@@ -26,7 +26,7 @@ class Top extends Component {
 
                 <HeaderMenuButton aria-label="Open menu" onClick={onClickSideNavExpand} isActive={isSideNavExpanded} />
 
-                <HeaderName href="#" prefix="">Socio-Prophet</HeaderName>
+                <HeaderName href="#" prefix="">SocioProphet</HeaderName>
 
                 <HeaderNavigation aria-label="SocioProphet Platform">
 
