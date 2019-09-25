@@ -19,7 +19,6 @@ import {
   SideNavMenuItem
 } from "carbon-components-react/lib/components/UIShell";
 
-import "./style.css";
 
 const StoryContent = () => {
   const content = (
