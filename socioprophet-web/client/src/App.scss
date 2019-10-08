@@ -1,0 +1,33 @@
+@import '~carbon-components/scss/globals/scss/styles.scss';
+@import '~carbon-components/scss/globals/scss/vendor/@carbon/layout/scss/breakpoint.scss';
+
+
+.drawer-open {
+  margin-left: 50%;
+}
+
+.drawer-close {
+  margin-left: 50%;
+}
+
+$feature-flags: (
+  components-x: true,
+  ui-shell: true,
+);
+
+select.form-control,
+textarea.form-control,
+input.form-control {
+  font-size: 16px;
+}
+input[type=file] {
+  width: 100%;
+}
+
+.App {
+  margin-top: 15px;
+}
+
+.App .navbar-brand {
+  font-weight: bold;
+}
