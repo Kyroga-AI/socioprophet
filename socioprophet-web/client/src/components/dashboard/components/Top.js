@@ -11,6 +11,8 @@ import { HeaderNavigation, HeaderMenu, HeaderMenuItem } from "carbon-components-
 import { HeaderGlobalBar, HeaderGlobalAction } from "carbon-components-react/lib/components/UIShell";
 import { SkipToContent, SideNav, SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from "carbon-components-react/lib/components/UIShell";
 
+import "./style-top.scss";
+
 class Top extends Component {
   render() {
     return (
@@ -24,7 +26,83 @@ class Top extends Component {
 
                 <SkipToContent />
 
-                <HeaderMenuButton aria-label="Open menu" onClick={onClickSideNavExpand} isActive={isSideNavExpanded} />
+              
+                <HeaderMenuButton className="bx--header__menu-toggle__hidden" aria-label="Open menu" onClick={onClickSideNavExpand} isActive={isSideNavExpanded} />
+
+                <SideNav className="hm-2 bx--side-nav--ux bx--side-nav--expanded" aria-label="Side navigation" expanded={isSideNavExpanded}>
+
+                <SideNavItems>
+
+                  <SideNavMenu title="User Dashboard">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="Portfolios & Watch Lists">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="Algorithmic Trading">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="Economic Prophet">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="Ontology & Epistemology">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="NLP & Information Extraction">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="Sentiment Analytics">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="Entity Analytics">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="Behavioral Analytics">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="Mobile & App Development">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                  <SideNavMenu title="Experiments & Simulations">
+                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
+                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
+                  </SideNavMenu>
+
+                </SideNavItems>
+
+              </SideNav>
+
 
                 <HeaderName href="#" prefix="">SocioProphet</HeaderName>
 
@@ -109,79 +187,7 @@ class Top extends Component {
 
                 </HeaderGlobalBar>
 
-                <SideNav aria-label="Side navigation" expanded={isSideNavExpanded}>
 
-                <SideNavItems>
-
-                  <SideNavMenu title="User Dashboard">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="Portfolios & Watch Lists">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="Algorithmic Trading">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="Economic Prophet">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="Ontology & Epistemology">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="NLP & Information Extraction">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="Sentiment Analytics">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="Entity Analytics">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="Behavioral Analytics">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="Mobile & App Development">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                  <SideNavMenu title="Experiments & Simulations">
-                    <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                    <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                  </SideNavMenu>
-
-                </SideNavItems>
-
-              </SideNav>
 
             </Header>
 
