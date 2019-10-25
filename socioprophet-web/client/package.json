@@ -4,7 +4,7 @@
   "description": "Client source package",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --mode development --open --hot",
+    "start": "webpack-dev-server --mode development --hot",
     "build": "webpack --mode production"
   },
   "author": "Will Jones",
@@ -19,17 +19,22 @@
     "carbon-icons": "^7.0.7",
     "classnames": "^2.2.6",
     "css-loader": "^3.2.0",
+    "file-loader": "^4.2.0",
     "javascript-terminal": "^1.0.3",
     "jwt-decode": "^2.2.0",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.0-beta.14",
+    "react-bootstrap-sidebar": "0.0.1",
     "react-dom": "^16.9.0",
+    "react-hamburger-menu": "^1.1.1",
     "react-redux": "^7.1.1",
     "react-router-dom": "^5.0.1",
+    "react-sidebar": "^3.0.2",
     "react-terminal-component": "^1.4.1",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
-    "style-loader": "^1.0.0"
+    "style-loader": "^1.0.0",
+    "styled-components": "^4.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

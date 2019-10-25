@@ -97,7 +97,7 @@ div, nav, li {
 .landing-header-separatorBlock {
   display: inline-block;
   height: inherit;
-  margin-left: 30px;
+  margin-left: 45px;
 }
 
 .landing-header-signUpButton {
@@ -118,6 +118,143 @@ div, nav, li {
   min-height: calc(100vh - 70px);
 }
 
+.billboard-background {
+  /* background-color: #8bd8c6; */
+  background-image: url("../../../images/main-background-circle.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.billboard {
+  color: #fff;
+  text-align: center;
+  height: 432px;
+  padding: 167px 10px 250px;
+}
+
+.main-socioprophet-name {
+  font-size: 36px;
+  font-weight: 400;
+}
+
+.prophet {
+  font-size: 36px;
+  font-weight: 600;
+}
+
+.main-button-login {
+  margin-top: 34px;
+  margin-right: 20px;
+  width: 94px;
+  height: 40px;
+  display: inline-block;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2px solid #264a60;
+  background-color: #264a60;
+  padding-top: 9px;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.main-button-register {
+  margin-top: 34px;
+  width: 127px;
+  height: 40px;
+  color: #fff;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2px solid #fff;
+  padding-top: 9px;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.main-platform-section {
+  padding: 31px 10px;
+  height: 275px;
+  color: #fff;
+  background-color: #152935;
+}
+
+.main-platform-slogan {
+  height: 36px;
+  font-size: 25px;
+  line-height: 1.44;
+  text-align: center;
+}
+
+.main-platform-description {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
+  color: #fff;
+  max-width: 690px;
+  margin: auto;
+  margin-top: 16px;
+  height: 67px;
+}
+
+.main-app-section {
+  background-color: transparent;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  margin-top: -92px;
+  z-index: 1;
+}
+
+.offering-card-container {
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  width: 380px;
+  height: 219px;
+  background-color: #fff;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .1);
+  padding: 25px 0 0 33px;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.offering-card-name {
+  margin-top: 23px;
+  color: #152934;
+  font-weight: 400;
+  font-size: 20px;
+}
+
+.offering-card-description {
+  width: 287px;
+  height: 40px;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.43;
+  text-align: left;
+  color: #5a6872;
+}
+
+.offering-card-learnMore {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.43;
+  text-align: left;
+  color: #3d70b2;
+}
+
+.offering-card-learnMore a {
+  text-decoration: none !important;
+  font-weight: 400 !important;
+  color: #3d70b2;
+  cursor: pointer;
+}
+
 .landing-footer {
   text-align: center;
   height: 70px;
@@ -126,13 +263,16 @@ div, nav, li {
 }
 
 .landing-footer-link {
-    padding: 0 25px;
-    font-size: 14px;
-    font-weight: 400;
-    color: #f4f7fb;
-    text-decoration: none!important;
+  padding: 0 25px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #f4f7fb;
+  text-decoration: none!important;
 }
 
+.landing-footer-social {
+
+}
 
 
 

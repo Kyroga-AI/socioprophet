@@ -52,16 +52,151 @@
   }
 }
 
-// .bx--side-nav--ux {
+.bx--side-nav--ux {
+
+  @include carbon--breakpoint-down(max) {
+    border: 3px solid pink;
+    width: 0px;
+  }
+  @media (min-width: 200px) {
+    .bx--side-nav--ux {
+
+      border: 8px solid brown;
+    }
+  }
+}
+
 //
-//   @include carbon--breakpoint-down(max) {
-//     border: 3px solid pink;
-//     width: 0px;
-//   }
-//   @media (min-width: 200px) {
-//     .bx--side-nav--ux {
 //
-//       border: 8px solid brown;
-//     }
-//   }
-// }
+// html, body, div, span,
+// h1, h2, p, a,
+// i, ul, li, nav {
+//   margin: 0;
+//   padding: 0;
+//   border: 0;
+//   font-size: 100%;
+//   vertical-align: baseline; }
+//
+// /* HTML5 display-role reset for older browsers */
+// header, nav {
+//   display: block; }
+//
+// body {
+//   line-height: 1; }
+//
+// ol, ul {
+//   list-style: none; }
+//
+// blockquote, q {
+//   quotes: none; }
+//
+// /*layout*/
+// .wrapper {
+//   margin-right: 1rem;
+//   margin-left: 1rem; }
+//
+// .wrapper--header {
+//   margin-right: 1rem; }
+//
+// .wrapper--flex {
+//   display: flex;
+//   justify-content: space-between; }
+//
+// /*type treatment*/
+// .p--main {
+//   color: #ffffff; }
+//
+// .p--inverse {
+//   color: #000000; }
+//
+// .emphasis {
+//   font-weight: 500; }
+//
+// p {
+//   font-size: .875rem; }
+//
+// .span--separation {
+//   margin-left: .5rem;
+//   margin-right: .5rem; }
+//
+// /*****HEADER*****/
+// /*header styles*/
+// header {
+//   background: #000000; }
+//
+// /*hides secondary nav on smaller screens*/
+// .nav--actionitems {
+//   display: none; }
+//
+// /*header navs*/
+// nav {
+//   display: flex;
+//   justify-content: space-between; }
+//
+// .nav--wayfinding ul {
+//   align-items: center;
+//   display: flex;
+//   flex-direction: row;
+//   height: 100%;
+//   padding-right: 1cm;
+//   margin-left: 0;
+//   list-style: none; }
+//
+// .nav--wayfinding li {
+//   padding: 1rem .5rem; }
+//   .nav--wayfinding li:last-of-type {
+//     padding: 1rem 0 1rem .5rem; }
+//
+// .nav--wayfinding a {
+//   display: flex;
+//   flex-direction: row; }
+//
+// /*****NAV PANEL*****/
+// /*nav panel styles*/
+// .navpanel {
+//   background: #636363;
+//   height: 100%;
+//   margin-left: -20.25rem;
+//   transition: margin-left .3s ease;
+//   width: 20.25rem; }
+//   .navpanel ul {
+//     width: 100%; }
+//
+// .navpanel__li {
+//   background: #636363;
+//   border-bottom: 1px solid #000000;
+//   color: #ffffff;
+//   display: inline-block;
+//   transition: background .4s ease, color .3s ease;
+//   width: 100%; }
+//   .navpanel__li:hover {
+//     background: #ffffff; }
+//
+// .navpanel__li:hover .navpanel__link, .navpanel__link:focus {
+//   color: #636363; }
+//
+// .navpanel__link {
+//   color: #ffffff;
+//   display: inline-block;
+//   margin-left: 3.75rem;
+//   padding: 1rem 0; }
+//
+// /*class that shows nav panel*/
+// .navpanel--active {
+//   margin-left: 0; }
+//
+// /*styles for hamburger menu*/
+// .navpanel--toggle {
+//   border-bottom: 3px solid green;
+//   transition: background .3s ease, border-bottom .3s ease; }
+//   .navpanel--toggle:hover, .navpanel--toggle:focus {
+//     background: #636363;
+//     border-bottom: 3px solid #ffffff;
+//     cursor: pointer;
+//     transition: background .3s ease, border-bottom .3s ease; }
+//
+// /*class to persists hover state on icon in menu*/
+// .icon--active {
+//   background: #636363;
+//   border-bottom: 3px solid #ffffff;
+//   cursor: pointer; }

@@ -12,7 +12,7 @@ class Landing extends Component {
               <div className="landing-header-title">
                 <div className="landing-header-menuNavTitle">
                   <a className="landing-header-titleText" href="/">
-                    <span className="landing-header-logoText"><strong>SocioProphet</strong></span>
+                    <span className="landing-header-logoText"><strong>[ SocioProphet ] Platform</strong></span>
                   </a>
                 </div>
                 <div className="landing-header-region"></div>
@@ -23,32 +23,74 @@ class Landing extends Component {
                   <li className="landing-header-link"><a href="#">Blog</a></li>
                   <li className="landing-header-link"><a href="#">Docs</a></li>
                   <div className="landing-header-separatorBlock">
-                    <Link
-                      to="/login"
-                      style={{
-                        width: "140px",
-                        borderRadius: "3px",
-                        letterSpacing: "1.5px",
-                        color: "white"
-                      }}
-                      className="btn btn-large btn-flat waves-effect white black-text"
-                      >
-                      Log In
-                    </Link>
-                    <li className="landing-header-link"><a href="#">Log In</a></li>
-                    <a className="landing-header-signUpButton" href="#">Sign Up</a>
+
+                    <Link to="/login" style={{ color : "#fff", fontSize : "16px" }}>Log In</Link>
+                    <Link to="/register" className="landing-header-signUpButton">Sign Up</Link>
+                    
                   </div>
                 </ul>
               </nav>
             </nav>
 
-            <div className="main"></div>
+            <div className="main">
+              <div className="billboard-background">
+                <div className="billboard">
+                  <div className="main-socioprophet-name">
+                    Socio
+                    <span className="prophet">Prophet</span>
+                  </div>
+                  <div>
+                    <Link to="/login" className="main-button-login">Log In</Link>
+                    <Link to="/register" className="main-button-register">Try it for Free</Link>
+                  </div>
+                </div>
+              </div>
+              <div className="main-platform-section">
+                <div className="main-platform-slogan">Explore the SocioProphet Platform</div>
+                <div className="main-platform-description">
+                  Use SocioProphet to create and visualize data in a collaborative and distributed manner.
+                  [add some more text here etc.]
+                </div>
+              </div>
+              <div className="main-app-section">
+                <div className="offering-card-container">
+                  <div className="offering-card-name">[socioprophet HEADING one]</div>
+                  <div className="offering-card-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Duis ut justo convallis.
+                  </div>
+                  <div className="offering-card-learnMore">
+                    <a href="#" target="_blank">Learn More</a>
+                  </div>
+                </div>
+                <div className="offering-card-container">
+                  <div className="offering-card-name">[socioprophet HEADING two]</div>
+                  <div className="offering-card-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Duis ut justo convallis.
+                  </div>
+                  <div className="offering-card-learnMore">
+                    <a href="#" target="_blank">Learn More</a>
+                  </div>
+                </div>
+                <div className="offering-card-container">
+                  <div className="offering-card-name">[socioprophet HEADING three]</div>
+                  <div className="offering-card-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Duis ut justo convallis.
+                  </div>
+                  <div className="offering-card-learnMore">
+                    <a href="#" target="_blank">Learn More</a>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <footer className="landing-footer">
-              <a class="landing-footer-link" href="#" target="_blank"><strong>Contact</strong></a>
-              <a class="landing-footer-link" href="#" target="_blank"><strong>Privacy</strong></a>
-              <a class="landing-footer-link" href="#" target="_blank"><strong>Terms of Use</strong></a>
-              <a class="landing-footer-link" href="#" target="_blank"><strong>Support</strong></a>
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Contact</strong></a>
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Privacy</strong></a>
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Terms of Use</strong></a>
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Support</strong></a>
             </footer>
 
           </div>

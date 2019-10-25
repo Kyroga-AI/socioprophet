@@ -1,0 +1,18 @@
+div {
+  font-size: 1rem;
+}
+
+.application {
+  background-color: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+.masthead {
+  position: relative;
+  transform: translate3d(0,0,0);
+  background-color: #fff;
+  top: 0;
+  width: 100%;
+  z-index: 900;
+}
