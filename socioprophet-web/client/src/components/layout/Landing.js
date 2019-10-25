@@ -26,7 +26,7 @@ class Landing extends Component {
 
                     <Link to="/login" style={{ color : "#fff", fontSize : "16px" }}>Log In</Link>
                     <Link to="/register" className="landing-header-signUpButton">Sign Up</Link>
-                    
+
                   </div>
                 </ul>
               </nav>

@@ -23,7 +23,7 @@ div, nav, li {
   display: flex;
   align-items: center;
   z-index: 1000;
-  background-color: #333;
+  background-color: #0c0c0c;
   color: #fff;
   top: 0;
   left: 0;
@@ -120,7 +120,7 @@ div, nav, li {
 
 .billboard-background {
   /* background-color: #8bd8c6; */
-  background-image: url("../../../images/main-background-circle.jpg");
+  background-image: url("../../../images/space.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 50%;
@@ -152,8 +152,8 @@ div, nav, li {
   color: #fff;
   font-size: 16px;
   font-weight: 500;
-  border: 2px solid #264a60;
-  background-color: #264a60;
+  border: 2px solid #fff;
+  background-color: #0c0c0c;
   padding-top: 9px;
   box-sizing: border-box;
   cursor: pointer;
@@ -179,7 +179,7 @@ div, nav, li {
   padding: 31px 10px;
   height: 275px;
   color: #fff;
-  background-color: #152935;
+  background-color: #0c0c0c;
 }
 
 .main-platform-slogan {
