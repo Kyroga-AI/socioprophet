@@ -19,8 +19,8 @@ class Landing extends Component {
               </div>
               <nav className="landing-header-linksContainer">
                 <ul className="landing-header-links">
-                  <li className="landing-header-link"><a href="#">GitHub</a></li>
-                  <li className="landing-header-link"><a href="#">Blog</a></li>
+                  <li className="landing-header-link"><a href="https://github.com/SocioProphet">GitHub</a></li>
+                  <li className="landing-header-link"><a href="https://medium.com/@socioprophet">Blog</a></li>
                   <li className="landing-header-link"><a href="#">Docs</a></li>
                   <div className="landing-header-separatorBlock">
 
@@ -48,13 +48,12 @@ class Landing extends Component {
               <div className="main-platform-section">
                 <div className="main-platform-slogan">Explore the SocioProphet Platform</div>
                 <div className="main-platform-description">
-                  Use SocioProphet to create and visualize data in a collaborative and distributed manner.
-                  [add some more text here etc.]
+                  Open Collaborative Social-Econo-Legislative Analytics.
                 </div>
               </div>
               <div className="main-app-section">
                 <div className="offering-card-container">
-                  <div className="offering-card-name">[socioprophet HEADING one]</div>
+                  <div className="offering-card-name">[ SocioProphet ] News & Events</div>
                   <div className="offering-card-description">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Duis ut justo convallis.
@@ -64,7 +63,7 @@ class Landing extends Component {
                   </div>
                 </div>
                 <div className="offering-card-container">
-                  <div className="offering-card-name">[socioprophet HEADING two]</div>
+                  <div className="offering-card-name">[ SocioProphet ] Data & AI</div>
                   <div className="offering-card-description">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Duis ut justo convallis.
@@ -74,7 +73,7 @@ class Landing extends Component {
                   </div>
                 </div>
                 <div className="offering-card-container">
-                  <div className="offering-card-name">[socioprophet HEADING three]</div>
+                  <div className="offering-card-name">[ SocioProphet ] Society & Law</div>
                   <div className="offering-card-description">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Duis ut justo convallis.

@@ -4,7 +4,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
 import classnames from "classnames";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from "carbon-components-react/lib/components/Button";
+import "./LoginStyles/styles.css";
 
 class Login extends Component {
   constructor() {
@@ -55,69 +56,72 @@ class Login extends Component {
 
     return (
       <div className="root">
-        // <div className="application">
-        //
-        //   <div className="masthead">
-        //   </div>
-        //
-        //   <div className="">
-        //   </div>
-        //
-        // </div>
-        <form noValidate onSubmit={this.onSubmit}>
-          <div className="input-field col s12">
-            <input
-              onChange={this.onChange}
-              value={this.state.email}
-              error={errors.email}
-              id="email"
-              type="email"
-              className={classnames("", {
-                invalid: errors.email || errors.emailnotfound
-              })}
-            />
-            <label htmlFor="email">Email</label>
-            <span className="red-text">
-              {errors.email}
-              {errors.emailnotfound}
-            </span>
+        <div className="application">
+          <div className="masthead">
+            <div className="content-body">
+              <div className="modal-wrap">
+                <div className="modal-form">
+                  <div className="login">
+                    <div className="form-container">
+                      <h1 className="form-heading sp-h2">
+                        <span>Log in to SocioProphet</span>
+                      </h1>
+                      <div className="flex">
+                        <form className="row-form" noValidate onSubmit={this.onSubmit}>
+                          <div className="full-width">
+                            <p className="input-container">
+                              <label htmlFor="email">Email</label>
+                              <input
+                                onChange={this.onChange}
+                                value={this.state.email}
+                                error={errors.email}
+                                id="email"
+                                type="email"
+                                className={classnames("", {
+                                  invalid: errors.email || errors.emailnotfound
+                                })}
+                              />
+                              <span className="red-text">
+                                {errors.email}
+                                {errors.emailnotfound}
+                              </span>
+                            </p>
+                            <p className="input-container">
+                              <label htmlFor="password">
+                                Password
+                                <a className="fright" href="#">
+                                  <span>Forgot Password?</span>
+                                </a>
+                              </label>
+                              <input
+                                onChange={this.onChange}
+                                value={this.state.password}
+                                error={errors.password}
+                                id="password"
+                                type="password"
+                                className={classnames("", {
+                                  invalid: errors.password || errors.passwordincorrect
+                                })}
+                              />
+                              <span className="red-text">
+                                {errors.password}
+                                {errors.passwordincorrect}
+                              </span>
+                            </p>
+                          </div>
+                          <div>
+                            <Button type="submit">Continue</Button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="input-field col s12">
-            <input
-              onChange={this.onChange}
-              value={this.state.password}
-              error={errors.password}
-              id="password"
-              type="password"
-              className={classnames("", {
-                invalid: errors.password || errors.passwordincorrect
-              })}
-            />
-            <label htmlFor="password">Password</label>
-            <span className="red-text">
-              {errors.password}
-              {errors.passwordincorrect}
-            </span>
-          </div>
-          <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-            <button
-              style={{
-                width: "150px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-                marginTop: "1rem"
-              }}
-              type="submit"
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-            >
-              Login
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
-
-
-
     );
   }
 }
