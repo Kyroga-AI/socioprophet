@@ -118,6 +118,10 @@ div, nav, li {
   min-height: calc(100vh - 70px);
 }
 
+.nav-wrapper {
+  font-size: 20px;
+}
+
 .billboard-background {
   /* background-color: #8bd8c6; */
   background-image: url("../../../images/space.jpg");
