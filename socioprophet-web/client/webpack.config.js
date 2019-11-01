@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-​
+
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -30,15 +30,16 @@ module.exports = {
   },
   devServer: {
     host: '0.0.0.0',
-    port: 8081,
+    port: 8080,
     historyApiFallback: true,
+    allowedHosts: [
+      'localhost.socioprophet.com',
+      'socioprophet.com',
+      'www.socioprophet.com'],
     proxy: {
       "/api/users": "http://localhost:5000"
-    },
-    allowedHosts: [
-        'localhost.socioprophet.com',
-        'socioprophet.com'
-    ]
+    
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({
