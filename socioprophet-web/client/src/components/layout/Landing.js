@@ -48,7 +48,7 @@ class Landing extends Component {
               <div className="main-platform-section">
                 <div className="main-platform-slogan">Explore the SocioProphet Platform</div>
                 <div className="main-platform-description">
-                  Open Collaborative Social-Econo-Legislative Analytics.
+                  Open Collaborative Socio-Econo-Legislative Analytics.
                 </div>
               </div>
               <div className="main-app-section">
