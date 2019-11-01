@@ -7,6 +7,6 @@ Today, Only the socioprophet-web portion of the repo can be built. To build run 
 ``` bash
 cd socioprophet-web && yarn
 cd client && yarn
-cd .. && yarn run dev 
-'''
+cd .. && yarn run dev
+
 
