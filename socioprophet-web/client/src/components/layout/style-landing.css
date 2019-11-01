@@ -263,6 +263,9 @@ div, nav, li {
   text-align: center;
   height: 70px;
   line-height: 70px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
   background-color: #1b1b1b;
 }
 
