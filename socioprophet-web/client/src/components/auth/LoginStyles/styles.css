@@ -61,8 +61,16 @@ a {
 }
 
 .modal-form {
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  width: 380px;
+  height: 219px;
   background-color: #fff;
-  padding: 32px 16px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .1);
+  padding: 25px 0 0 33px;
+  box-sizing: border-box;
+  display: inline-block;
 }
 
 .modal-form .form-heading {

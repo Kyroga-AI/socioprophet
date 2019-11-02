@@ -1,124 +1,91 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { loginUser } from "../../actions/authActions";
-import classnames from "classnames";
-import Button from "carbon-components-react/lib/components/Button";
-import "./LoginStyles/styles.css";
+import LoginModal from "./LoginModal";
+import "./style-landing.css";
 
-class Login extends Component {
-  constructor() {
-    super();
-    this.state = {
-      email: "",
-      password: "",
-      errors: {}
-    };
-  }
-
-  componentDidMount() {
-    // If logged in and user navigates to Login page, should redirect them to dashboard
-    if (this.props.auth.isAuthenticated) {
-      this.props.history.push("/dashboard");
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
-      this.props.history.push("/dashboard");
-    }
-
-    if (nextProps.errors) {
-      this.setState({
-        errors: nextProps.errors
-      });
-    }
-  }
-
-  onChange = e => {
-    this.setState({ [e.target.id]: e.target.value });
-  };
-
-  onSubmit = e => {
-    e.preventDefault();
-
-    const userData = {
-      email: this.state.email,
-      password: this.state.password
-    };
-
-    this.props.loginUser(userData);
-  };
-
+class Landing extends Component {
   render() {
-    const { errors } = this.state;
-
     return (
-      <div className="root">
-        <div className="application">
-          <div className="masthead">
-            <div className="content-body">
-              <div className="modal-wrap">
-                <div className="modal-form">
-                  <div className="login">
-                    <div className="form-container">
-                      <h1 className="form-heading sp-h2">
-                        <span>Log in to SocioProphet</span>
-                      </h1>
-                      <div className="flex">
-                        <form className="row-form" noValidate onSubmit={this.onSubmit}>
-                          <div className="full-width">
-                            <p className="input-container">
-                              <label htmlFor="email">Email</label>
-                              <input
-                                onChange={this.onChange}
-                                value={this.state.email}
-                                error={errors.email}
-                                id="email"
-                                type="email"
-                                className={classnames("", {
-                                  invalid: errors.email || errors.emailnotfound
-                                })}
-                              />
-                              <span className="red-text">
-                                {errors.email}
-                                {errors.emailnotfound}
-                              </span>
-                            </p>
-                            <p className="input-container">
-                              <label htmlFor="password">
-                                Password
-                                <a className="fright" href="#">
-                                  <span>Forgot Password?</span>
-                                </a>
-                              </label>
-                              <input
-                                onChange={this.onChange}
-                                value={this.state.password}
-                                error={errors.password}
-                                id="password"
-                                type="password"
-                                className={classnames("", {
-                                  invalid: errors.password || errors.passwordincorrect
-                                })}
-                              />
-                              <span className="red-text">
-                                {errors.password}
-                                {errors.passwordincorrect}
-                              </span>
-                            </p>
-                          </div>
-                          <div>
-                            <Button type="submit">Continue</Button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
+      <div className="page-wrapper">
+        <div className="contentNode">
+          <div className="landing-wrapper">
+            <nav className="landing-header">
+              <div className="landing-header-title">
+                <div className="landing-header-menuNavTitle">
+                  <a className="landing-header-titleText" href="/">
+                    <span className="landing-header-logoText"><strong>[ SocioProphet ] Platform</strong></span>
+                  </a>
+                </div>
+                <div className="landing-header-region"></div>
+              </div>
+              <nav className="landing-header-linksContainer">
+                <ul className="landing-header-links">
+                  <li className="landing-header-link"><a href="https://github.com/SocioProphet">GitHub</a></li>
+                  <li className="landing-header-link"><a href="https://medium.com/@socioprophet">Blog</a></li>
+                  <li className="landing-header-link"><a href="#">Docs</a></li>
+                  <div className="landing-header-separatorBlock">
+
+                    <Link to="/login" style={{ color : "#fff", fontSize : "16px" }}>Log In</Link>
+                    <Link to="/register" className="landing-header-signUpButton">Sign Up</Link>
+
+                  </div>
+                </ul>
+              </nav>
+            </nav>
+
+            <div className="main">
+              <div className="billboard-background">
+                <div className="billboard">
+                  <div className="main-socioprophet-name">
+                    Socio
+                    <span className="prophet">Prophet</span>
+                  </div>
+                  <div>
+                    <Link to="/login" className="main-button-login">Log In</Link>
+                    <Link to="/register" className="main-button-register">Try it for Free</Link>
+                  </div>
+                </div>
+              </div>
+              <div className="main-platform-section">
+                <div className="main-platform-slogan">Explore the SocioProphet Platform</div>
+                <div className="main-platform-description">
+                  Open Collaborative Socio-Econo-Legislative Analytics.
+                </div>
+              </div>
+              <div className="main-app-section">
+                <div className="offering-card-container">
+                  <LoginModal />
+                </div>
+                <div className="offering-card-container">
+                  <div className="offering-card-name">[ SocioProphet ] Data & AI</div>
+                  <div className="offering-card-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Duis ut justo convallis.
+                  </div>
+                  <div className="offering-card-learnMore">
+                    <a href="#" target="_blank">Learn More</a>
+                  </div>
+                </div>
+                <div className="offering-card-container">
+                  <div className="offering-card-name">[ SocioProphet ] Society & Law</div>
+                  <div className="offering-card-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Duis ut justo convallis.
+                  </div>
+                  <div className="offering-card-learnMore">
+                    <a href="#" target="_blank">Learn More</a>
                   </div>
                 </div>
               </div>
             </div>
+
+            <footer className="landing-footer">
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Contact</strong></a>
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Privacy</strong></a>
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Terms of Use</strong></a>
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Support</strong></a>
+            </footer>
+
           </div>
         </div>
       </div>
@@ -126,18 +93,4 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
-  loginUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
-};
-
-const mapStateToProps = state => ({
-  auth: state.auth,
-  errors: state.errors
-});
-
-export default connect(
-  mapStateToProps,
-  { loginUser }
-)(Login);
+export default Landing;
