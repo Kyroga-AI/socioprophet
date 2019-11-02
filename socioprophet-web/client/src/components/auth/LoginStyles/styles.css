@@ -32,7 +32,7 @@ a {
   color: #1268fb;
 }
 
-.application {
+/*.application {
   background-color: #fff;
   overflow: hidden;
   position: relative;
@@ -59,7 +59,7 @@ a {
   padding-bottom: 40px;
   max-width: 568px;
 }
-
+*/
 .modal-form {
   background-color: #fff;
   padding: 32px 16px;
