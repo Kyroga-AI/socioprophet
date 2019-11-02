@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "./style-landing.css";
 
-// Login Component
-import Login from "../auth/Login";
 
 class Landing extends Component {
   render() {
@@ -56,8 +54,15 @@ class Landing extends Component {
               </div>
               <div className="main-app-section">
                 <div className="offering-card-container">
+                  <div className="offering-card-name">[ SocioProphet ] News & Events</div>
+                  <div className="offering-card-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Duis ut justo convallis.
+                  </div>
+                  <div className="offering-card-learnMore">
+                    <a href="#" target="_blank">Learn More</a>
+                     </div>
 
-                  <Login />
 
                 </div>
                 <div className="offering-card-container">
