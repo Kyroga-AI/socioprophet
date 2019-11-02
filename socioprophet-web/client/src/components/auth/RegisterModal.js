@@ -55,11 +55,6 @@ class Register extends Component {
     const { errors } = this.state;
 
     return (
-      <div className="root">
-        <div className="application">
-          <div className="masthead">
-            <div className="content-body">
-              <div className="modal-wrap">
                 <div className="modal-form">
                   <div className="register">
                     <div className="form-container">
@@ -145,11 +140,6 @@ class Register extends Component {
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     );
   }
