@@ -100,8 +100,8 @@ class Login extends Component {
                   <div className="login">
 
                       <div>
-                        <form className="row-form" noValidate onSubmit={this.onSubmit}>
-                          <div className="full-width">
+                        <form className="row-form_login" noValidate onSubmit={this.onSubmit}>
+                          <div className="full-width_login">
                             <p className="input-container">
                               <label htmlFor="email">Email</label>
                               <input

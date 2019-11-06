@@ -100,9 +100,9 @@ class Register extends Component {
                   <div className="register">
 
                       <div>
-                      <form className="row-form" noValidate onSubmit={this.onSubmit}>
-                        <div className="full-width">
-                          <p className="input-container-left">
+                      <form className="row-form_register" noValidate onSubmit={this.onSubmit}>
+                        <div className="full-width_register_left">
+                          <p className="input-container">
                             <label htmlFor="name">Name</label>
                             <input
                               onChange={this.onChange}
@@ -113,12 +113,12 @@ class Register extends Component {
                               className={classnames("", {
                                 invalid: errors.name
                               })}
-                            />
+                            /><br/>
                             <span className="red-text">
                               {errors.name}
                             </span>
                           </p>
-                          <p className="input-container-left">
+                          <p className="input-container">
                             <label htmlFor="email">Email</label>
                             <input
                               onChange={this.onChange}
@@ -129,12 +129,14 @@ class Register extends Component {
                               className={classnames("", {
                                 invalid: errors.email
                               })}
-                            />
+                            /><br/>
                             <span className="red-text">
                               {errors.email}
                             </span>
                           </p>
-                          <p className="input-container-right">
+                          </div>
+                          <div className="full-width_register_right">
+                          <p className="input-container">
                             <label htmlFor="password">
                               Password
                             </label>
@@ -147,12 +149,12 @@ class Register extends Component {
                               className={classnames("", {
                                 invalid: errors.password
                               })}
-                            />
+                            /><br/>
                             <span className="red-text">
                               {errors.password}
                             </span>
                           </p>
-                          <p className="input-container-right">
+                          <p className="input-container">
                             <label htmlFor="password2">
                               Confirm Password
                             </label>
@@ -165,14 +167,14 @@ class Register extends Component {
                               className={classnames("", {
                                 invalid: errors.password2
                               })}
-                            />
+                            /><br/>
                             <span className="red-text">
                               {errors.password2}
                             </span>
                           </p>
                         </div>
                         <div>
-                          <Button type="submit">Sign Up</Button>
+                          <button className="signUp-button_register" type="submit">Sign Up</button>
                         </div>
                       </form>
 

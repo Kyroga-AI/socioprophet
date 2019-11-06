@@ -247,7 +247,7 @@ input {
   margin-top: 20px;
 }
 
-.row-form {
+.row-form_login {
   width: 400px;
   padding: 10px 0;
 }
@@ -256,14 +256,14 @@ input {
   padding-bottom: 24px;
 }
 
-.row-form label {
+.row-form_login label {
   text-align: center;
   padding-bottom: 5px;
   display: block;
   color: #0c0c0c;
 }
 
-.row-form label span {
+.row-form_login label span {
   text-align: center;
   display: block;
   margin: 0;
@@ -276,7 +276,7 @@ input {
   font-size: 12px !important;
 }
 
-.row-form input {
+.row-form_login input {
   border: 1px solid #959f9f;
   border-radius: 0;
   box-sizing: border-box;
