@@ -264,7 +264,7 @@ div, nav, li {
   height: 70px;
   line-height: 70px;
   width: 100%;
-  position: absolute;
+  /* position: absolute; */
   bottom: 0;
   background-color: #1b1b1b;
 }
