@@ -7,11 +7,6 @@ div {
   display: block;
 }
 
-h1 {
-  font-weight: 400;
-  padding: 0 0 15px;
-}
-
 form, span {
   font-size: inherit;
 }
@@ -32,57 +27,9 @@ a {
   color: #1268fb;
 }
 
-/*.application {
-  background-color: #fff;
-  overflow: hidden;
-  position: relative;
-}
-
-.masthead {
-  position: relative;
-  transform: translate3d(0,0,0);
-  background-color: #fff;
-  top: 10px;
-  width: 100%;
-  z-index: 900;
-}
-.content-body {
-  padding-top: 0;
-  background-color: #f4f4f4 !important;
-  height: 100%;
-}
-
-.modal-wrap {
-  margin: auto;
-  object-fit: contain;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  max-width: 568px;
-}
-*/
-.modal-form {
-  margin-right: 10px;
-  margin-left: 10px;
-  margin-bottom: 10px;
-  width: 380px;
-  height: 219px;
-  background-color: #fff;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .1);
-  padding: 25px 0 0 33px;
-  box-sizing: border-box;
-  display: inline-block;
-}
-
-.modal-form .form-heading {
-  font-size: 30px;
-}
-
-.sp-h2 {
-  line-height: 2.1875rem;
-}
 
 .row-form {
-  max-width: 400px;
+  max-width: 220px;
   padding: 24px 0;
 }
 
