@@ -1,15 +1,13 @@
 <template>
-    <ul class="breadcrumb">
-      <li
-        v-for="(breadcrumb, idx) in breadcrumbList"
-        :key="idx"
-        @click="routeTo(breadcrumb.path)"
-        :class="{'linked': !!breadcrumb.link}">
-
-        <a href="javascript:void(0);">{{ breadcrumb.name }}</a>
-
-      </li>
-    </ul>
+ <ul class="breadcrumb">
+  <li
+   v-for="(breadcrumb, idx) in breadcrumbList"
+   :key="idx"
+   @click="routeTo(breadcrumb.path)"
+   :class="{'linked': !!breadcrumb.link}">
+   <a href="javascript:void(0);">{{ breadcrumb.name }}</a>
+  </li>
+ </ul>
 </template>
 
 <script>
@@ -33,7 +31,6 @@ export default {
     updateList () {
       let currentPath = this.$router.currentRoute.path
       this.pageConfig = ConfigManager.getMetaById(currentPath)
-
       // calculate the breadcrumb
       // console.log('BreadCrumb ', JSON.stringify(this.pageConfig.breadCrumb))
       this.breadcrumbList = this.pageConfig.breadCrumb
@@ -43,7 +40,6 @@ export default {
 </script>
 
 <style scoped>
-
   ul.breadcrumb {
     position: sticky;
     top: 0;
