@@ -45,7 +45,7 @@ class ComingSoon extends Component {
                 </div>
               </div>
               <div className="main-platform-section">
-                <div className="main-platform-slogan">Try for FREE! (...soon)</div>
+                <div className="main-platform-slogan">Try it Soon (by Invite Only)</div>
                 <div className="main-platform-description">
                   Open Collaborative Socio-Econo-Legislative Analytics.
                 </div>
