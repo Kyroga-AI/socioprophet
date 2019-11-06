@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import "./style-landing.css";
+import "./ComingSoonStyles/comingSoon-styles.css";
 
 
-class Landing extends Component {
+class ComingSoon extends Component {
   render() {
     return (
       <div className="page-wrapper">
@@ -25,8 +25,7 @@ class Landing extends Component {
                   <li className="landing-header-link"><a href="#">Docs</a></li>
                   <div className="landing-header-separatorBlock">
 
-                    <Link to="/login" style={{ color : "#fff", fontSize : "16px" }}>Log In</Link>
-                    <Link to="/register" className="landing-header-signUpButton">Sign Up</Link>
+                    <Link to="/" className="landing-header-signUpButton">Back</Link>
 
                   </div>
                 </ul>
@@ -41,13 +40,12 @@ class Landing extends Component {
                     <span className="prophet">Prophet</span>
                   </div>
                   <div>
-                    <Link to="/login" className="main-button-login">Log In</Link>
-                    <Link to="/register" className="main-button-register">Try it for Free</Link>
+                    <Link to="/" className="main-button-login">Back</Link>
                   </div>
                 </div>
               </div>
               <div className="main-platform-section">
-                <div className="main-platform-slogan">Explore the SocioProphet Platform</div>
+                <div className="main-platform-slogan">Try for FREE! (...soon)</div>
                 <div className="main-platform-description">
                   Open Collaborative Socio-Econo-Legislative Analytics.
                 </div>
@@ -110,4 +108,4 @@ class Landing extends Component {
   }
 }
 
-export default Landing;
+export default ComingSoon;

@@ -260,6 +260,7 @@ div, nav, li {
 }
 
 .landing-footer {
+  float: none;
   text-align: center;
   height: 70px;
   line-height: 70px;
@@ -270,16 +271,53 @@ div, nav, li {
 }
 
 .landing-footer-link {
+  position: relative;
   padding: 0 25px;
   font-size: 14px;
   font-weight: 400;
   color: #f4f7fb;
   text-decoration: none!important;
-}
-
-.landing-footer-social {
 
 }
+
+.social-links i {
+  font-size: 20px;
+  color: #f4f4f4;
+}
+
+.social-twitter {
+  float: left;
+  position: absolute;
+  margin-top: 30px;
+  margin-left: 5%;
+}
+
+.social-medium{
+  float: left;
+  position: absolute;
+  margin-top: 30px;
+  margin-left: 10%;
+}
+
+.social-github{
+  float: left;
+  position: absolute;
+  margin-top: 30px;
+  margin-left: 15%;
+}
+
+.copyright {
+  float: left;
+  position: absolute;
+  margin-top: 25px;
+  margin-left: 88%;
+  color: #fff;
+}
+.copyright p {
+  font-size: 12px;
+}
+
+
 
 
 

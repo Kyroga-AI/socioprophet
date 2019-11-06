@@ -10,6 +10,8 @@ import store from "./store";
 import Navbar from "./components/layout/Navbar";
 import Landing from "./components/layout/Landing";
 import Register from "./components/auth/Register";
+// Using ComingSoon page as temp before users
+import ComingSoon from "./components/auth/ComingSoon";
 import Login from "./components/auth/Login";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
@@ -41,9 +43,9 @@ class App extends Component {
       <Provider store={store}>
         <Router>
           <div className="App">
-            <Navbar /> 
+            <Navbar />
             <Route exact path="/" component={Landing} />
-            <Route exact path="/register" component={Register} />
+            <Route exact path="/register" component={ComingSoon} />
             <Route exact path="/login" component={Login} />
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />

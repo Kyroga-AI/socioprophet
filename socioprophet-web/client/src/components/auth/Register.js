@@ -185,11 +185,19 @@ class Register extends Component {
 
             </div>
 
-            <footer className="landing-footer_register">
-              <a className="landing-footer-link_register" href="#" target="_blank"><strong>Contact</strong></a>
-              <a className="landing-footer-link_register" href="#" target="_blank"><strong>Privacy</strong></a>
-              <a className="landing-footer-link_register" href="#" target="_blank"><strong>Terms of Use</strong></a>
-              <a className="landing-footer-link_register" href="#" target="_blank"><strong>Support</strong></a>
+            <div className="social-links">
+              <a className="social-twitter" href="https://twitter.com/socioprophet" target="_blank"><i className="fa fa-twitter-square" aria-hidden="true"></i></a>
+              <a className="social-medium" href="https://medium.com/@socioprophet" target="_blank"><i class="fa fa-medium" aria-hidden="true"></i></a>
+              <a className="social-github" href="https://github.com/SocioProphet" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+            </div>
+            <a className="copyright" href="#" target="_blank"><p>&copy; 2019 SocioProphet</p></a>
+
+            <footer className="landing-footer">
+
+              <a className="landing-footer-link" href="mailto:socioprophet@gmail.com" target="_top"><strong>Contact</strong></a>
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Privacy</strong></a>
+              <a className="landing-footer-link" href="#" target="_blank"><strong>Terms of Use</strong></a>
+              <a className="landing-footer-link" href="https://gitter.im/socioprophet/" target="_blank"><strong>Support</strong></a>
             </footer>
 
           </div>
