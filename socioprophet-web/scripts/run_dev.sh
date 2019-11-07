@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
 
-#start mongodb ('&' runs process in background)
-mongod &
-
 #start-up socioprophet-web
-cd.. && yarn run dev
+cd .. && yarn run dev

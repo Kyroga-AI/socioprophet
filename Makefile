@@ -1,7 +1,7 @@
-.PHONY: build_web
-build_web:
-	bash /scripts/build_web.sh
+.PHONY: build_web run_dev
 
-.PHONY: run_dev
-	bash /scripts/run_dev.sh
-	
+build_web:
+	bash ./socioprophet-web/scripts/build_web.sh
+
+run_dev:
+	cd socioprophet-web/scripts && bash run_dev.sh
