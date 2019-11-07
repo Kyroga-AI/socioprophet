@@ -4,4 +4,4 @@
 mongod &
 
 #start-up socioprophet-web
-yarn run dev
+cd.. && yarn run dev

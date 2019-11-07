@@ -4,9 +4,12 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
 
 Today, Only the socioprophet-web portion of the repo can be built. To build run the following commands in the root directory:
 
-``` bash
-cd socioprophet-web && yarn
-cd client && yarn
-cd .. && yarn run dev
+'''bash
+make build_web
+'''
 
+to run the development web-server:
+'''bash
+make run_dev
+'''
 
