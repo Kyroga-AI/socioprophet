@@ -4,7 +4,7 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
 
 Today, Only the socioprophet-web portion of the repo can be built. To build run the following commands in the root directory:
 
-'''bash
+``` bash
 # install website dependencies
 make build_web
 
