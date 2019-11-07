@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "../components/layout/style-landing.css";
-import Landing from "../components/layout/Landing";
+import Dashboard from "../components/dashboard/Dashboard";
 
-class Landing extends Component { 
+class Dashboard extends Component { 
   render() {
     return ( 
     )
