@@ -1,70 +1,14 @@
 @import '~carbon-components/scss/globals/scss/styles.scss';
 @import '~carbon-components/scss/globals/scss/vendor/@carbon/layout/scss/breakpoint.scss';
 
-.hm-1 {
-  border: 3px solid red;
-
-  // top border in only small breakpoints to prevent overrides
-  @include carbon--breakpoint-down(max) {
-    display: hidden;
-    @if expanded == true{
-      border: 3px solid green;
-    }
-
-  }
-
-  @media (min-width: 200px) {
-    .bx--header__menu-toggle__hidden {
-      @if expanded false {
-        border: 3px solid blue;
-      }
-
-    }
-  }
-
-  @media (min-width: 66rem) {
-    .bx--header__menu-toggle__hidden {
-        display: block;
-    }
-  }
-  .bx--side-nav--expanded {
-      @if expanded == false {
-        width: 16rem;
-      }
-  }
-  @media (max-width: 99rem){
-
-.bx--side-nav--ux {
-    width: 0;
-}
-}
-
-}
-// @media (max-width: 100rem) {
-//   .hm-2{
-//     width: 0;
-//   }
-// }
-
-.hm-2{
-  @include carbon--breakpoint-down(max) {
-    width: 0;
-  }
-}
-
-.bx--side-nav--ux {
+.bx--side-nav--expanded {
 
   @include carbon--breakpoint-down(max) {
     border: 3px solid pink;
     width: 0px;
   }
-  @media (min-width: 200px) {
-    .bx--side-nav--ux {
-
-      border: 8px solid brown;
-    }
-  }
 }
+
 
 //
 //

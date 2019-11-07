@@ -187,8 +187,8 @@ class Register extends Component {
 
             <div className="social-links">
               <a className="social-twitter" href="https://twitter.com/socioprophet" target="_blank"><i className="fa fa-twitter-square" aria-hidden="true"></i></a>
-              <a className="social-medium" href="https://medium.com/@socioprophet" target="_blank"><i class="fa fa-medium" aria-hidden="true"></i></a>
-              <a className="social-github" href="https://github.com/SocioProphet" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+              <a className="social-medium" href="https://medium.com/@socioprophet" target="_blank"><i className="fa fa-medium" aria-hidden="true"></i></a>
+              <a className="social-github" href="https://github.com/SocioProphet" target="_blank"><i className="fa fa-github" aria-hidden="true"></i></a>
             </div>
             <a className="copyright" href="#" target="_blank"><p>&copy; 2019 SocioProphet</p></a>
 
