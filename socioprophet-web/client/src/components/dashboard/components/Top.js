@@ -14,25 +14,15 @@ import { SkipToContent, SideNav, SideNavItems, SideNavLink, SideNavMenu, SideNav
 import { HamburgerMenu } from 'react-hamburger-menu';
 
 
-import "./style-top.scss";
+import "./styles.css";
 
 class Top extends Component {
 
+
+
   render() {
-    // window.onload=function(){
-    //   var burgerMenu = document.getElementById('navpanel--toggle');
-    // //create vat with nav panel
-    //   var navPanel = document.getElementById('navpanel');
-    // //when burgerMenu is clicked, toggle class that shows & hides the nav off & on
-    // //also when burgerMenu is clicked, add class so that hover state styles persist
-    //   burgerMenu.addEventListener('click', function(e){
-    //       e.preventDefault();
-    //       navPanel.classList.toggle('navpanel--active');
-    //       this.classList.toggle('icon--active');
-    //     });
-    // }
+
     return (
-      <div className="container">
 
         <HeaderContainer
 
@@ -40,81 +30,28 @@ class Top extends Component {
 
               <Header aria-label="SocioProphet Platform">
 
-                <HeaderMenuButton className="bx--header__menu-toggle__hidden" aria-label="Open menu" onClick={onClickSideNavExpand} isActive={isSideNavExpanded} />
+              <input type="checkbox" className="openSidebarMenu" id="openSidebarMenu"/>
+              <label htmlFor="openSidebarMenu" className="sidebarIconToggle">
+                <div className="spinner diagonal part-1"></div>
+                <div className="spinner horizontal"></div>
+                <div className="spinner diagonal part-2"></div>
+              </label>
+              <div id="sidebarMenu">
+                <ul className="sidebarMenuInner">
+                  <li>User Dashboard</li>
+                  <li>Portfolios & Watch Lists</li>
+                  <li>Algorithmic Trading</li>
+                  <li>Economic Prophet</li>
+                  <li>Ontology & Epistemology</li>
+                  <li>NLP & Information Extraction</li>
+                  <li>Sentiment Analytics</li>
+                  <li>Entity Analytics</li>
+                  <li>Behavioral Analytics</li>
+                  <li>Mobile & App Development</li>
+                  <li>Experiments & Simulations</li>
+                </ul>
+              </div>
 
-                <SideNav className="hm-2 bx--side-nav--ux bx--side-nav--expanded" aria-label="Side navigation" expanded={isSideNavExpanded}>
-
-                  <SideNavItems>
-
-                    <SideNavMenu title="User Dashboard">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="Portfolios & Watch Lists">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="Algorithmic Trading">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="Economic Prophet">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="Ontology & Epistemology">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="NLP & Information Extraction">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="Sentiment Analytics">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="Entity Analytics">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="Behavioral Analytics">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="Mobile & App Development">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                    <SideNavMenu title="Experiments & Simulations">
-                      <SideNavMenuItem id="link">sub-heading1</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading2</SideNavMenuItem>
-                      <SideNavMenuItem id="link">sub-heading3</SideNavMenuItem>
-                    </SideNavMenu>
-
-                  </SideNavItems>
-
-                </SideNav>
                 <HeaderName href="#" prefix="">SocioProphet</HeaderName>
 
                 <HeaderNavigation aria-label="SocioProphet Platform">
@@ -205,9 +142,19 @@ class Top extends Component {
           )}
 
         />
-
-      </div>
     );
+    var burgerMenu = document.getElementById('navpanel--toggle');
+
+    //create vat with nav panel
+    var navPanel = document.getElementById('navpanel');
+
+    //when burgerMenu is clicked, toggle class that shows & hides the nav off & on
+    //also when burgerMenu is clicked, add class so that hover state styles persist
+    burgerMenu.addEventListener('click', function(e){
+        e.preventDefault();
+        navPanel.classList.toggle('navpanel--active');
+        this.classList.toggle('icon--active');
+    });
   }
 }
 
