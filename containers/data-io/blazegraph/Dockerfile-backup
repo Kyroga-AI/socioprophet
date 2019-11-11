@@ -1,0 +1,180 @@
+
+# Creates a Docker container.
+### Tomcat from https://github.com/docker-library/tomcat/blob/ef856d48e431a9b83730b5c14c0d9a84d70156a5/8-jre8/Dockerfile
+###=================================================================================================================
+### STAGE 1 - install  Open JRE
+
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.0
+
+LABEL BASE_IMAGE="registry.access.redhat.com/ubi8/ubi-minimal:8.0"
+LABEL JAVA_VERSION="1.8"
+
+RUN microdnf install --nodocs java-1.8.0-openjdk-headless && microdnf clean all
+
+# add a simple script that can auto-detect the appropriate JAVA_HOME value
+# based on whether the JDK or only the JRE is installed
+RUN { \
+		echo '#!/bin/sh'; \
+		echo 'set -e'; \
+		echo; \
+		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
+	} > /usr/local/bin/docker-java-home \
+	&& chmod +x /usr/local/bin/docker-java-home
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
+ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
+
+ENV JAVA_VERSION 8u201
+ENV JAVA_VERSION 8.201.08-r1
+
+RUN set -x \
+	&& yum update && yum upgrade \
+	&& yum add --no-cache \
+		# bash \
+		openjdk8-jre="$JAVA_VERSION" \
+		# openjdk8-jre-base="$JAVA_VERSION" \
+		# openjdk8-jre-lib="$JAVA_VERSION" \
+	&& [ "$JAVA_HOME" = "$(docker-java-home)" ] \
+	&& rm -rf /usr/share/* \
+		$JAVA_HOME/jre/plugin \
+		$JAVA_HOME/jre/bin/orbd \
+		$JAVA_HOME/jre/bin/pack200 \
+		$JAVA_HOME/jre/bin/policytool \
+		$JAVA_HOME/jre/bin/rmid \
+		$JAVA_HOME/jre/bin/rmiregistry \
+		$JAVA_HOME/jre/bin/servertool \
+		$JAVA_HOME/jre/bin/tnameserv \
+		$JAVA_HOME/jre/bin/unpack200 \
+		$JAVA_HOME/jre/lib/javaws.jar \
+		$JAVA_HOME/jre/lib/deploy* \
+		$JAVA_HOME/jre/lib/desktop \
+		$JAVA_HOME/jre/lib/*javafx* \
+		$JAVA_HOME/jre/lib/*jfx* \
+		$JAVA_HOME/jre/lib/amd64/libdecora_sse.so \
+		$JAVA_HOME/jre/lib/amd64/libprism_*.so \
+		$JAVA_HOME/jre/lib/amd64/libfxplugins.so \
+		$JAVA_HOME/jre/lib/amd64/libglass.so \
+		$JAVA_HOME/jre/lib/amd64/libgstreamer-lite.so \
+		$JAVA_HOME/jre/lib/amd64/libjavafx*.so \
+		$JAVA_HOME/jre/lib/amd64/libjfx*.so \
+		$JAVA_HOME/jre/lib/ext/jfxrt.jar \
+		$JAVA_HOME/jre/lib/oblique-fonts \
+		$JAVA_HOME/jre/lib/plugin.jar
+
+###=================================================================================================================
+### STAGE 1 - install  Blazegraph
+################################
+#### ---- Environment Vars ----
+################################
+## ARG BLAZEGRAPH_VERSION=${BLAZEGRAPH_VERSION:-2.1.4}
+ARG BLAZEGRAPH_VERSION=${BLAZEGRAPH_VERSION:-BLAZEGRAPH_RELEASE_2_1_5}
+ENV BLAZEGRAPH_VERSION=${BLAZEGRAPH_VERSION}
+
+ARG BLAZEGRAPH_PORT=${BLAZEGRAPH_PORT:-9999}
+ENV BLAZEGRAPH_PORT=${BLAZEGRAPH_PORT}
+
+################################
+################################
+ENV USER_NAME=prophetuser
+ENV HOME=/home/${USER_NAME}
+
+ARG USER_ID=${USER_ID:-1000}
+ENV USER_ID=${USER_ID}
+
+ARG GROUP_ID=${GROUP_ID:-1000}
+ENV GROUP_ID=${GROUP_ID}
+
+RUN addgroup -g ${GROUP_ID} ${GROUP_ID}
+RUN adduser -S -u ${USER_ID} ${USER_NAME} ${GROUP_ID}
+RUN export uid=${USER_ID} gid=${GROUP_ID}
+RUN mkdir -p ${HOME}
+RUN mkdir -p /etc/sudoers.d
+RUN echo "${USER_NAME}:x:${USER_ID}:${GROUP_ID}:${USER_NAME},,,:${HOME}:/bin/bash" >> /etc/passwd
+RUN echo "${USER_NAME}:x:${USER_ID}:" >> /etc/group
+RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${USER_NAME}
+RUN chmod 0440 /etc/sudoers.d/${USER_NAME}
+
+################################################
+#### ---- User's Data and Workspace folders ----
+################################################
+ARG DATA_DIR=${DATA_DIR:-${HOME}/data-io}
+ENV DATA_DIR=${HOME}/data-io
+
+################################
+#### ---- BlazeGraph Server ----
+################################
+ARG BLAZEGRAPH_HOME=${BLAZEGRAPH_HOME:-${HOME}/blazegraph}
+ENV BLAZEGRAPH_HOME=${HOME}/data-io/blazegraph
+
+## (blazegraph option) -v $PWD/conf:/conf
+ARG BLAZEGRAPH_CONF_DIR=${BLAZEGRAPH_CONF_DIR:-${HOME}/data-io/blazegraph/conf}
+
+## (blazegraph option): -Dbigdata.propertyFile=/usr/data-io/blazegraph/conf/RWStore.properties
+ENV BIGDATA_PROPERTY=${HOME}/blazegraph/conf/RWStore.properties
+
+## (blazegraph option): -Djetty.overrideWebXml=/path/to/override.xml
+#ENV JETTY_OVERRIDEWEBXML=${HOME}/data-io/blazegraph/conf/web.xml
+
+################################
+#### ---- Setup Folders ----
+################################
+WORKDIR ${HOME}/data-io/blazegraph
+
+## -- ref: https://sourceforge.net/projects/bigdata/files
+# ENV BLAZEGRAPH_URL=https://sourceforge.net/projects/bigdata/files/bigdata/${BLAZEGRAPH_VERSION}/blazegraph.jar
+ENV BLAZEGRAPH_URL=https://github.com/blazegraph/database/releases/download/${BLAZEGRAPH_VERSION}/blazegraph.jar
+
+RUN set -x && \
+    mkdir -p ${HOME}/data-io && \
+    mkdir -p ${HOME}/data-io/blazegraph && \
+    mkdir -p ${HOME}/data-io/blazegraph/conf && \
+    chown ${USER_NAME}:${USER_NAME} -R ${HOME} ${HOME}/data-io/blazegraph ${HOME}/data-io/blazegraph/conf
+
+#################################
+#### ---- Blazegraph install ----
+#################################
+
+USER ${USER_NAME}
+
+## -- (opt-1.) Copy from local directory: --
+#COPY ./blazegraph.jar $BLAZEGRAPH_HOME/
+
+## -- (opt-2.) Download from Internet: --
+RUN set -x && \
+    wget -c ${BLAZEGRAPH_URL}
+
+################################
+#### ---- Blazegraph config ----
+################################
+COPY ./RWStore.properties ${HOME}/blazegraph/conf/
+COPY ./printVersions.sh ${HOME}/
+
+#####################
+#### ---- Volumes ----
+#####################
+#### A volume must be mounted with docker run for directory:
+### /home/${USER_NAME}/data-io
+
+EXPOSE ${BLAZEGRAPH_PORT}
+
+################################
+#### /home/prophetuser/data-io/
+#### |-.profile
+#### |-rules.log
+#### |-.java
+#### |-bigdata.jnl
+#### |-printVersions.sh
+#### |-blazegraph
+#### | |-conf
+#### | | |-RWStore.properties
+#### | |-blazegraph.jar
+#### |-data
+################################
+
+################################
+#### ---- Entrypoint & CMD  ----
+################################
+
+WORKDIR ${HOME}
+USER ${USER_NAME}
+
+CMD java -server -Xmx4g -jar -Dfile.encoding="UTF-8" -Dbigdata.propertyFile=${BIGDATA_PROPERTY} ${HOME}/data-io/blazegraph/blazegraph.jar

@@ -1,18 +1,34 @@
 
 # Creates a Docker container.
 FROM registry.access.redhat.com/ubi8/ubi-minimal
-WORKDIR /workspace
 
-# NOTE: always microdnf clean all: https://github.com/cekit/cekit/issues/485
-RUN microdnf install -y bzip2 gzip tar curl python36-devel gcc-c++ && microdnf clean all
-ARG ARTIFACTORY_KEY
-RUN curl -Ou relayinfohere:$ARTIFACTORY_KEY " " \
-        && python3 -m pip install --no-cache-dir pip-19.1.1-py2.py3-none-any.whl \
-        && rm pip-19.1.1-py2.py3-none-any.whl
+# Redis Dockerfile
 
-COPY ./socioprophet/containers/requirements.txt /workspace
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-ARG PIP_INDEX_URL
-ENV PIP_EXTRA_INDEX_URL="https://pypi.org/simple"
-RUN PIP_INDEX_URL=$PIP_INDEX_URL python3 -m pip install --no-cache-dir -r /workspace/requirements.txt
+# Install Redis.
+RUN \
+  cd /tmp && \
+  wget http://download.redis.io/redis-stable.tar.gz && \
+  tar xvzf redis-stable.tar.gz && \
+  cd redis-stable && \
+  make && \
+  make install && \
+  cp -f src/redis-sentinel /usr/local/bin && \
+  mkdir -p /etc/redis && \
+  cp -f *.conf /etc/redis && \
+  rm -rf /tmp/redis-stable* && \
+  sed -i 's/^\(bind .*\)$/# \1/' /etc/redis/redis.conf && \
+  sed -i 's/^\(daemonize .*\)$/# \1/' /etc/redis/redis.conf && \
+  sed -i 's/^\(dir .*\)$/# \1\ndir \/data/' /etc/redis/redis.conf && \
+  sed -i 's/^\(logfile .*\)$/# \1/' /etc/redis/redis.conf
 
+# Define mountable directories.
+VOLUME ["/data"]
+
+# Define working directory.
+WORKDIR /data
+
+# Define default command.
+CMD ["redis-server", "/etc/redis/redis.conf"]
+
+# Expose ports.
+EXPOSE 6379
