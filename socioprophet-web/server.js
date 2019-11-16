@@ -16,7 +16,7 @@ app.use(
 app.use(bodyParser.json());
 
 // DB Config
-const db = require("./config/keys").mongoURI;
+const db = require("./src/validation/config/keys").mongoURI;
 
 // Connect to MongoDB
 const mongo_uri = 'mongodb://127.0.0.1:27017/socio_prophet_users';
