@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
 import Top from "./components/Top";
 import TerminalDrawer from "./components/TerminalDrawer";
+import "./components/style-top.scss";
 
 class Dashboard extends Component {
   onLogoutClick = e => {
@@ -31,7 +32,14 @@ class Dashboard extends Component {
           className="btn btn-large waves-effect waves-light hoverable blue accent-3"
         >
           Logout
-        </button>
+        </button>]
+
+        <a className="copyright" href="#" target="_blank"><p>&copy; 2019 SocioProphet</p></a>
+
+        <footer className="landing-footer">
+
+
+        </footer>
       </div>
     );
   }

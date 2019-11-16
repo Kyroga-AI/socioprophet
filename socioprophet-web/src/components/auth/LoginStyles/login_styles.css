@@ -7,12 +7,21 @@ div, nav, li {
   vertical-align: baseline;
 }
 
+body {
+
+}
+
+.page-wrapper_login {
+  background-color: #000;
+}
+
 .contentNode_login {
+  background-color: #000;
   padding: 0;
 }
 
 .landing-wrapper_login {
-  background-color: #fff;
+  background-color: #000;
 }
 
 .landing-header_login {
@@ -114,7 +123,7 @@ div, nav, li {
 }
 
 .main_login {
-  background-color: #f4f7fb;
+  background-color: #000;
   /* min-height: calc(100vh - 70px); */
   height: 100%;
 }
@@ -166,7 +175,7 @@ div, nav, li {
   padding: 10px 0px;
   height: 400px;
   color: #fff;
-  background-color: #fff;
+  background-color: #000;
 }
 
 .main-platform-description_login {
@@ -251,10 +260,12 @@ div, nav, li {
 .login div {
   font-size: 1rem;
   margin: 0;
-  padding: 0;
+  padding: 20px;
+  padding-bottom: 5px !important;
   border: 0;
   vertical-align: baseline;
   display: block;
+  background-color: #fff;
 }
 
 form, span {
@@ -270,13 +281,8 @@ input {
 .login p {
   font-size: 1rem;
   line-height: 1.625;
-  padding: 0 0 15px;
+  padding: 0;
 }
-
-.login a {
-  color: #1268fb;
-}
-
 
 .login {
   width: 400px;
@@ -286,7 +292,8 @@ input {
 
 .row-form_login {
   width: 400px;
-  padding: 10px 0;
+  padding: 0px 0;
+  border: 3px solid #200020;
 }
 
 .input-container {
@@ -294,14 +301,22 @@ input {
 }
 
 .row-form_login label {
-  text-align: center;
+  text-align: left;
+  padding-top: 10px;
   padding-bottom: 5px;
   display: block;
   color: #0c0c0c;
 }
 
+.loginCard {
+  width: 400px;
+  height: 200px;
+  background-color: #000 !important;
+
+}
+
 .row-form_login label span {
-  text-align: center;
+  text-align: left;
   display: block;
   margin: 0;
 }
@@ -344,6 +359,10 @@ input {
   box-sizing: border-box;
   cursor: pointer;
   text-decoration: none;
+}
+
+.LoginButton {
+  margin-bottom: 10px;
 }
 
 .red-text {

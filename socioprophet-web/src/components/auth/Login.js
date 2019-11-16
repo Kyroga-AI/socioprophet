@@ -99,7 +99,7 @@ class Login extends Component {
 
                   <div className="login">
 
-                      <div>
+                      <div className="loginCard">
                         <form className="row-form_login" noValidate onSubmit={this.onSubmit}>
                           <div className="full-width_login">
                             <p className="input-container">
@@ -138,12 +138,9 @@ class Login extends Component {
                                 {errors.password}
                                 {errors.passwordincorrect}
                               </span>
-                              <a className="fright" href="#">
-                                <span>Forgot Password?</span>
-                              </a>
                             </p>
                           </div>
-                          <div>
+                          <div className="LoginButton">
                             <button className="continue-button_login" type="submit">Continue</button>
                           </div>
                         </form>
