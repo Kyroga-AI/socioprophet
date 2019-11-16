@@ -10,7 +10,7 @@
     "start": "node server.js && webpack-dev-server --mode development --hot",
     "build": "webpack --mode production",
     "server": "node server.js",
-    "client": "npm start --prefix src",
+    "src": "npm start --prefix src",
     "dev": "concurrently \"npm run server\" \"npm run src\""
   },
   "author": "Will Jones",
