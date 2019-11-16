@@ -28,7 +28,7 @@ mongoose.connect(mongo_uri, { useNewUrlParser: true })
 app.use(passport.initialize());
 
 // Passport config
-require("./config/passport")(passport);
+require("./src/validation/config/passport")(passport);
 
 // Routes
 app.use("/api/users", users);
