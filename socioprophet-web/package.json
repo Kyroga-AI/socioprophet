@@ -2,10 +2,10 @@
   "name": "socioprophet-web",
   "version": "1.0.0",
   "description": "Client-server source package",
-  "main": {
+  "main": [
     "index.js",
     "../server.js"
-  }
+  ],
   "scripts": {
     "start": "node server.js && webpack-dev-server --mode development --hot",
     "build": "webpack --mode production",
