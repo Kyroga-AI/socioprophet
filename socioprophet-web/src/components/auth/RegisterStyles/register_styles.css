@@ -124,7 +124,7 @@ div, nav, li {
 }
 
 .billboard-background_register {
-  background-image: url("../../../../images/space.jpg");
+  background-image: url("../../../client/images/space.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 50%;

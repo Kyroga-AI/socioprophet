@@ -124,7 +124,7 @@ div, nav, li {
 
 .billboard-background {
   /* background-color: #8bd8c6; */
-  background-image: url("../../../../images/space.jpg");
+  background-image: url("../../../client/images/space.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 50%;
