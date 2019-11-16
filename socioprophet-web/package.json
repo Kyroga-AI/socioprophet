@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Client-server source package",
   "main": [
-    "index.js",
-    "../server.js"
+    "./src/index.js",
+    "./server.js"
   ],
   "scripts": {
     "start": "node server.js && webpack-dev-server --mode development --hot",
