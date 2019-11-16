@@ -2,6 +2,5 @@
 
 #build prophet-web
 cd .. && yarn 
-cd client/ && yarn
 cd ../docs/ && yarn
 
