@@ -5,7 +5,7 @@
   "main": {
     "index.js",
     "../server.js"
-  },
+  }
   "scripts": {
     "start": "node server.js && webpack-dev-server --mode development --hot",
     "build": "webpack --mode production"
