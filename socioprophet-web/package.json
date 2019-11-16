@@ -11,7 +11,7 @@
     "build": "webpack --mode production",
     "server": "node server.js",
     "client": "npm start --prefix src",
-    "dev": "concurrently \"npm run server\" \"npm run ./src\""
+    "dev": "concurrently \"npm run server\" \"npm run src\""
   },
   "author": "Will Jones",
   "private": true,
