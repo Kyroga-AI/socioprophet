@@ -1,11 +1,17 @@
 {
-  "name": "socioprophet-client-side",
+  "name": "socioprophet-web",
   "version": "1.0.0",
-  "description": "Client source package",
-  "main": "index.js",
+  "description": "Client-server source package",
+  "main": {
+    "index.js",
+    "../server.js"
+  },
   "scripts": {
-    "start": "webpack-dev-server --mode development --hot",
+    "start": "node server.js && webpack-dev-server --mode development --hot",
     "build": "webpack --mode production"
+    "server": "node server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Will Jones",
   "private": true,
@@ -34,7 +40,17 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "style-loader": "^1.0.0",
-    "styled-components": "^4.4.0"
+    "styled-components": "^4.4.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "concurrently": "^4.0.1",
+    "express": "^4.16.4",
+    "is-empty": "^1.2.0",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.3.11",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "validator": "^10.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
