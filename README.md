@@ -21,7 +21,7 @@ make run_dev
     .
     │── .gitignore                  #
     │── CONTRIBUTING.md             #
-    ├── LICENSE.md                     #
+    ├── LICENSE.md                  #
     │── README.md                   #
     ├── bin                         # Compiled files (alternatively `dist`)
     ├── build                       # For deployment we assume that all the files (including the index page) required to run in `release` mode have been written to the `build` off the root (this directory).
@@ -34,7 +34,7 @@ make run_dev
     ├── logs                        #
     ├── packages                    # Tools and utilities
     ├── prophet-platform            # Prophet-platform code for sharing data, storage & compute
-    └── scripts                     # Scripts for automating tasks
+    │── scripts                     # Scripts for automating tasks
     │── socioprophet-web            # Directory containing website platform code (back-end and front-end)
     │   ├── README.md               #
     │   ├── content                 #
@@ -42,8 +42,8 @@ make run_dev
     │   ├── routes                  #
     │   ├── scripts                 #
     │   ├── server.js               #
-    │   │   ├── src                    #
-    │   │   ├── **/**               #
+    │   └── src                     #
+    │        └──**/**               #
     ├── webpack.config.js           #
     ├── partials/templatetest       # Automated tests (alternatively `spec` or `tests`)
     └── utils                       # Non-script utilities
