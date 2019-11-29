@@ -21,8 +21,9 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
     │   ├── data-io                 #
     │   ├── dev-user                #
     │   ├── knowledge-management    #
-    │   └── prophet-platform
-    │        └──**/**
+    │   │   └──**/**    
+    │   ├──prophet-platform
+    │   │   └──**/**
     │   ├── requirements.txt        #
     │   └── socioprophet-web        #
     │       └──**/**
