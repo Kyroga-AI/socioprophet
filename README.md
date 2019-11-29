@@ -22,9 +22,9 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
     │   ├── dev-user                #
     │   ├── knowledge-management    #
     │   └── prophet-platform
-            └──**/**
+    │        └──**/**
     │   ├── requirements.txt        #
-    │   ├── socioprophet-web        #
+    │   └── socioprophet-web        #
     │       └──**/**
     ├── data                        # Data is the essence of the prophet-platform
     ├── docs                        # Documentation files (alternatively `doc`)
@@ -49,7 +49,7 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
 
 ## Folder Structure Conventions
 
-Socioprophet's source code is nested beneath the `src` directories. For deployment, `yoke` assumes that all the files (including the index page) required to run in `release` mode have been written to a directory called either `dist` or `build` off the root. Grunt or Gulp both have good facilities for writing the outputs of a task to a different directory.
+SocioProphet's source code is nested beneath the `src` directories. For deployment, `yoke` assumes that all the files (including the index page) required to run in `release` mode have been written to a directory called either `dist` or `build` off the root. Grunt or Gulp both have good facilities for writing the outputs of a task to a different directory.
 
 ## Build Setup
 
