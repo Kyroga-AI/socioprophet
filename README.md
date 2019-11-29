@@ -1,7 +1,7 @@
-# This is the monorepo for the socioprophet platform. The codebase and repo is a work in progress.
+This is the monorepo for the socioprophet platform. The codebase and repo is a work in progress.
 
 ## Scioprophet monorepo top-level directory layout
-===================================================
+
 ```bash
     .
     │── .gitignore                  #
@@ -35,12 +35,11 @@
 ```
 
 ## Folder Structure Conventions
-================================
 
 Socioprophet's source code is nested beneath the `src` directories. For deployment, `yoke` assumes that all the files (including the index page) required to run in `release` mode have been written to a directory called either `dist` or `build` off the root. Grunt or Gulp both have good facilities for writing the outputs of a task to a different directory.
 
 ## Build Setup
-===============
+
 
 Today, Only the socioprophet-web portion of the repo can be built. To build run the following commands in the root directory:
 
