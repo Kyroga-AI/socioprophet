@@ -1,3 +1,4 @@
+## Scioprophet
 This is the monorepo for the socioprophet platform. The codebase and repo is a work in progress.
 
 ## Scioprophet monorepo top-level directory layout
@@ -14,11 +15,23 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
     ├── clusters                    # Automated tests (alternatively `spec` or `tests`)
     ├── config                      # Configuration files and templates
     ├── containers                  # Containerization scripts for building from code
+    │   ├── README.md               #
+    │   ├── aiml                    #
+    │   ├── create_docker.sh        #
+    │   ├── data-io                 #
+    │   ├── dev-user                #
+    │   ├── knowledge-management    #
+    │   └── prophet-platform
+            └──**/**
+    │   ├── requirements.txt        #
+    │   ├── socioprophet-web        #
+    │       └──**/**
     ├── data                        # Data is the essence of the prophet-platform
     ├── docs                        # Documentation files (alternatively `doc`)
     ├── logs                        #
     ├── packages                    # Tools and utilities
     ├── prophet-platform            # Prophet-platform code for sharing data, storage & compute
+    │   └──**/**                    #            
     │── scripts                     # Scripts for automating tasks
     │── socioprophet-web            # Directory containing website platform code (back-end and front-end)
     │   ├── README.md               #
