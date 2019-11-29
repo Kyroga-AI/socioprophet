@@ -6,8 +6,8 @@ This is the portion of the SocioProphet repo that contains the code / specificat
 
 ```bash
     .
-    .gitignore                      #
-    ├── Makefile                    #
+    .gitignore                      
+    ├── Makefile                    
     ├── aiml                        # Prophet-platform code for developing and sharing AIML assets
     │   └──**/**                    
     ├── data-io                     # Prophet-platform code for add data & io related containers
@@ -18,18 +18,8 @@ This is the portion of the SocioProphet repo that contains the code / specificat
     │   └──**/**          
     ├── prophet-platform            # Prophet-platform code for sharing data, storage & compute
     │   └──**/**                               
-    │── scripts                     # Scripts for automating tasks
+    ├── scripts                    # Scripts for automating tasks
     │   └──**/**                      
-    │── socioprophet-web            # Directory containing website platform code (back-end and front-end)
-    │   ├── README.md               #
-    │   ├── content                 #
-    │   ├── public                  #
-    │   ├── routes                  #
-    │   ├── scripts                 #
-    │   ├── server.js               #
-    │   └── src                     #
-    │        └──**/**               
-    └── utils                       # Non-script utilities
+    └──socioprophet-web            # Directory containing website platform code (back-end and front-end)
+        └──**/** 
 ```
-
-## Folder Structure Conventions
