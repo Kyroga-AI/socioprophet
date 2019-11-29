@@ -32,7 +32,7 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
     ├── logs                        #
     ├── packages                    # Tools and utilities
     ├── prophet-platform            # Prophet-platform code for sharing data, storage & compute
-    │   └──**/**                    #            
+    │   └──**/**                               
     │── scripts                     # Scripts for automating tasks
     │── socioprophet-web            # Directory containing website platform code (back-end and front-end)
     │   ├── README.md               #
@@ -42,7 +42,7 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
     │   ├── scripts                 #
     │   ├── server.js               #
     │   └── src                     #
-    │        └──**/**               #
+    │        └──**/**               
     ├── webpack.config.js           #
     ├── partials/templatetest       # Automated tests (alternatively `spec` or `tests`)
     └── utils                       # Non-script utilities
