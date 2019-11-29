@@ -30,7 +30,7 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
     ├── data                        # Data is the essence of the prophet-platform
     ├── docs                        # Documentation files (alternatively `doc`)
     ├── logs                        #
-    ├── packages                    # Tools and utilities
+    ├── packages                    # 
     ├── prophet-platform            # Prophet-platform code for sharing data, storage & compute
     │   └──**/**                               
     │── scripts                     # Scripts for automating tasks
