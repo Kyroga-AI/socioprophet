@@ -16,7 +16,8 @@ make run_dev
 
 
 ### Scioprophet monorepo top-level directory layout
-
+===================================================
+```bash
     .
     └── .gitignore                  #
     └── CONTRIBUTING.md             #
@@ -35,54 +36,22 @@ make run_dev
     ├── prophet-platform            # Prophet-platform code for sharing data, storage & compute
     └── scripts                     # Scripts for automating tasks
     └── socioprophet-web            # Directory containing website platform code (back-end and front-end)
-    |   ├── css                     #
-    │   ├── **/**.css               #
-    ├── favicon.ico                 #
-    ├── images                      #
-    ├── index.html                  #
-    ├── js                          #
-    │   ├── **/**.js                #
+    |   ├── README.md               #
+    |   ├── content                 #
+    │   ├── public                  #
+    │   ├── routes                  #
+    |   ├── scripts                 #
+    │   ├── server.js               #
+    |   ├── src                     #
+    |   │   ├── **/**               #
+    ├── webpack.config.js           #
     ├── partials/templatetest       # Automated tests (alternatively `spec` or `tests`)
     └── utils                       # Non-script utilities
+```
 
 #Folder Structure Conventions
-============================
 
-> Folder structure options and naming conventions for software projects
-
-By conforming to these conventions you can simplify your configuration (convention over configuration).
-
-Here is the basic suggested skeleton for your app repo that each of the starter templates conforms to:
-
-```bash
-├── app
-│   ├── css
-│   │   ├── **/*.css
-│   ├── favicon.ico
-│   ├── images
-│   ├── index.html
-│   ├── js
-│   │   ├── **/*.js
-│   └── partials/template
-├── dist (or build)
-├── node_modules
-├── bower_components (if using bower)
-├── test
-├── Gruntfile.js/gulpfile.js
-├── README.md
-├── package.json
-├── bower.json (if using bower)
-└── .gitignore
-```
-
-Your app's source code is nested beneath the `app` directory. This is where assets are served from in `debug` mode. Note that in most cases it is not necessary to setup a watch to re-compile languages and syntaxes including CoffeeScript, Sass, Stylus, Jade, and LESS as the development server will automatically do this for you in middleware. Note that in your index page, you should not include the `/app` prefix since the development asset server will treat it as the root.
-
-```html
-<!- Serves app/js/main.js-->
-<script data-aero-build="debug" src="/js/main.js"></script>
-```
-
-For deployment, `yoke` assumes that all the files (including the index page) required to run in `release` mode have been written to a directory called either `dist` or `build` off the root. Grunt or Gulp both have good facilities for writing the outputs of a task to a different directory.
+Socioprophet's source code is nested beneath the `src` directories. For deployment, `yoke` assumes that all the files (including the index page) required to run in `release` mode have been written to a directory called either `dist` or `build` off the root. Grunt or Gulp both have good facilities for writing the outputs of a task to a different directory.
 
 ### A typical top-level directory layout
 
@@ -142,46 +111,3 @@ or, less commonly, into the `doc` folder.
     └── ...
 
 > **Samples**: [HTML5 Boilerplate](https://github.com/h5bp/html5-boilerplate) `doc`, [Backbone](https://github.com/jashkenas/backbone) `docs`, [three.js](https://github.com/mrdoob/three.js) `docs`, [GitLab](https://github.com/gitlabhq/gitlabhq) `doc`, [Underscore.js](https://github.com/jashkenas/underscore) `docs`, [Discourse](https://github.com/emberjs/ember.js) `docs`, [Grunt](https://github.com/gruntjs/grunt) `docs`, [Emscripten](https://github.com/kripken/emscripten) `docs`, [RethinkDB](https://github.com/rethinkdb/rethinkdb) `docs`, [RequireJS](https://github.com/jrburke/requirejs) `docs`, [GitHub Hubot](https://github.com/github/hubot) `docs`, [Twitter Flight](https://github.com/flightjs/flight) `doc`, [Video.js](https://github.com/videojs/video.js) `docs`, [Bitcoin](https://github.com/bitcoin/bitcoin) `doc`, [MongoDB](https://github.com/mongodb/mongo) `docs`, [Facebook React](https://github.com/facebook/react) `docs`, [libgit2](https://github.com/libgit2/libgit2) `docs`, [Stylus](https://github.com/LearnBoost/stylus) `docs`, [Gulp](https://github.com/gulpjs/gulp) `docs`, [Brunch](https://github.com/brunch/brunch) `docs`
-
-### Scripts
-
-...
-
-### Tools and utilities
-
-...
-
-### Compiled files
-
-...
-
-### 3rd party libraries
-
-...
-
-### License information
-
-If you want to share your work with others, please consider choosing an open
-source license and include the text of the license into your project.
-The text of a license is usually stored in the `LICENSE` (or `LICENSE.txt`,
-`LICENSE.md`) file in the root of the project.
-
-> You’re under no obligation to choose a license and it’s your right not to
-> include one with your code or project. But please note that opting out of
-> open source licenses doesn’t mean you’re opting out of copyright law.
->
-> You’ll have to check with your own legal counsel regarding your particular
-> project, but generally speaking, the absence of a license means that default
-> copyright laws apply. This means that you retain all rights to your source
-> code and that nobody else may reproduce, distribute, or create derivative
-> works from your work. This might not be what you intend.
->
-> Even in the absence of a license file, you may grant some rights in cases
-> where you publish your source code to a site that requires accepting terms
-> of service. For example, if you publish your source code in a public
-> repository on GitHub, you have accepted the [Terms of Service](https://help.github.com/articles/github-terms-of-service)
-> which do allow other GitHub users some rights. Specifically, you allow others
-> to view and fork your repository.
-
-For more info on how to choose a license for an open source project, please
-refer to http://choosealicense.com
