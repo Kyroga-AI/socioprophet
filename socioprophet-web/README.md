@@ -27,7 +27,9 @@ This is the directory of the monorepo for the website / user interfact of the pr
 
 ## Build Setup 
 
-# Building with the Makefile vs. using Yarn
+Some build setup documentation
+
+## Building with the Makefile vs. using Yarn
 
 SocioProphet-Web can be built and run using the Makefile within the project root directory. The commands executed by the Makefile are the same commands one would use to build a project and run the webserver.
 
