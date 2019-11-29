@@ -19,10 +19,10 @@ make run_dev
 ===================================================
 ```bash
     .
-    └── .gitignore                  #
-    └── CONTRIBUTING.md             #
-    ├── LICENSE                     #
-    └── README.md                   #
+    │── .gitignore                  #
+    │── CONTRIBUTING.md             #
+    ├── LICENSE.md                     #
+    │── README.md                   #
     ├── bin                         # Compiled files (alternatively `dist`)
     ├── build                       # For deployment we assume that all the files (including the index page) required to run in `release` mode have been written to the `build` off the root (this directory).
     ├── cli                         # Directory containing prophet-cli code
@@ -35,15 +35,15 @@ make run_dev
     ├── packages                    # Tools and utilities
     ├── prophet-platform            # Prophet-platform code for sharing data, storage & compute
     └── scripts                     # Scripts for automating tasks
-    └── socioprophet-web            # Directory containing website platform code (back-end and front-end)
-    |   ├── README.md               #
-    |   ├── content                 #
+    │── socioprophet-web            # Directory containing website platform code (back-end and front-end)
+    │   ├── README.md               #
+    │   ├── content                 #
     │   ├── public                  #
     │   ├── routes                  #
-    |   ├── scripts                 #
+    │   ├── scripts                 #
     │   ├── server.js               #
-    |   ├── src                     #
-    |   │   ├── **/**               #
+    │   │   ├── src                    #
+    │   │   ├── **/**               #
     ├── webpack.config.js           #
     ├── partials/templatetest       # Automated tests (alternatively `spec` or `tests`)
     └── utils                       # Non-script utilities
