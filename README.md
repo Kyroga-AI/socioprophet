@@ -13,14 +13,17 @@ make run_dev
 ```
 #General Monorepo Organization
 
+
+
 ### Scioprophet monorepo top-level directory layout
 
     .
+    └── .gitignore                  #
     └── CONTRIBUTING.md             #
     ├── LICENSE                     #
-    └── README.md                   # 
+    └── README.md                   #
     ├── bin                         # Compiled files (alternatively `dist`)
-    ├── build                       #
+    ├── build                       # For deployment we assume that all the files (including the index page) required to run in `release` mode have been written to the `build` off the root (this directory).
     ├── cli                         # Directory containing prophet-cli code
     ├── clusters                    # Automated tests (alternatively `spec` or `tests`)
     ├── config                      # Configuration files and templates
@@ -32,15 +35,54 @@ make run_dev
     ├── prophet-platform            # Prophet-platform code for sharing data, storage & compute
     └── scripts                     # Scripts for automating tasks
     └── socioprophet-web            # Directory containing website platform code (back-end and front-end)
-    └── test                        # Automated tests (alternatively `spec` or `tests`)
+    |   ├── css                     #
+    │   ├── **/**.css               #
+    ├── favicon.ico                 #
+    ├── images                      #
+    ├── index.html                  #
+    ├── js                          #
+    │   ├── **/**.js                #
+    ├── partials/templatetest       # Automated tests (alternatively `spec` or `tests`)
     └── utils                       # Non-script utilities
-
-
 
 #Folder Structure Conventions
 ============================
 
 > Folder structure options and naming conventions for software projects
+
+By conforming to these conventions you can simplify your configuration (convention over configuration).
+
+Here is the basic suggested skeleton for your app repo that each of the starter templates conforms to:
+
+```bash
+├── app
+│   ├── css
+│   │   ├── **/*.css
+│   ├── favicon.ico
+│   ├── images
+│   ├── index.html
+│   ├── js
+│   │   ├── **/*.js
+│   └── partials/template
+├── dist (or build)
+├── node_modules
+├── bower_components (if using bower)
+├── test
+├── Gruntfile.js/gulpfile.js
+├── README.md
+├── package.json
+├── bower.json (if using bower)
+└── .gitignore
+```
+
+Your app's source code is nested beneath the `app` directory. This is where assets are served from in `debug` mode. Note that in most cases it is not necessary to setup a watch to re-compile languages and syntaxes including CoffeeScript, Sass, Stylus, Jade, and LESS as the development server will automatically do this for you in middleware. Note that in your index page, you should not include the `/app` prefix since the development asset server will treat it as the root.
+
+```html
+<!- Serves app/js/main.js-->
+<script data-aero-build="debug" src="/js/main.js"></script>
+```
+
+For deployment, `yoke` assumes that all the files (including the index page) required to run in `release` mode have been written to a directory called either `dist` or `build` off the root. Grunt or Gulp both have good facilities for writing the outputs of a task to a different directory.
 
 ### A typical top-level directory layout
 
