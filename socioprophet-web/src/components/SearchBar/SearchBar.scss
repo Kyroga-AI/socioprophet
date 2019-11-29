@@ -1,0 +1,118 @@
+/*@import cloud/_themes.scss*/
+$edited: true;
+$brand-01: #3D70B2 !default;
+$brand-02: #5596E6 !default;
+$brand-03: #41D6C3 !default;
+$inverse-01: #FFFFFF !default;
+$inverse-02: #272D33 !default;
+$ui-01: #FFFFFF !default;
+$ui-02: #F4F7FB !default;
+$ui-03: #DFE3E6 !default;
+$ui-04: #8897A2 !default;
+$ui-05: #5A6872 !default;
+$text-01: #152934 !default;
+$text-02: #5A6872 !default;
+$text-03: #CDD1D4 !default;
+$field-01: #F4F7FB !default;
+$field-02: #FFFFFF !default;
+$support-01: #E71D32 !default;
+$support-02: #5AA700 !default;
+$support-03: #EFC100 !default;
+$support-04: #5AAAFA !default;
+
+$hover-primary: #30588C !default;
+$hover-primary-text: #294C86 !default;
+$hover-secondary: #3D70B2 !default;
+$selected: #F3F3F3 !default;
+$hover-danger: #BD1427 !default;
+
+:export {
+    brand01: $brand-01;
+    brand02: $brand-02;
+    brand03: $brand-03;
+    inverse01: $inverse-01;
+    inverse02: $inverse-02;
+    ui01: $ui-01;
+    ui02: $ui-02;
+    ui03: $ui-03;
+    ui04: $ui-04;
+    ui05: $ui-05;
+    text01: $text-01;
+    text02: $text-02;
+    text03: $text-03;
+    field01: $field-01;
+    field02: $field-02;
+    support01: $support-01;
+    support02: $support-02;
+    support03: $support-03;
+    support04: $support-04;
+    hoverPrimary: $hover-primary;
+    hoverPrimaryText: $hover-primary-text;
+    hoverSecondary: $hover-secondary;
+    selected: $selected;
+    hoverDanger: $hover-danger;
+}
+
+.searchPanel {
+	display: flex;
+	flex-flow: row nowrap;
+	margin-bottom: 33px;
+	justify-content: flex-start;
+}
+
+.iconFilter {
+	fill: $brand-01;
+	width: 20px;
+	padding-top: 1px;
+	margin-right: -20px;
+
+	&.dark {
+		fill: $brand-02;
+	}
+}
+
+.searchBarContainer {
+	display: flex;
+	justify-content: flex-start;
+	margin-top: 3px;
+	color: $text-02;
+	min-width: 200px;
+
+	&.dark {
+		color: $ui-02;
+	}
+}
+
+.searchBar {
+	min-width: 645px;
+	width: 35%;
+
+	&.narrow {
+		min-width: 0;
+		width: 100%;
+	}
+}
+
+.searchBarCarbon {
+	min-width: 645px;
+	width: 35%;
+	margin-bottom: 1rem;
+
+	&.narrow {
+		min-width: 0;
+		width: 100%;
+	}
+}
+
+
+@media screen and (max-width: 1100px) {
+	.searchBar .searchBarCarbon {
+		width: 65%;
+		min-width: 200px;
+	}
+}
+
+.searchBar input {
+	padding-left: 33px;
+	border-bottom: 2px solid $ui-03;
+}
