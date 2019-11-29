@@ -17,9 +17,7 @@ This is the portion of the SocioProphet repo that contains the code / specificat
     ├── knowledge-management        # Prophet-platform code for knowledge management and knowledge engineering
     │   └──**/**          
     ├── prophet-platform            # Prophet-platform code for sharing data, storage & compute
-    │   └──**/**                               
-    ├── scripts                    # Scripts for automating tasks
-    │   └──**/**                      
+    │   └──**/**                                
     └──socioprophet-web            # Directory containing website platform code (back-end and front-end)
         └──**/** 
 ```
