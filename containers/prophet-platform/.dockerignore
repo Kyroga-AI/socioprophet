@@ -27,13 +27,4 @@ configuration.py
 
 # Ignore all directories except those that are !-prefixed:
 *
-!cedp
-!deeplearning/AMG/manage.py
-!deeplearning/AMG/Makefile
-!deeplearning/AMG/metadata
-!deeplearning/AMG/data_ingestion_new
-!deeplearning/AMG/containers/cedp/proto
-!deeplearning/AMG/containers/cedp/classifier_servicer.py
-!deeplearning/AMG/containers/cedp/start.sh
-!deeplearning/AMG/containers/requirements-alldeps-minimal.txt
-!deeplearning/AMG/containers/requirements-alldeps.txt
+!example
