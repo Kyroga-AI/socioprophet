@@ -5,7 +5,7 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
 
 ```bash
     .
-    │── .gitignore                  #
+    .gitignore                 	    #
     │── CONTRIBUTING.md             #
     ├── LICENSE.md                  #
     │── README.md                   #
