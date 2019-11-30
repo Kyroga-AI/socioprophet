@@ -36,7 +36,7 @@
         ├──authReducer.js               #
         ├──errorReducer.js              #
         └──index.js                     #
-   
+    
 ```
 
 ## Folder Structure Conventions
