@@ -1,4 +1,4 @@
-## Socioprophet monorepo top-level directory layout
+## Socioprophet-web/src directory top-level directory layout
 
 ```bash
     .
