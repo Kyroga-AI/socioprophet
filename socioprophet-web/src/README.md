@@ -21,21 +21,21 @@
     │   ├── layout                      #
     │   ├── pages                       #
     │   ├── privateproute               #  
-    │   ├──README.md
-    ├── models                        # 
-    |    └── Users.js
-    ├── validation                 # 
-    │   ├── login.js                 #
-    │   ├── register.js           #
-    │   ├── config                #
-    │   │   └──keys.js            #
-    |   |   └──passport.js        #
-    ├── utils                       #    
-    │   └──setAuthToken.js                #
-    │── reducers            # 
+    │   ├──README.md                    #
+    ├── models                          # 
+    |    └── Users.js                   #
+    ├── validation                      # 
+    │   ├── login.js                    #
+    │   ├── register.js                 #
+    │   ├── config                      #
+    │   │   └──keys.js                  #
+    |   |   └──passport.js              #
+    ├── utils                           #    
+    │   └──setAuthToken.js              #
+    │── reducers                        # 
         ├──authReducer.js               #
-        ├──errorReducer.js                 #
-        └──index.js                 #
+        ├──errorReducer.js              #
+        └──index.js                     #
    
 ```
 
