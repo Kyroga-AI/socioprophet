@@ -17,7 +17,6 @@ This is the directory of the monorepo for the website / user interfact of the pr
        ├── server.js               #
        └── src                     #
             └──**/**               
-   
 ```
 
 ## Build Setup 
