@@ -1,7 +1,7 @@
 ## Socioprophet
 This is the monorepo for the socioprophet platform. The codebase and repo is a work in progress.
 
-## Scioprophet monorepo top-level directory layout
+## Socioprophet monorepo top-level directory layout
 
 ```bash
     .
