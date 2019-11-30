@@ -3,24 +3,24 @@
 ```bash
     .
     ├──.gitignore                 	    #
-    ├── App.js                	    #
-    ├── App.scss              	    #
+    ├── App.js                	        #
+    ├── App.scss              	        #
     ├── index.js                	    #
     ├── polyfill.js                	    #
     ├── store.js                 	    #
-    ├── actions                  # Containerization scripts for building from code
-    │   ├── authActions.js               #
-    │   ├── types.js                   #                      # Directory containing prophet-cli code
-    ├── images                  # Containerization scripts for building from code
-    │   └──**/**               #
-    ├── utils                        # Data is the essence of the prophet-platform                    # Automated tests (alternatively `spec` or `tests`)
-    ├── components                  # Containerization scripts for building from code
-    │   ├── SearchBar               #
-    │   ├── auth                    #
-    │   ├── dashboard        #
-    │   ├── layout                 #
-    │   ├── pages                #
-    │   ├── privateproute    #  
+    ├── actions                         # 
+    │   ├── authActions.js              #
+    │   ├── types.js                    #               
+    ├── images                          # 
+    │   └──**/**                        #
+    ├── utils                           #                   
+    ├── components                      # 
+    │   ├── SearchBar                   #
+    │   ├── auth                        #
+    │   ├── dashboard                   #
+    │   ├── layout                      #
+    │   ├── pages                       #
+    │   ├── privateproute               #  
     │   ├──README.md
     ├── models                        # 
     |    └── Users.js
