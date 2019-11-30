@@ -32,8 +32,6 @@
     |   |   └──passport.js        #
     ├── utils                       #    
     │   └──setAuthToken.js                #
-    ├── redux                        # delete this folder
-    ├── scss                        # delete this folder
     │── reducers            # 
         ├──authReducer.js               #
         ├──errorReducer.js                 #
