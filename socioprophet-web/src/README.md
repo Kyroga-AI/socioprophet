@@ -7,7 +7,7 @@
     ├── App.scss              	        
     ├── index.js                	    
     ├── polyfill.js                	    
-    ├── store.js                 	    
+    ├── store.js                 	    #
     ├── actions                         #
     │   ├── authActions.js              #
     │   ├── types.js                    #               
