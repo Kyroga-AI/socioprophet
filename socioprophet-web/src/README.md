@@ -2,7 +2,7 @@
 
 ```bash
     .
-    ├──.gitignore                 	    #
+    ├──.gitignore                 	   #
     ├── App.js                	        #
     ├── App.scss              	        #
     ├── index.js                	    #
@@ -12,8 +12,7 @@
     │   ├── authActions.js              #
     │   ├── types.js                    #               
     ├── images                          # 
-    │   └──**/**                        #
-    ├── utils                           #                   
+    │   └──**/**                        #                  
     ├── components                      # 
     │   ├── SearchBar                   #
     │   ├── auth                        #
