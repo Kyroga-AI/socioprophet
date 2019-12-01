@@ -2,7 +2,7 @@
 
 ```bash
     .
-    ├──.gitignore                 	   #
+    ├──.gitignore                 	    #
     ├── App.js                	        #
     ├── App.scss              	        #
     ├── index.js                	    #
