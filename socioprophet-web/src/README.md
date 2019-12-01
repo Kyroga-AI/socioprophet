@@ -2,13 +2,13 @@
 
 ```bash
     .
-    ├──.gitignore                 	    #
-    ├── App.js                	        #
-    ├── App.scss              	        #
-    ├── index.js                	    #
-    ├── polyfill.js                	    #
-    ├── store.js                 	    #
-    ├── actions                         # 
+    ├──.gitignore                 	    
+    ├── App.js                	        
+    ├── App.scss              	        
+    ├── index.js                	    
+    ├── polyfill.js                	    
+    ├── store.js                 	    
+    ├── actions                         #
     │   ├── authActions.js              #
     │   ├── types.js                    #               
     ├── images                          # 
