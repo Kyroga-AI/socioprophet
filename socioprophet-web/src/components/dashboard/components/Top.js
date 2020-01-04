@@ -120,22 +120,10 @@ class Top extends Component {
                 </HeaderNavigation>
 
                 <HeaderGlobalBar>
-
-                  <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
-                    <Search20 />
-                  </HeaderGlobalAction>
-
-                  <HeaderGlobalAction aria-label="Notifications" onClick={() => {}}>
-                    <Notification20 />
-                  </HeaderGlobalAction>
-
                   <HeaderGlobalAction aria-label="App Switcher" onClick={() => {}}>
                     <AppSwitcher20 />
                   </HeaderGlobalAction>
-
                 </HeaderGlobalBar>
-
-
 
             </Header>
 

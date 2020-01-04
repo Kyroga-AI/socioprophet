@@ -3,6 +3,7 @@ import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import ReactTerminal from 'react-terminal-component';
 import { ReactThemes } from 'react-terminal-component';
+import "./terminal.css";
 
 export default function TemporaryDrawer() {
   const [state, setState] = React.useState({
@@ -16,9 +17,9 @@ export default function TemporaryDrawer() {
   const fullList = () => (
     <div>
       <div className="drawer-close">
-        <Button onClick={toggleDrawer('bottom', false)}>Close Drawer</Button>
+        <button className="close-button" onClick={toggleDrawer('bottom', false)}>^</button>
       </div>
-      <div>
+      <div className="react-terminal">
         <ReactTerminal />
       </div>
     </div>
@@ -26,7 +27,9 @@ export default function TemporaryDrawer() {
 
   return (
     <div className="drawer-open">
-      <Button onClick={toggleDrawer('bottom', true)}>Open Drawer</Button>
+      <button className="open-button" onClick={toggleDrawer('bottom', true)}>
+
+        <ul><li>^</li></ul></button>
       <Drawer anchor="bottom" open={state.bottom}>
         {fullList()}
       </Drawer>

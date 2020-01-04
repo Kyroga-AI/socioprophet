@@ -9,7 +9,8 @@
   width: 100%;
   position: absolute;
   bottom: 0;
-  background-color: #1b1b1b;
+  background-color: #333;
+  color: #fff;
 }
 
 .landing-footer-link {
@@ -19,5 +20,64 @@
   font-weight: 400;
   color: #f4f7fb;
   text-decoration: none!important;
+}
 
+.drawer {
+  width: 70%;
+  position: absolute;
+  bottom: 70px;
+}
+
+.search {
+  position: absolute;
+  margin-left: 0;
+  width: 100%;
+  // height: 60px;
+  bottom: 70px;
+
+}
+
+.search-bar {
+  margin-top: 10px;
+  width: 30%;
+  // height: 60px;
+  margin-left: 35%;
+  position: absolute;
+  display: flex;
+
+}
+
+.terminal-drawer {
+  position: relative;
+}
+
+.social-links_dashboard {
+  float: left;
+}
+
+.social-links_dashboard i {
+  font-size: 20px;
+  color: #f4f4f4;
+  float: left;
+}
+
+.social-twitter {
+  float: left;
+  position: absolute;
+  margin-top: 30px;
+  margin-left: 5%;
+}
+
+.social-medium{
+  float: left;
+  position: absolute;
+  margin-top: 30px;
+  margin-left: 10%;
+}
+
+.social-github{
+  float: left;
+  position: absolute;
+  margin-top: 30px;
+  margin-left: 15%;
 }
