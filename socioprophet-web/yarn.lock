@@ -760,9 +760,9 @@
     lodash-es "4.17.15"
     resize-observer-polyfill "1.5.0"
 
-"@carbon/charts@git+https://github.com/scottdickerson/carbon-charts.git#carbon-charts-v0.16.28-gitpkg":
+"@carbon/charts@https://github.com/scottdickerson/carbon-charts#carbon-charts-v0.16.28-gitpkg":
   version "0.16.28"
-  resolved "git+https://github.com/scottdickerson/carbon-charts.git#4f77105a6cdac8b203b62ab831a97eca05ad5354"
+  resolved "https://github.com/scottdickerson/carbon-charts#4f77105a6cdac8b203b62ab831a97eca05ad5354"
   dependencies:
     "@carbon/utils-position" "1.1.1"
     babel-polyfill "6.26.0"
