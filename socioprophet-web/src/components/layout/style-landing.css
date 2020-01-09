@@ -113,16 +113,16 @@ div, nav, li {
   text-decoration: none;
 }
 
-.main {
+.main-landing {
   background-color: #f4f7fb;
-  min-height: calc(100vh - 70px);
+  min-height: calc(10vh - 70px);
 }
 
 .nav-wrapper {
   font-size: 20px;
 }
 
-.billboard-background {
+.billboard-background-landing {
   /* background-color: #8bd8c6; */
   background-image: url("../../client/images/space.jpg");
   background-size: cover;
@@ -130,10 +130,10 @@ div, nav, li {
   background-position: 50%;
 }
 
-.billboard {
+.billboard-landing {
   color: #fff;
   text-align: center;
-  height: 432px;
+  height: 200px;
   padding: 167px 10px 250px;
 }
 
@@ -259,13 +259,13 @@ div, nav, li {
   cursor: pointer;
 }
 
-.landing-footer {
+.landing-page-footer {
   float: none;
   text-align: center;
   height: 70px;
   line-height: 70px;
   width: 100%;
-  /* position: absolute; */
+  position: relative;
   bottom: 0;
   background-color: #1b1b1b;
 }
@@ -280,47 +280,40 @@ div, nav, li {
 
 }
 
-.social-links i {
+.social-links-landing {
+  float: left;
+}
+
+.social-links-landing i {
   font-size: 20px;
   color: #f4f4f4;
 }
 
-.social-twitter {
+.social-twitter-landing {
   float: left;
   position: absolute;
-  margin-top: 30px;
   margin-left: 5%;
 }
 
-.social-medium{
+.social-medium-landing {
   float: left;
   position: absolute;
-  margin-top: 30px;
   margin-left: 10%;
 }
 
-.social-github{
+.social-github-landing {
   float: left;
   position: absolute;
-  margin-top: 30px;
   margin-left: 15%;
 }
 
-.copyright {
-  float: left;
+.search-bar-landing {
+  margin-top:1px;
+  width: 30%;
+  margin-left: 25%;
   position: absolute;
-  margin-top: 25px;
-  margin-left: 88%;
-  color: #fff;
+  display: flex;
 }
-.copyright p {
-  font-size: 12px;
-}
-
-
-
-
-
 
 
 

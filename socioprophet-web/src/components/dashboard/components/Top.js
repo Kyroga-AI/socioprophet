@@ -30,27 +30,11 @@ class Top extends Component {
 
               <Header aria-label="SocioProphet Platform">
 
-              <input type="checkbox" className="openSidebarMenu" id="openSidebarMenu"/>
-              <label htmlFor="openSidebarMenu" className="sidebarIconToggle">
-                <div className="spinner diagonal part-1"></div>
-                <div className="spinner horizontal"></div>
-                <div className="spinner diagonal part-2"></div>
-              </label>
-              <div id="sidebarMenu">
-                <ul className="sidebarMenuInner">
-                  <li>User Dashboard</li>
-                  <li>Portfolios & Watch Lists</li>
-                  <li>Algorithmic Trading</li>
-                  <li>Economic Prophet</li>
-                  <li>Ontology & Epistemology</li>
-                  <li>NLP & Information Extraction</li>
-                  <li>Sentiment Analytics</li>
-                  <li>Entity Analytics</li>
-                  <li>Behavioral Analytics</li>
-                  <li>Mobile & App Development</li>
-                  <li>Experiments & Simulations</li>
-                </ul>
-              </div>
+                <nav className="toolbar">
+
+                  <button>BUTTON</button>
+                  
+                </nav>
 
                 <HeaderName href="#" prefix="">SocioProphet</HeaderName>
 
@@ -131,18 +115,6 @@ class Top extends Component {
 
         />
     );
-    var burgerMenu = document.getElementById('navpanel--toggle');
-
-    //create vat with nav panel
-    var navPanel = document.getElementById('navpanel');
-
-    //when burgerMenu is clicked, toggle class that shows & hides the nav off & on
-    //also when burgerMenu is clicked, add class so that hover state styles persist
-    burgerMenu.addEventListener('click', function(e){
-        e.preventDefault();
-        navPanel.classList.toggle('navpanel--active');
-        this.classList.toggle('icon--active');
-    });
   }
 }
 

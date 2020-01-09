@@ -1,7 +1,7 @@
 // @import '~carbon-components/scss/globals/scss/styles.scss';
 // @import '~carbon-components/scss/globals/scss/vendor/@carbon/layout/scss/breakpoint.scss';
 
-.landing-footer {
+.landing-footer-dashboard {
   float: none;
   text-align: center;
   height: 70px;
@@ -13,7 +13,7 @@
   color: #fff;
 }
 
-.landing-footer-link {
+.landing-footer-link-dashboard {
   position: relative;
   padding: 0 25px;
   font-size: 14px;
@@ -30,7 +30,7 @@
 
 .search {
   position: absolute;
-  margin-left: 0;
+  // margin-left: 0;
   width: 100%;
   // height: 60px;
   bottom: 70px;
@@ -38,7 +38,7 @@
 }
 
 .search-bar {
-  margin-top: 10px;
+  margin-top: 20px;
   width: 30%;
   // height: 60px;
   margin-left: 35%;
@@ -49,35 +49,4 @@
 
 .terminal-drawer {
   position: relative;
-}
-
-.social-links_dashboard {
-  float: left;
-}
-
-.social-links_dashboard i {
-  font-size: 20px;
-  color: #f4f4f4;
-  float: left;
-}
-
-.social-twitter {
-  float: left;
-  position: absolute;
-  margin-top: 30px;
-  margin-left: 5%;
-}
-
-.social-medium{
-  float: left;
-  position: absolute;
-  margin-top: 30px;
-  margin-left: 10%;
-}
-
-.social-github{
-  float: left;
-  position: absolute;
-  margin-top: 30px;
-  margin-left: 15%;
 }

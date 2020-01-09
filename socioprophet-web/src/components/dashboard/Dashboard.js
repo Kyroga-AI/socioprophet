@@ -33,13 +33,14 @@ class Dashboard extends Component {
         <button
           style={{
             width: "150px",
+            height: "50px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
             marginTop: "1rem",
-            marginLeft: "30rem"
+            marginLeft: "30rem",
+
           }}
           onClick={this.onLogoutClick}
-          className="btn btn-large waves-effect waves-light hoverable blue accent-3"
         >
           Logout
         </button>
@@ -51,12 +52,8 @@ class Dashboard extends Component {
           </div>
         </div>
 
-        <footer className="landing-footer">
-          <div className="social-links_dashboard">
-            <a className="social-twitter" href="https://twitter.com/socioprophet" target="_blank"><i className="fa fa-twitter-square" aria-hidden="true"></i></a>
-            <a className="social-medium" href="https://medium.com/@socioprophet" target="_blank"><i className="fa fa-medium" aria-hidden="true"></i></a>
-            <a className="social-github" href="https://github.com/SocioProphet" target="_blank"><i className="fa fa-github" aria-hidden="true"></i></a>
-          </div>
+        <footer className="landing-footer-dashboard">
+
           <div className="search-bar">
             <Search
               className="some-class"
@@ -75,13 +72,7 @@ class Dashboard extends Component {
               labelText="Search"
               onClick={function noRefCheck(){}}
             />
-          
-              {/*}<Search {...props()} />
-              <SearchFilterButton
-                iconDescription="filter"
-                labelText="Search"
-                onClick={function noRefCheck(){}}
-              />*/}
+
           </div>
 
         </footer>

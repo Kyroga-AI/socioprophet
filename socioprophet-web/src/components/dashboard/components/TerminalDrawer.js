@@ -16,8 +16,11 @@ export default function TemporaryDrawer() {
 
   const fullList = () => (
     <div>
-      <div className="drawer-close">
-        <button className="close-button" onClick={toggleDrawer('bottom', false)}>^</button>
+      <div className="drawer-closed">
+        <button className="close-button" onClick={toggleDrawer('bottom', false)}>
+
+          <ul><li>&#8690;</li></ul></button>
+
       </div>
       <div className="react-terminal">
         <ReactTerminal />
@@ -26,10 +29,11 @@ export default function TemporaryDrawer() {
   );
 
   return (
-    <div className="drawer-open">
+    <div className="drawer-opened">
       <button className="open-button" onClick={toggleDrawer('bottom', true)}>
 
-        <ul><li>^</li></ul></button>
+        <ul><li><p className="up-arrow">&#8689;</p></li></ul></button>
+
       <Drawer anchor="bottom" open={state.bottom}>
         {fullList()}
       </Drawer>
