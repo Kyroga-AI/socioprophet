@@ -18,8 +18,6 @@ import "./styles.css";
 
 class Top extends Component {
 
-
-
   render() {
 
     return (
@@ -30,14 +28,10 @@ class Top extends Component {
 
               <Header aria-label="SocioProphet Platform">
 
-                <nav className="toolbar">
 
-                  <button>BUTTON</button>
-                  
-                </nav>
-
+                <div className="margin">
                 <HeaderName href="#" prefix="">SocioProphet</HeaderName>
-
+                </div>
                 <HeaderNavigation aria-label="SocioProphet Platform">
 
                   <HeaderMenu aria-label="News & Events" menuLinkName="News & Events">
@@ -110,12 +104,11 @@ class Top extends Component {
                 </HeaderGlobalBar>
 
             </Header>
-
           )}
-
         />
     );
   }
 }
+
 
 export default Top;

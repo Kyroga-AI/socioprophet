@@ -1,13 +1,9 @@
-.toolbar {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 3rem;
-  height: 20px;
-  border: 1px solid pink;
-  padding: 0.5rem 0.25rem;
-  background-color: var(--ui-background, #161616);
-  box-sizing: border-box;
-  z-index: 8002;
+body, div {
+  margin: auto;
+}
+
+
+
+.margin {
+  margin-left: 1.5cm;
 }
