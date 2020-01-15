@@ -16,20 +16,6 @@ class Dashboard extends Component {
     this.props.logoutUser();
   };
 
-  constructor(props) {
-    super(props);
-    this.open = this.open.bind(this);
-    this.close = this.close.bind(this);
-  }
-
-  open() {
-    document.getElementById('mySidebar').style.display = "block";
-  }
-
-  close() {
-    document.getElementById("mySidebar").style.display = "none";
-  }
-
   render() {
 
     const props = () => ({
@@ -41,16 +27,7 @@ class Dashboard extends Component {
 
     return (
       <div>
-      <div className="w3-sidebar w3-bar-block w3-border-right" id="mySidebar" style={{display: "none"}}>
-        <button className="w3-bar-item w3-large" id="clicked" onClick={this.close}>&times;</button>
-          <a href="#" className="w3-bar-item w3-button">Link 1</a>
-          <a href="#" className="w3-bar-item w3-button">Link 2</a>
-          <a href="#" className="w3-bar-item w3-button">Link 3</a>
-      </div>
-
-      <div className="w3-teal">
-        <button className="w3-button w3-teal w3-xlarge" id="now-close" onClick={this.open}><svg focusable="false" preserveAspectRatio="xMidYMid meet" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className="security--icon security--toolbar__icon"><path d="M2 14.8h16V16H2zm0-3.6h16v1.2H2zm0-3.6h16v1.2H2zM2 4h16v1.2H2z"></path></svg></button>
-      </div>
+      
         <Top />
         <button
           style={{
