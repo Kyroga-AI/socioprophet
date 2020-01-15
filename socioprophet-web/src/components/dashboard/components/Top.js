@@ -41,9 +41,8 @@ class Top extends Component {
 
             <Header aria-label="SocioProphet Platform">
 
-<<<<<<< HEAD
+
                 <HeaderName href="#" prefix="">SocioProphet</HeaderName>
-=======
                 <SkipToContent />
 
                 <HeaderMenuButton
@@ -56,7 +55,6 @@ class Top extends Component {
                 <HeaderName href="#" prefix="">
                   SocioProphet
                 </HeaderName>
->>>>>>> sidenav
 
                 <HeaderNavigation aria-label="SocioProphet Platform">
 
