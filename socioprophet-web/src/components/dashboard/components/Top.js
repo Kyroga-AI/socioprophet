@@ -41,20 +41,16 @@ class Top extends Component {
 
             <Header aria-label="SocioProphet Platform">
 
-
-                <HeaderName href="#" prefix="">SocioProphet</HeaderName>
-                <SkipToContent />
-
-                <HeaderMenuButton
-                    aria-label="Open menu"
-                    isCollapsible
-                    onClick={onClickSideNavExpand}
-                    isActive={isSideNavExpanded}
-                />
-
-                <HeaderName href="#" prefix="">
-                  SocioProphet
-                </HeaderName>
+              <SkipToContent />
+              <HeaderMenuButton
+                  aria-label="Open menu"
+                  isCollapsible
+                  onClick={onClickSideNavExpand}
+                  isActive={isSideNavExpanded}
+              />
+              <HeaderName href="#" prefix="">
+                SocioProphet
+              </HeaderName>
 
                 <HeaderNavigation aria-label="SocioProphet Platform">
 
