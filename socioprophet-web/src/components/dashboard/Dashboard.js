@@ -26,16 +26,10 @@ class Dashboard extends Component {
     const { user } = this.props.auth;
 
     return (
-<<<<<<< HEAD
 
-
-      <div>
-=======
-      <div>
-      
->>>>>>> sidenav
-        <Top />
-        <button
+<div>
+       <Top />
+          <button 
           style={{
             width: "150px",
             height: "50px",
