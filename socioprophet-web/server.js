@@ -3,9 +3,13 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 
+const helmet = require('helmet');
+
 const users = require("./routes/api/users");
 
 const app = express();
+
+app.use(helmet.frameguard({ action: "sameorigin" }));
 
 // Bodyparser middleware
 app.use(

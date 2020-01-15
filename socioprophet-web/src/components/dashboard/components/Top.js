@@ -26,12 +26,10 @@ class Top extends Component {
 
           render={({ isSideNavExpanded, onClickSideNavExpand }) => (
 
-              <Header aria-label="SocioProphet Platform">
+            <Header aria-label="SocioProphet Platform">
 
-
-                <div className="margin">
                 <HeaderName href="#" prefix="">SocioProphet</HeaderName>
-                </div>
+
                 <HeaderNavigation aria-label="SocioProphet Platform">
 
                   <HeaderMenu aria-label="News & Events" menuLinkName="News & Events">
@@ -59,9 +57,7 @@ class Top extends Component {
                   </HeaderMenu>
 
                   <HeaderMenu aria-label="Economy & Industry" menuLinkName="Economy & Industry">
-                    <HeaderMenuItem href="#">Macro Enconomics</HeaderMenuItem>
-                    <HeaderMenuItem href="#">Micro Economics</HeaderMenuItem>
-                    <HeaderMenuItem href="#">Labor Economics</HeaderMenuItem>
+                    <HeaderMenuItem href="#">Enconomics</HeaderMenuItem>
                     <HeaderMenuItem href="#">Industry & Commerce</HeaderMenuItem>
                     <HeaderMenuItem href="#">Farming & Agriculture</HeaderMenuItem>
                     <HeaderMenuItem href="#">Mining & Extraction</HeaderMenuItem>
@@ -88,7 +84,7 @@ class Top extends Component {
                     <HeaderMenuItem href="#">Natural Resources</HeaderMenuItem>
                   </HeaderMenu>
 
-                  <HeaderMenu aria-label="Maps & Analytics" menuLinkName="Maps & Analytics">
+                  <HeaderMenu aria-label="Data & Analytics" menuLinkName="Data & Analytics">
                     <HeaderMenuItem href="#">Trending Infographics</HeaderMenuItem>
                     <HeaderMenuItem href="#">Charts & Graphs</HeaderMenuItem>
                     <HeaderMenuItem href="#">Maps & Interactives</HeaderMenuItem>
@@ -98,9 +94,11 @@ class Top extends Component {
                 </HeaderNavigation>
 
                 <HeaderGlobalBar>
+
                   <HeaderGlobalAction aria-label="App Switcher" onClick={() => {}}>
                     <AppSwitcher20 />
                   </HeaderGlobalAction>
+
                 </HeaderGlobalBar>
 
             </Header>
