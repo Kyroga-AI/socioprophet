@@ -13,11 +13,9 @@ import { HeaderGlobalBar, HeaderGlobalAction } from "carbon-components-react/lib
 import { SkipToContent, SideNav, SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from "carbon-components-react/lib/components/UIShell";
 import { HamburgerMenu } from 'react-hamburger-menu';
 
-
 import "./styles.css";
 
 class Top extends Component {
-
   render() {
 
     const Fade16 = () => (
@@ -31,28 +29,27 @@ class Top extends Component {
       </svg>
     );
 
-
-
     return (
 
-        <HeaderContainer
+      <HeaderContainer
+        render={({ isSideNavExpanded, onClickSideNavExpand }) => (
 
-          render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+          <Header aria-label="SocioProphet Platform">
 
-            <Header aria-label="SocioProphet Platform">
+            <SkipToContent />
 
-              <SkipToContent />
-              <HeaderMenuButton
-                  aria-label="Open menu"
-                  isCollapsible
-                  onClick={onClickSideNavExpand}
-                  isActive={isSideNavExpanded}
-              />
-              <HeaderName href="#" prefix="">
-                SocioProphet
-              </HeaderName>
+            <HeaderMenuButton
+              aria-label="Open menu"
+              isCollapsible
+              onClick={onClickSideNavExpand}
+              isActive={isSideNavExpanded}
+            />
 
-                <HeaderNavigation aria-label="SocioProphet Platform">
+            <HeaderName href="#" prefix="">
+              SocioProphet
+            </HeaderName>
+
+            <HeaderNavigation aria-label="SocioProphet Platform">
 
                   <HeaderMenu aria-label="News & Events" menuLinkName="News & Events">
                     <HeaderMenuItem href="#">All News & Events</HeaderMenuItem>
@@ -123,18 +120,17 @@ class Top extends Component {
 
                 </HeaderGlobalBar>
 
+
                 <SideNav
                     aria-label="Side navigation"
                     isRail
                     expanded={isSideNavExpanded}>
-                  <SideNavItems>
-                    <SideNavMenu renderIcon={Fade16} title="Category Title">
+                    <SideNavItems>
+                      <SideNavMenu renderIcon={Fade16} title="User Dashboard">
+                        <SideNavMenuItem href="#">
+                          Link
+                        </SideNavMenuItem>
                       <SideNavMenuItem href="#">
-                        Link
-                      </SideNavMenuItem>
-                      <SideNavMenuItem
-                          aria-current="page"
-                          href="#">
                         Link
                       </SideNavMenuItem>
                       <SideNavMenuItem href="#">
@@ -174,7 +170,9 @@ class Top extends Component {
                     Link
                   </SideNavLink>
                 </SideNavItems>
+
               </SideNav>
+
 
             </Header>
           )}

@@ -10,6 +10,8 @@ import { Search } from 'carbon-addons-iot-react';
 import { SearchFilterButton } from 'carbon-addons-iot-react';
 import { SearchLayoutButton } from 'carbon-addons-iot-react';
 
+import { Breadcrumb, BreadcrumbItem, BreadcrumbSkelton } from "carbon-components-react/lib/components/Breadcrumb";
+
 class Dashboard extends Component {
   onLogoutClick = e => {
     e.preventDefault();
@@ -29,13 +31,24 @@ class Dashboard extends Component {
 
 <div>
        <Top />
-          <button 
+
+       <div className="sub-header">
+         <Breadcrumb>
+           <BreadcrumbItem>
+             <a href="#">Breadcrumb 1</a>
+           </BreadcrumbItem>
+           <BreadcrumbItem href="#">Breadcrumb 2</BreadcrumbItem>
+           <BreadcrumbItem href="#">Breadcrumb 3</BreadcrumbItem>
+         </Breadcrumb>
+       </div>
+
+          <button
           style={{
             width: "150px",
             height: "50px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
-            marginTop: "1rem",
+            marginTop: "10rem",
             marginLeft: "30rem",
 
           }}
