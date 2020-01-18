@@ -44,6 +44,53 @@ class Top extends Component {
       </svg>
     );
 
+    const DashboardIcon = () => (
+      <svg viewBox="0 0 24 24" className="bx--parent-item__link--taxonomy-icon" fillRule="evenodd" className="invert">
+        <path d="M0 0v24h24V0H0zm1 23V7h8v16H1zm22 0H10v-8h13v8zm0-9H10V7h13v7zM1 6V1h22v5H1z"></path>
+      </svg>
+    );
+
+    const ResourceIcon = () => (
+      <svg viewBox="0 0 18 18" className="bx--parent-item__link--taxonomy-icon" fillRule="evenodd" className="invert">
+        <path
+        d="M15,0 L1.25,0 C0.5625,0 0,0.5625 0,1.25 L0,3.75 L0,5 L0,7.5 L0,8.75 L0,11.25 L0,12.5 L0,15 C0,15.6875 0.5625,16.25 1.25,16.25 L15,16.25 C15.6875,16.25 16.25,15.6875 16.25,15 L16.25,12.5 L16.25,11.25 L16.25,8.75 L16.25,7.5 L16.25,5 L16.25,3.75 L16.25,1.25 C16.25,0.5625 15.6875,0 15,0 Z M15,15 L1.25,15 L1.25,12.5 L15,12.5 L15,15 Z M15,11.25 L1.25,11.25 L1.25,8.75 L15,8.75 L15,11.25 Z M15,7.5 L1.25,7.5 L1.25,5 L15,5 L15,7.5 Z M1.25,3.75 L1.25,1.25 L15,1.25 L15,3.75 L1.25,3.75Z"></path>
+      </svg>
+    );
+
+    const ChartIcon = () => (
+      <svg viewBox="0 0 24 24" fillRule="evenodd" id="icon--logmet" width="100%" height="100%" className="invert">
+        <path d="M8.4,9.7l4.1,9.9l3.4-11.7l4.9-4.2C21.1,3.8,21.6,4,22,4c1.1,0,2-0.9,2-2c0-1.1-0.9-2-2-2s-2,0.9-2,2c0,0.3,0.1,0.6,0.2,0.8l-5.1,4.4l-2.7,9.3L8.6,7.3L1,21.5V0H0v24h24v-1H1.3L8.4,9.7z"></path>
+      </svg>
+    );
+
+    const EconomicProphetIcon = () => (
+      <svg viewBox="0 0 24 21" className="bx--parent-item__link--taxonomy-icon" fillRule="evenodd" className="invert">
+        <path d="M18 0H6L0 10.5 6 21h12l6-10.5L18 0zm4.5 10h-9.7l4.8-8.5 4.9 8.5zM6.3 19.4L1.4 11H11l-4.7 8.4zm5.6-7.8l4.8 8.4H7.2l4.7-8.4zm0-2.1L7 1h9.7l-4.8 8.5zM6.2 1.6L11 10H1.5l4.7-8.4zm11.5 18L12.8 11h9.8l-4.9 8.6z"></path>
+      </svg>
+    );
+
+    const SchematicsIcon = () => (
+      <svg viewBox="0 0 24 24" className="bx--parent-item__link--taxonomy-icon" fillRule="evenodd" className="invert">
+        <path d="M17.5,12c0-1.4-1.1-2.5-2.5-2.5H5C4.2,9.5,3.5,8.8,3.5,8V5.9c1.3-0.2,2.2-1.2,2.4-2.4h8.1C14.3,4.9,15.5,6,17,6c1.7,0,3-1.3,3-3s-1.3-3-3-3c-1.5,0-2.7,1.1-2.9,2.5H5.9C5.7,1.1,4.5,0,3,0C1.3,0,0,1.3,0,3c0,1.5,1.1,2.7,2.5,2.9V8c0,1.4,1.1,2.5,2.5,2.5h10c0.8,0,1.5,0.7,1.5,1.5v2H14v2.5H5.9C5.7,15.1,4.5,14,3,14c-1.7,0-3,1.3-3,3s1.3,3,3,3c1.5,0,2.7-1.1,2.9-2.5H14V20h6v-6h-2.5V12z M17,1c1.1,0,2,0.9,2,2c0,1.1-0.9,2-2,2s-2-0.9-2-2C15,1.9,15.9,1,17,1z M1,3c0-1.1,0.9-2,2-2s2,0.9,2,2c0,1.1-0.9,2-2,2S1,4.1,1,3z M3,19c-1.1,0-2-0.9-2-2c0-1.1,0.9-2,2-2s2,0.9,2,2C5,18.1,4.1,19,3,19zM19,19h-4v-4h4V19z"></path>
+      </svg>
+    );
+
+    const FolderIcon = () => (
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" className="invert">
+        <path d="M5.6 3l1.7 1.7.3.3H14v8H2V3h3.6m0-1H2c-.6 0-1 .4-1 1v10c0 .6.4 1 1 1h12c.6 0 1-.4 1-1V5c0-.6-.4-1-1-1H8L6.3 2.3c-.2-.2-.4-.3-.7-.3z"></path>
+      </svg>
+    )
+
+    const SimIcon = () => (
+      <svg viewBox="0 0 24 24" className="bx--parent-item__link--taxonomy-icon" fillRule="evenodd" className="invert">
+        <path d="M23 0H1C.5 0 0 .5 0 1v21c0 .6.5 1 1 1h22c.6 0 1-.5 1-1V1c0-.5-.5-1-1-1zM1 1h7v3H1V1zm22 21H1V5h22v17zm0-21v3H9V1h14z"></path>
+        <circle cx="2.5" cy="2.5" r=".5"></circle>
+        <circle cx="4.5" cy="2.5" r=".5"></circle>
+        <circle cx="6.5" cy="2.5" r=".5"></circle>
+        <path d="M7.5 8h-5c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h5c.3 0 .5.2.5.5s-.2.5-.5.5zm3 3h-8c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h8c.3 0 .5.2.5.5s-.2.5-.5.5zm3-3h-4c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h4c.3 0 .5.2.5.5s-.2.5-.5.5zm1 3h-2c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h2c.3 0 .5.2.5.5s-.2.5-.5.5zm-10 3h-2c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h2c.3 0 .5.2.5.5s-.2.5-.5.5zm4 0h-1c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h1c.3 0 .5.2.5.5s-.2.5-.5.5zm11-3h-3c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h3c.3 0 .5.2.5.5s-.2.5-.5.5z"></path>
+      </svg>
+    )
+
     return (
 
       <HeaderContainer
@@ -135,27 +182,51 @@ class Top extends Component {
               </HeaderGlobalAction>
             </HeaderGlobalBar>
 
-            <HeaderPanel aria-label="Header Panel" isCollapsible expanded={isSideNavExpanded}>
+            <HeaderPanel aria-label="Header Panel" expanded={isSideNavExpanded}>
               <Switcher role="menu" aria-label="Switcher Container">
-                <SwitcherItem isSelected aria-label="Link 1" href="#">
-                  Link 1
+                <SwitcherItem isSelected aria-label="account name" href="#">
+                  Account Name
                 </SwitcherItem>
                 <SwitcherDivider />
-                <SwitcherItem href="#" aria-label="Link 2">
-                  Link 2
+                <SwitcherItem href="#" aria-label="profile">
+                  Profile
                 </SwitcherItem>
-                <SwitcherItem href="#" aria-label="Link 3">
-                  Link 3
+                <SwitcherDivider />
+                <SwitcherItem href="#" aria-label="preferences">
+                  Preferences
                 </SwitcherItem>
-                <SwitcherItem href="#" aria-label="Link 4">
-                  Link 4
+                <SwitcherDivider />
+                <SwitcherItem href="#" aria-label="set status">
+                  Set Status
                 </SwitcherItem>
-                <SwitcherItem href="#" aria-label="Link 5">
-                  Link 5
+                <SwitcherDivider />
+                <SwitcherItem href="#" aria-label="your repositories">
+                  Your Repositories
+                </SwitcherItem>
+                <SwitcherItem href="#" aria-label="your projects">
+                  Your Projects
+                </SwitcherItem>
+                <SwitcherItem href="#" aria-label="your projects">
+                  Help
+                </SwitcherItem>
+                <SwitcherItem href="#" aria-label="your projects">
+                  Settings
+                </SwitcherItem>
+                <SwitcherItem href="#" aria-label="your projects">
+                  Posts & Activities
+                </SwitcherItem>
+                <SwitcherItem href="#" aria-label="your projects">
+                  My Network
+                </SwitcherItem>
+                <SwitcherItem href="#" aria-label="your projects">
+                  Language
+                </SwitcherItem>
+                <SwitcherItem href="#" aria-label="your projects">
+                  Privacy & Security
                 </SwitcherItem>
                 <SwitcherDivider />
                 <SwitcherItem href="#" aria-label="Link 6">
-                  Link 6
+                  Sign Out
                 </SwitcherItem>
               </Switcher>
             </HeaderPanel>`
@@ -167,7 +238,19 @@ class Top extends Component {
 
               <SideNavItems className="black">
 
-                <SideNavMenu renderIcon={UsersIcon} title="User Dashboard">
+                <SideNavMenu className="link" renderIcon={DashboardIcon} title="User Dashboard">
+                  <SideNavMenuItem href="#">
+                    <span className="link">Link</span>
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Link
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Link
+                  </SideNavMenuItem>
+                </SideNavMenu>
+
+                <SideNavMenu renderIcon={ResourceIcon} title="Portfolios & Watch Lists">
                   <SideNavMenuItem href="#">
                     Link
                   </SideNavMenuItem>
@@ -179,7 +262,7 @@ class Top extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu renderIcon={SwitcherIcon} title="Portfolios & Watch Lists">
+                <SideNavMenu renderIcon={ChartIcon} title="Algorithmic Trading">
                   <SideNavMenuItem href="#">
                     Link
                   </SideNavMenuItem>
@@ -191,19 +274,7 @@ class Top extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu renderIcon={DeviceIcon} title="Algorithmic Trading">
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                </SideNavMenu>
-
-                <SideNavMenu renderIcon={Fade16} title="Economic Prophet">
+                <SideNavMenu renderIcon={EconomicProphetIcon} title="Economic Prophet">
                   <SideNavMenuItem href="#">
                     Link
                   </SideNavMenuItem>
@@ -227,7 +298,7 @@ class Top extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu renderIcon={Fade16} title="NLP & Data Extraction">
+                <SideNavMenu renderIcon={SchematicsIcon} title="NLP & Data Extraction">
                   <SideNavMenuItem href="#">
                     Link
                   </SideNavMenuItem>
@@ -275,7 +346,7 @@ class Top extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu renderIcon={Fade16} title="Simulations">
+                <SideNavMenu renderIcon={SimIcon} title="Simulations">
                   <SideNavMenuItem href="#">
                     Link
                   </SideNavMenuItem>
@@ -287,6 +358,29 @@ class Top extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
+                <SideNavMenu renderIcon={FolderIcon} title="Developer Studio">
+                  <SideNavMenuItem href="#">
+                    Link
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Link
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Link
+                  </SideNavMenuItem>
+                </SideNavMenu>
+
+                <SideNavMenu renderIcon={SwitcherIcon} title="AI Studio">
+                  <SideNavMenuItem href="#">
+                    Link
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Link
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Link
+                  </SideNavMenuItem>
+                </SideNavMenu>
               </SideNavItems>
 
             </SideNav>

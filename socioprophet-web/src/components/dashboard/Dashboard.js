@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
 import Top from "./components/Top";
 import TerminalDrawer from "./components/TerminalDrawer";
-import "./components/style-top.scss";
+import "./components/style-top.css";
 
 import { Search } from 'carbon-addons-iot-react';
 import { SearchFilterButton } from 'carbon-addons-iot-react';
@@ -29,44 +29,44 @@ class Dashboard extends Component {
 
     return (
 
-<div>
-       <Top />
+        <div>
 
-       <div className="sub-header">
-         <Breadcrumb>
-           <BreadcrumbItem>
-             <a href="#">Breadcrumb 1</a>
-           </BreadcrumbItem>
-           <BreadcrumbItem href="#">Breadcrumb 2</BreadcrumbItem>
-           <BreadcrumbItem href="#">Breadcrumb 3</BreadcrumbItem>
-         </Breadcrumb>
-       </div>
+          <Top />
+
+          <div className="sub-header">
+            <Breadcrumb>
+              <BreadcrumbItem><a href="#">Breadcrumb 1</a></BreadcrumbItem>
+              <BreadcrumbItem href="#">Breadcrumb 2</BreadcrumbItem>
+              <BreadcrumbItem href="#">Breadcrumb 3</BreadcrumbItem>
+            </Breadcrumb>
+          </div>
 
           <button
-          style={{
+            style={{
             width: "150px",
             height: "50px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
             marginTop: "10rem",
             marginLeft: "30rem",
-
           }}
           onClick={this.onLogoutClick}
-        >
-          Logout
-        </button>
+          >
+            Logout
+          </button>
 
-        <div className="search">
+          <div className="search">
 
-          <div className="terminal-drawer">
-            <TerminalDrawer />
+            <div className="terminal-drawer">
+              <TerminalDrawer />
+            </div>
+
           </div>
-        </div>
 
-        <footer className="landing-footer-dashboard">
+          <footer className="landing-footer-dashboard">
 
           <div className="search-bar">
+          
             <Search
               className="some-class"
               closeButtonLabelText="Clear search input"
@@ -88,7 +88,6 @@ class Dashboard extends Component {
           </div>
 
         </footer>
-
       </div>
     );
   }

@@ -23,10 +23,7 @@ export default function TemporaryDrawer() {
 
       </div>
       <div className="react-terminal">
-      <div>
-        <object data="http://127.0.0.1:3000/wetty/override-http-headers-default-settings-x-frame-options">
-        </object>
-      </div>
+        <ReactTerminal />
       </div>
     </div>
   );

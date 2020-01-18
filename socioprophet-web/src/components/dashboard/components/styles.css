@@ -9,6 +9,7 @@ body, div {
 
 .black {
   background-color: black;
+  color: white;
 }
 
 .transform {
@@ -18,4 +19,8 @@ body, div {
 .invert {
   -webkit-filter: invert(100%);
           filter: invert(100%);
+}
+
+.link {
+  color: #fff;
 }
