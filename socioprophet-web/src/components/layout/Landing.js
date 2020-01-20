@@ -15,6 +15,7 @@ class Landing extends Component {
           <div className="landing-wrapper">
             <nav className="landing-header">
               <div className="search-bar-landing">
+
                 <Search
                   className="some-class"
                   closeButtonLabelText="Clear search input"
@@ -27,7 +28,7 @@ class Landing extends Component {
                   size="sm"
                   type="text"
                 />
-                
+
               </div>
               <div className="landing-header-title">
                 <div className="landing-header-menuNavTitle">

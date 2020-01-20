@@ -66,7 +66,7 @@ class Dashboard extends Component {
           <footer className="landing-footer-dashboard">
 
           <div className="search-bar">
-          
+
             <Search
               className="some-class"
               closeButtonLabelText="Clear search input"
