@@ -2,6 +2,10 @@ import React, { Component, useRef } from 'react';
 import { render } from "react-dom";
 import ReactDOM from "react-dom";
 
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { logoutUser } from "../../../actions/authActions";
+
 // Carbon UI Components
 import Search20 from "@carbon/icons-react/lib/search/20";
 import Notification20 from "@carbon/icons-react/lib/notification/20";
@@ -17,6 +21,11 @@ import { HamburgerMenu } from 'react-hamburger-menu';
 import "./styles.css";
 
 class Top extends Component {
+  onLogoutClick = e => {
+    e.preventDefault();
+    this.props.logoutUser();
+  };
+
   render() {
 
     const Fade16 = () => (
@@ -90,6 +99,8 @@ class Top extends Component {
         <path d="M7.5 8h-5c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h5c.3 0 .5.2.5.5s-.2.5-.5.5zm3 3h-8c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h8c.3 0 .5.2.5.5s-.2.5-.5.5zm3-3h-4c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h4c.3 0 .5.2.5.5s-.2.5-.5.5zm1 3h-2c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h2c.3 0 .5.2.5.5s-.2.5-.5.5zm-10 3h-2c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h2c.3 0 .5.2.5.5s-.2.5-.5.5zm4 0h-1c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h1c.3 0 .5.2.5.5s-.2.5-.5.5zm11-3h-3c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h3c.3 0 .5.2.5.5s-.2.5-.5.5z"></path>
       </svg>
     )
+
+    const { user } = this.props.auth;
 
     return (
 
@@ -225,9 +236,11 @@ class Top extends Component {
                   Privacy & Security
                 </SwitcherItem>
                 <SwitcherDivider />
-                <SwitcherItem href="#" aria-label="Link 6">
-                  Sign Out
-                </SwitcherItem>
+
+                  <button onClick={this.onLogoutClick}>
+                    Logout
+                  </button>
+
               </Switcher>
             </HeaderPanel>`
 
@@ -393,4 +406,16 @@ class Top extends Component {
   }
 }
 
-export default Top;
+Top.propTypes = {
+  logoutUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(
+  mapStateToProps,
+  { logoutUser }
+)(Top);
