@@ -1,22 +1,15 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { logoutUser } from "../../actions/authActions";
-import Top from "./components/Top";
-import TerminalDrawer from "./components/TerminalDrawer";
-import "./components/style-top.css";
-
+import Top from "./dashboardComponents/Top";
+import TerminalDrawer from "./dashboardComponents/TerminalDrawer";
 import { Search } from 'carbon-addons-iot-react';
 import { SearchFilterButton } from 'carbon-addons-iot-react';
 import { SearchLayoutButton } from 'carbon-addons-iot-react';
-
 import { Breadcrumb, BreadcrumbItem, BreadcrumbSkelton } from "carbon-components-react/lib/components/Breadcrumb";
 
+import "./styles/dashboard.css";
+
 class Dashboard extends Component {
-  onLogoutClick = e => {
-    e.preventDefault();
-    this.props.logoutUser();
-  };
 
   render() {
 
@@ -24,8 +17,6 @@ class Dashboard extends Component {
       labelText: 'Search',
       placeHolderText: '/command OR Search',
     });
-
-    const { user } = this.props.auth;
 
     return (
 
@@ -40,20 +31,6 @@ class Dashboard extends Component {
               <BreadcrumbItem href="#">Breadcrumb 3</BreadcrumbItem>
             </Breadcrumb>
           </div>
-
-          <button
-            style={{
-            width: "150px",
-            height: "50px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "10rem",
-            marginLeft: "30rem",
-          }}
-          onClick={this.onLogoutClick}
-          >
-            Logout
-          </button>
 
           <div className="search">
 
@@ -92,17 +69,4 @@ class Dashboard extends Component {
     );
   }
 }
-
-Dashboard.propTypes = {
-  logoutUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
-};
-
-const mapStateToProps = state => ({
-  auth: state.auth
-});
-
-export default connect(
-  mapStateToProps,
-  { logoutUser }
-)(Dashboard);
+export default Dashboard;

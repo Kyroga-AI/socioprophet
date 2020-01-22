@@ -7,100 +7,62 @@ div, nav, li {
   vertical-align: baseline;
 }
 
-.contentNode {
-  padding: 0;
-}
-
-.landing-wrapper {
-  background-color: #fff;
-}
-
-.landing-header {
+/* Header Block */
+.header {
   width: 100%;
-  height: 50px;
-  line-height: 50px;
+  height: 3.5rem;
+  line-height: 3.5rem;
   position: fixed;
   display: flex;
   align-items: center;
-  z-index: 1000;
+  z-index: 10000;
   background-color: #0c0c0c;
   color: #fff;
-  top: 0;
-  left: 0;
 }
 
-.landing-header-title {
-  user-select: none;
-  display: inline-flex;
-  padding: 0;
-}
-
-.landing-header-menuNavTitle {
-  display: inline-flex;
+/* Header Title Element */
+.header__title {
   align-items: center;
-  padding: 0 1.61124% 0 20px;
-}
-
-.landing-header-titleText {
+  display: inline-flex;
+  padding-left: 2rem;
   font-size: 16px;
-  color: #fff;
   white-space: nowrap;
   vertical-align: middle;
   text-decoration: none;
 }
-
-.landing-header-logoText {
-  vertical-align: middle;
+.header__title__link {
+  text-decoration: none;
   color: #fff;
 }
 
-.landing-header-region {
-  padding: 0 15px;
-  color: #dfe3e6;
-  display: inline-flex;
-  align-items: flex-end;
-  white-space: nowrap;
-}
-
-.landing-header-linksContainer {
+/* Header Links Element */
+.header__list {
   margin: 0 20px 0 auto;
   height: 100%;
-  display: block;
-}
-
-.landing-header-links {
-  display: inline-block;
-  list-style: none;
-  margin: 0;
-  height: 100%;
-}
-
-.landing-header-link {
-  height: 100%;
   font-size: 16px;
+}
+.header__list__item {
   box-sizing: border-box;
   cursor: pointer;
   display: inline-block;
   margin-left: 30px;
 }
-
-.landing-header-link a {
+.header__list__item__link {
   text-decoration: none;
   color: #fff;
-  padding: 0;
-  margin: 0;
-  display: block;
-  height: 100%;
-  white-space: nowrap;
 }
-
-.landing-header-separatorBlock {
+.header__list__btn {
   display: inline-block;
   height: inherit;
-  margin-left: 45px;
+  margin-left: 60px;
 }
 
-.landing-header-signUpButton {
+/* Header Buttons Element */
+.header__list__btn__login {
+  color: #fff;
+  font-size: 16px;
+}
+.header__list__btn__signup {
   border: 2px solid #f4f7fb;
   margin-left: 1.75rem;
   box-sizing: border-box;
@@ -113,41 +75,29 @@ div, nav, li {
   text-decoration: none;
 }
 
-.main-landing {
-  background-color: #f4f7fb;
-  min-height: calc(10vh - 70px);
+/* Main Block */
+
+.main {
+  background-color: #fff;
+  min-height: calc(100vh - 70px);
 }
 
-.nav-wrapper {
-  font-size: 20px;
-}
-
-.billboard-background-landing {
-  /* background-color: #8bd8c6; */
-  background-image: url("../../client/images/space.jpg");
+/* Main Background Element */
+.main__background {
+  background-image: url("../../../client/images/space.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 50%;
-}
-
-.billboard-landing {
   color: #fff;
   text-align: center;
   height: 200px;
-  padding: 167px 10px 250px;
+  padding: 117px 100px 200px;
 }
-
-.main-socioprophet-name {
+.main__background__title {
   font-size: 36px;
   font-weight: 400;
 }
-
-.prophet {
-  font-size: 36px;
-  font-weight: 600;
-}
-
-.main-button-login {
+.main__background__login {
   margin-top: 34px;
   margin-right: 20px;
   width: 94px;
@@ -163,8 +113,7 @@ div, nav, li {
   cursor: pointer;
   text-decoration: none;
 }
-
-.main-button-register {
+.main__background__signup {
   margin-top: 34px;
   width: 127px;
   height: 40px;
@@ -179,21 +128,20 @@ div, nav, li {
   text-decoration: none;
 }
 
-.main-platform-section {
+/* Main Description Element */
+.main__descriptive {
   padding: 31px 10px;
-  height: 275px;
+  height: 265px;
   color: #fff;
   background-color: #0c0c0c;
 }
-
-.main-platform-slogan {
+.main__descriptive__title {
   height: 36px;
   font-size: 25px;
   line-height: 1.44;
   text-align: center;
 }
-
-.main-platform-description {
+.main__descriptive__description {
   font-size: 20px;
   font-weight: 400;
   line-height: 1.4;
@@ -205,7 +153,8 @@ div, nav, li {
   height: 67px;
 }
 
-.main-app-section {
+/* Main Offering Element */
+.main__offering {
   background-color: transparent;
   display: flex;
   -webkit-box-pack: center;
@@ -213,8 +162,7 @@ div, nav, li {
   margin-top: -92px;
   z-index: 1;
 }
-
-.offering-card-container {
+.main__offering__card {
   margin-right: 10px;
   margin-left: 10px;
   margin-bottom: 10px;
@@ -226,15 +174,13 @@ div, nav, li {
   box-sizing: border-box;
   display: inline-block;
 }
-
-.offering-card-name {
+.main__offering__card__name {
   margin-top: 23px;
   color: #152934;
   font-weight: 400;
   font-size: 20px;
 }
-
-.offering-card-description {
+.main__offering__card__description {
   width: 287px;
   height: 40px;
   margin-top: 16px;
@@ -243,23 +189,22 @@ div, nav, li {
   text-align: left;
   color: #5a6872;
 }
-
-.offering-card-learnMore {
+.main__offering__card__learnmore {
   margin-top: 8px;
   font-size: 14px;
   line-height: 1.43;
   text-align: left;
-  color: #3d70b2;
 }
-
-.offering-card-learnMore a {
+.main__offering__card__learnmore__link {
   text-decoration: none !important;
   font-weight: 400 !important;
   color: #3d70b2;
   cursor: pointer;
 }
 
-.landing-page-footer {
+/* Footer Block */
+
+.footer {
   float: none;
   text-align: center;
   height: 70px;
@@ -270,57 +215,39 @@ div, nav, li {
   background-color: #1b1b1b;
 }
 
-.landing-footer-link {
-  position: relative;
+/* Footer Social Element */
+.footer__social {
+  position: absolute;
+  height: 70px;
+  width: 30%;
+  padding-left: 5%;
+}
+.footer__social__btn {
+  font-size: 20px;
+  color: #f4f4f4;
+  float: left;
+  margin-left: 15%;
+}
+
+/* Footer Links Element */
+.footer__references {
+  position: absolute;
+  height: 70px;
+  width: 30%;
+  margin-left: 35%;
+}
+.footer__references__link {
   padding: 0 25px;
   font-size: 14px;
   font-weight: 400;
   color: #f4f7fb;
   text-decoration: none!important;
-
 }
 
-.social-links-landing {
-  float: left;
-}
-
-.social-links-landing i {
-  font-size: 20px;
+/* Footer Copyright Element */
+.footer__copyright {
+  float: right;
+  padding-right: 5%;
   color: #f4f4f4;
+  text-decoration: none!important;
 }
-
-.social-twitter-landing {
-  float: left;
-  position: absolute;
-  margin-left: 5%;
-}
-
-.social-medium-landing {
-  float: left;
-  position: absolute;
-  margin-left: 10%;
-}
-
-.social-github-landing {
-  float: left;
-  position: absolute;
-  margin-left: 15%;
-}
-
-.search-bar-landing {
-  margin-top:1px;
-  width: 30%;
-  margin-left: 25%;
-  position: absolute;
-  display: flex;
-}
-
-
-
-
-
-
-
-
-
-/*  */
