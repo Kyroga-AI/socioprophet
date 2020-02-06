@@ -1,0 +1,16 @@
+.uifooter {
+  z-index: 10000;
+  height: 50px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  background-color: #0c090a;
+  border-bottom: .1px solid grey;
+}
+
+.uifooter--fish {
+  float: right;
+  position: relative;
+  margin-right: 20px;
+  padding-top: 10px;
+}

@@ -1,26 +1,33 @@
-import React, { Component, useRef } from 'react';
-import { render } from "react-dom";
+import React, { Component } from 'react';
 import ReactDOM from "react-dom";
-
 import PropTypes from "prop-types";
+import { render } from "react-dom";
 import { connect } from "react-redux";
 import { logoutUser } from "../../../actions/authActions";
+import {
+  HeaderContainer,
+  Header,
+  SkipToContent,
+  HeaderMenuButton,
+  HeaderName,
+  HeaderNavigation,
+  HeaderMenu,
+  HeaderMenuItem,
+  HeaderGlobalBar,
+  HeaderGlobalAction,
+  HeaderPanel,
+  Switcher,
+  SwitcherItem,
+  SwitcherDivider,
+  SideNav,
+  SideNavItems,
+  SideNavMenu,
+  SideNavMenuItem,
+} from "carbon-components-react/lib/components/UIShell";
 
-// Carbon UI Components
-import Search20 from "@carbon/icons-react/lib/search/20";
-import Notification20 from "@carbon/icons-react/lib/notification/20";
-import AppSwitcher20 from "@carbon/icons-react/lib/app-switcher/20";
-import HeaderContainer from "carbon-components-react/lib/components/UIShell/HeaderContainer";
-import { Content, HeaderMenuButton, HeaderName } from "carbon-components-react/lib/components/UIShell";
-import { HeaderNavigation, Header, HeaderMenu, HeaderMenuItem } from "carbon-components-react/lib/components/UIShell";
-import { HeaderGlobalBar, HeaderGlobalAction } from "carbon-components-react/lib/components/UIShell";
-import { SkipToContent, SideNav, SideNavItems, SideNavLink, SideNavMenu, SideNavMenuItem } from "carbon-components-react/lib/components/UIShell";
-import { HeaderPanel, Switcher, SwitcherItem, SwitcherDivider } from "carbon-components-react/lib/components/UIShell";
-import { HamburgerMenu } from 'react-hamburger-menu';
+import "./styles/frame.css";
 
-import "./styles.css";
-
-class Top extends Component {
+class UIFrame extends Component {
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
@@ -406,7 +413,7 @@ class Top extends Component {
   }
 }
 
-Top.propTypes = {
+UIFrame.propTypes = {
   logoutUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired
 };
@@ -418,4 +425,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { logoutUser }
-)(Top);
+)(UIFrame);

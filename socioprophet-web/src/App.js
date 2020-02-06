@@ -13,7 +13,7 @@ import ComingSoon from "./components/landing/ComingSoon";
 import Register from "./components/landing/Register";
 import Login from "./components/landing/Login";
 import PrivateRoute from "./components/private-route/PrivateRoute";
-import Dashboard from "./components/postAuth/Dashboard";
+import UInterface from "./components/postAuth/UInterface";
 
 import "./App.scss";
 
@@ -46,7 +46,7 @@ class App extends Component {
             <Route exact path="/register" component={ComingSoon} />
             <Route exact path="/login" component={Login} />
             <Switch>
-              <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <PrivateRoute exact path="/dashboard" component={UInterface} />
             </Switch>
           </div>
         </Router>
