@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import ReactTerminal from 'react-terminal-component';
 import { ReactThemes } from 'react-terminal-component';
-import { Search } from '@carbon/ibm-security';
+// import { Search } from '@carbon/ibm-security';
+
+import { Search } from 'carbon-addons-ics';
 
 import 'react-splitter-layout/lib/index.css';
 import "./styles/terminal.css";
@@ -12,7 +14,7 @@ class Terminal extends Component {
       <div className="drawer">
         <div className="drawer--bar">
           <div className="drawer--bar--search">
-            <Search
+            {/*<Search
               closeButtonLabelText="Clear search input"
               defaultValue=""
               id="search-1"
@@ -23,6 +25,12 @@ class Terminal extends Component {
               size="sm"
               type="text"
               light={true}
+            />*/}
+            <Search
+              className="some-class"
+              id="search"
+              labelText="Search"
+              placeHolderText="Search"
             />
           </div>
         </div>
