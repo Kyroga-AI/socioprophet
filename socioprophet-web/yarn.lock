@@ -1965,6 +1965,15 @@ caniuse-lite@^1.0.30001022:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001023.tgz#b82155827f3f5009077bdd2df3d8968bcbcc6fc4"
   integrity sha512-C5TDMiYG11EOhVOA62W1p3UsJ2z4DsHtMBQtjzp3ZsUglcQn62WOUgW0y795c7A5uZ+GCEIvzkMatLIlAsbNTA==
 
+carbon-addons-ics@^1.15.0:
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/carbon-addons-ics/-/carbon-addons-ics-1.15.0.tgz#971c1d8bc7712eea72b9c5fc8b78dbc643e5ff74"
+  integrity sha512-EC8YTQzkde4sIyqWRR0vYn69QbNPWI3GpRjJWqexs/DhpeB5CHqQlrS46Z6TX299vKuNvRh/eVD7+vDQxETZXg==
+  dependencies:
+    carbon-components "^8.23.1"
+    carbon-components-react "^5.52.4"
+    flatpickr "4.3.0"
+
 carbon-addons-iot-react@^2.19.4:
   version "2.29.2"
   resolved "https://registry.yarnpkg.com/carbon-addons-iot-react/-/carbon-addons-iot-react-2.29.2.tgz#9cdcda74d530e30c15f6598786981b1ba34f71ac"
@@ -2022,6 +2031,21 @@ carbon-components-react@7.9.0:
     warning "^3.0.0"
     window-or-global "^1.0.1"
 
+carbon-components-react@^5.52.4:
+  version "5.53.1"
+  resolved "https://registry.yarnpkg.com/carbon-components-react/-/carbon-components-react-5.53.1.tgz#7ab1301babbed02cc95dd42baca357789f770ae5"
+  integrity sha512-Pq+Y+uSStUfQvWMX94NcQU6mZUsY+hcUUyBQNAxbIavMO58yIFTV0A+1WsNypfctyvAxCneOtA2ErJyyz6yOLQ==
+  dependencies:
+    classnames "2.2.5"
+    downshift "^1.31.14"
+    flatpickr "4.5.0"
+    invariant "^2.2.3"
+    lodash.debounce "^4.0.8"
+    lodash.isequal "^4.5.0"
+    lodash.omit "^4.5.0"
+    warning "^3.0.0"
+    window-or-global "^1.0.1"
+
 carbon-components-react@^7.5.1, carbon-components-react@^7.9.1:
   version "7.9.2"
   resolved "https://registry.yarnpkg.com/carbon-components-react/-/carbon-components-react-7.9.2.tgz#28a1a9026aeaf8a69e56e1e4c89626bf1ffccad8"
@@ -2070,10 +2094,25 @@ carbon-components@^10.5.1, carbon-components@^10.9.1:
     lodash.debounce "^4.0.8"
     warning "^3.0.0"
 
+carbon-components@^8.23.1:
+  version "8.23.1"
+  resolved "https://registry.yarnpkg.com/carbon-components/-/carbon-components-8.23.1.tgz#1491be5405ed806c8a7155a4f873642d8edbe080"
+  integrity sha512-HxfkCdIKMKvVWgUwvmblCHkFTzQOllEM5iL6YAsD6nlCCkEur0D3ALQ1DGLe0K6dME76Zd+dDpVCZ7Ono1o4Hg==
+  dependencies:
+    carbon-icons "^6.0.4"
+    flatpickr "2.6.3"
+    lodash.debounce "^4.0.8"
+    warning "^3.0.0"
+
 carbon-icons@7.0.7, carbon-icons@^7.0.7:
   version "7.0.7"
   resolved "https://registry.yarnpkg.com/carbon-icons/-/carbon-icons-7.0.7.tgz#ebafe3e9fa25df973796a8eca06d8a7c501cc610"
   integrity sha512-3vgkdXJRgCViCrH3fLUdyAXo0I8wmohO6QETv7vWFx6yc7s+SirWFBSFL38zUx4MHtR8iTxIlLEzkeU6FlFtXg==
+
+carbon-icons@^6.0.4:
+  version "6.3.2"
+  resolved "https://registry.yarnpkg.com/carbon-icons/-/carbon-icons-6.3.2.tgz#2cc942225442b0d5c02593e344b50c7ec22edf28"
+  integrity sha512-6c2xYOxvHP5iJGNsuqC/YclcWn0EpBHb+awmoQLgDcIyOThAtVB8RpIRYeLFB6PbJk4P0sqNpFggwY/o/cCj3g==
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -2158,6 +2197,11 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
+
+classnames@2.2.5:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
+  integrity sha1-+zgB1FNGdknvNgPH1hoCvRKb3m0=
 
 classnames@2.2.6, classnames@2.x, classnames@^2.2.5, classnames@^2.2.6:
   version "2.2.6"
@@ -3575,6 +3619,21 @@ findup-sync@3.0.0:
     is-glob "^4.0.0"
     micromatch "^3.0.4"
     resolve-dir "^1.0.1"
+
+flatpickr@2.6.3:
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-2.6.3.tgz#457357532deb135f3da64b425bf4435737961564"
+  integrity sha1-RXNXUy3rE189pktCW/RDVzeWFWQ=
+
+flatpickr@4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.3.0.tgz#9cc3aa8c9a2bde1ea431be0f4a74f40f9bad79e3"
+  integrity sha512-HQ2I2rNE5TaHtTmRmAWUbFTZbT3bCs3x7Kn6sRNEVeDVrg75X3nUJi8DvnWvQVgeq2wk9teT8p+/tenfC9UI0w==
+
+flatpickr@4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.5.0.tgz#f72c7164a1c24e3ad419e3b2209d1a2d3604724a"
+  integrity sha512-7AfaM2BVyQmFW4uBpzgoNeRUr6EZlvEh4Pnj298rEsHBq8LIZnPgRaesLORir7dATETUvoLkhrfXZdmNssma+A==
 
 flatpickr@4.6.1:
   version "4.6.1"

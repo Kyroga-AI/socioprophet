@@ -114,17 +114,9 @@ class UIFrame extends Component {
       <HeaderContainer
         render={({ isSideNavExpanded, onClickSideNavExpand }) => (
 
-
           <Header aria-label="SocioProphet Platform">
 
             <SkipToContent />
-
-            <HeaderMenuButton
-              aria-label="Open menu"
-              isCollapsible
-              onClick={onClickSideNavExpand}
-              isActive={isSideNavExpanded}
-            />
 
             <HeaderName href="#" prefix="">
               SocioProphet
@@ -194,8 +186,13 @@ class UIFrame extends Component {
             </HeaderNavigation>
 
             <HeaderGlobalBar>
-              <HeaderGlobalAction aria-label="App Switcher" onClick={onClickSideNavExpand}
-              isActive={isSideNavExpanded}>
+
+              <HeaderGlobalAction aria-label="App Switcher">
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18 18h3v3h-3zm-7.5 0h3v3h-3zM3 18h3v3H3zm15-7.5h3v3h-3zm-7.5 0h3v3h-3zm-7.5 0h3v3H3zM18 3h3v3h-3zm-7.5 0h3v3h-3zM3 3h3v3H3z"></path>
+                </svg>
+              </HeaderGlobalAction>
+              <HeaderGlobalAction aria-label="App Switcher" onClick={onClickSideNavExpand} isActive={isSideNavExpanded}>
                 <svg width="20" height="20"><title>user</title><path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path><path d="M10 9.841a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path></svg>
               </HeaderGlobalAction>
             </HeaderGlobalBar>
@@ -249,88 +246,44 @@ class UIFrame extends Component {
                   </button>
 
               </Switcher>
-            </HeaderPanel>`
+            </HeaderPanel>
 
-            <SideNav
-              aria-label="Side navigation"
-              isRail
-              expanded={isSideNavExpanded}>
+            <SideNav aria-label="Side navigation" isRail>
 
               <SideNavItems className="black">
 
                 <SideNavMenu className="link" renderIcon={DashboardIcon} title="User Dashboard">
-                  <SideNavMenuItem href="#">
-                    <span className="link">Link</span>
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                </SideNavMenu>
 
-                <SideNavMenu renderIcon={ResourceIcon} title="Portfolios & Watch Lists">
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                </SideNavMenu>
-
-                <SideNavMenu renderIcon={ChartIcon} title="Algorithmic Trading">
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
                 </SideNavMenu>
 
                 <SideNavMenu renderIcon={EconomicProphetIcon} title="Economic Prophet">
                   <SideNavMenuItem href="#">
-                    Link
+                    Portfolios & Watch Lists
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Link
+                    Algorithmic Trading
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Link
+                    Social Profit
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu renderIcon={Fade16} title="Ontology & Epistemology">
+                <SideNavMenu renderIcon={ChartIcon} title="Analytics Studio">
                   <SideNavMenuItem href="#">
-                    Link
+                    Behavioral Analytics
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Link
+                    Entity Analytics
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                </SideNavMenu>
-
-                <SideNavMenu renderIcon={SchematicsIcon} title="NLP & Data Extraction">
-                  <SideNavMenuItem href="#">
-                    Link
+                    Sentiment Analytics
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
+                    GeoSpatial Analytics
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu renderIcon={Fade16} title="Sentiment Analytics">
+                <SideNavMenu renderIcon={FolderIcon} title="Data Studio">
                   <SideNavMenuItem href="#">
                     Link
                   </SideNavMenuItem>
@@ -342,7 +295,7 @@ class UIFrame extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu renderIcon={Fade16} title="Entity Analytics">
+                <SideNavMenu renderIcon={SimIcon} title="Developer Studio">
                   <SideNavMenuItem href="#">
                     Link
                   </SideNavMenuItem>
@@ -354,51 +307,15 @@ class UIFrame extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu renderIcon={Fade16} title="Behavioral Analytics">
+                <SideNavMenu renderIcon={SchematicsIcon} title="AI | Model Studio">
                   <SideNavMenuItem href="#">
-                    Link
+                    Ontology & Epistemology
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Link
+                    NLP & Info Extraction
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                </SideNavMenu>
-
-                <SideNavMenu renderIcon={SimIcon} title="Simulations">
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                </SideNavMenu>
-
-                <SideNavMenu renderIcon={FolderIcon} title="Developer Studio">
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                </SideNavMenu>
-
-                <SideNavMenu renderIcon={SwitcherIcon} title="AI Studio">
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Link
+                    Simulations
                   </SideNavMenuItem>
                 </SideNavMenu>
               </SideNavItems>
@@ -407,7 +324,6 @@ class UIFrame extends Component {
 
           </Header>
         )}
-
       />
     );
   }
