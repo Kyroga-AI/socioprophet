@@ -13,7 +13,7 @@
   padding-left: 16.5rem;
   color: black;
 }
-/*
+
 .sub--ticker {
   background-color: #eeeeee;
   position: fixed;
@@ -24,7 +24,7 @@
   color: #000;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: subpixel-antialiased;
-} */
+}
 
 .ticker {
   line-height: 14px;
