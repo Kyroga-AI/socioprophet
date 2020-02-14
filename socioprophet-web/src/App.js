@@ -14,6 +14,7 @@ import Register from "./components/landing/Register";
 import Login from "./components/landing/Login";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import UInterface from "./components/postAuth/UInterface";
+import PopoutTerminal from "./components/postAuth/components/dashboardComponents/PopoutTerminal";
 
 import "./App.scss";
 
@@ -47,6 +48,7 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Switch>
               <PrivateRoute exact path="/dashboard" component={UInterface} />
+              <PrivateRoute exact path="/terminal" component={PopoutTerminal} />
             </Switch>
           </div>
         </Router>

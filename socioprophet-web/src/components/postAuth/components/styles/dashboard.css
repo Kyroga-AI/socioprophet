@@ -1,3 +1,20 @@
-.splitter--pane2 {
+.splitter__hide .layout-pane {
+  flex-basis: 76.19px;
+}
+
+.splitter__show .layout-pane {
+  flex: 0 0 auto;
+}
+
+.toggle-btn {
+  position: absolute;
+  right: 25px;
+  width: 25px;
+  height: 18px;
+  margin-top: 6px;
+  z-index: 100;
+}
+
+.splitter--secondary{
   height: 100%;
 }

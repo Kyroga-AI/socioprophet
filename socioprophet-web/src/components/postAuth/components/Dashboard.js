@@ -5,24 +5,34 @@ import 'react-splitter-layout/lib/index.css';
 
 import Terminal from "./dashboardComponents/Terminal";
 
-// will remove from here into separate component soon
-
 import "./styles/dashboard.css";
 
 class Dashboard extends Component {
+  constructor(props) {
+    super(props);
+    this.toggleBar = this.toggleBar.bind(this);
+    this.state = {
+      barVisible: false
+    };
+  }
+
+  toggleBar() {
+    this.setState(state => ({ barVisible: !state.barVisible }));
+  }
+
   render() {
     return (
       <SplitterLayout
+        customClassName={this.state.barVisible ? "splitter__show" : "splitter__hide"}
         vertical={true}
-        secondaryInitialSize={82}
-        secondaryMinSize={82}
       >
-        <div className="splitter--pane1">
-          <div>
-            <SubHeader />
-          </div>
+        <div className="splitter--primary">
+          <SubHeader />
         </div>
-        <div className="splitter--pane2">
+        <div className="splitter--secondary">
+          <button className="toggle-btn" type="button" onClick={this.toggleBar}>
+            ^
+          </button>
           <Terminal />
         </div>
       </SplitterLayout>

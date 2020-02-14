@@ -1,23 +1,108 @@
-.drawer {
-  width: calc(100% - 3rem);
-  margin-left: 3rem;
+/* styling neccessary for popout terminal related stuff */
+.popout-container {
+  position: absolute;
+  width: 100%;
   height: 100%;
+}
+
+.popout-btn {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  margin-bottom: 4px;
+
+  float: right;
+  margin-right: 80px;
+}
+
+.container {
+  height: 100%;
+}
+
+.drawer {
+  margin-left: 3rem;
+  width: calc(100% - 3rem);
+  height: 100%;
+  position: relative;
   overflow: hidden;
 }
 
 .drawer--bar {
   position: relative;
+  height: 26.19px;
   width: 100%;
-  height: 32px;
-  background-color: #000;
-  border-bottom: 1px solid #fff;
+  background-color: #111518;
+  box-shadow: rgba(0, 0, 0, 0.298039) 0px 0px 3px;
+  cursor: row-resize;
 }
 
 .drawer--bar--search {
+  position: absolute;
+  color: #fff;
+  text-align: center;
   width: 30%;
+  background-color: transparent;
   margin-left: 35%;
 }
 
-.drawer--terminal {
+.drawer--content {
+  position: relative;
+  background-color: rgb(28, 32, 34);
   height: 100%;
+  width: 100%;
+
+}
+
+.drawer--content--tab {
+  position: relative;
+  display: flex;
+  background-color: rgb(17, 21, 24);
+  width: 100%;
+  text-align: center;
+  align-items: center;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.drawer--content--tab--heading {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  background-color: rgb(28, 32, 34);
+  color: rgba(255, 255, 255, 0.901961);
+  font-weight: 400;
+  transition: all 0.2s ease;
+  padding: 0.35rem 0.75rem;
+  border-bottom: 1px solid transparent;
+  border-right: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.drawer--content--tab--plus {
+  background-color: transparent;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  min-width: 45px;
+  width: 45px;
+  height: 100%;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.498039);
+  transition: all 0.3s ease;
+  border-width: 0px;
+  border-style: initial;
+  border-color: initial;
+  border-image: initial;
+  outline: 0px;
+  padding: 0px;
+}
+
+.drawer--content--terminal {
+  position: absolute;
+  display: block;
+  height: 100%;
+  width: 100%;
+  padding-left: 20px;
+  padding-top: 5px;
 }
