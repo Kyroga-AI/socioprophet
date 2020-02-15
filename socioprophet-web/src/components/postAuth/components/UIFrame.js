@@ -35,9 +35,21 @@ class UIFrame extends Component {
 
   render() {
 
+    const Home = () => (
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16.61 2.21a1 1 0 0 0-1.24 0L1 13.42 2.24 15 4 13.62V26a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V13.63L29.76 15 31 13.43zM18 26h-4v-8h4zm2 0v-8a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v8H6V12.06l10-7.79 10 7.8V26z"></path>
+      </svg>
+    );
+
     const Fade16 = () => (
       <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
         <path d="M8.24 25.14L7 26.67a14 14 0 0 0 4.18 2.44l.68-1.88a12 12 0 0 1-3.62-2.09zm-4.05-7.07l-2 .35A13.89 13.89 0 0 0 3.86 23l1.73-1a11.9 11.9 0 0 1-1.4-3.93zm7.63-13.31l-.68-1.88A14 14 0 0 0 7 5.33l1.24 1.53a12 12 0 0 1 3.58-2.1zM5.59 10L3.86 9a13.89 13.89 0 0 0-1.64 4.54l2 .35A11.9 11.9 0 0 1 5.59 10zM16 2v2a12 12 0 0 1 0 24v2a14 14 0 0 0 0-28z" />
+      </svg>
+    );
+
+    const Projects = () => (
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M26 2H8a2 2 0 0 0-2 2v4H4v2h2v5H4v2h2v5H4v2h2v4a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 26H8v-4h2v-2H8v-5h2v-2H8v-5h2V8H8V4h18z"></path><path d="M14 8h8v2h-8zm0 7h8v2h-8zm0 7h8v2h-8z"></path>
       </svg>
     );
 
@@ -201,7 +213,22 @@ class UIFrame extends Component {
 
               <SideNavItems className="black">
 
+                <SideNavMenu className="invert" renderIcon={Home} title="Home">
+                </SideNavMenu>
+
                 <SideNavMenu className="invert" renderIcon={DashboardIcon} title="User Dashboard">
+                </SideNavMenu>
+
+                <SideNavMenu className="invert" renderIcon={Projects} title="Projects Portfolio">
+                  <SideNavMenuItem href="#">
+                    New Project
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Community Projects
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Trending Projects
+                  </SideNavMenuItem>
                 </SideNavMenu>
 
                 <SideNavMenu className="invert" renderIcon={EconomicProphetIcon} title="Economic Prophet">
@@ -218,28 +245,32 @@ class UIFrame extends Component {
 
                 <SideNavMenu className="invert" renderIcon={ChartIcon} title="Analytics Studio">
                   <SideNavMenuItem href="#">
-                    Behavioral Analytics
+                    Trending
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Entity Analytics
-                  </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Sentiment Analytics
+                    Charts & Visualisations
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
                     GeoSpatial Analytics
                   </SideNavMenuItem>
+
                 </SideNavMenu>
 
                 <SideNavMenu className="invert" renderIcon={FolderIcon} title="Data Studio">
                   <SideNavMenuItem href="#">
-                    Link
+                    My Data
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Link
+                    Community Data
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Link
+                    Data Marketplace
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Data Environment
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Storage Settings
                   </SideNavMenuItem>
                 </SideNavMenu>
 
@@ -263,7 +294,13 @@ class UIFrame extends Component {
                     NLP & Info Extraction
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
-                    Simulations
+                    Assets
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Deployment
+                  </SideNavMenuItem>
+                  <SideNavMenuItem href="#">
+                    Inventory
                   </SideNavMenuItem>
                 </SideNavMenu>
               </SideNavItems>
