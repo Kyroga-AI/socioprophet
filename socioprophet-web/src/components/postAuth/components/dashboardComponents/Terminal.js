@@ -27,34 +27,21 @@ class Terminal extends Component {
 
   render() {
     if (this.state.isPoppedOut) {
+      var popout = <button className="popout-btn" onClick={this.popoutClosed}>&#8690;</button>
       return (
         <div className="container">
           <Popout url='/terminal' title='Window title' onClosing={this.popoutClosed} />
           <div className="drawer">
             <div className="drawer--bar">
+              <strong>{popout}</strong>
               <div className="drawer--bar--search">
-                <Search
-                  closeButtonLabelText="Clear search input"
-                  defaultValue=""
-                  id="search-1"
-                  labelText="Search"
-                  name=""
-                  onChange={function noRefCheck(){}}
-                  placeHolderText="Search..."
-                  size="sm"
-                  type="text"
-                  light={true}
-                />
               </div>
             </div>
             <div className="drawer--content">
               <div className="drawer--content--tab">
-                <div className="drawer--content--tab--heading">yarn start</div>
-                <button className="drawer--content--tab--plus">
-                  <svg fill="currentColor" preserveAspectRatio="xMidYMid meet" height="1em" width="1em" viewBox="0 0 40 40">
-                    <g><path d="m31.6 21.6h-10v10h-3.2v-10h-10v-3.2h10v-10h3.2v10h10v3.2z"></path></g>
-                  </svg>
-                </button>
+                <div className="tablist">
+
+                </div>
               </div>
               <div className="drawer--content--terminal">
                 <ReactTerminal theme={{
@@ -72,12 +59,12 @@ class Terminal extends Component {
         </div>
       );
     } else {
-      var popout = <p className="popout-btn"><button onClick={this.popout}>&#11016;</button></p>
+      var popout = <button className="popout-btn" onClick={this.popout}>&#8689;</button>
       return (
         <div className="drawer">
           <div className="drawer--bar">
             <strong>{popout}</strong>
-            <div className="drawer--bar--search">
+            <div className={this.props.barVisible ? "drawer--bar--hidden" : "drawer--bar--search"}>
               <Search
                 closeButtonLabelText="Clear search input"
                 defaultValue=""
@@ -85,7 +72,7 @@ class Terminal extends Component {
                 labelText="Search"
                 name=""
                 onChange={function noRefCheck(){}}
-                placeHolderText="Search..."
+                placeHolderText="/command or search..."
                 size="sm"
                 type="text"
                 light={false}
@@ -94,12 +81,21 @@ class Terminal extends Component {
           </div>
           <div className="drawer--content">
             <div className="drawer--content--tab">
-              <div className="drawer--content--tab--heading">yarn start</div>
-              <button className="drawer--content--tab--plus">
-                <svg fill="currentColor" preserveAspectRatio="xMidYMid meet" height="1em" width="1em" viewBox="0 0 40 40">
-                  <g><path d="m31.6 21.6h-10v10h-3.2v-10h-10v-3.2h10v-10h3.2v10h10v3.2z"></path></g>
-                </svg>
-              </button>
+              <div className="tab-top-bar">
+                <div className="tab-bar-container">
+                  <div>
+                    <div role="tab" className="tab">
+                      Session 1
+                      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" className="tabs__close"><path d="M12 4.7l-.7-.7L8 7.3 4.7 4l-.7.7L7.3 8 4 11.3l.7.7L8 8.7l3.3 3.3.7-.7L8.7 8z"></path></svg>
+                      <button title="Open a new session" tabIndex="0" className="add-session-btn">
+                        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true"><path d="M17 15V7h-2v8H7v2h8v8h2v-8h8v-2h-8z"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="ink-bar">
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="drawer--content--terminal">
               <ReactTerminal theme={{

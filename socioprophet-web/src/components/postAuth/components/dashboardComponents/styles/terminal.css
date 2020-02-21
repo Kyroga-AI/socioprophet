@@ -7,12 +7,16 @@
 
 .popout-btn {
   position: relative;
-  width: 10px;
-  height: 10px;
-  margin-bottom: 4px;
-
+  width: 20px;
+  height: 20px;
+  font-size: 13px;
   float: right;
-  margin-right: 80px;
+  margin-right: 60px;
+  margin-top: 2px;
+  background-color: #fff;
+  border: 0;
+  -webkit-filter: invert(100%);
+          filter: invert(100%);
 }
 
 .container {
@@ -31,7 +35,7 @@
   position: relative;
   height: 26.19px;
   width: 100%;
-  background-color: #111518;
+  background-color: #000;
   box-shadow: rgba(0, 0, 0, 0.298039) 0px 0px 3px;
   cursor: row-resize;
 }
@@ -45,12 +49,21 @@
   margin-left: 35%;
 }
 
+.drawer--bar--hidden {
+  position: absolute;
+  color: #fff;
+  text-align: center;
+  width: 30%;
+  background-color: transparent;
+  margin-left: 35%;
+  z-index: -100;
+}
+
 .drawer--content {
   position: relative;
   background-color: rgb(28, 32, 34);
   height: 100%;
   width: 100%;
-
 }
 
 .drawer--content--tab {
@@ -58,10 +71,98 @@
   display: flex;
   background-color: rgb(17, 21, 24);
   width: 100%;
-  text-align: center;
   align-items: center;
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.7);
+}
+
+.tab-top-bar {
+  border-top: 1px solid #d3d3d3;
+  border-bottom: 0!important;
+  box-shadow: 0 -1px 4px rgba(0,0,0,.12);
+  background-color: #fff;
+  padding: 0 8px;
+  margin: -1px 0 0;
+  align-items: center;
+  height: 25px;
+  width: 100%;
+  line-height: 0;
+}
+
+.tab-bar-container {
+  position: relative;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-bottom: -1px;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: nowrap;
+  zoom: 1;
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.tab {
+  position: relative;
+  margin-left: 0;
+  margin-right: 15px;
+  font-weight: 400;
+  line-height: 26px;
+  padding: 0 6px;
+  color: #1890ff;
+  display: flex;
+  align-items: center;
+}
+
+.tabs__close {
+  border: 1px solid transparent;
+  border-radius: 50%;
+  line-height: 16px;
+  margin-left: 5px;
+  margin-right: 0!important;
+  color: rgba(0,0,0,.45);
+  font-size: 12px;
+  vertical-align: middle;
+  transition: all .3s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.add-session-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  overflow: visible;
+  outline: 1px solid transparent;
+  outline-offset: -4px;
+  border: 1px solid transparent;
+  background: transparent;
+  vertical-align: middle;
+  transition: all .3s;
+  padding: 2px;
+  line-height: 26px;
+  height: 26px;
+  min-height: 26px;
+  padding-left: 15px;
+}
+
+.ink-bar {
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  box-sizing: border-box;
+  height: 1px;
+  background-color: #1890ff;
+  transform-origin: 0 0;
+  display: block;
+  width: 93px;
+  transform: translate3d(0px, 0px, 0px);
 }
 
 .drawer--content--tab--heading {

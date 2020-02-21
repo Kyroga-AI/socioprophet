@@ -21,6 +21,7 @@ import {
   SwitcherDivider,
   SideNav,
   SideNavItems,
+  SideNavLink,
   SideNavMenu,
   SideNavMenuItem,
 } from "carbon-components-react/lib/components/UIShell";
@@ -208,16 +209,18 @@ class UIFrame extends Component {
 
               </Switcher>
             </HeaderPanel>
-
+            <div className="scroll">
             <SideNav aria-label="Side navigation" isRail>
 
               <SideNavItems className="black">
 
-                <SideNavMenu className="invert" renderIcon={Home} title="Home">
-                </SideNavMenu>
+                <SideNavLink className="invert" renderIcon={Home} href="#">
+                  Home
+                </SideNavLink>
 
-                <SideNavMenu className="invert" renderIcon={DashboardIcon} title="User Dashboard">
-                </SideNavMenu>
+                <SideNavLink className="invert" renderIcon={DashboardIcon} href="#">
+                  User Dashboard
+                </SideNavLink>
 
                 <SideNavMenu className="invert" renderIcon={Projects} title="Projects Portfolio">
                   <SideNavMenuItem href="#">
@@ -306,7 +309,7 @@ class UIFrame extends Component {
               </SideNavItems>
 
             </SideNav>
-
+            </div>
           </Header>
         )}
       />

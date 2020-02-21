@@ -8,8 +8,10 @@ body, div {
 }
 
 .black {
+  position: relative;
   background-color: black;
   color: white;
+  margin-bottom: 3rem;
 }
 
 .transform {
