@@ -33,6 +33,24 @@
   transform: rotate(180deg);
 }
 
+.splitter--primary--pages {
+  position: relative;
+  text-align: center;
+  top: 8rem;
+  left: 35%;
+  height: 100px;
+  width: 30%;
+  z-index: 1000;
+  color: #000;
+
+  border: 3px solid black;
+}
+
+.splitter--primary--pages a {
+  color: #000;
+  font-size: 14px;
+}
+
 .splitter--secondary{
   height: 100%;
 }

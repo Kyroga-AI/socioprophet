@@ -3,7 +3,9 @@ import SubHeader from "./dashboardComponents/SubHeader";
 import SplitterLayout from 'react-splitter-layout';
 import 'react-splitter-layout/lib/index.css';
 
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Terminal from "./dashboardComponents/Terminal";
+import News from "./dashboardComponents/pages/News";
 
 import "./styles/dashboard.css";
 

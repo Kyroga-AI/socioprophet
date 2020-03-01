@@ -9,7 +9,7 @@ body, div {
 
 .black {
   position: relative;
-  background-color: black;
+  background-color: #000;
   color: white;
   margin-bottom: 3rem;
 }

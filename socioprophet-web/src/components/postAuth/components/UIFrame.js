@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from "react-dom";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { render } from "react-dom";
 import { connect } from "react-redux";
@@ -29,6 +30,7 @@ import {
 import "./styles/frame.css";
 
 class UIFrame extends Component {
+
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();

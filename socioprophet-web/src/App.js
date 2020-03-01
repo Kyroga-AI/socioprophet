@@ -15,6 +15,7 @@ import Login from "./components/landing/Login";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import UInterface from "./components/postAuth/UInterface";
 import PopoutTerminal from "./components/postAuth/components/dashboardComponents/PopoutTerminal";
+import News from "./components/postAuth/components/dashboardComponents/pages/News";
 
 import "./App.scss";
 

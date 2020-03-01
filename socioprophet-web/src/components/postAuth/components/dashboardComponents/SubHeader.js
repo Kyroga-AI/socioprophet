@@ -3,6 +3,8 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbSkelton } from "carbon-components
 
 import Ticker from 'react-ticker';
 
+import News from "./pages/News";
+
 import "./styles/subHeader.css";
 
 class SubHeader extends Component {
@@ -18,7 +20,7 @@ class SubHeader extends Component {
             )}
           </Ticker>
           <div className="sub--menu">
-            
+
           </div>
         </div>
       </div>
