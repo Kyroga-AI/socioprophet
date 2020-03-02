@@ -1,3 +1,6 @@
+body {
+  overflow: scroll;
+}
 div, nav, li {
   margin: 0;
   padding: 0;

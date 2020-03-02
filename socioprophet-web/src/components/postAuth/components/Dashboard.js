@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Terminal from "./dashboardComponents/Terminal";
 import News from "./dashboardComponents/pages/News";
 
+import Dock from "react-osx-dock";
+
 import "./styles/dashboard.css";
 
 class Dashboard extends Component {

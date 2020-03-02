@@ -48,6 +48,7 @@
     "react-dom": "^16.9.0",
     "react-hamburger-menu": "^1.1.1",
     "react-helmet": "^5.2.1",
+    "react-osx-dock": "^1.0.0",
     "react-popout": "^1.0.2",
     "react-redux": "^7.1.1",
     "react-router-dom": "^5.0.1",

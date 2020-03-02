@@ -5,13 +5,36 @@
   position: absolute;
   bottom: 0;
   background-color: #000;
-  /* border-bottom: .1px solid grey; */
+  border-bottom: .1px solid grey;
   border-top: .1px solid grey;
+  display: flex;
+  justify-content: center;
 }
 
-.uifooter--fish {
-  float: right;
+.uifooter--dock {
+  display: hidden;
+}
+
+.uifooter--dock:hover {
+  margin-left: 3rem;
   position: relative;
-  margin-right: 20px;
-  padding-top: 10px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-self: flex-end;
+  z-index: 0;
+  color: teal;
+  border-bottom: 2px solid grey;
+}
+
+.uifooter--dock:hover .uifooter--dock--item {
+  margin: 0;
+  bottom: 1rem;
+}
+
+.uifooter--dock--item {
+  font-size: 0px;
+  margin-top: 2rem;;
+  bottom: 0;
+  height: 0px;
+  width: 0px;
 }

@@ -139,7 +139,7 @@ class UIFrame extends Component {
 
             <HeaderNavigation aria-label="SocioProphet Platform">
 
-              <HeaderMenuItem href="#">News & Events</HeaderMenuItem>
+              <HeaderMenuItem href="/news">News & Events</HeaderMenuItem>
               <HeaderMenuItem href="#">Law & Regulation</HeaderMenuItem>
               <HeaderMenuItem href="#">People & Society</HeaderMenuItem>
               <HeaderMenuItem href="#">Economy & Industrys</HeaderMenuItem>

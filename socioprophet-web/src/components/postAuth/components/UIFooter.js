@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 
+import Dock from "react-osx-dock";
 
 import "./styles/footer.css";
 
@@ -8,10 +9,14 @@ class UIFooter extends Component {
     return (
       <div>
         <footer className="uifooter">
-          <div className="uifooter--fish">
+            <Dock width={800} magnification={0.5} magnifyDirection="up" className="uifooter--dock">
+              {["finder", "settings", "terminal", "atom", "slack", "spotify", "trash"].map((item, index) => (
+                <Dock.Item className="uifooter--dock--item" key={index} onClick={() => console.log(item)}>
+                  <img src={`src/components/postAuth/images/dock-images/${item}.jpg`} width="40" height="40"/>
+                </Dock.Item>
+              ))}
+            </Dock>
 
-          <img src="src/components/postAuth/images/fish.gif" alt="fish icon" width="30px" height="24px"/>
-          </div>
         </footer>
       </div>
     );

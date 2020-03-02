@@ -6640,6 +6640,11 @@ react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
+react-osx-dock@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-osx-dock/-/react-osx-dock-1.0.0.tgz#8e2de4e5606d492e568f7f790bbf7b0e06ee7229"
+  integrity sha1-ji3k5WBtSS5Wj395C797Dgbucik=
+
 react-overlays@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-2.1.0.tgz#3671cadab085a519c90a51b9b1402a70281e31d4"

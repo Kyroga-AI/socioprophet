@@ -50,6 +50,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute exact path="/dashboard" component={UInterface} />
               <PrivateRoute exact path="/terminal" component={PopoutTerminal} />
+              <PrivateRoute exact path="/news" component={News} />
             </Switch>
           </div>
         </Router>
