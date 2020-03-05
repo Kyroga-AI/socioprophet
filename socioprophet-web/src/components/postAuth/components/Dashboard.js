@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import SubHeader from "./dashboardComponents/SubHeader";
+import Content from "./dashboardComponents/Content";
 import SplitterLayout from 'react-splitter-layout';
 import 'react-splitter-layout/lib/index.css';
-
+import { withRouter } from "react-router";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Terminal from "./dashboardComponents/Terminal";
 import News from "./dashboardComponents/pages/News";
-
 import Dock from "react-osx-dock";
 
 import "./styles/dashboard.css";
@@ -31,7 +30,7 @@ class Dashboard extends Component {
         vertical={true}
       >
         <div className="splitter--primary">
-          <SubHeader />
+          <Content />
         </div>
         <div className="splitter--secondary">
           <button className={this.state.barVisible ? "toggle-down" : "toggle-up"} type="button" onClick={this.toggleBar}>

@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import "../components/layout/style-landing.css";
-import Dashboard from "../components/dashboard/Dashboard";
 
-class Dashboard extends Component { 
+import "./styles/markets.css";
+class Markets extends Component {
   render() {
-    return ( 
-    )
+    return (
+      <div className="dashboard--markets">
+        <h1>Capital & Markets</h1>
+      </div>
+    );
   }
 }
 

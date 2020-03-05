@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import ReactDOM from "react-dom";
+import ReactDOM, { render } from "react-dom";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { render } from "react-dom";
 import { connect } from "react-redux";
 import { logoutUser } from "../../../actions/authActions";
 import {
@@ -125,7 +124,7 @@ class UIFrame extends Component {
     const { user } = this.props.auth;
 
     return (
-
+      <div>
       <HeaderContainer
         render={({ isSideNavExpanded, onClickSideNavExpand }) => (
 
@@ -139,13 +138,27 @@ class UIFrame extends Component {
 
             <HeaderNavigation aria-label="SocioProphet Platform">
 
-              <HeaderMenuItem href="/news">News & Events</HeaderMenuItem>
-              <HeaderMenuItem href="#">Law & Regulation</HeaderMenuItem>
-              <HeaderMenuItem href="#">People & Society</HeaderMenuItem>
-              <HeaderMenuItem href="#">Economy & Industrys</HeaderMenuItem>
-              <HeaderMenuItem href="#">Capital & Markets</HeaderMenuItem>
-              <HeaderMenuItem href="#">Weather & Natural Resources</HeaderMenuItem>
-              <HeaderMenuItem href="#">Data & Analytics</HeaderMenuItem>
+              <HeaderMenuItem>
+                <Link className="header--link" to="/news">News & Events</Link>
+              </HeaderMenuItem>
+              <HeaderMenuItem>
+                <Link className="header--link" to="/law">Law & Regulation</Link>
+              </HeaderMenuItem>
+              <HeaderMenuItem>
+                <Link className="header--link" to="/society">People & Society</Link>
+              </HeaderMenuItem>
+              <HeaderMenuItem>
+                <Link className="header--link" to="/industry">Economy & Industries</Link>
+              </HeaderMenuItem>
+              <HeaderMenuItem>
+                <Link className="header--link" to="/markets">Capital & Markets</Link>
+              </HeaderMenuItem>
+              <HeaderMenuItem>
+                <Link className="header--link" to="/weather">Weather & Natural Resources</Link>
+              </HeaderMenuItem>
+              <HeaderMenuItem>
+                <Link className="header--link" to="/data">Data & Analytics</Link>
+              </HeaderMenuItem>
 
             </HeaderNavigation>
 
@@ -314,7 +327,9 @@ class UIFrame extends Component {
             </div>
           </Header>
         )}
+
       />
+    </div>
     );
   }
 }

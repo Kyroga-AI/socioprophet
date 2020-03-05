@@ -26,3 +26,10 @@ body, div {
 .link {
   color: #fff;
 }
+
+.header--link {
+  color: #c6c6c6;
+  text-decoration: none;
+  transition: background-color 110ms, border-color 110ms, color 110ms;
+  user-select: none;
+}

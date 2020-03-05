@@ -48,11 +48,11 @@ class App extends Component {
             <Route exact path="/register" component={ComingSoon} />
             <Route exact path="/login" component={Login} />
             <Switch>
-              <PrivateRoute exact path="/dashboard" component={UInterface} />
+              <PrivateRoute path="/:id" component={UInterface} />
               <PrivateRoute exact path="/terminal" component={PopoutTerminal} />
-              <PrivateRoute exact path="/news" component={News} />
             </Switch>
           </div>
+
         </Router>
       </Provider>
     );

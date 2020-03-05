@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import "../components/layout/style-landing.css";
-import Dashboard from "../components/dashboard/Dashboard";
 
-class Law extends Component { 
+import "./styles/law.css";
+class Law extends Component {
   render() {
-    return ( 
-    )
+    return (
+      <div className="dashboard--law">
+        <h1>Law & Regulation</h1>
+      </div>
+    );
   }
 }
 
