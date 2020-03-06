@@ -10,6 +10,7 @@ import Industry from "./pages/Industry";
 import Markets from "./pages/Markets";
 import Weather from "./pages/Weather";
 import Data from "./pages/Data";
+import Projects from "./pages/Projects";
 import DashboardHome from "./pages/DashboardHome";
 
 import { useParams } from "react-router-dom";
@@ -135,6 +136,23 @@ export default function Content() {
           </div>
         </div>
         <Data />
+      </div>
+    );
+  } else if (id === "projects") {
+    return (
+      <div>
+        <div className="sub">
+          <div className="sub--ticker">
+            <Ticker>
+              {({ index }) => (
+                <div className="ticker">
+                  <p><span className="news">News</span> / IM's #{index}!</p>
+                </div>
+              )}
+            </Ticker>
+          </div>
+        </div>
+        <Projects />
       </div>
     );
   } else {

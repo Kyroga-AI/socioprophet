@@ -33,3 +33,8 @@ body, div {
   transition: background-color 110ms, border-color 110ms, color 110ms;
   user-select: none;
 }
+
+.sidenav--link {
+  text-decoration: none;
+  color: #525252;
+}

@@ -225,7 +225,10 @@ class UIFrame extends Component {
               </Switcher>
             </HeaderPanel>
             <div className="scroll">
-            <SideNav aria-label="Side navigation" isRail>
+            <SideNav
+              aria-label="Side navigation"
+              isRail
+              >
 
               <SideNavItems className="black">
 
@@ -237,19 +240,19 @@ class UIFrame extends Component {
                   User Dashboard
                 </SideNavLink>
 
-                <SideNavMenu className="invert" renderIcon={Projects} title="Projects Portfolio">
-                  <SideNavMenuItem href="#">
+                <SideNavMenu className="invert" defaultExpanded={true} renderIcon={Projects} title="Projects Portfolio">
+                  <SideNavMenuItem href="/projects">
                     New Project
                   </SideNavMenuItem>
                   <SideNavMenuItem href="#">
                     Community Projects
                   </SideNavMenuItem>
-                  <SideNavMenuItem href="#">
-                    Trending Projects
+                  <SideNavMenuItem>
+                    <Link className="sidenav--link" to="/news">Trending Projects</Link>
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu className="invert" renderIcon={EconomicProphetIcon} title="Economic Prophet">
+                <SideNavMenu className="invert" defaultExpanded={true} renderIcon={EconomicProphetIcon} title="Economic Prophet">
                   <SideNavMenuItem href="#">
                     Portfolios & Watch Lists
                   </SideNavMenuItem>
@@ -261,7 +264,7 @@ class UIFrame extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu className="invert" renderIcon={ChartIcon} title="Analytics Studio">
+                <SideNavMenu className="invert" defaultExpanded={true} renderIcon={ChartIcon} title="Analytics Studio">
                   <SideNavMenuItem href="#">
                     Trending
                   </SideNavMenuItem>
@@ -274,7 +277,7 @@ class UIFrame extends Component {
 
                 </SideNavMenu>
 
-                <SideNavMenu className="invert" renderIcon={FolderIcon} title="Data Studio">
+                <SideNavMenu className="invert" defaultExpanded={true} renderIcon={FolderIcon} title="Data Studio">
                   <SideNavMenuItem href="#">
                     My Data
                   </SideNavMenuItem>
@@ -292,7 +295,7 @@ class UIFrame extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu className="invert" renderIcon={SimIcon} title="Developer Studio">
+                <SideNavMenu className="invert" defaultExpanded={true} renderIcon={SimIcon} title="Developer Studio">
                   <SideNavMenuItem href="#">
                     Link
                   </SideNavMenuItem>
@@ -304,7 +307,7 @@ class UIFrame extends Component {
                   </SideNavMenuItem>
                 </SideNavMenu>
 
-                <SideNavMenu className="invert" renderIcon={SchematicsIcon} title="AI | Model Studio">
+                <SideNavMenu className="invert" defaultExpanded={true} renderIcon={SchematicsIcon} title="AI | Model Studio">
                   <SideNavMenuItem href="#">
                     Ontology & Epistemology
                   </SideNavMenuItem>
