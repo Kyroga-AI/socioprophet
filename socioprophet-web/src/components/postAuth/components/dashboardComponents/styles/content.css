@@ -5,40 +5,24 @@
   top: 3rem;
   z-index: 1;
 }
-/*
-.sub--menu {
-  position: absolute;
-  width: calc(100% - 5rem);
-  height: 600px;
-  left: 4rem;
-  color: black;
-  padding-top: 10rem;
-  text-align: center;
 
-  border: 2px solid #333;
-} */
-
-.sub--ticker {
-  background-color: #eeeeee;
+.sub__ticker {
   position: fixed;
-  width: 100%;
-  height: 35px;
   top: 3rem;
   left: 0;
+  width: 100%;
+  height: 35px;
+  background-color: #eeeeee;
   color: #000;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: subpixel-antialiased;
 }
 
-.ticker {
+.sub__ticker__text {
   line-height: 14px;
   font-size: 14px;
   vertical-align: middle;
   margin-left: 3em;
   padding-top: 5px;
   height: 3rem;
-}
-
-.news {
-  font-weight: 800;
 }

@@ -114,6 +114,9 @@ class Landing extends Component {
             <a className="footer__references__link" href="#" target="_blank"><strong>Terms of Use</strong></a>
             <a className="footer__references__link" href="https://gitter.im/socioprophet/" target="_blank"><strong>Support</strong></a>
           </div>
+          <div className="footer__fish">
+            <img src="src/components/landing/images/fishbowl-landing.jpg" width="45px" height="42px" />
+          </div>
           <a className="footer__copyright" href="#" target="_blank">&copy; 2020 SocioProphet</a>
         </footer>
       </div>

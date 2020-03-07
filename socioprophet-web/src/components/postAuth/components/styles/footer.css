@@ -11,11 +11,11 @@
   justify-content: center;
 }
 
-.uifooter--dock {
+.uifooter__dock {
   display: hidden;
 }
 
-.uifooter--dock:hover {
+.uifooter__dock:hover {
   margin-left: 3rem;
   position: relative;
   display: grid;
@@ -26,12 +26,12 @@
   border-bottom: 2px solid grey;
 }
 
-.uifooter--dock:hover .uifooter--dock--item {
+.uifooter__dock:hover .uifooter__dock--item {
   margin: 0;
   bottom: 1rem;
 }
 
-.uifooter--dock--item {
+.uifooter__dock--item {
   font-size: 0px;
   margin-top: 2rem;;
   bottom: 0;

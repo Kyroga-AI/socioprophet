@@ -141,12 +141,15 @@ div, nav, li {
 .main__descriptive__title {
   height: 36px;
   font-size: 25px;
-  line-height: 1.44;
+  line-height: 3;
   text-align: center;
+  font-style: italic;
 }
-.main__descriptive__description {
+
+/* .main__descriptive__description {
   font-size: 20px;
   font-weight: 400;
+  font-style: italic;
   line-height: 1.4;
   text-align: center;
   color: #fff;
@@ -154,7 +157,7 @@ div, nav, li {
   margin: auto;
   margin-top: 16px;
   height: 67px;
-}
+} */
 
 /* Main Offering Element */
 .main__offering {
@@ -193,7 +196,7 @@ div, nav, li {
   color: #5a6872;
 }
 .main__offering__card__learnmore {
-  margin-top: 8px;
+  margin-top: 50px;
   font-size: 14px;
   line-height: 1.43;
   text-align: left;
@@ -250,7 +253,17 @@ div, nav, li {
 /* Footer Copyright Element */
 .footer__copyright {
   float: right;
-  padding-right: 5%;
+  padding-right: 2%;
   color: #f4f4f4;
   text-decoration: none!important;
+}
+
+.footer__fish {
+  position: relative;
+  float: right;
+  margin-right: 10px;
+  height: 70px;
+  width: 70px;
+  padding-top: 13px;
+  opacity: 0.9;
 }

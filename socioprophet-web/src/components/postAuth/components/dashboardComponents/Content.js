@@ -23,11 +23,11 @@ export default function Content() {
     return (
       <div>
         <div className="sub">
-          <div className="sub--ticker">
+          <div className="sub__ticker">
             <Ticker>
               {({ index }) => (
-                <div className="ticker">
-                  <p><span className="news">News</span> / IM's #{index}!</p>
+                <div className="sub__ticker__text">
+                  <p><span style={{fontWeight: "800"}}>News</span> / IM's #{index}!</p>
                 </div>
               )}
             </Ticker>
@@ -40,11 +40,11 @@ export default function Content() {
     return (
       <div>
         <div className="sub">
-          <div className="sub--ticker">
+          <div className="sub__ticker">
             <Ticker>
               {({ index }) => (
-                <div className="ticker">
-                  <p><span className="news">News</span> / IM's #{index}!</p>
+                <div className="sub__ticker__text">
+                  <p><span style={{fontWeight: "800"}}>News</span> / IM's #{index}!</p>
                 </div>
               )}
             </Ticker>
@@ -57,11 +57,11 @@ export default function Content() {
     return (
       <div>
         <div className="sub">
-          <div className="sub--ticker">
+          <div className="sub__ticker">
             <Ticker>
               {({ index }) => (
-                <div className="ticker">
-                  <p><span className="news">News</span> / IM's #{index}!</p>
+                <div className="sub__ticker__text">
+                  <p><span style={{fontWeight: "800"}}>News</span> / IM's #{index}!</p>
                 </div>
               )}
             </Ticker>
@@ -74,11 +74,11 @@ export default function Content() {
     return (
       <div>
         <div className="sub">
-          <div className="sub--ticker">
+          <div className="sub__ticker">
             <Ticker>
               {({ index }) => (
-                <div className="ticker">
-                  <p><span className="news">News</span> / IM's #{index}!</p>
+                <div className="sub__ticker__text">
+                  <p><span style={{fontWeight: "800"}}>News</span> / IM's #{index}!</p>
                 </div>
               )}
             </Ticker>
@@ -91,11 +91,11 @@ export default function Content() {
     return (
       <div>
         <div className="sub">
-          <div className="sub--ticker">
+          <div className="sub__ticker">
             <Ticker>
               {({ index }) => (
-                <div className="ticker">
-                  <p><span className="news">News</span> / IM's #{index}!</p>
+                <div className="sub__ticker__text">
+                  <p><span style={{fontWeight: "800"}}>News</span> / IM's #{index}!</p>
                 </div>
               )}
             </Ticker>
@@ -108,11 +108,11 @@ export default function Content() {
     return (
       <div>
         <div className="sub">
-          <div className="sub--ticker">
+          <div className="sub__ticker">
             <Ticker>
               {({ index }) => (
-                <div className="ticker">
-                  <p><span className="news">News</span> / IM's #{index}!</p>
+                <div className="sub__ticker__text">
+                  <p><span style={{fontWeight: "800"}}>News</span> / IM's #{index}!</p>
                 </div>
               )}
             </Ticker>
@@ -125,11 +125,11 @@ export default function Content() {
     return (
       <div>
         <div className="sub">
-          <div className="sub--ticker">
+          <div className="sub__ticker">
             <Ticker>
               {({ index }) => (
-                <div className="ticker">
-                  <p><span className="news">News</span> / IM's #{index}!</p>
+                <div className="sub__ticker__text">
+                  <p><span style={{fontWeight: "800"}}>News</span> / IM's #{index}!</p>
                 </div>
               )}
             </Ticker>
@@ -142,11 +142,11 @@ export default function Content() {
     return (
       <div>
         <div className="sub">
-          <div className="sub--ticker">
+          <div className="sub__ticker">
             <Ticker>
               {({ index }) => (
-                <div className="ticker">
-                  <p><span className="news">News</span> / IM's #{index}!</p>
+                <div className="sub__ticker__text">
+                  <p><span style={{fontWeight: "800"}}>News</span> / IM's #{index}!</p>
                 </div>
               )}
             </Ticker>
@@ -159,11 +159,11 @@ export default function Content() {
     return (
       <div>
         <div className="sub">
-          <div className="sub--ticker">
+          <div className="sub__ticker">
             <Ticker>
               {({ index }) => (
-                <div className="ticker">
-                  <p><span className="news">News</span> / IM's #{index}!</p>
+                <div className="sub__ticker__text">
+                  <p><span style={{fontWeight: "800"}}>News</span> / IM's #{index}!</p>
                 </div>
               )}
             </Ticker>

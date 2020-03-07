@@ -60,20 +60,26 @@ class Landing extends Component {
           {/* Main Description Element */}
           <div className="main__descriptive">
             <div className="main__descriptive__title">
-              Explore the SocioProphet Platform
-            </div>
-            <div className="main__descriptive__description">
-              Open Collaborative Socio-Econo-Legislative Analytics.
+              Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
             </div>
           </div>
           {/* Main Offering Element */}
           <div className="main__offering">
             {/* Main Offering Card Element */}
             <div className="main__offering__card">
-              <div className="main__offering__card__name">[ SocioProphet ] News & Events</div>
+              <div className="main__offering__card__name">[ SocioProphet ] Platform</div>
               <div className="main__offering__card__description">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Duis ut justo convallis.
+                Web 2.0 platform capabilities for voting, sharing, tagging, and commenting.
+              </div>
+              <div className="main__offering__card__learnmore">
+                <a className="main__offering__card__learnmore__link" href="#" target="_blank">Learn More</a>
+              </div>
+            </div>
+            {/* Main Offering Card Element */}
+            <div className="main__offering__card">
+              <div className="main__offering__card__name">[ SocioProphet ] Community</div>
+              <div className="main__offering__card__description">
+                SocioProphet is a community for distributed infrastructure, data, analytics, and AI, built as a web 2.0 social networking platform.
               </div>
               <div className="main__offering__card__learnmore">
                 <a className="main__offering__card__learnmore__link" href="#" target="_blank">Learn More</a>
@@ -83,19 +89,7 @@ class Landing extends Component {
             <div className="main__offering__card">
               <div className="main__offering__card__name">[ SocioProphet ] Data & AI</div>
               <div className="main__offering__card__description">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Duis ut justo convallis.
-              </div>
-              <div className="main__offering__card__learnmore">
-                <a className="main__offering__card__learnmore__link" href="#" target="_blank">Learn More</a>
-              </div>
-            </div>
-            {/* Main Offering Card Element */}
-            <div className="main__offering__card">
-              <div className="main__offering__card__name">[ SocioProphet ] Society & Law</div>
-              <div className="main__offering__card__description">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Duis ut justo convallis.
+                Share your compute, storage, data, analytics, AI models and workflows.
               </div>
               <div className="main__offering__card__learnmore">
                 <a className="main__offering__card__learnmore__link" href="#" target="_blank">Learn More</a>
@@ -115,6 +109,9 @@ class Landing extends Component {
             <a className="footer__references__link" href="#" target="_blank"><strong>Privacy</strong></a>
             <a className="footer__references__link" href="#" target="_blank"><strong>Terms of Use</strong></a>
             <a className="footer__references__link" href="https://gitter.im/socioprophet/" target="_blank"><strong>Support</strong></a>
+          </div>
+          <div className="footer__fish">
+            <img src="src/components/landing/images/fishbowl-landing.jpg" width="45px" height="42px" />
           </div>
           <a className="footer__copyright" href="#" target="_blank">&copy; 2020 SocioProphet</a>
         </footer>
