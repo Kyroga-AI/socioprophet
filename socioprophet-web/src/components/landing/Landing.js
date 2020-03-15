@@ -64,7 +64,7 @@ class Landing extends Component {
             </div>
           </div>
           {/* Main Offering Element */}
-          <div className="main__offering">
+          <div className="main__offering"> 
             {/* Main Offering Card Element */}
             <div className="main__offering__card">
               <div className="main__offering__card__name">[ SocioProphet ] Platform</div>
