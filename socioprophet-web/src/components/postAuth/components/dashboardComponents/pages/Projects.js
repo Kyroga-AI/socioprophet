@@ -6,6 +6,8 @@ import TextArea from "carbon-components-react/lib/components/TextArea";
 import TextInput from "carbon-components-react/lib/components/TextInput";
 import RadioButtonGroup from "carbon-components-react/lib/components/RadioButtonGroup";
 import RadioButton from "carbon-components-react/lib/components/RadioButton";
+import Button from "carbon-components-react/lib/components/Button";
+import { Link } from "react-router-dom";
 
 import "./styles/projects.css";
 class Projects extends Component {
@@ -90,7 +92,9 @@ class Projects extends Component {
                   </RadioButtonGroup>
                 </div>
               </Form>
-
+              <Button>
+                <Link to="/news">Link</Link>
+              </Button>
             </div>
 
             <div className="dashboard__projects__form__footer">
