@@ -9,8 +9,8 @@ import RadioButton from "carbon-components-react/lib/components/RadioButton";
 import Button from "carbon-components-react/lib/components/Button";
 import { Link } from "react-router-dom";
 
-import "./styles/projects.css";
-class Projects extends Component {
+import "./styles/projects1.css";
+class Projects1 extends Component {
   render() {
     return (
       <div className="dashboard__projects">
@@ -91,10 +91,21 @@ class Projects extends Component {
                     />
                   </RadioButtonGroup>
                 </div>
+                <div className="contentForm__pageBtn">
+                  <Button
+                    className="cancel"
+                    size="small"
+                  >
+                    <Link className="cancel__link" to="/dashboard">Cancel</Link>
+                  </Button>
+                  <Button
+                    className="next"
+                    size="small"
+                  >
+                    <Link className="next__link" to="/projects2">Next</Link>
+                  </Button>
+                </div>
               </Form>
-              <Button>
-                <Link to="/news">Link</Link>
-              </Button>
             </div>
 
             <div className="dashboard__projects__form__footer">
@@ -108,4 +119,4 @@ class Projects extends Component {
   }
 }
 
-export default Projects;
+export default Projects1;

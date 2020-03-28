@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
-import Content from "./dashboardComponents/Content";
-import SplitterLayout from 'react-splitter-layout';
-import 'react-splitter-layout/lib/index.css';
 import { withRouter } from "react-router";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Terminal from "./dashboardComponents/Terminal";
-import News from "./dashboardComponents/pages/News";
+import SplitterLayout from 'react-splitter-layout';
 import Dock from "react-osx-dock";
 
+import ContentTicker from "./dashboardComponents/ContentTicker";
+import Content from "./dashboardComponents/Content";
+import Terminal from "./dashboardComponents/Terminal";
+import News from "./dashboardComponents/pages/News";
+
+import { useParams } from "react-router-dom";
+
+import 'react-splitter-layout/lib/index.css';
 import "./styles/dashboard.css";
 
 class Dashboard extends Component {
@@ -30,6 +34,7 @@ class Dashboard extends Component {
         vertical={true}
       >
         <div className="splitter__primary">
+          <ContentTicker />
           <Content />
         </div>
         <div className="splitter__secondary">

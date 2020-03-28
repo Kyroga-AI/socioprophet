@@ -241,9 +241,9 @@ class UIFrame extends Component {
                 </SideNavLink>
 
                 <SideNavMenu className="invert" defaultExpanded={true} renderIcon={Projects} title="Projects Portfolio">
-                  <SideNavMenuItem>
-                    <Link className="sidenav--link" to="/projects">New Project</Link>
-                  </SideNavMenuItem>
+                  <li className="sidenav__item">
+                    <Link className="sidenav--link" to="/projects1">New Project</Link>
+                  </li>
                   <SideNavMenuItem href="#">
                     Community Projects
                   </SideNavMenuItem>

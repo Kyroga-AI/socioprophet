@@ -43,7 +43,7 @@ body {
 
 .dashboard__projects__newProject__content {
   position: relative;
-  overflow-y: auto;
+
   left: 0;
   right: 0;
   height: calc(100% - 5rem);
@@ -74,6 +74,48 @@ body {
 
 .contentForm__collab {
   display: flex;
+}
+
+.contentForm__pageBtn {
+  position: relative;
+  float: right;
+  margin-top: 40px;
+}
+
+.contentForm__pageBtn .next {
+  background-color: #4d5358;
+  padding: 0;
+  padding-left: 0.5rem;
+}
+
+.contentForm__pageBtn .next:hover {
+  background-color: #5a6065;
+}
+
+.contentForm__pageBtn .cancel {
+  background-color: #dfe3e6;
+  padding: 0;
+  padding-left: 0.5rem;
+}
+
+.contentForm__pageBtn .cancel:hover {
+  background-color: #e4e8eb;
+}
+
+.next__link {
+  color: #fff;
+  text-decoration: none;
+  width: 100px;
+  padding: 0;
+  position: relative;
+}
+
+.cancel__link {
+  color: #333;
+  text-decoration: none;
+  width: 100px;
+  padding: 0;
+  position: relative;
 }
 
 .dashboard__projects__newProject__footer {}
