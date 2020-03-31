@@ -13,6 +13,8 @@ body {
   left: 4rem;
   top: 6rem;
   text-align: center;
+
+  background-color: #333;
 }
 
 .dashboard__projects__newProject {

@@ -77,7 +77,7 @@ body {
 }
 
 .contentForm__pageBtn {
-  position: relative;
+  position: fixed;
   float: right;
   margin-top: 40px;
 }
