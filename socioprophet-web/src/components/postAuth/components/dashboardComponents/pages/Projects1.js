@@ -13,21 +13,18 @@ import "./styles/projects1.css";
 class Projects1 extends Component {
   render() {
     return (
-      <div className="dashboard__projects">
-        <div>
-          <div className="dashboard__projects__newProject">
-            <div className="dashboard__projects__newProject__header">
-              <h3 className="headerTitle">New Project</h3>
+      <div className="project__sOne">
+          <div className="project__sOne__new">
+            <div className="project__sOne__new__header">
+              <h3 className="project__sOne__new__header__title">New Project</h3>
             </div>
-            <div className="dashboard__projects__newProject__content">
               <Form
-                className="contentForm"
+                className="project__sOne__new__form"
                 onSubmit={function noRefCheck(){}}
               >
-                <h4 className="contentForm__heading">Define project details</h4>
-                <div className="contentForm__input contentForm__input--name">
+                <h4 className="project__sOne__new__form__heading">Define project details</h4>
+                <div style={{ marginBottom : "2rem" }}>
                   <TextInput
-                    className=""
                     disabled={false}
                     light={true}
                     id="projectName"
@@ -36,9 +33,8 @@ class Projects1 extends Component {
                     type="text"
                   />
                 </div>
-                <div className="contentForm__input contentForm__input--description">
+                <div>
                   <TextArea
-                    className=""
                     disabled={false}
                     light={true}
                     cols={100}
@@ -48,8 +44,8 @@ class Projects1 extends Component {
                     type="text"
                   />
                 </div>
-                <h4 className="contentForm__heading"><span style={{paddingTop:"2rem"}}>Collaboration model</span></h4>
-                <div className="contentForm__collab">
+                <h4 className="project__sOne__new__form__heading"><span style={{ paddingTop : "2rem" }}>Collaboration model</span></h4>
+                <div className="sOnecontentForm__radio">
                   <RadioButtonGroup
                     defaultSelected="default-selected"
                     labelPosition="right"
@@ -58,13 +54,11 @@ class Projects1 extends Component {
                     orientation="horizontal"
                   >
                     <RadioButton
-                      className="some-class"
                       id="radio-1"
                       labelText="Public"
                       value="default-selected"
                     />
                     <RadioButton
-                      className="some-class"
                       id="radio-2"
                       labelText="Private"
                       value="standard"
@@ -78,42 +72,37 @@ class Projects1 extends Component {
                     orientation="horizontal"
                   >
                     <RadioButton
-                      className="radio--left"
                       id="radio-3"
                       labelText="Open"
                       value="default-selected"
                     />
                     <RadioButton
-                      className="some-class"
                       id="radio-4"
                       labelText="Closed"
                       value="standard"
                     />
                   </RadioButtonGroup>
                 </div>
-                <div className="contentForm__pageBtn">
+              </Form>
+              <div className="sOne__footer">
+                <div className="sOnecontentForm__pageBtn">
                   <Button
                     className="cancel"
                     size="small"
                   >
-                    <Link className="cancel__link" to="/dashboard">Cancel</Link>
+                    <Link className="sOnecancel__link" to="/dashboard">Cancel</Link>
                   </Button>
                   <Button
                     className="next"
                     size="small"
                   >
-                    <Link className="next__link" to="/projects2">Next</Link>
+                    <Link className="sOnenext__link" to="/projects2">Next</Link>
                   </Button>
                 </div>
-              </Form>
-            </div>
-
-            <div className="dashboard__projects__form__footer">
-
-            </div>
+              </div>
 
           </div>
-        </div>
+
       </div>
     );
   }

@@ -30,7 +30,7 @@ export default function Content() {
               window.location = "/projects1";
             }}
             selected={false}
-            text="First Selection"
+            text="Step 1"
           />
           <Switch
             name="two"
@@ -38,7 +38,7 @@ export default function Content() {
               window.location = "/projects2";
             }}
             selected={false}
-            text="Second Selection"
+            text="Step 2"
           />
           <Switch
             name="three"
@@ -46,7 +46,7 @@ export default function Content() {
               window.location = "/projects3";
             }}
             selected={false}
-            text="Third Selection"
+            text="Step 3"
           />
         </ContentSwitcher>
       </div>

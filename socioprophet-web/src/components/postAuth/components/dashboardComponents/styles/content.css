@@ -32,4 +32,5 @@
   margin-top: 3rem;
   margin-left: 3rem;
   width: calc(100% - 3rem);
+  z-index: 2;
 }
