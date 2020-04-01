@@ -6,7 +6,7 @@ body {
   border: 0;
 }
 
-.project__sOne {
+.sOne {
   position: relative;
   width: calc(100% - 5rem);
   height: 100%;
@@ -16,21 +16,21 @@ body {
   z-index: 1;
 }
 
-.project__sOne__new {
+.sOne .new {
   height: 100%;
   width: 100%;
   position: relative;
   color: #152935;
 }
 
-.project__sOne__new__header {
+.sOne .new__header {
   height: 5rem;
   position: relative;
   line-height: 1.4;
   background-color: #fff;
 }
 
-.project__sOne__new__header__title {
+.sOne .new__header__title {
   font-size: 1.75rem;
   font-weight: 400;
   line-height: 2.25rem;
@@ -41,14 +41,14 @@ body {
   margin-left: 3rem;
 }
 
-.project__sOne__new__form {
+.sOne .new__form {
   position: relative;
   padding: 2rem;
   width: 50%;
   background: #f4f7fb;
 }
 
-.project__sOne__new__form__heading {
+.sOne .new__form__heading {
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.125rem;
@@ -57,45 +57,44 @@ body {
   padding-bottom: 2rem;
 }
 
-.sOnecontentForm__radio {
+.sOne .new__form__collab {
   display: flex;
 }
 
-.sOne__footer {
+.sOne .new__footer {
   width: 50%;
   left: calc(50% - 1rem);
   height: 52px;
   bottom: 76.19px;
   position: fixed;
   display: flex;
-
 }
 
-.sOnecontentForm__pageBtn {
+.sOne .new__footer__pageBtn {
   margin-left: calc(100% - 332px);
 }
 
-.sOnecontentForm__pageBtn .next {
+.sOne .new__footer__pageBtn .next {
   background-color: #4d5358;
   padding: 0;
   padding-left: 0.5rem;
 }
 
-.sOnecontentForm__pageBtn .next:hover {
+.sOne .new__footer__pageBtn .next:hover {
   background-color: #5a6065;
 }
 
-.sOnecontentForm__pageBtn .cancel {
+.sOne .new__footer__pageBtn .cancel {
   background-color: #dfe3e6;
   padding: 0;
   padding-left: 0.5rem;
 }
 
-.sOnecontentForm__pageBtn .cancel:hover {
+.sOne .new__footer__pageBtn.cancel:hover {
   background-color: #e4e8eb;
 }
 
-.sOnenext__link {
+.sOne .new__footer__pageBtn__nextLink {
   color: #fff;
   text-decoration: none;
   width: 150px;
@@ -104,7 +103,7 @@ body {
   position: relative;
 }
 
-.sOnecancel__link {
+.sOne .new__footer__pageBtn__cancelLink {
   color: #333;
   text-decoration: none;
   width: 150px;
@@ -112,27 +111,3 @@ body {
   padding: 0;
   position: relative;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*  */

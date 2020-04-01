@@ -6,31 +6,31 @@ body {
   border: 0;
 }
 
-.dashboard__projects {
-  position: absolute;
+.sThree {
+  position: relative;
   width: calc(100% - 5rem);
   height: 100%;
   left: 4rem;
   top: 6rem;
   text-align: center;
+  z-index: 1;
 }
 
-.dashboard__projects__newProject {
+.sThree .new {
   height: 100%;
   width: 100%;
-  position: absolute;
+  position: relative;
   color: #152935;
-  background: #f4f7fb;
 }
 
-.dashboard__projects__newProject__header {
+.sThree .new__header {
   height: 5rem;
   position: relative;
   line-height: 1.4;
   background-color: #fff;
 }
 
-.headerTitle {
+.sThree .new__header__title {
   font-size: 1.75rem;
   font-weight: 400;
   line-height: 2.25rem;
@@ -41,21 +41,14 @@ body {
   margin-left: 3rem;
 }
 
-.dashboard__projects__newProject__content {
+.sThree .new__form{
   position: relative;
-
-  left: 0;
-  right: 0;
-  height: calc(100% - 5rem);
-}
-
-.contentForm {
   padding: 2rem;
-  height: calc(100% - 3rem);
   width: 50%;
+  background: #f4f7fb;
 }
 
-.contentForm__heading {
+.sThree .new__form__heading {
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.125rem;
@@ -64,62 +57,56 @@ body {
   padding-bottom: 2rem;
 }
 
-.contentForm__input {}
-
-.contentForm__input--name {
-  margin-bottom: 2rem;
-}
-
-.contentForm__input--description {}
-
-.contentForm__collab {
+.sThree .new__footer {
+  width: 50%;
+  left: calc(50% - 1rem);
+  height: 52px;
+  bottom: 76.19px;
+  position: fixed;
   display: flex;
 }
 
-.contentForm__pageBtn {
-  position: fixed;
-  float: right;
-  margin-top: 40px;
+.sThree .new__footer__pageBtn {
+  margin-left: calc(100% - 332px);
 }
 
-.contentForm__pageBtn .next {
+.sThree .new__footer__pageBtn .next {
   background-color: #4d5358;
   padding: 0;
   padding-left: 0.5rem;
 }
 
-.contentForm__pageBtn .next:hover {
+.sThree .new__footer__pageBtn .next:hover {
   background-color: #5a6065;
 }
 
-.contentForm__pageBtn .cancel {
+.sThree .new__footer__pageBtn .cancel {
   background-color: #dfe3e6;
   padding: 0;
   padding-left: 0.5rem;
 }
 
-.contentForm__pageBtn .cancel:hover {
+.sThree .new__footer__pageBtn.cancel:hover {
   background-color: #e4e8eb;
 }
 
-.next__link {
+.sThree .new__footer__pageBtn__nextLink {
   color: #fff;
   text-decoration: none;
-  width: 100px;
+  width: 150px;
+  height: 40px;
   padding: 0;
   position: relative;
 }
 
-.cancel__link {
+.sThree .new__footer__pageBtn__cancelLink {
   color: #333;
   text-decoration: none;
-  width: 100px;
+  width: 150px;
+  height: 40px;
   padding: 0;
   position: relative;
 }
-
-.dashboard__projects__newProject__footer {}
-
 
 
 
