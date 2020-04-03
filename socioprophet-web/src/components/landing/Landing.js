@@ -34,12 +34,12 @@ class Landing extends Component {
                 />
               </li>
               <li className="header__list__item"><a className="header__list__item__link" href="https://github.com/SocioProphet">GitHub</a></li>
-              <li className="header__list__item"><a className="header__list__item__link" href="https://medium.com/@socioprophet">Blog</a></li>
+              <li className="header__list__item"><a className="header__list__item__link" href="https://socioprophet.blogspot.com">Blog</a></li>
               <li className="header__list__item"><a className="header__list__item__link" href="#">Docs</a></li>
               {/* Header Links Buttons Element */}
               <div className="header__list__btn">
                 <Link to="/login" className="header__list__btn__login">Log In</Link>
-                <Link to="/register" className="header__list__btn__signup">Sign Up</Link>
+                <Link to="/comingsoon" className="header__list__btn__signup">Sign Up</Link>
               </div>
             </ul>
           </nav>
