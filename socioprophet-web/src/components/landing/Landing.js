@@ -19,7 +19,7 @@ class Landing extends Component {
           {/* Header Links Element */}
           <nav className="header__list">
             <ul>
-              <li className="header__list__item">
+              <li className="header__list__item hidden">
                 <Search
                   closeButtonLabelText="Clear search input"
                   defaultValue=""
@@ -33,13 +33,14 @@ class Landing extends Component {
                   light={false}
                 />
               </li>
-              <li className="header__list__item"><a className="header__list__item__link" href="https://github.com/SocioProphet">GitHub</a></li>
-              <li className="header__list__item"><a className="header__list__item__link" href="https://socioprophet.blogspot.com">Blog</a></li>
-              <li className="header__list__item"><a className="header__list__item__link" href="#">Docs</a></li>
+              <li id="spGitHub" className="header__list__item"><a className="header__list__item__link" href="https://github.com/SocioProphet">GitHub</a></li>
+              <li id="spBlog" className="header__list__item"><a className="header__list__item__link" href="https://socioprophet.blogspot.com">Blog</a></li>
+              <li id="spDocs" className="header__list__item"><a className="header__list__item__link" href="#">Docs</a></li>
               {/* Header Links Buttons Element */}
               <div className="header__list__btn">
-                <Link to="/login" className="header__list__btn__login">Log In</Link>
-                <Link to="/comingsoon" className="header__list__btn__signup">Sign Up</Link>
+                {/* no login yet - will be added in later when login becomes available
+                <Link to="/login" className="header__list__btn__login">Log In</Link>*/}
+                <Link to="/comingsoon" className="header__list__btn__signup">Try it for Free</Link>
               </div>
             </ul>
           </nav>
@@ -50,11 +51,12 @@ class Landing extends Component {
           <div className="main__background">
             <div className="main__background__title">
               Socio
-              <span style={{"fontSize" : "36px"}}><strong>Prophet</strong></span>
+              <span><strong>Prophet</strong></span>
             </div>
             <div>
-              <Link to="/login" className="main__background__login">Log In</Link>
-              <Link to="/register" className="main__background__signup">Try it for Free</Link>
+              {/* no login yet - will be added in later when login becomes available
+              <Link to="/login" className="main__background__login">Log In</Link>*/}
+              <Link to="/register" className="main__background__login">Try it for Free</Link>
             </div>
           </div>
           {/* Main Description Element */}
@@ -99,7 +101,14 @@ class Landing extends Component {
               </div>
             </div>
           </div>
+          <div className="footer__responsive">
+            <a className="footer__responsive__link" href="mailto:socioprophet@gmail.com" target="_top"><strong>Contact</strong></a>
+            <a className="footer__responsive__link" href="#" target="_blank"><strong>Privacy</strong></a>
+            <a className="footer__responsive__link" href="#" target="_blank"><strong>Terms of Use</strong></a>
+            <a className="footer__responsive__link" href="https://gitter.im/socioprophet/" target="_blank"><strong>Support</strong></a>
+          </div>
         </div>
+
         {/* Footer Block */}
         <footer className="footer">
           <div className="footer__social">
