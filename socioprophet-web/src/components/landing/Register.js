@@ -157,7 +157,7 @@ class Register extends Component {
                       className="header__login__form__field__btn"
                       type="submit"
                     >
-                      Log In
+                      Register now
                     </button>
                   </div>
                 </label>

@@ -18,125 +18,84 @@ const User = require("../../src/models/User");
 // @access Public
 router.post("/register", (req, res) => {
   // Form validation
-  const { name, email } = req.body;
 
-  // Construct req data
-  const data = {
-    members: [
-      {
-        email_address: email,
-        status: "subscribed",
-        merge_fields: {
-          FNAME: name,
-        },
-      },
-    ],
-  };
-
-  const postData = JSON.stringify(data);
-  console.log(postData);
-
-  const options = {
-    url: "https://us19.api.mailchimp.com/3.0/lists/057ea96293",
-    method: "POST",
-    headers: {
-      Authorization: "auth 47f2d0cb3275e6ed33c7eee5838c6ba4-us19",
-    },
-    body: postData,
-  };
-
-  request(options, (err, response, body) => {
-    if (err) {
-      console.log(err);
-    } else {
-      if (response.statusCode === 200) {
-        console.log("STATUS = 200");
-        res.json(req.body);
-      } else {
-        console.log(response.statusCode);
-
-        res.redirect("http://localhost:8081");
-      }
-    }
-  });
-  // const { errors, isValid } = validateRegisterInput(req.body);
+  const { errors, isValid } = validateRegisterInput(req.body);
 
   // Check validation
-  // if (!isValid) {
-  //   return res.status(400).json(errors);
-  // }
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
 
-  // User.findOne({ email: req.body.email }).then((user) => {
-  //   if (user) {
-  //     return res.status(400).json({ email: "Email already exists" });
-  //   } else {
-  //     const newUser = new User({
-  //       name: req.body.name,
-  //       email: req.body.email,
-  //       // password: req.body.password,
-  //     });
+  User.findOne({ email: req.body.email }).then((user) => {
+    if (user) {
+      return res.status(400).json({ email: "Email already exists" });
+    } else {
+      const newUser = new User({
+        name: req.body.name,
+        email: req.body.email,
+        // password: req.body.password,
+      });
 
-  //     // ADD BACK IN LATER TO ADD USER TO MONGO DATABASE
-  //     // newUser
-  //     //   .save()
-  //     //   .then((user) => res.json(user))
-  //     //   .catch((err) => console.log("user not added"));
+      // ADD BACK IN LATER TO ADD USER TO MONGO DATABASE
+      // newUser
+      //   .save()
+      //   .then((user) => res.json(user))
+      //   .catch((err) => console.log("user not added"));
 
-  //     const { name, email } = req.body;
+      const { name, email } = req.body;
 
-  //     // Construct req data
-  //     const data = {
-  //       members: [
-  //         {
-  //           email_address: email,
-  //           status: "subscribed",
-  //           merge_fields: {
-  //             FNAME: name,
-  //           },
-  //         },
-  //       ],
-  //     };
+      // Construct req data
+      const data = {
+        members: [
+          {
+            email_address: email,
+            status: "subscribed",
+            merge_fields: {
+              FNAME: name,
+            },
+          },
+        ],
+      };
 
-  //     const postData = JSON.stringify(data);
+      const postData = JSON.stringify(data);
 
-  //     const options = {
-  //       url: "https://us19.api.mailchimp.com/3.0/lists/057ea96293",
-  //       method: "POST",
-  //       headers: {
-  //         Authorisation: "auth 47f2d0cb3275e6ed33c7eee5838c6ba4-us19",
-  //       },
-  //       body: postData,
-  //     };
+      const options = {
+        url: "https://us19.api.mailchimp.com/3.0/lists/057ea96293",
+        method: "POST",
+        headers: {
+          Authorization: "auth 47f2d0cb3275e6ed33c7eee5838c6ba4-us19",
+        },
+        body: postData,
+      };
 
-  //     request(options, (err, response, body) => {
-  //       console.log("Request Logged");
-  //       res.json(data);
-  //       // if (err) {
-  //       //   res.redirect("http://localhost:8081");
-  //       // } else {
-  //       //   if (response.statusCode === 200) {
-  //       //     console.log(req.body);
+      request(options, (err, response, body) => {
+        if (err) {
+          console.log(err);
+        } else {
+          if (response.statusCode === 200) {
+            console.log("Status = 200, successful registration");
+            res.json(req.body);
+          } else {
+            console.log(
+              `Request failed with status code ${response.statusCode}`
+            );
+          }
+        }
+      });
 
-  //       //     res.redirect("./login");
-  //       //   } else {
-  //       //     res.redirect("http://localhost:8081");
-  //       //   }
-  //       // }
-  //     });
-
-  //     // Hash password before saving in database
-  //     // bcrypt.genSalt(10, (err, salt) => {
-  //     //   bcrypt.hash(newUser.password, salt, (err, hash) => {
-  //     //     if (err) throw err;
-  //     //     newUser.password = hash;
-  //     //     newUser
-  //     //       .save()
-  //     //       .then((user) => res.json(user))
-  //     //       .catch((err) => console.log(err));
-  //     //   });
-  //     // });
-  //   }
-  // });
+      // Hash password before saving in database
+      // bcrypt.genSalt(10, (err, salt) => {
+      //   bcrypt.hash(newUser.password, salt, (err, hash) => {
+      //     if (err) throw err;
+      //     newUser.password = hash;
+      //     newUser
+      //       .save()
+      //       .then((user) => res.json(user))
+      //       .catch((err) => console.log(err));
+      //   });
+      // });
+    }
+  });
 });
 
 // @route POST api/users/login
