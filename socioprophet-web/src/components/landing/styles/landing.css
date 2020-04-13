@@ -1,7 +1,9 @@
 body {
   overflow: scroll;
 }
-div, nav, li {
+div,
+nav,
+li {
   margin: 0;
   padding: 0;
   border: 0;
@@ -87,17 +89,17 @@ div, nav, li {
   background-position: 50%;
   color: #fff;
   text-align: center;
-  height: 200px;
-  padding: 117px 100px 200px;
+  height: 300px;
+  padding: 150px 100px 200px;
 }
 .main__background__title {
   font-size: 36px;
   font-weight: 400;
 }
 .main__background__login {
-  margin-top: 34px;
-  /* margin-right: 20px; */
-  width: 150px;
+  margin-top: 30px;
+  /* margin-right: 30px; */
+  width: 127px;
   height: 40px;
   display: inline-block;
   color: #fff;
@@ -127,7 +129,7 @@ div, nav, li {
 /* Main Description Element */
 .main__descriptive {
   padding: 31px 10px;
-  height: 265px;
+  height: 230px;
   color: #fff;
   background-color: #0c0c0c;
 }
@@ -154,7 +156,7 @@ div, nav, li {
   width: 380px;
   height: 219px;
   background-color: #fff;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .1);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
   padding: 25px 0 0 33px;
   box-sizing: border-box;
   display: inline-block;
@@ -200,7 +202,7 @@ div, nav, li {
   font-size: 14px;
   font-weight: 400;
   color: #f4f7fb;
-  text-decoration: none!important;
+  text-decoration: none !important;
 }
 .footer {
   float: none;
@@ -237,14 +239,14 @@ div, nav, li {
   font-size: 14px;
   font-weight: 400;
   color: #f4f7fb;
-  text-decoration: none!important;
+  text-decoration: none !important;
 }
 /* Footer Copyright Element */
 .footer__copyright {
   float: right;
   padding-right: 5%;
   color: #f4f4f4;
-  text-decoration: none!important;
+  text-decoration: none !important;
 }
 .footer__fish {
   position: relative;
@@ -315,7 +317,7 @@ div, nav, li {
     font-size: 14px;
     font-weight: 400;
     color: #f4f7fb;
-    text-decoration: none!important;
+    text-decoration: none !important;
   }
   .footer__social {
     /* position: absolute;
@@ -328,7 +330,7 @@ div, nav, li {
     float: left;
     padding-left: 5%;
     color: #f4f4f4;
-    text-decoration: none!important;
+    text-decoration: none !important;
   }
 }
 @media (max-width: 510px) {
@@ -340,7 +342,7 @@ div, nav, li {
     width: 90vw;
     height: 250px;
     background-color: #fff;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
     text-align: center;
     padding-left: 0;
   }
@@ -408,7 +410,7 @@ div, nav, li {
     width: 90vw;
     height: 219px;
     background-color: #fff;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
     text-align: center;
     padding-top: 5px;
     padding-left: 0;

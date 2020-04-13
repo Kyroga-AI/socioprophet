@@ -7,8 +7,8 @@ module.exports = function validateRegisterInput(data) {
   // Convert empty fields to an empty string so we can use validator functions
   data.name = !isEmpty(data.name) ? data.name : "";
   data.email = !isEmpty(data.email) ? data.email : "";
-  data.password = !isEmpty(data.password) ? data.password : "";
-  data.password2 = !isEmpty(data.password2) ? data.password2 : "";
+  // data.password = !isEmpty(data.password) ? data.password : "";
+  // data.password2 = !isEmpty(data.password2) ? data.password2 : "";
 
   // Name checks
   if (Validator.isEmpty(data.name)) {
@@ -23,24 +23,24 @@ module.exports = function validateRegisterInput(data) {
   }
 
   // Password checks
-  if (Validator.isEmpty(data.password)) {
-    errors.password = "Field is required";
-  }
+  // if (Validator.isEmpty(data.password)) {
+  //   errors.password = "Field is required";
+  // }
 
-  if (Validator.isEmpty(data.password2)) {
-    errors.password2 = "Field is required";
-  }
+  // if (Validator.isEmpty(data.password2)) {
+  //   errors.password2 = "Field is required";
+  // }
 
-  if (!Validator.isLength(data.password, { min: 6, max: 30 })) {
-    errors.password = "At least 6 characters";
-  }
+  // if (!Validator.isLength(data.password, { min: 6, max: 30 })) {
+  //   errors.password = "At least 6 characters";
+  // }
 
-  if (!Validator.equals(data.password, data.password2)) {
-    errors.password2 = "Passwords must match";
-  }
+  // if (!Validator.equals(data.password, data.password2)) {
+  //   errors.password2 = "Passwords must match";
+  // }
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };

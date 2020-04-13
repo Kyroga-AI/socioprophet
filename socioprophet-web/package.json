@@ -9,7 +9,7 @@
   "scripts": {
     "start": "webpack-dev-server --mode development --hot",
     "build": "webpack --mode production",
-    "server": "node server.js",
+    "server": "nodemon server.js",
     "src": "npm start src/index.js",
     "dev": "concurrently \"npm run server\" \"npm run src\""
   },
