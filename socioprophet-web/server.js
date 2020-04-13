@@ -11,7 +11,7 @@ const app = express();
 // Bodyparser middleware
 app.use(
   bodyParser.urlencoded({
-    extended: false,
+    extended: true,
   })
 );
 app.use(bodyParser.json());
@@ -29,9 +29,6 @@ mongoose
 // Passport middleware
 app.use(passport.initialize());
 
-app.get("/comingsoon", (req, res) => {
-  console.log("working");
-});
 // Passport config
 require("./src/validation/config/passport")(passport);
 

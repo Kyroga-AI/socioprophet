@@ -59,6 +59,7 @@
     "react-ticker": "^1.2.2",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
+    "request": "^2.88.2",
     "style-loader": "^1.0.0",
     "styled-components": "^4.4.0",
     "validator": "^10.9.0"
