@@ -22,6 +22,7 @@ class Landing extends Component {
               <li className="header__list__item hidden">
                 <Search
                   closeButtonLabelText="Clear search input"
+                  className="dark"
                   defaultValue=""
                   id="search-1"
                   labelText="Search"
