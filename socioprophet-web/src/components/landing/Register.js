@@ -58,10 +58,10 @@ class Register extends Component {
     return (
       <div>
         {/* Header Block */}
-        <nav className="header">
+        <nav className="header--register">
           {/* Platform Name Element */}
           <div className="header__title">
-            <a className="header__title__link" href="/">
+            <a className="header__title__link--register" href="/">
               <strong>[ SocioProphet ] Platform</strong>
             </a>
           </div>
@@ -168,7 +168,7 @@ class Register extends Component {
         {/* Main Block */}
         <div className="main">
           {/* Main Background Element */}
-          <div className="main__background">
+          <div className="main__background responsive">
             <div className="main__background__title">
               Socio
               <span style={{ fontSize: "36px" }}>
@@ -176,6 +176,62 @@ class Register extends Component {
               </span>
             </div>
             <div>
+              <div className="body__login">
+                <form
+                  className="body__login__form"
+                  noValidate
+                  onSubmit={this.onSubmit}
+                >
+                  <label className="body__login__form__field">
+                    <div>
+                      <input
+                        className={classnames(
+                          "body__login__form__field__input",
+                          {
+                            invalid: errors.name,
+                          }
+                        )}
+                        onChange={this.onChange}
+                        value={this.state.name}
+                        error={errors.name}
+                        id="name"
+                        type="text"
+                        placeholder="Name"
+                      />
+                      <span className="error">{errors.name}</span>
+                    </div>
+                  </label>
+                  <label className="body__login__form__field">
+                    <div>
+                      <input
+                        className={classnames(
+                          "body__login__form__field__input",
+                          {
+                            invalid: errors.email,
+                          }
+                        )}
+                        onChange={this.onChange}
+                        value={this.state.email}
+                        error={errors.email}
+                        id="email"
+                        type="email"
+                        placeholder="Email"
+                      />
+                      <span className="error">{errors.email}</span>
+                    </div>
+                  </label>
+                  <label className="body__login__form__field body__login__form__field--swidth">
+                    <div>
+                      <button
+                        className="body__login__form__field__btn"
+                        type="submit"
+                      >
+                        Register now
+                      </button>
+                    </div>
+                  </label>
+                </form>
+              </div>
               <Link to="/" className="main__background__signup">
                 Back
               </Link>

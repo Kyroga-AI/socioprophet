@@ -305,6 +305,7 @@ li {
     background-color: #0c0c0c;
   }
 }
+
 @media (max-width: 490px) {
   .header__title__link {
     display: none;
