@@ -109,8 +109,7 @@ class Landing extends Component {
               <div className="main__offering__card__learnmore">
                 <a
                   className="main__offering__card__learnmore__link"
-                  href="#"
-                  target="_blank"
+                  href="https://socioprophet.blogspot.com/"
                 >
                   Learn More
                 </a>
@@ -129,8 +128,7 @@ class Landing extends Component {
               <div className="main__offering__card__learnmore">
                 <a
                   className="main__offering__card__learnmore__link"
-                  href="#"
-                  target="_blank"
+                  href="https://socioprophet.blogspot.com/"
                 >
                   Learn More
                 </a>
@@ -149,8 +147,7 @@ class Landing extends Component {
               <div className="main__offering__card__learnmore">
                 <a
                   className="main__offering__card__learnmore__link"
-                  href="#"
-                  target="_blank"
+                  href="https://socioprophet.blogspot.com/"
                 >
                   Learn More
                 </a>

@@ -169,7 +169,7 @@ class Register extends Component {
         <div className="main">
           {/* Main Background Element */}
           <div className="main__background responsive">
-            <div className="main__background__title">
+            <div className="main__background__title--register">
               Socio
               <span style={{ fontSize: "36px" }}>
                 <strong>Prophet</strong>
@@ -232,7 +232,7 @@ class Register extends Component {
                   </label>
                 </form>
               </div>
-              <Link to="/" className="main__background__signup">
+              <Link to="/" className="main__background__register">
                 Back
               </Link>
             </div>
@@ -258,8 +258,7 @@ class Register extends Component {
               <div className="main__offering__card__learnmore">
                 <a
                   className="main__offering__card__learnmore__link"
-                  href="#"
-                  target="_blank"
+                  href="https://socioprophet.blogspot.com/"
                 >
                   Learn More
                 </a>
@@ -278,8 +277,7 @@ class Register extends Component {
               <div className="main__offering__card__learnmore">
                 <a
                   className="main__offering__card__learnmore__link"
-                  href="#"
-                  target="_blank"
+                  href="https://socioprophet.blogspot.com/"
                 >
                   Learn More
                 </a>
@@ -298,8 +296,7 @@ class Register extends Component {
               <div className="main__offering__card__learnmore">
                 <a
                   className="main__offering__card__learnmore__link"
-                  href="#"
-                  target="_blank"
+                  href="https://socioprophet.blogspot.com/"
                 >
                   Learn More
                 </a>

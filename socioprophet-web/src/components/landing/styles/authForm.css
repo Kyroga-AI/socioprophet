@@ -160,10 +160,10 @@
     color: red;
     background-color: #000;
   }
-  .main__background__signup {
+  .main__background__register {
     display: none;
   }
-  .main__background__title {
+  .main__background__title--register {
     display: none;
   }
   .responsive {
@@ -180,4 +180,25 @@
     text-decoration: none;
     color: #fff;
   }
+}
+
+.main__background__title--register {
+  font-size: 36px;
+  font-weight: 400;
+}
+
+.main__background__register {
+  margin-top: 30px;
+  width: 127px;
+  height: 40px;
+  display: inline-block;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2px solid #fff;
+  background-color: #0c0c0c;
+  padding-top: 9px;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-decoration: none;
 }
