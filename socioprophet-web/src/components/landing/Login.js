@@ -137,13 +137,11 @@ class Login extends Component {
           {/* Main Background Element */}
 
           <div className="main__background">
-            <h1>
-              <strong>Welcome</strong> to <strong>SocioProphet!</strong>
-            </h1>
+            <h1>{/* <strong>SocioProphet</strong> */}</h1>
             <br />
-            <h2>Please check your inbox</h2>
-            <Link to="/" className="main__background__signup">
-              Back
+            <h2>Please register for the &#945; release for now</h2>
+            <Link to="/register" className="main__background__signup">
+              &#945; Registry
             </Link>
           </div>
           {/* Main Description Element */}

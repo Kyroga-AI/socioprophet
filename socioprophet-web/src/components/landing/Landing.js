@@ -62,7 +62,7 @@ class Landing extends Component {
                   Log In
                 </Link> */}
                 <Link to="/register" className="header__list__btn__signup">
-                  &#945; Registery
+                  &#945; Registry
                 </Link>
               </div>
             </ul>
@@ -78,13 +78,13 @@ class Landing extends Component {
                 <strong>Prophet</strong>
               </span>
             </div>
-            <div>
+            <div className="main__background__responsive">
               {/* no login yet - will be added in later when login becomes available*/}
               <Link to="/login" className="main__background__login">
                 Log In
               </Link>
               <Link to="/register" className="main__background__signup">
-                Register
+                &#945; Register
               </Link>
             </div>
           </div>

@@ -66,7 +66,7 @@ li {
 .header__list__btn {
   display: inline-block;
   height: inherit;
-  margin-left: 60px;
+  margin-left: 40px;
 }
 /* Header Buttons Element */
 .header__list__btn__login {
@@ -229,7 +229,8 @@ li {
 /* Footer Social Element */
 .footer__social {
   position: absolute;
-  height: 70px;
+  z-index: 1;
+  height: 80px;
   width: 30%;
   padding-left: 5%;
 }
@@ -320,6 +321,19 @@ li {
     display: inline-block;
     margin-left: 20px;
   }
+  .main__background__responsive {
+    display: grid;
+    margin: 0;
+    justify-content: space-evenly;
+  }
+  .main__background__login {
+    margin-top: 34px;
+    margin-right: 0px;
+  }
+  .main__background__signup {
+    margin-top: 15px;
+    margin-right: 0px;
+  }
 }
 @media (max-width: 500px) {
   .footer__responsive {
@@ -397,7 +411,7 @@ li {
 }
 @media (max-width: 600px) {
   .main__descriptive__title {
-    height: 20px;
+    height: 18px;
     font-size: 18px;
     line-height: 1.5;
     text-align: center;
@@ -417,6 +431,14 @@ li {
     background-color: transparent;
     display: grid;
     margin-top: -150px;
+    z-index: 1;
+  }
+}
+@media (max-width: 500px) {
+  .main__offering {
+    background-color: transparent;
+    display: grid;
+    margin-top: -120px;
     z-index: 1;
   }
 }
