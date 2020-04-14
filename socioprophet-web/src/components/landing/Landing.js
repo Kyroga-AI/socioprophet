@@ -62,7 +62,7 @@ class Landing extends Component {
                   Log In
                 </Link> */}
                 <Link to="/register" className="header__list__btn__signup">
-                  Alpha Registery
+                  &#945; Registery
                 </Link>
               </div>
             </ul>
@@ -80,10 +80,10 @@ class Landing extends Component {
             </div>
             <div>
               {/* no login yet - will be added in later when login becomes available*/}
-              {/* <Link to="/login" className="main__background__login">
+              <Link to="/login" className="main__background__login">
                 Log In
-              </Link> */}
-              <Link to="/register" className="main__background__login">
+              </Link>
+              <Link to="/register" className="main__background__signup">
                 Register
               </Link>
             </div>
