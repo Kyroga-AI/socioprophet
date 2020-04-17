@@ -332,7 +332,7 @@ class Register extends Component {
           <div className="footer__references">
             <a
               className="footer__references__link"
-              href="mailto:socioprophet@gmail.com"
+              href="mailto:michael@socioprophet.ai"
               target="_top"
             >
               <strong>Contact</strong>
