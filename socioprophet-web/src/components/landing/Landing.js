@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Search } from "@carbon/ibm-security";
+import Ticker from "react-ticker";
 
 import "./styles/landing.css";
 
@@ -70,6 +71,20 @@ class Landing extends Component {
         </nav>
         {/* Main Block */}
         <div className="main">
+          <div className="main__sub">
+            <div className="main__sub__ticker">
+              <Ticker>
+                {({ index }) => (
+                  <div className="main__sub__ticker__text">
+                    <p>
+                      <span style={{ fontWeight: "800" }}>News</span> / IM's #
+                      {index}!
+                    </p>
+                  </div>
+                )}
+              </Ticker>
+            </div>
+          </div>
           {/* Main Background Element */}
           <div className="main__background">
             <div className="main__background__title">
