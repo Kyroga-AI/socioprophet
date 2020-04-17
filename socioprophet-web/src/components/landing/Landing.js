@@ -99,7 +99,7 @@ class Landing extends Component {
                 Log In
               </Link>
               <Link to="/register" className="main__background__signup">
-                &#945; Register
+                &#945; Registry
               </Link>
             </div>
           </div>
