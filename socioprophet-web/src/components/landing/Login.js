@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { Search } from "@carbon/ibm-security";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
 import classnames from "classnames";
-import Ticker from "react-ticker";
 
+import Header from "./LandingComponents/Header";
+import HeaderLinks from "./LandingComponents/HeaderLinks";
 import Offering from "./LandingComponents/Offering";
 import Footer from "./LandingComponents/Footer";
 
@@ -63,13 +65,9 @@ class Login extends Component {
       <div>
         {/* Header Block */}
         <nav className="header">
-          {/* Platform Name Element */}
-          <div className="header__title">
-            <a className="header__title__link" href="/">
-              <strong>[ SocioProphet ] Platform</strong>
-            </a>
-          </div>
-          {/* Header Links Element */}
+          <Header />
+          <HeaderLinks />
+
           {/* Login Element - NOT BEING USED YET */}
           {/* <nav className="header__list">
             <div className="header__login">
@@ -138,20 +136,6 @@ class Login extends Component {
         </nav>
         {/* Main Block */}
         <div className="main">
-          <div className="main__sub">
-            <div className="main__sub__ticker">
-              <Ticker>
-                {({ index }) => (
-                  <div className="main__sub__ticker__text">
-                    <p>
-                      <span style={{ fontWeight: "800" }}>News</span> / IM's #
-                      {index}!
-                    </p>
-                  </div>
-                )}
-              </Ticker>
-            </div>
-          </div>
           {/* Main Background Element */}
 
           <div className="main__background">

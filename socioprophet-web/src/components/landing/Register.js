@@ -4,10 +4,11 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { registerUser } from "../../actions/authActions";
 import classnames from "classnames";
-import Ticker from "react-ticker";
 
 import "./styles/landing.css";
-import "./styles/authForm.css";
+import "./styles/register.css";
+
+import Header from "./LandingComponents/Header";
 import Offering from "./LandingComponents/Offering";
 import Footer from "./LandingComponents/Footer";
 
@@ -62,12 +63,7 @@ class Register extends Component {
       <div>
         {/* Header Block */}
         <nav className="header--register">
-          {/* Platform Name Element */}
-          <div className="header__title">
-            <a className="header__title__link--register" href="/">
-              <strong>[ SocioProphet ] Platform</strong>
-            </a>
-          </div>
+          <Header />
           {/* Header Links Element */}
           <nav className="header__list">
             {/* Header Login Element */}
@@ -170,20 +166,6 @@ class Register extends Component {
         </nav>
         {/* Main Block */}
         <div className="main">
-          <div className="main__sub">
-            <div className="main__sub__ticker">
-              <Ticker>
-                {({ index }) => (
-                  <div className="main__sub__ticker__text">
-                    <p>
-                      <span style={{ fontWeight: "800" }}>News</span> / IM's #
-                      {index}!
-                    </p>
-                  </div>
-                )}
-              </Ticker>
-            </div>
-          </div>
           {/* Main Background Element */}
           <div className="main__background responsive">
             <div className="main__background__title--register">

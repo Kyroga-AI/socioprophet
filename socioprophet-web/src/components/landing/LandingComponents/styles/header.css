@@ -1,0 +1,20 @@
+.header__title {
+  align-items: center;
+  display: inline-flex;
+  padding-left: 2rem;
+  font-size: 16px;
+  white-space: nowrap;
+  vertical-align: middle;
+  text-decoration: none;
+}
+.header__title__link {
+  text-decoration: none;
+  color: #fff;
+}
+
+/* MEDIA QUERIES */
+@media (max-width: 490px) {
+  .header__title__link {
+    display: none;
+  }
+}
