@@ -1,0 +1,179 @@
+/* Main Description Element */
+.main__descriptive {
+  padding: 31px 10px;
+  height: 230px;
+  color: #fff;
+  background-color: #0c0c0c;
+}
+.main__descriptive__title {
+  height: 36px;
+  font-size: 25px;
+  line-height: 3;
+  text-align: center;
+  font-style: italic;
+}
+/* Main Offering Element */
+.main__offering {
+  background-color: transparent;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  margin-top: -92px;
+  z-index: 1;
+}
+.main__offering__card {
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  width: 380px;
+  height: 219px;
+  background-color: #fff;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+  padding: 25px 0 0 33px;
+  box-sizing: border-box;
+  display: inline-block;
+  text-align: left;
+}
+.main__offering__card__name {
+  margin-top: 23px;
+  color: #152934;
+  font-weight: 400;
+  font-size: 20px;
+}
+.main__offering__card__description {
+  width: 287px;
+  height: 40px;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.43;
+  text-align: left;
+  color: #5a6872;
+}
+.main__offering__card__learnmore {
+  margin-top: 65px;
+  font-size: 14px;
+  line-height: 1.43;
+  text-align: left;
+}
+.main__offering__card__learnmore__link {
+  text-decoration: none !important;
+  font-weight: 400 !important;
+  color: #3d70b2;
+  cursor: pointer;
+}
+
+/* MEDIA QUERIES */
+@media (max-width: 370px) {
+  .main__offering__card__learnmore {
+    margin-top: 80px;
+    font-size: 14px;
+    line-height: 1.43;
+    text-align: center;
+  }
+}
+
+@media (max-width: 450px) {
+  .main__descriptive {
+    padding: 31px 10px;
+    margin-bottom: 20px;
+    height: 230px;
+    color: #fff;
+    background-color: #0c0c0c;
+  }
+}
+@media (max-width: 1020px) {
+  .main__offering {
+    background-color: transparent;
+    display: grid;
+    margin-top: -92px;
+    z-index: 1;
+  }
+}
+@media (max-width: 600px) {
+  .main__offering {
+    background-color: transparent;
+    display: grid;
+    margin-top: -150px;
+    z-index: 1;
+  }
+}
+@media (max-width: 500px) {
+  .main__offering {
+    background-color: transparent;
+    display: grid;
+    margin-top: -120px;
+    z-index: 1;
+  }
+}
+@media (max-width: 1020px) {
+  .main__offering__card {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    width: 90vw;
+    height: 219px;
+    background-color: #fff;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding-top: 5px;
+    padding-left: 0;
+  }
+  .main__offering__card__description {
+    width: 90vw;
+    height: 40px;
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.43;
+    text-align: center;
+    color: #5a6872;
+    overflow: visible;
+    padding: 15px;
+  }
+  .main__offering__card__learnmore {
+    margin-top: 45px;
+    font-size: 14px;
+    line-height: 1.43;
+    text-align: center;
+  }
+}
+@media (max-width: 510px) {
+  .main__offering__card__learnmore {
+    margin-top: 70px;
+    font-size: 14px;
+    line-height: 1.43;
+    text-align: center;
+  }
+}
+@media (max-width: 510px) {
+  .main__offering__card {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    width: 90vw;
+    height: 250px;
+    background-color: #fff;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding-left: 0;
+  }
+}
+@media (max-width: 680px) {
+  .main__descriptive__title {
+    height: 36px;
+    font-size: 22px;
+    line-height: 3;
+    text-align: center;
+    font-style: italic;
+  }
+}
+@media (max-width: 600px) {
+  .main__descriptive__title {
+    height: 18px;
+    font-size: 18px;
+    line-height: 1.5;
+    text-align: center;
+    font-style: italic;
+  }
+}

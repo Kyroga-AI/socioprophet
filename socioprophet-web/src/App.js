@@ -8,8 +8,6 @@ import { Provider } from "react-redux";
 import store from "./store";
 
 import Landing from "./components/landing/Landing";
-// Using ComingSoon page as temp before users
-import ComingSoon from "./components/landing/ComingSoon";
 import Register from "./components/landing/Register";
 import Login from "./components/landing/Login";
 import PrivateRoute from "./components/private-route/PrivateRoute";
@@ -45,7 +43,6 @@ class App extends Component {
         <Router>
           <div className="App">
             <Route exact path="/" component={Landing} />
-            {/* <Route exact path="/comingsoon" component={ComingSoon} /> */}
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
             <Switch>

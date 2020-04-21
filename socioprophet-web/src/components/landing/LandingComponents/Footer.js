@@ -1,8 +1,32 @@
 import React from "react";
 
+import "./styles/footer.css";
+
 const Footer = () => {
   return (
     <div>
+      <div className="footer__responsive">
+        <a
+          className="footer__responsive__link"
+          href="mailto:socioprophet@gmail.com"
+          target="_top"
+        >
+          <strong>Contact</strong>
+        </a>
+        <a className="footer__responsive__link" href="#" target="_blank">
+          <strong>Privacy</strong>
+        </a>
+        <a className="footer__responsive__link" href="#" target="_blank">
+          <strong>Terms of Use</strong>
+        </a>
+        <a
+          className="footer__responsive__link"
+          href="https://gitter.im/socioprophet/"
+          target="_blank"
+        >
+          <strong>Support</strong>
+        </a>
+      </div>
       {/* Footer Block */}
       <footer className="footer">
         <div className="footer__social">

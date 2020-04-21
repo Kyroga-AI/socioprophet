@@ -1,10 +1,16 @@
 import React from "react";
 
-import "../styles/landing.css";
+import "./styles/offering.css";
 
-const OfferingCard = () => {
+const Offering = () => {
   return (
     <div>
+      {/* Main Description Element */}
+      <div className="main__descriptive">
+        <div className="main__descriptive__title">
+          Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
+        </div>
+      </div>
       {/* Main Offering Element */}
       <div className="main__offering">
         {/* Main Offering Card Element */}
@@ -69,4 +75,4 @@ const OfferingCard = () => {
   );
 };
 
-export default OfferingCard;
+export default Offering;
