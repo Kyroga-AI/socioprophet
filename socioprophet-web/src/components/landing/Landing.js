@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
 import Ticker from "react-ticker";
 
 import Header from "./LandingComponents/Header";
@@ -8,11 +7,12 @@ import HeaderLinks from "./LandingComponents/HeaderLinks";
 import Offering from "./LandingComponents/Offering";
 import Footer from "./LandingComponents/Footer";
 
+import "./styles/common.css";
 import "./styles/landing.css";
 
 const Landing = () => {
   return (
-    <div>
+    <div className="landing">
       {/* Header Block */}
       <nav className="header">
         <Header />
@@ -47,7 +47,7 @@ const Landing = () => {
             <Link to="/login" className="main__background__login">
               Log In
             </Link>
-            <Link to="/register" className="main__background__signup">
+            <Link to="/register" className="main__background__register">
               &#945; Registry
             </Link>
           </div>

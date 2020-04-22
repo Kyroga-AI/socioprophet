@@ -11,8 +11,8 @@ import HeaderLinks from "./LandingComponents/HeaderLinks";
 import Offering from "./LandingComponents/Offering";
 import Footer from "./LandingComponents/Footer";
 
-import "./styles/landing.css";
-import "./styles/authForm.css";
+import "./styles/common.css";
+import "./styles/login.css";
 
 class Login extends Component {
   constructor() {
@@ -62,7 +62,7 @@ class Login extends Component {
     const { errors } = this.state;
 
     return (
-      <div>
+      <div className="login">
         {/* Header Block */}
         <nav className="header">
           <Header />
@@ -142,7 +142,7 @@ class Login extends Component {
             <h1>{/* <strong>SocioProphet</strong> */}</h1>
             <br />
             <h2>Please register for the &#945; release for now</h2>
-            <Link to="/register" className="main__background__signup">
+            <Link to="/register" className="main__background__register">
               &#945; Registry
             </Link>
           </div>

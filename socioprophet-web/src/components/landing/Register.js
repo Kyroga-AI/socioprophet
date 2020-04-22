@@ -5,12 +5,12 @@ import { connect } from "react-redux";
 import { registerUser } from "../../actions/authActions";
 import classnames from "classnames";
 
-import "./styles/landing.css";
-import "./styles/register.css";
-
 import Header from "./LandingComponents/Header";
 import Offering from "./LandingComponents/Offering";
 import Footer from "./LandingComponents/Footer";
+
+import "./styles/common.css";
+import "./styles/register.css";
 
 class Register extends Component {
   constructor() {
@@ -60,24 +60,24 @@ class Register extends Component {
     const { errors } = this.state;
 
     return (
-      <div>
+      <div className="register">
         {/* Header Block */}
-        <nav className="header--register">
+        <nav className="header">
           <Header />
           {/* Header Links Element */}
           <nav className="header__list">
             {/* Header Login Element */}
-            <div className="header__login">
+            <div className="header__register">
               <form
-                className="header__login__form"
+                className="header__register__form"
                 noValidate
                 onSubmit={this.onSubmit}
               >
-                <label className="header__login__form__field">
+                <label className="header__register__form__field">
                   <div>
                     <input
                       className={classnames(
-                        "header__login__form__field__input",
+                        "header__register__form__field__input",
                         {
                           invalid: errors.name,
                         }
@@ -92,11 +92,11 @@ class Register extends Component {
                     <span className="error">{errors.name}</span>
                   </div>
                 </label>
-                <label className="header__login__form__field">
+                <label className="header__register__form__field">
                   <div>
                     <input
                       className={classnames(
-                        "header__login__form__field__input",
+                        "header__register__form__field__input",
                         {
                           invalid: errors.email,
                         }
@@ -150,10 +150,10 @@ class Register extends Component {
                     <span className="error">{errors.password2}</span>
                   </div>
                 </label> */}
-                <label className="header__login__form__field header__login__form__field--swidth">
+                <label className="header__register__form__field header__register__form__field--swidth">
                   <div>
                     <button
-                      className="header__login__form__field__btn"
+                      className="header__register__form__field__btn"
                       type="submit"
                     >
                       Register now
@@ -168,9 +168,9 @@ class Register extends Component {
         <div className="main">
           {/* Main Background Element */}
           <div className="main__background responsive">
-            <div className="main__background__title--register">
+            <div className="main__background__title">
               Socio
-              <span style={{ fontSize: "36px" }}>
+              <span>
                 <strong>Prophet</strong>
               </span>
             </div>

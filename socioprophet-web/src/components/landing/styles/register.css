@@ -1,26 +1,10 @@
-.header--register {
-  width: 100%;
-  height: 3.5rem;
-  line-height: 3.5rem;
-  position: fixed;
-  display: flex;
-  align-items: center;
-  z-index: 10000;
-  background-color: #0c0c0c;
-  color: #fff;
-}
-.header__title__link--register {
-  align-items: center;
-  display: inline-flex;
-  padding-left: 1rem;
+/* REGISTER HEADER STYLES -------------------- */
+.register .header__list {
+  margin: 0 20px 0 auto;
+  height: 100%;
   font-size: 16px;
-  white-space: nowrap;
-  vertical-align: middle;
-  text-decoration: none;
-  color: #fff;
 }
-/* Header Login Element */
-.header__login {
+.header__register {
   position: relative;
   margin: 5px 10px;
   width: 100%;
@@ -28,8 +12,7 @@
   float: right;
   display: block;
 }
-
-.header__login__form {
+.header__register__form {
   margin: 0;
   padding: 0;
   border: 0;
@@ -38,7 +21,7 @@
   vertical-align: baseline;
   box-sizing: border-box;
 }
-.header__login__form__field {
+.header__register__form__field {
   position: relative;
   float: left;
   padding-right: 2px;
@@ -49,10 +32,10 @@
   display: block;
   padding: 6px 5px;
 }
-.header__login__form__field--swidth {
+.header__register__form__field--swidth {
   width: 100px;
 }
-.header__login__form__field__input {
+.header__register__form__field__input {
   position: relative;
   border: 0;
   display: block;
@@ -65,7 +48,7 @@
   z-index: 1;
   -webkit-appearance: textfield;
 }
-.header__login__form__field__btn {
+.header__register__form__field__btn {
   position: relative;
   float: left;
   width: 100px;
@@ -83,12 +66,21 @@
   color: red;
   background-color: #000;
 }
+/* REGISTER HEADER STYLES END -------------------- */
 
 .body__login {
   display: none;
 }
+@media (max-width: 490px) {
+  .register .header__list {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    font-size: 16px;
+  }
+}
 @media (max-width: 800px) {
-  .header__login {
+  .header__register {
     display: none;
   }
 }
@@ -160,45 +152,8 @@
     color: red;
     background-color: #000;
   }
-  .main__background__register {
-    display: none;
-  }
-  .main__background__title--register {
-    display: none;
-  }
   .responsive {
     padding-top: 100px;
     padding-bottom: 250px;
   }
-  .header__title__link--register {
-    align-items: center;
-    display: inline-flex;
-    padding-left: 1rem;
-    font-size: 16px;
-    white-space: nowrap;
-    vertical-align: middle;
-    text-decoration: none;
-    color: #fff;
-  }
-}
-
-.main__background__title--register {
-  font-size: 36px;
-  font-weight: 400;
-}
-
-.main__background__register {
-  margin-top: 30px;
-  width: 127px;
-  height: 40px;
-  display: inline-block;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
-  border: 2px solid #fff;
-  background-color: #0c0c0c;
-  padding-top: 9px;
-  box-sizing: border-box;
-  cursor: pointer;
-  text-decoration: none;
 }
