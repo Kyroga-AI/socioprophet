@@ -5,9 +5,9 @@ import { connect } from "react-redux";
 import { registerUser } from "../../actions/authActions";
 import classnames from "classnames";
 
-import Header from "./LandingComponents/Header";
-import Offering from "./LandingComponents/Offering";
-import Footer from "./LandingComponents/Footer";
+import Header from "./landing_components/Header";
+import Offering from "./landing_components/Offering";
+import Footer from "./landing_components/Footer";
 
 import "./styles/common.css";
 import "./styles/register.css";

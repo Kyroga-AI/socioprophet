@@ -6,10 +6,10 @@ import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
 import classnames from "classnames";
 
-import Header from "./LandingComponents/Header";
-import HeaderLinks from "./LandingComponents/HeaderLinks";
-import Offering from "./LandingComponents/Offering";
-import Footer from "./LandingComponents/Footer";
+import Header from "./landing_components/Header";
+import HeaderLinks from "./landing_components/HeaderLinks";
+import Offering from "./landing_components/Offering";
+import Footer from "./landing_components/Footer";
 
 import "./styles/common.css";
 import "./styles/login.css";

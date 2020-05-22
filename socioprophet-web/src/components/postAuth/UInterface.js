@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import UIFrame from "./components/UIFrame";
-import Dashboard from "./components/Dashboard";
-import UIFooter from "./components/UIFooter";
-
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import UIFrame from "./interface_components/UIFrame";
+import Dashboard from "./interface_components/Dashboard";
+import UIFooter from "./interface_components/UIFooter";
 
 class UInterface extends Component {
   render() {
