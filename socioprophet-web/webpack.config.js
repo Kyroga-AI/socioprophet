@@ -1,11 +1,11 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: './src/index.js',
+  entry: "./src/index.js",
   output: {
-    path: path.join(__dirname, '/dist'),
-    filename: 'index_bundle.js'
+    path: path.join(__dirname, "/dist"),
+    filename: "index_bundle.js",
   },
   module: {
     rules: [
@@ -13,48 +13,46 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
-        }
+          loader: "babel-loader",
+        },
       },
       {
         test: /\.(s*)css$/,
-        use: ['style-loader', 'css-loader', 'sass-loader']
+        use: ["style-loader", "css-loader", "sass-loader"],
       },
       {
         test: /\.(jpg|gif)$/i,
-        use: [
-          'file-loader'
-        ],
+        use: ["file-loader"],
       },
       {
         test: /\.(mov|mp4)$/,
         use: [
           {
-            loader: 'file-loader',
+            loader: "file-loader",
             options: {
-              name: '[name].[ext]'
-            }
-          }
+              name: "[name].[ext]",
+            },
+          },
         ],
-      }
-    ]
+      },
+    ],
   },
   devServer: {
-    host: '0.0.0.0',
+    host: "0.0.0.0",
     port: 8081,
     historyApiFallback: true,
     allowedHosts: [
-      'localhost.socioprophet.com',
-      'socioprophet.com',
-      'www.socioprophet.com'],
+      "localhost.socioprophet.com",
+      "socioprophet.com",
+      "www.socioprophet.com",
+    ],
     proxy: {
-      "/api/users": "http://localhost:5000"
-
-    }
+      "/api/users": "http://localhost:5000",
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html'
-    })
-  ]
-}
+      template: "./public/index.html",
+    }),
+  ],
+};
