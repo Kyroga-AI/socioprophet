@@ -11,6 +11,7 @@ import Projects1 from "./content/Projects1";
 import Projects2 from "./content/Projects2";
 import Projects3 from "./content/Projects3";
 import DashboardHome from "./content/DashboardHome";
+import ProjectDashboard from "./content/ProjectDashboard";
 
 import { useParams } from "react-router-dom";
 
@@ -39,6 +40,8 @@ export default function Content() {
       return <Projects2 />;
     case "projects3":
       return <Projects3 />;
+    case "projectDashboard":
+      return <ProjectDashboard />;
     default:
       return <DashboardHome />;
   }

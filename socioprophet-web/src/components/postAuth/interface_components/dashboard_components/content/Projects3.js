@@ -16,41 +16,40 @@ class Projects3 extends Component {
           <div className="new__header">
             <h3 className="new__header__title">Project Services</h3>
           </div>
-          <Form
-            className="new__form"
-            onSubmit={function noRefCheck(){}}
-          >
+          <Form className="new__form" onSubmit={function noRefCheck() {}}>
             <h4 className="new__form__heading">Preferences</h4>
-            <div style={{ marginBottom : "2rem" }}>
-            <Toggle
-              aria-label="Toggle"
-              className="some-class"
-              defaultToggled={true}
-              id="toggle-1"
-              labelA="Off"
-              labelB="On"
-              onToggle={function noRefCheck(){}}
-            />
-            <Toggle
-              aria-label="Toggle"
-              className="some-class"
-              defaultToggled={false}
-              id="toggle-2"
-              labelA="Off"
-              labelB="On"
-              onToggle={function noRefCheck(){}}
-            />
-            <Toggle
-              aria-label="Toggle"
-              className="some-class"
-              defaultToggled={false}
-              id="toggle-3"
-              labelA="Off"
-              labelB="On"
-              onToggle={function noRefCheck(){}}
-            />
+            <div style={{ marginBottom: "2rem" }}>
+              <Toggle
+                aria-label="Toggle"
+                className="some-class"
+                defaultToggled={true}
+                id="toggle-1"
+                labelA="Off"
+                labelB="On"
+                onToggle={function noRefCheck() {}}
+              />
+              <Toggle
+                aria-label="Toggle"
+                className="some-class"
+                defaultToggled={false}
+                id="toggle-2"
+                labelA="Off"
+                labelB="On"
+                onToggle={function noRefCheck() {}}
+              />
+              <Toggle
+                aria-label="Toggle"
+                className="some-class"
+                defaultToggled={false}
+                id="toggle-3"
+                labelA="Off"
+                labelB="On"
+                onToggle={function noRefCheck() {}}
+              />
             </div>
-            <h4 className="new__form__heading"><span style={{paddingTop:"2rem"}}>Cluster Options</span></h4>
+            <h4 className="new__form__heading">
+              <span style={{ paddingTop: "2rem" }}>Cluster Options</span>
+            </h4>
             <Select
               className="some-class"
               defaultValue="placeholder-item"
@@ -91,17 +90,21 @@ class Projects3 extends Component {
           </Form>
           <div className="new__footer">
             <div className="new__footer__pageBtn">
-              <Button
-                className="cancel"
-                size="small"
-              >
-                <Link className="new__footer__pageBtn__cancelLink" to="/dashboard">Cancel</Link>
+              <Button className="cancel" size="small">
+                <Link
+                  className="new__footer__pageBtn__cancelLink"
+                  to="/dashboard"
+                >
+                  Cancel
+                </Link>
               </Button>
-              <Button
-                className="next"
-                size="small"
-              >
-                <Link className="new__footer__pageBtn__nextLink" to="/dashboard">Next</Link>
+              <Button className="next" size="small">
+                <Link
+                  className="new__footer__pageBtn__nextLink"
+                  to="/projectDashboard"
+                >
+                  Create
+                </Link>
               </Button>
             </div>
           </div>

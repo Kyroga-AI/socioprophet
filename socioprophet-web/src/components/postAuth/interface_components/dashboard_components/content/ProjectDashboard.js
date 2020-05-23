@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 
+import "./styles/dashboardHome.css";
 class ProjectDashboard extends Component {
   render() {
     return (
-      <div>
-        <h1>Project Dashboard</h1>
+      <div className="dashboard--home">
+        <h1>Your Projects</h1>
       </div>
     );
   }
