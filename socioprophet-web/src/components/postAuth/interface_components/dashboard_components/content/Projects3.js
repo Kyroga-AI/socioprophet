@@ -20,7 +20,7 @@ class Projects3 extends Component {
               className="some-class"
               id="number-input-1"
               label="Collaborators"
-              max={100}
+              max={1000}
               min={0}
               step={1}
               value={1}
