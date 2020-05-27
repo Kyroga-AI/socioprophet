@@ -208,7 +208,7 @@ class UIFrame extends Component {
             <Header aria-label="SocioProphet Platform">
               <SkipToContent />
 
-              <HeaderName href="#" prefix="">
+              <HeaderName href="/dashboardHome" prefix="">
                 SocioProphet
               </HeaderName>
 

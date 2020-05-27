@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import Form from "carbon-components-react/lib/components/Form";
-import FormLabel from "carbon-components-react/lib/components/FormLabel";
-import Toggle from "carbon-components-react/lib/components/Toggle";
-import Select from "carbon-components-react/lib/components/Select";
-import SelectItem from "carbon-components-react/lib/components/SelectItem";
+import NumberInput from "carbon-components-react/lib/components/NumberInput";
+
 import Button from "carbon-components-react/lib/components/Button";
 import { Link } from "react-router-dom";
 
@@ -17,76 +15,16 @@ class Projects3 extends Component {
             <h3 className="new__header__title">Project Services</h3>
           </div>
           <Form className="new__form" onSubmit={function noRefCheck() {}}>
-            <h4 className="new__form__heading">Preferences</h4>
-            <div style={{ marginBottom: "2rem" }}>
-              <Toggle
-                aria-label="Toggle"
-                className="some-class"
-                defaultToggled={true}
-                id="toggle-1"
-                labelA="Off"
-                labelB="On"
-                onToggle={function noRefCheck() {}}
-              />
-              <Toggle
-                aria-label="Toggle"
-                className="some-class"
-                defaultToggled={false}
-                id="toggle-2"
-                labelA="Off"
-                labelB="On"
-                onToggle={function noRefCheck() {}}
-              />
-              <Toggle
-                aria-label="Toggle"
-                className="some-class"
-                defaultToggled={false}
-                id="toggle-3"
-                labelA="Off"
-                labelB="On"
-                onToggle={function noRefCheck() {}}
-              />
-            </div>
-            <h4 className="new__form__heading">
-              <span style={{ paddingTop: "2rem" }}>Cluster Options</span>
-            </h4>
-            <Select
+            <h4 className="new__form__heading">Collaborator Restrictions</h4>
+            <NumberInput
               className="some-class"
-              defaultValue="placeholder-item"
-              disabled={false}
-              helperText=""
-              id="select-1"
-              inline={false}
-              invalid={false}
-              invalidText=""
-              labelText="Select"
-              light={false}
-            >
-              <SelectItem
-                disabled
-                hidden
-                text="Choose an option"
-                value="placeholder-item"
-              />
-              <SelectItem
-                disabled={false}
-                hidden={false}
-                text="Option 1"
-                value="option-1"
-              />
-              <SelectItem
-                disabled={false}
-                hidden={false}
-                text="Option 2"
-                value="option-2"
-              />
-              <SelectItem
-                disabled={false}
-                hidden={false}
-                text="Option 3"
-                value="option-3"
-              />
-            </Select>
+              id="number-input-1"
+              label="Collaborators"
+              max={100}
+              min={0}
+              step={1}
+              value={1}
+            />
           </Form>
           <div className="new__footer">
             <div className="new__footer__pageBtn">
