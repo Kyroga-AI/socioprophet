@@ -1,14 +1,40 @@
 import React, { Component } from "react";
+import { addProject } from "../../../../../actions/authActions";
+
 import Form from "carbon-components-react/lib/components/Form";
 import TextArea from "carbon-components-react/lib/components/TextArea";
 import TextInput from "carbon-components-react/lib/components/TextInput";
 import RadioButtonGroup from "carbon-components-react/lib/components/RadioButtonGroup";
 import RadioButton from "carbon-components-react/lib/components/RadioButton";
 import Button from "carbon-components-react/lib/components/Button";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
 import "./styles/projects1.css";
 class Projects1 extends Component {
+  constructor() {
+    super();
+    this.state = {
+      name: "",
+      description: "",
+    };
+  }
+
+  onChange = (e) => {
+    this.setState({ [e.target.id]: e.target.value });
+  };
+
+  onSubmit = (e) => {
+    e.preventDefault();
+
+    const newProject = {
+      name: this.state.name,
+      description: this.state.description,
+    };
+    this.props.addProject(newProject, this.props.history);
+  };
+
   render() {
     return (
       <div className="sOne">
@@ -16,13 +42,16 @@ class Projects1 extends Component {
           <div className="new__header">
             <h3 className="new__header__title">New Project</h3>
           </div>
-          <Form className="new__form" onSubmit={function noRefCheck() {}}>
+
+          <Form className="new__form" onSubmit={this.onSubmit}>
             <h4 className="new__form__heading">Define project details</h4>
             <div style={{ marginBottom: "2rem" }}>
               <TextInput
                 disabled={false}
+                onChange={this.onChange}
+                value={this.state.name}
                 light={true}
-                id="projectName"
+                id="name"
                 labelText="Name"
                 placeholder="Project name"
                 type="text"
@@ -31,14 +60,22 @@ class Projects1 extends Component {
             <div>
               <TextArea
                 disabled={false}
+                onChange={this.onChange}
+                value={this.state.description}
                 light={true}
                 cols={100}
-                id="projectName"
+                id="description"
                 labelText="Description"
                 placeholder="Project description"
                 type="text"
               />
             </div>
+            <button
+              className="header__register__form__field__btn"
+              type="submit"
+            >
+              Add Project
+            </button>
             <h4 className="new__form__heading">
               <span style={{ paddingTop: "2rem" }}>Collaboration model</span>
             </h4>
@@ -103,4 +140,12 @@ class Projects1 extends Component {
   }
 }
 
-export default Projects1;
+Projects1.propTypes = {
+  addProject: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, { addProject })(withRouter(Projects1));

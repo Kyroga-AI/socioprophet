@@ -4,6 +4,15 @@ import jwt_decode from "jwt-decode";
 
 import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from "./types";
 
+export const addProject = (userData, history) => (dispatch) => {
+  axios
+    .post("/api/projects/new", userData)
+    .then((res) => {
+      history.push("/");
+    })
+    .catch((err) => console.error("errer here"));
+};
+
 // Register User
 export const registerUser = (userData, history) => (dispatch) => {
   axios
