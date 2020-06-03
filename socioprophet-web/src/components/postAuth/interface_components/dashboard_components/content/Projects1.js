@@ -70,12 +70,6 @@ class Projects1 extends Component {
                 type="text"
               />
             </div>
-            <button
-              className="header__register__form__field__btn"
-              type="submit"
-            >
-              Add Project
-            </button>
             <h4 className="new__form__heading">
               <span style={{ paddingTop: "2rem" }}>Collaboration model</span>
             </h4>
