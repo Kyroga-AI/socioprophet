@@ -17,12 +17,16 @@
   -webkit-font-smoothing: subpixel-antialiased;
 }
 .main__sub__ticker__text {
-  line-height: 14px;
+  line-height: 10px;
   font-size: 14px;
   vertical-align: middle;
   margin-left: 3rem;
-  padding-top: 5px;
+  padding-top: 4px;
   height: 3rem;
+}
+
+#tickerText {
+  font-size: 14px;
 }
 
 .main__background__login {

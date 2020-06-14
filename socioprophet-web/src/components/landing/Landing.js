@@ -25,8 +25,8 @@ const Landing = () => {
             <Ticker>
               {({ index }) => (
                 <div className="main__sub__ticker__text">
-                  <p>
-                    <span style={{ fontWeight: "800" }}>News</span> / IM's #
+                  <p id="tickerText">
+                    <span style={{ fontWeight: "600" }}>News</span> / IM's #
                     {index}!
                   </p>
                 </div>
