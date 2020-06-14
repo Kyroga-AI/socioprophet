@@ -53,7 +53,7 @@ class ProjectDashboard extends Component {
               openClosed: "false",
               computeOptions: "option 1",
               clusterOptions: "cluster 3",
-              collaborators: "2",
+              collaborators: "3",
             },
             {
               id: "2",
