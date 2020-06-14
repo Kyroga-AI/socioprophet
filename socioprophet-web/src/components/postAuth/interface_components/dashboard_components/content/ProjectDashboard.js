@@ -12,24 +12,32 @@ class ProjectDashboard extends Component {
           headers={[
             {
               header: "Latest Configuration",
-              key: "lastSighted",
+              key: "dateConfigured",
             },
             {
               header: "Project Name",
-              key: "name",
+              key: "projectName",
             },
 
             {
-              header: "Attack phase",
-              key: "attackPhase",
+              header: "Public",
+              key: "publicPrivate",
             },
             {
-              header: "Method",
-              key: "method",
+              header: "Open",
+              key: "openClosed",
             },
             {
-              header: "Missing",
-              key: "missing",
+              header: "Compute",
+              key: "computeOptions",
+            },
+            {
+              header: "Cluster",
+              key: "clusterOptions",
+            },
+            {
+              header: "Collaborator Restrictions",
+              key: "collaborators",
             },
           ]}
           isSelectable={false}
@@ -38,28 +46,34 @@ class ProjectDashboard extends Component {
           render={undefined}
           rows={[
             {
-              attackPhase: "Initial Compromise",
-              id: "7c34f4507156b35",
-              lastSighted: "11/28/2018",
-              method: "Phishing",
-              name: "IBM X-Force",
-              type: "IPv6",
+              id: "1",
+              dateConfigured: "4 June 20",
+              projectName: "SP Project",
+              publicPrivate: "true",
+              openClosed: "false",
+              computeOptions: "option 1",
+              clusterOptions: "cluster 3",
+              collaborators: "2",
             },
             {
-              attackPhase: "Establish Foothold",
-              id: "38347816a51b0c5a8",
-              lastSighted: "06/28/2017",
-              method: "Deploy backdoor",
-              name: "AppX",
-              type: "Hash",
+              id: "2",
+              dateConfigured: "5 June 20",
+              projectName: "my socioprophet test project",
+              publicPrivate: "false",
+              openClosed: "false",
+              computeOptions: "option 2",
+              clusterOptions: "cluster 1",
+              collaborators: "1",
             },
             {
-              attackPhase: "Escalate Privileges",
-              id: "1d6116a2d1d03b4",
-              lastSighted: "05/30/2018",
-              method: "Credential dumping",
-              name: "Bigfix",
-              type: "URL",
+              id: "3",
+              dateConfigured: "6 June 20",
+              projectName: "test-sp",
+              publicPrivate: "true",
+              openClosed: "true",
+              computeOptions: "option 3",
+              clusterOptions: "cluster 2",
+              collaborators: "100",
             },
           ]}
           sortRow={undefined}
