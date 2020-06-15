@@ -47,7 +47,7 @@ module.exports = {
       "www.socioprophet.com",
     ],
     proxy: {
-      "/api/users": "http://localhost:5000",
+      "/api/users": "http://localhost:5001",
     },
   },
   plugins: [

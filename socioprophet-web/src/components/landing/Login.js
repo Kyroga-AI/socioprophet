@@ -69,7 +69,7 @@ class Login extends Component {
           <HeaderLinks />
 
           {/* Login Element - NOT BEING USED YET */}
-          <nav className="header__list">
+          {/* <nav className="header__list">
             <div className="header__login">
               <form
                 className="header__login__form"
@@ -132,7 +132,7 @@ class Login extends Component {
                 </label>
               </form>
             </div>
-          </nav>
+          </nav> */}
         </nav>
         {/* Main Block */}
         <div className="main">
@@ -141,7 +141,7 @@ class Login extends Component {
           <div className="main__background">
             <h1>{/* <strong>SocioProphet</strong> */}</h1>
             <br />
-            <h2>Please register for the &#945; release for now</h2>
+            <h2>Please register for the &#945; release</h2>
             <Link to="/register" className="main__background__register">
               &#945; Registry
             </Link>

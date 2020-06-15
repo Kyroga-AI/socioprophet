@@ -12,9 +12,11 @@
   color: #fff;
 }
 
+/* not sure about this one */
+
 /* MEDIA QUERIES */
 @media (max-width: 490px) {
   .header__title__link {
-    display: none;
+    /* display: none; */
   }
 }

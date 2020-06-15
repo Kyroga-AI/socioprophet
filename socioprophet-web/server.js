@@ -37,6 +37,6 @@ require("./src/validation/config/passport")(passport);
 app.use("/api/users", users);
 app.use("/api/projects", projects);
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 app.listen(port, () => console.log(`Server up and running on port ${port} !`));
