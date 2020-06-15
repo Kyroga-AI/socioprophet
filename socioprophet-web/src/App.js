@@ -46,9 +46,9 @@ class App extends Component {
             <Route exact path="/register" component={Register} />
             <Switch>
               {/* This is route for now until private issues are fixed */}
-              {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
+              <PrivateRoute path="/dashboard" component={UInterface} />
               {/* This is route to render pages w/in dashboard */}
-              <PrivateRoute path="/:id" component={UInterface} />
+              {/* <PrivateRoute path="/:id" component={UInterface} /> */}
               <PrivateRoute exact path="/terminal" component={PopoutTerminal} />
             </Switch>
           </div>
