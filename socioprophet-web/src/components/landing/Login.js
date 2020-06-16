@@ -4,7 +4,7 @@ import { Search } from "@carbon/ibm-security";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
-import classnames from "classnames";
+// import classnames from "classnames";
 
 import Header from "./landing_components/Header";
 import HeaderLinks from "./landing_components/HeaderLinks";
