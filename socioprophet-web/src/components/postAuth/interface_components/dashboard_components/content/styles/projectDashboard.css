@@ -6,6 +6,12 @@ body {
   border: 0;
 }
 
+.project--home__dataTable {
+  margin-top: 2rem;
+  border: 2px solid #333;
+  box-shadow: 2px 2px #333;
+}
+
 .project--home {
   position: absolute;
   width: calc(100% - 9rem);
@@ -14,10 +20,4 @@ body {
   top: 7rem;
   text-align: center;
   padding: 3rem;
-}
-
-.project--home__heading {
-  position: relative;
-  text-align: left;
-  padding-bottom: 50px;
 }
