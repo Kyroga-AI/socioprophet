@@ -4,7 +4,7 @@ import { Search } from "@carbon/ibm-security";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
-// import classnames from "classnames";
+import classnames from "classnames";
 
 import Header from "./landing_components/Header";
 import HeaderLinks from "./landing_components/HeaderLinks";
@@ -69,7 +69,7 @@ class Login extends Component {
           <HeaderLinks />
 
           {/* Login Element - NOT BEING USED YET */}
-          {/* <nav className="header__list">
+          <nav className="header__list">
             <div className="header__login">
               <form
                 className="header__login__form"
@@ -132,7 +132,7 @@ class Login extends Component {
                 </label>
               </form>
             </div>
-          </nav> */}
+          </nav>
         </nav>
         {/* Main Block */}
         <div className="main">
