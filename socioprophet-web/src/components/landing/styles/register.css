@@ -4,6 +4,21 @@
   height: 100%;
   font-size: 16px;
 }
+
+.register .bx--header {
+  background-color: #0c0c0c;
+  height: 2.5rem;
+  line-height: 2.5rem;
+}
+
+.register .bx--header-panel {
+  top: 2.5rem;
+}
+
+.header__register__back {
+  text-align: center;
+}
+
 .header__register {
   position: relative;
   margin: 5px 10px;

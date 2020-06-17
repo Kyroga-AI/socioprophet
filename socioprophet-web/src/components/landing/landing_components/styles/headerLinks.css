@@ -1,5 +1,6 @@
 .headerLinks {
-  margin: 0 20px 0 auto;
+  margin: 0px 50px 0 auto;
+  z-index: 100000;
 }
 
 /* Header Links Element */
@@ -38,6 +39,7 @@
   display: inline-block;
   height: inherit;
   margin-left: 40px;
+  z-index: 10000;
 }
 /* Header Buttons Element */
 .header__list__btn__login {

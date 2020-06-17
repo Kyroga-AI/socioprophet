@@ -4,8 +4,21 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { registerUser } from "../../actions/authActions";
 import classnames from "classnames";
+import Ticker from "react-ticker";
 
-import Header from "./landing_components/Header";
+import {
+  HeaderContainer,
+  Header,
+  HeaderGlobalBar,
+  HeaderGlobalAction,
+  HeaderPanel,
+  Switcher,
+  SwitcherItem,
+  SwitcherDivider,
+} from "carbon-components-react/lib/components/UIShell";
+
+import HeaderLanding from "./landing_components/HeaderLanding";
+import HeaderLinks from "./landing_components/HeaderLinks";
 import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
@@ -63,11 +76,84 @@ class Register extends Component {
       <div className="register">
         {/* Header Block */}
         <nav className="header">
-          <Header />
+          <HeaderLanding />
+          <HeaderLinks />
+
+          <HeaderContainer
+            render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+              <Header aria-label="SocioProphet Platform">
+                <HeaderGlobalBar>
+                  {/* <Link to="/" className="header__register__back">
+                    &#945; Registry
+                  </Link> */}
+
+                  <HeaderGlobalAction
+                    aria-label="App Switcher"
+                    // onClick={onClickSideNavExpand}
+                    isActive={isSideNavExpanded}
+                  >
+                    <svg width="20" height="20">
+                      <title>user</title>
+                      <path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
+                      <path d="M10 9.841a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
+                    </svg>
+                  </HeaderGlobalAction>
+                </HeaderGlobalBar>
+
+                <HeaderPanel aria-label="Header Panel" expanded={true}>
+                  <Switcher role="menu" aria-label="Switcher Container">
+                    <SwitcherItem isSelected aria-label="account name" href="#">
+                      Account Name
+                    </SwitcherItem>
+                    <SwitcherDivider />
+                    <SwitcherItem href="#" aria-label="profile">
+                      Profile
+                    </SwitcherItem>
+                    <SwitcherDivider />
+                    <SwitcherItem href="#" aria-label="preferences">
+                      Preferences
+                    </SwitcherItem>
+                    <SwitcherDivider />
+                    <SwitcherItem href="#" aria-label="set status">
+                      Set Status
+                    </SwitcherItem>
+                    <SwitcherDivider />
+                    <SwitcherItem href="#" aria-label="your repositories">
+                      Your Repositories
+                    </SwitcherItem>
+                    <SwitcherItem href="#" aria-label="your projects">
+                      Your Projects
+                    </SwitcherItem>
+                    <SwitcherItem href="#" aria-label="your projects">
+                      Help
+                    </SwitcherItem>
+                    <SwitcherItem href="#" aria-label="your projects">
+                      Settings
+                    </SwitcherItem>
+                    <SwitcherItem href="#" aria-label="your projects">
+                      Posts & Activities
+                    </SwitcherItem>
+                    <SwitcherItem href="#" aria-label="your projects">
+                      My Network
+                    </SwitcherItem>
+                    <SwitcherItem href="#" aria-label="your projects">
+                      Language
+                    </SwitcherItem>
+                    <SwitcherItem href="#" aria-label="your projects">
+                      Privacy & Security
+                    </SwitcherItem>
+                    <SwitcherDivider />
+
+                    {/* <button onClick={this.onLogoutClick}>Logout</button> */}
+                  </Switcher>
+                </HeaderPanel>
+              </Header>
+            )}
+          />
           {/* Header Links Element */}
-          <nav className="header__list">
-            {/* Header Login Element */}
-            <div className="header__register">
+          {/* <nav className="header__list"> */}
+          {/* Header Login Element */}
+          {/* <div className="header__register">
               <form
                 className="header__register__form"
                 noValidate
@@ -110,9 +196,9 @@ class Register extends Component {
                     />
                     <span className="error">{errors.email}</span>
                   </div>
-                </label>
-                {/* add back later for actual registration */}
-                {/* <label className="header__login__form__field">
+                </label> */}
+          {/* add back later for actual registration */}
+          {/* <label className="header__login__form__field">
                   <div>
                     <input
                       className={classnames(
@@ -150,7 +236,7 @@ class Register extends Component {
                     <span className="error">{errors.password2}</span>
                   </div>
                 </label> */}
-                <label className="header__register__form__field header__register__form__field--swidth">
+          {/* <label className="header__register__form__field header__register__form__field--swidth">
                   <div>
                     <button
                       className="header__register__form__field__btn"
@@ -162,10 +248,25 @@ class Register extends Component {
                 </label>
               </form>
             </div>
-          </nav>
+          </nav> */}
         </nav>
+
         {/* Main Block */}
         <div className="main">
+          <div className="main__sub">
+            <div className="main__sub__ticker">
+              <Ticker>
+                {({ index }) => (
+                  <div className="main__sub__ticker__text">
+                    <p id="tickerText">
+                      <span style={{ fontWeight: "600" }}>News</span> / IM's #
+                      {index}!
+                    </p>
+                  </div>
+                )}
+              </Ticker>
+            </div>
+          </div>
           {/* Main Background Element */}
           <div className="main__background responsive">
             <div className="main__background__title">
@@ -231,8 +332,11 @@ class Register extends Component {
                   </label>
                 </form>
               </div>
+              <Link to="/login" className="main__background__login">
+                Log In
+              </Link>
               <Link to="/" className="main__background__register">
-                Back
+                &#945; Registry
               </Link>
             </div>
           </div>

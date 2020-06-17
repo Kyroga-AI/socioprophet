@@ -52,9 +52,9 @@ const HeaderLinks = () => {
             {/* <Link to="/login" className="header__list__btn__login">
             Log In
           </Link> */}
-            <Link to="/register" className="header__list__btn__signup">
+            {/* <Link to="/register" className="header__list__btn__signup">
               &#945; Registry
-            </Link>
+            </Link> */}
           </div>
         </ul>
       </nav>

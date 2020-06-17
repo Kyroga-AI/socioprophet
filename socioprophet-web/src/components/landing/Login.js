@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
 import classnames from "classnames";
 
-import Header from "./landing_components/Header";
+import HeaderLanding from "./landing_components/HeaderLanding";
 import HeaderLinks from "./landing_components/HeaderLinks";
 import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
@@ -65,7 +65,7 @@ class Login extends Component {
       <div className="login">
         {/* Header Block */}
         <nav className="header">
-          <Header />
+          <HeaderLanding />
           <HeaderLinks />
 
           {/* Login Element - NOT BEING USED YET */}

@@ -10,6 +10,7 @@
 .header__title__link {
   text-decoration: none;
   color: #fff;
+  z-index: 1000000;
 }
 
 /* not sure about this one */

@@ -1,8 +1,8 @@
 import React from "react";
 
-import "./styles/header.css";
+import "./styles/headerLanding.css";
 
-const Header = () => {
+const HeaderLanding = () => {
   return (
     <div>
       {/* Platform Name Element */}
@@ -15,4 +15,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HeaderLanding;
