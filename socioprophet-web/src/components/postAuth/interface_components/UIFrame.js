@@ -207,7 +207,13 @@ class UIFrame extends Component {
           render={({ isSideNavExpanded, onClickSideNavExpand }) => (
             <Header aria-label="SocioProphet Platform">
               <SkipToContent />
-
+              <div className="footer__fish">
+                <img
+                  src="src/components/landing/images/fishbowl-landing.jpg"
+                  width="45px"
+                  height="42px"
+                />
+              </div>
               <HeaderName href="/dashboardHome" prefix="">
                 SocioProphet
               </HeaderName>

@@ -31,6 +31,19 @@ const Landing = () => {
                 {/* <Link to="/" className="header__register__back">
                     &#945; Registry
                   </Link> */}
+                <HeaderGlobalAction aria-label="App Switcher">
+                  <svg
+                    focusable="false"
+                    preserveAspectRatio="xMidYMid meet"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M18 18h3v3h-3zm-7.5 0h3v3h-3zM3 18h3v3H3zm15-7.5h3v3h-3zm-7.5 0h3v3h-3zm-7.5 0h3v3H3zM18 3h3v3h-3zm-7.5 0h3v3h-3zM3 3h3v3H3z"></path>
+                  </svg>
+                </HeaderGlobalAction>
 
                 <HeaderGlobalAction
                   aria-label="App Switcher"
@@ -77,7 +90,7 @@ const Landing = () => {
               Log In
             </Link>
             <Link to="/register" className="main__background__register">
-              &#945; Registry
+              &#945; - Registry
             </Link>
           </div>
         </div>

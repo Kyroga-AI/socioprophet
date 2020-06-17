@@ -83,10 +83,6 @@ class Register extends Component {
             render={({ isSideNavExpanded, onClickSideNavExpand }) => (
               <Header aria-label="SocioProphet Platform">
                 <HeaderGlobalBar>
-                  {/* <Link to="/" className="header__register__back">
-                    &#945; Registry
-                  </Link> */}
-
                   <HeaderGlobalAction
                     aria-label="App Switcher"
                     // onClick={onClickSideNavExpand}
@@ -102,49 +98,33 @@ class Register extends Component {
 
                 <HeaderPanel aria-label="Header Panel" expanded={true}>
                   <Switcher role="menu" aria-label="Switcher Container">
-                    <SwitcherItem isSelected aria-label="account name" href="#">
-                      Account Name
+                    <SwitcherItem href="#" aria-label="your repositories">
+                      First Name
                     </SwitcherItem>
-                    <SwitcherDivider />
-                    <SwitcherItem href="#" aria-label="profile">
-                      Profile
-                    </SwitcherItem>
-                    <SwitcherDivider />
-                    <SwitcherItem href="#" aria-label="preferences">
-                      Preferences
-                    </SwitcherItem>
-                    <SwitcherDivider />
-                    <SwitcherItem href="#" aria-label="set status">
-                      Set Status
+                    <SwitcherItem href="#" aria-label="your repositories">
+                      Last Name
                     </SwitcherItem>
                     <SwitcherDivider />
                     <SwitcherItem href="#" aria-label="your repositories">
-                      Your Repositories
-                    </SwitcherItem>
-                    <SwitcherItem href="#" aria-label="your projects">
-                      Your Projects
-                    </SwitcherItem>
-                    <SwitcherItem href="#" aria-label="your projects">
-                      Help
-                    </SwitcherItem>
-                    <SwitcherItem href="#" aria-label="your projects">
-                      Settings
-                    </SwitcherItem>
-                    <SwitcherItem href="#" aria-label="your projects">
-                      Posts & Activities
-                    </SwitcherItem>
-                    <SwitcherItem href="#" aria-label="your projects">
-                      My Network
-                    </SwitcherItem>
-                    <SwitcherItem href="#" aria-label="your projects">
-                      Language
-                    </SwitcherItem>
-                    <SwitcherItem href="#" aria-label="your projects">
-                      Privacy & Security
+                      SocioProphet ID
                     </SwitcherItem>
                     <SwitcherDivider />
-
-                    {/* <button onClick={this.onLogoutClick}>Logout</button> */}
+                    <SwitcherItem href="#" aria-label="your repositories">
+                      Password
+                    </SwitcherItem>
+                    <SwitcherItem href="#" aria-label="your repositories">
+                      Confirm Password
+                    </SwitcherItem>
+                    <SwitcherDivider />
+                    <SwitcherItem href="#" aria-label="your repositories">
+                      Phone Number (optional for 2FA)
+                    </SwitcherItem>
+                    <SwitcherDivider />
+                    <SwitcherItem href="#" aria-label="your repositories">
+                      Data Privacy Policy
+                    </SwitcherItem>
+                    <SwitcherDivider />
+                    <button>Register</button>
                   </Switcher>
                 </HeaderPanel>
               </Header>
