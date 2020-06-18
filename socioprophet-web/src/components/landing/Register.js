@@ -85,7 +85,6 @@ class Register extends Component {
                 <HeaderGlobalBar>
                   <HeaderGlobalAction
                     aria-label="App Switcher"
-                    // onClick={onClickSideNavExpand}
                     isActive={isSideNavExpanded}
                   >
                     <svg width="20" height="20">

@@ -16,8 +16,8 @@
 .footer {
   float: none;
   text-align: center;
-  height: 70px;
-  line-height: 70px;
+  height: 40px;
+  line-height: 45px;
   width: 100%;
   position: fixed;
   bottom: 0;
@@ -27,12 +27,12 @@
 .footer__social {
   position: absolute;
   z-index: 1;
-  height: 80px;
+  height: 40px;
   width: 30%;
   padding-left: 5%;
 }
 .footer__social__btn {
-  font-size: 20px;
+  font-size: 14px;
   color: #f4f4f4;
   float: left;
   margin-left: 15%;
@@ -40,7 +40,7 @@
 /* Footer Links Element */
 .footer__references {
   position: absolute;
-  height: 70px;
+  height: 40px;
   width: 100%;
   margin-left: 0;
 }
@@ -56,15 +56,16 @@
   float: right;
   padding-right: 5%;
   color: #f4f4f4;
+  font-size: 14px;
   text-decoration: none !important;
 }
 .footer__fish {
   position: relative;
   float: left;
   margin-right: 10px;
-  height: 60px;
-  width: 60px;
-  padding-top: 13px;
+  height: 40px;
+  width: 40px;
+  padding-top: 8px;
   opacity: 0.9;
 
   z-index: 1000000;

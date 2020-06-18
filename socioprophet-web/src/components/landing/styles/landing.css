@@ -1,22 +1,27 @@
 .landing .bx--header {
-  background-color: #0c0c0c;
-  height: 2.5rem;
-  line-height: 2.5rem;
+  height: 2rem;
+}
+
+.landing .bx--header__action {
+  height: 2rem;
+  width: 2rem;
+  padding-right: 25px;
+  padding-top: 5px;
 }
 
 .main__sub {
   position: absolute;
   width: 100%;
-  height: 2.5rem;
-  top: 2.5rem;
+  height: 30px;
+  top: 2rem;
   z-index: 1;
 }
 .main__sub__ticker {
   position: fixed;
-  top: 2.4rem;
+  top: 2rem;
   left: 0;
   width: 100%;
-  height: 40px;
+  height: 30px;
   background-color: #262626;
   color: #eee;
   text-rendering: optimizeLegibility;
@@ -27,8 +32,8 @@
   font-size: 14px;
   vertical-align: middle;
   margin-left: 3rem;
-  padding-top: 4px;
-  height: 3rem;
+  padding-top: 0px;
+  height: 30px;
 }
 
 #tickerText {

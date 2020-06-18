@@ -11,8 +11,8 @@ const HeaderLanding = () => {
         <div className="footer__fish">
           <img
             src="src/components/landing/images/fishbowl-landing.jpg"
-            width="45px"
-            height="42px"
+            width="28px"
+            height="26px"
           />
         </div>
         <a className="header__title__link" href="/">

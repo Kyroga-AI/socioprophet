@@ -1,17 +1,31 @@
 import React from "react";
 import Crawl from "react-star-wars-crawl";
-// import "react-star-wars-crawl/lib/index.css";
+import "react-star-wars-crawl/lib/index.css";
+
+import Slider from "react-slick";
 
 import "./styles/offering.css";
+var settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  autoplay: true,
+};
 
 const Offering = () => {
   return (
     <div>
       {/* Main Description Element */}
       <div className="main__descriptive">
-        <div style={{ height: "200px", animationIterationCount: "infinite" }}>
-          <Crawl>
-            <div style={{ color: "#fff" }}>
+        {/* <div style={{ height: "200px", zIndex: "1000" }}>
+          <Crawl
+            fadeStyles={{ minHeight: "5vh" }}
+            crawlStyles={{ animationIterationCount: "infinite" }}
+            textContainerStyles={{ color: "#fff" }}
+          >
+            <div>
               It is a period of civil wars in the galaxy. A brave alliance of
               underground freedom fighters has challenged the tyranny and
               oppression of the awesome GALACTIC EMPIRE. Striking from a
@@ -26,15 +40,159 @@ const Offering = () => {
               freedom.
             </div>
           </Crawl>
-        </div>
+        </div> */}
         <div className="main__descriptive__title">
           Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
         </div>
       </div>
       {/* Main Offering Element */}
       <div className="main__offering">
+        <Slider {...settings}>
+          <div>
+            <div className="div">
+              {" "}
+              <div className="main__offering__card">
+                <div className="main__offering__card__name">
+                  [ SocioProphet ] Platform
+                </div>
+                <div className="main__offering__card__description">
+                  SocioProphet is a web 3.0 community for distributed
+                  infrastructure, data, analytics & AI, built as a social
+                  networking platform - for geeks, but simple enough for
+                  everyone.
+                </div>
+                {/* <div className="main__offering__card__learnmore">
+                  <a
+                    className="main__offering__card__learnmore__link"
+                    href="https://socioprophet.blogspot.com/"
+                  >
+                    Learn More
+                  </a>
+                </div> */}
+              </div>{" "}
+            </div>
+          </div>
+          <div>
+            <div className="div">
+              {" "}
+              <div className="main__offering__card">
+                <div className="main__offering__card__name">
+                  [ SocioProphet ] Community
+                </div>
+                <div className="main__offering__card__description">
+                  A collaborative distributed system and social network. Aimed
+                  to unlock the world's best ideas through democratized social
+                  intellegence.
+                </div>
+                {/* <div className="main__offering__card__learnmore">
+                  <a
+                    className="main__offering__card__learnmore__link"
+                    href="https://socioprophet.blogspot.com/"
+                  >
+                    Learn More
+                  </a>
+                </div> */}
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="div">
+              {" "}
+              <div className="main__offering__card">
+                <div className="main__offering__card__name">
+                  [ SocioProphet ] Data & AI
+                </div>
+                <div className="main__offering__card__description">
+                  Share your compute, storage, data, analytics, AI models and
+                  workflows. Achieved through leveraging peer to peer and
+                  federated networks, or centralized collaboration models.
+                </div>
+                {/* <div className="main__offering__card__learnmore">
+                  <a
+                    className="main__offering__card__learnmore__link"
+                    href="https://socioprophet.blogspot.com/"
+                  >
+                    Learn More
+                  </a>
+                </div> */}
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="div">
+              {" "}
+              <div className="main__offering__card">
+                <div className="main__offering__card__name">
+                  [ SocioProphet ] Platform
+                </div>
+                <div className="main__offering__card__description">
+                  SocioProphet is a web 3.0 community for distributed
+                  infrastructure, data, analytics & AI, built as a social
+                  networking platform - for geeks, but simple enough for
+                  everyone.
+                </div>
+                {/* <div className="main__offering__card__learnmore">
+                  <a
+                    className="main__offering__card__learnmore__link"
+                    href="https://socioprophet.blogspot.com/"
+                  >
+                    Learn More
+                  </a>
+                </div> */}
+              </div>{" "}
+            </div>
+          </div>
+          <div>
+            <div className="div">
+              {" "}
+              <div className="main__offering__card">
+                <div className="main__offering__card__name">
+                  [ SocioProphet ] Platform
+                </div>
+                <div className="main__offering__card__description">
+                  SocioProphet is a web 3.0 community for distributed
+                  infrastructure, data, analytics & AI, built as a social
+                  networking platform - for geeks, but simple enough for
+                  everyone.
+                </div>
+                {/* <div className="main__offering__card__learnmore">
+                  <a
+                    className="main__offering__card__learnmore__link"
+                    href="https://socioprophet.blogspot.com/"
+                  >
+                    Learn More
+                  </a>
+                </div> */}
+              </div>{" "}
+            </div>
+          </div>
+          <div>
+            <div className="div">
+              {" "}
+              <div className="main__offering__card">
+                <div className="main__offering__card__name">
+                  [ SocioProphet ] Platform
+                </div>
+                <div className="main__offering__card__description">
+                  SocioProphet is a web 3.0 community for distributed
+                  infrastructure, data, analytics & AI, built as a social
+                  networking platform - for geeks, but simple enough for
+                  everyone.
+                </div>
+                {/* <div className="main__offering__card__learnmore">
+                  <a
+                    className="main__offering__card__learnmore__link"
+                    href="https://socioprophet.blogspot.com/"
+                  >
+                    Learn More
+                  </a>
+                </div> */}
+              </div>{" "}
+            </div>
+          </div>
+        </Slider>
         {/* Main Offering Card Element */}
-        <div className="main__offering__card">
+        {/* <div className="main__offering__card">
           <div className="main__offering__card__name">
             [ SocioProphet ] Platform
           </div>
@@ -51,9 +209,9 @@ const Offering = () => {
               Learn More
             </a>
           </div>
-        </div>
+        </div> */}
         {/* Main Offering Card Element */}
-        <div className="main__offering__card">
+        {/* <div className="main__offering__card">
           <div className="main__offering__card__name">
             [ SocioProphet ] Community
           </div>
@@ -70,9 +228,9 @@ const Offering = () => {
               Learn More
             </a>
           </div>
-        </div>
+        </div> */}
         {/* Main Offering Card Element */}
-        <div className="main__offering__card">
+        {/* <div className="main__offering__card">
           <div className="main__offering__card__name">
             [ SocioProphet ] Data & AI
           </div>
@@ -89,7 +247,7 @@ const Offering = () => {
               Learn More
             </a>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
