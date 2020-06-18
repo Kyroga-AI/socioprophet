@@ -1,9 +1,9 @@
 /* Main Description Element */
 .main__descriptive {
-  padding: 31px 10px;
-  height: 100px;
+  /* padding: 31px 10px; */
+  /* height: 100px; */
   color: #fff;
-  background-color: #0c0c0c;
+  /* background-color: #0c0c0c; */
 }
 .main__descriptive__title {
   color: #f1f1f1;
@@ -19,7 +19,7 @@
   background-color: transparent;
   /* display: flex; */
   width: 90%;
-  margin-top: -110px;
+  margin-top: -100px;
   margin-left: 5%;
   justify-content: center;
   z-index: 10000;
@@ -35,6 +35,7 @@
   height: 240px;
   /* width: 1000px; */
   background-color: #fff;
+  opacity: 0.9;
   box-sizing: border-box;
   display: inline-block;
   text-align: center;
@@ -55,10 +56,11 @@
   height: 40px;
   padding: 8px;
   margin-top: 16px;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 2.43;
-  text-align: center;
-  color: #5a6872;
+  text-align: left;
+  color: #000;
+  font-weight: 800;
   padding: 20px;
 }
 .main__offering__card__learnmore {

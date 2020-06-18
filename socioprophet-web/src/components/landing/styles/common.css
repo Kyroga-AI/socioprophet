@@ -10,6 +10,10 @@
   color: #fff;
 }
 .main {
+  background-image: url("../images/grass.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50%;
   background-color: #f4f4f4;
   height: calc(100vh);
   overflow: scroll;
@@ -18,14 +22,14 @@
   background-image: url("../images/space.jpg");
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: 50%;
+  background-position: 100%;
   color: #fff;
   text-align: center;
-  height: 300px;
+  height: 480px;
   padding: 135px 100px 200px;
 }
 .main__background__title {
-  margin-top: 40px;
+  margin-top: 80px;
   font-size: 42px;
   font-weight: 400;
 }
