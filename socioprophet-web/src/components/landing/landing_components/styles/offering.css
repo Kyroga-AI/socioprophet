@@ -1,14 +1,15 @@
 /* Main Description Element */
 .main__descriptive {
   padding: 31px 10px;
-  height: 230px;
+  height: 100px;
   color: #fff;
   background-color: #0c0c0c;
 }
 .main__descriptive__title {
+  color: #f1f1f1;
   height: 36px;
   font-size: 25px;
-  line-height: 3;
+  line-height: 1;
   text-align: center;
   font-style: italic;
 }
@@ -17,9 +18,9 @@
 .main__offering {
   background-color: transparent;
   /* display: flex; */
-  width: 80%;
+  width: 90%;
   margin-top: -110px;
-  margin-left: 10%;
+  margin-left: 5%;
   justify-content: center;
   z-index: 10000;
   /* background-color: #fff; */
@@ -30,21 +31,23 @@
 .main__offering__card {
   margin-left: 20px;
   margin-right: 20px;
-  height: 200px;
+  margin-bottom: 20px;
+  height: 240px;
   /* width: 1000px; */
   background-color: #fff;
   box-sizing: border-box;
   display: inline-block;
   text-align: center;
   z-index: 100000;
+  box-shadow: 2px 2px grey;
 }
 
 .main__offering__card__name {
   margin-top: 23px;
   color: #152934;
   font-weight: 400;
-  font-size: 20px;
-
+  font-size: 18px;
+  font-weight: 800;
   text-align: center;
 }
 .main__offering__card__description {
@@ -52,10 +55,11 @@
   height: 40px;
   padding: 8px;
   margin-top: 16px;
-  font-size: 16px;
-  line-height: 1.43;
+  font-size: 13px;
+  line-height: 2.43;
   text-align: center;
   color: #5a6872;
+  padding: 20px;
 }
 .main__offering__card__learnmore {
   margin-top: 65px;

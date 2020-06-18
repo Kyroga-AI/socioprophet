@@ -8,9 +8,10 @@ import "./styles/offering.css";
 var settings = {
   dots: true,
   infinite: true,
-  speed: 500,
+  speed: 2000,
   slidesToShow: 3,
   slidesToScroll: 1,
+  autoplaySpeed: 18000,
   autoplay: true,
 };
 
@@ -41,9 +42,7 @@ const Offering = () => {
             </div>
           </Crawl>
         </div> */}
-        <div className="main__descriptive__title">
-          Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
-        </div>
+        <div className="main__descriptive__title"></div>
       </div>
       {/* Main Offering Element */}
       <div className="main__offering">

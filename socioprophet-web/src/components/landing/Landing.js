@@ -82,6 +82,9 @@ const Landing = () => {
             Socio
             <span>
               <strong>Prophet</strong>
+              <p style={{ marginTop: "10px" }}>
+                Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
+              </p>
             </span>
           </div>
           <div className="main__background__responsive">
