@@ -11,6 +11,13 @@
   line-height: 2rem;
 }
 
+.register .bx--header__action {
+  height: 2rem;
+  width: 2rem;
+  padding-right: 25px;
+  padding-top: 5px;
+}
+
 .register .bx--header-panel {
   top: 2rem;
 }
