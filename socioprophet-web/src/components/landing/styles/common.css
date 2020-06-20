@@ -13,7 +13,7 @@
   background-image: url("../images/grass.jpg");
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: 50%;
+  background-position: 100%;
   background-color: #f4f4f4;
   height: calc(100vh);
   overflow: scroll;

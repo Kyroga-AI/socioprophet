@@ -252,6 +252,17 @@ class Register extends Component {
               Socio
               <span>
                 <strong>Prophet</strong>
+                <p
+                  style={{
+                    marginTop: "10px",
+                    fontWeight: "800",
+                    paddingTop: "10px",
+                  }}
+                >
+                  <strong>
+                    Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
+                  </strong>
+                </p>
               </span>
             </div>
             <div>
