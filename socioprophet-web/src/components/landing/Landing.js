@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Ticker from "react-ticker";
 
@@ -7,6 +7,10 @@ import {
   Header,
   HeaderGlobalBar,
   HeaderGlobalAction,
+  HeaderPanel,
+  Switcher,
+  SwitcherItem,
+  SwitcherDivider,
 } from "carbon-components-react/lib/components/UIShell";
 
 import HeaderLanding from "./landing_components/HeaderLanding";
@@ -18,6 +22,11 @@ import "./styles/common.css";
 import "./styles/landing.css";
 
 const Landing = () => {
+  const [isExpanded, setExpanded] = useState(false);
+
+  const toggle = () => {
+    setExpanded(isExpanded === false ? true : false);
+  };
   return (
     <div className="landing">
       <nav className="header">
@@ -40,10 +49,7 @@ const Landing = () => {
                     <path d="M18 18h3v3h-3zm-7.5 0h3v3h-3zM3 18h3v3H3zm15-7.5h3v3h-3zm-7.5 0h3v3h-3zm-7.5 0h3v3H3zM18 3h3v3h-3zm-7.5 0h3v3h-3zM3 3h3v3H3z"></path>
                   </svg>
                 </HeaderGlobalAction>
-                <HeaderGlobalAction
-                  aria-label="App Switcher"
-                  isActive={isSideNavExpanded}
-                >
+                <HeaderGlobalAction aria-label="App Switcher">
                   <svg width="20" height="20">
                     <title>user</title>
                     <path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
@@ -51,6 +57,37 @@ const Landing = () => {
                   </svg>
                 </HeaderGlobalAction>
               </HeaderGlobalBar>
+              <HeaderPanel aria-label="Header Panel" expanded={isExpanded}>
+                <Switcher role="menu" aria-label="Switcher Container">
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    First Name
+                  </SwitcherItem>
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Last Name
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    SocioProphet ID
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Password
+                  </SwitcherItem>
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Confirm Password
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Phone Number (optional for 2FA)
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Data Privacy Policy
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <button>Register</button>
+                </Switcher>
+              </HeaderPanel>
             </Header>
           )}
         />
@@ -93,9 +130,9 @@ const Landing = () => {
             <Link to="/login" className="main__background__login">
               Log In
             </Link>
-            <Link to="/register" className="main__background__register">
+            <button className="main__background__register" onClick={toggle}>
               &#945; - Registry
-            </Link>
+            </button>
           </div>
         </div>
 
