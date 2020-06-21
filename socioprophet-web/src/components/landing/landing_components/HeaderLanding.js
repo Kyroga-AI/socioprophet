@@ -1,5 +1,7 @@
 import React from "react";
 
+import fish from "../images/fishCropFinal.gif";
+
 import "./styles/headerLanding.css";
 
 const HeaderLanding = () => {
@@ -9,10 +11,17 @@ const HeaderLanding = () => {
 
       <div className="header__title">
         <div className="footer__fish">
-          <img
+          {/* <img
             src="src/components/landing/images/fishbowl-landing.jpg"
-            width="36px"
+            width="35px"
             height="30px"
+          /> */}
+          <img
+            className="fishGif"
+            src={fish}
+            width="35px"
+            height="30px"
+            alt="fish bowl"
           />
         </div>
         <a className="header__title__link" href="/">
