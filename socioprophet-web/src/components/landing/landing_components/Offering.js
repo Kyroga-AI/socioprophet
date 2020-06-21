@@ -18,8 +18,10 @@ var settings = {
 const Offering = () => {
   return (
     <div>
-      {/* Main Description Element */}
+      {/* ---------- */}
+
       <div className="main__descriptive">
+        {/* Star Wars crawl section */}
         {/* <div style={{ height: "200px", zIndex: "1000" }}>
           <Crawl
             fadeStyles={{ minHeight: "5vh" }}

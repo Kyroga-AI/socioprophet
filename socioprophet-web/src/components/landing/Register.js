@@ -343,7 +343,7 @@ class Register extends Component {
                 Log In
               </Link>
               <Link to="/" className="main__background__register">
-                &#945; Registry
+                &#945; - Registry
               </Link>
             </div>
           </div>
