@@ -74,7 +74,6 @@ class Register extends Component {
 
     return (
       <div className="register">
-        {/* Header Block */}
         <nav className="header">
           <HeaderLanding />
           <HeaderLinks />
@@ -83,9 +82,6 @@ class Register extends Component {
             render={({ isSideNavExpanded, onClickSideNavExpand }) => (
               <Header aria-label="SocioProphet Platform">
                 <HeaderGlobalBar>
-                  {/* <Link to="/" className="header__register__back">
-                    &#945; Registry
-                  </Link> */}
                   <HeaderGlobalAction aria-label="App Switcher">
                     <svg
                       focusable="false"
@@ -247,7 +243,6 @@ class Register extends Component {
           </nav> */}
         </nav>
 
-        {/* Main Block */}
         <div className="main">
           <div className="main__sub">
             <div className="main__sub__ticker">
@@ -263,7 +258,6 @@ class Register extends Component {
               </Ticker>
             </div>
           </div>
-          {/* Main Background Element */}
           <div className="main__background responsive">
             <div className="main__background__title">
               Socio

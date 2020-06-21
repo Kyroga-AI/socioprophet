@@ -20,7 +20,6 @@ import "./styles/landing.css";
 const Landing = () => {
   return (
     <div className="landing">
-      {/* Header Block */}
       <nav className="header">
         <HeaderLanding />
         <HeaderLinks />
@@ -28,9 +27,6 @@ const Landing = () => {
           render={({ isSideNavExpanded, onClickSideNavExpand }) => (
             <Header aria-label="SocioProphet Platform">
               <HeaderGlobalBar>
-                {/* <Link to="/" className="header__register__back">
-                    &#945; Registry
-                  </Link> */}
                 <HeaderGlobalAction aria-label="App Switcher">
                   <svg
                     focusable="false"
@@ -44,7 +40,6 @@ const Landing = () => {
                     <path d="M18 18h3v3h-3zm-7.5 0h3v3h-3zM3 18h3v3H3zm15-7.5h3v3h-3zm-7.5 0h3v3h-3zm-7.5 0h3v3H3zM18 3h3v3h-3zm-7.5 0h3v3h-3zM3 3h3v3H3z"></path>
                   </svg>
                 </HeaderGlobalAction>
-
                 <HeaderGlobalAction
                   aria-label="App Switcher"
                   isActive={isSideNavExpanded}
@@ -60,7 +55,6 @@ const Landing = () => {
           )}
         />
       </nav>
-      {/* Main Block */}
       <div className="main">
         <div className="main__sub">
           <div className="main__sub__ticker">
@@ -76,7 +70,7 @@ const Landing = () => {
             </Ticker>
           </div>
         </div>
-        {/* Main Background Element */}
+
         <div className="main__background">
           <div className="main__background__title">
             Socio
@@ -96,7 +90,6 @@ const Landing = () => {
             </span>
           </div>
           <div className="main__background__responsive">
-            {/* no login yet - will be added in later when login becomes available*/}
             <Link to="/login" className="main__background__login">
               Log In
             </Link>
