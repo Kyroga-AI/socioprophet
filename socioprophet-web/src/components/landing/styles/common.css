@@ -10,11 +10,11 @@
   color: #fff;
 }
 .main {
-  background-image: url("../images/grass.jpg");
+  background-image: url("../images/grassFlat.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 100%;
-  background-color: #f4f4f4;
+  background-color: #0c0c0c;
   height: calc(100vh);
   overflow: scroll;
 }
