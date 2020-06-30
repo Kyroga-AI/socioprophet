@@ -111,20 +111,22 @@ const Landing = () => {
         <div className="main__background">
           <div className="main__background__title">
             Socio
-            <span>
+            <span style={{ color: "#f4f4f4" }}>
               <strong>Prophet</strong>
-              <p
-                style={{
-                  marginTop: "10px",
-                  fontWeight: "800",
-                  paddingTop: "10px",
-                }}
-              >
+            </span>
+            <p
+              style={{
+                marginTop: "10px",
+                fontWeight: "800",
+                paddingTop: "10px",
+              }}
+            >
+              <span style={{ color: "#fff", textDecoration: "underline" }}>
                 <strong>
                   Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
                 </strong>
-              </p>
-            </span>
+              </span>
+            </p>
           </div>
           <div className="main__background__responsive">
             <Link to="/login" className="main__background__login">

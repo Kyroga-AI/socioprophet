@@ -53,9 +53,7 @@ const Offering = () => {
             <div className="div">
               {" "}
               <div className="main__offering__card">
-                <div className="main__offering__card__name">
-                  [ SocioProphet ] Platform
-                </div>
+                <div className="main__offering__card__name">Platform</div>
                 <div className="main__offering__card__description">
                   SocioProphet is a web 3.0 community for distributed
                   infrastructure, data, analytics & AI, built as a social
@@ -77,9 +75,7 @@ const Offering = () => {
             <div className="div">
               {" "}
               <div className="main__offering__card">
-                <div className="main__offering__card__name">
-                  [ SocioProphet ] Community
-                </div>
+                <div className="main__offering__card__name">Community</div>
                 <div className="main__offering__card__description">
                   A collaborative distributed system and social network. Aimed
                   to unlock the world's best ideas through democratized social
@@ -100,9 +96,7 @@ const Offering = () => {
             <div className="div">
               {" "}
               <div className="main__offering__card">
-                <div className="main__offering__card__name">
-                  [ SocioProphet ] Data & AI
-                </div>
+                <div className="main__offering__card__name">Data & AI</div>
                 <div className="main__offering__card__description">
                   Share your compute, storage, data, analytics, AI models and
                   workflows. Achieved through leveraging peer to peer and

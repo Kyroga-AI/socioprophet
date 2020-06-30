@@ -14,12 +14,13 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 100%;
+  /* background-color: #fff; */
   background-color: #0c0c0c;
   height: calc(100vh);
   overflow: scroll;
 }
 .main__background {
-  background-image: url("../images/space.jpg");
+  background-image: url("../images/test11.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 100%;
@@ -29,23 +30,28 @@
   padding: 135px 100px 200px;
 }
 .main__background__title {
-  margin-top: 80px;
-  font-size: 42px;
+  margin-top: 0px;
+  font-size: 48px;
   font-weight: 400;
+  /* color: #161c20; */
+  color: #f4f4f4;
 }
 .main__background__register {
   margin-top: 34px;
   width: 127px;
   height: 40px;
   display: inline-block;
-  color: #fff;
+  color: #000;
   font-size: 16px;
   font-weight: 500;
-  border: 2px solid #fff;
-  background-color: #0c0c0c;
+  border: 2px solid #000;
+  background-color: #fff;
+  opacity: 0.8;
   /* padding-top: 9px; */
   box-sizing: border-box;
   cursor: pointer;
+  /* font-weight: 800; */
+
   text-decoration: none;
 }
 
