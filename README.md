@@ -64,7 +64,7 @@ SocioProphet's source code is nested beneath the `src` directories. For deployme
 | `deploy`            | Deploy the helm charts.                                   |
 | `update`            | Re-deploy the previously built chart with updated values. |
 | `deploy-monitoring` | Deploy monitoring components.                             |
-| `deploy-all`        | Deploy DataHub and the monitoring components.             |
+| `deploy-all`        | Deploy and the monitoring components.             |
 
 ## Build Variables
 
