@@ -74,7 +74,7 @@ All of the variables that control the build are in `Makefile.inc` in the root of
 | --------------------------- | ---------------------------------------------------- | --------- |
 | `DOCKER_REGISTRY`           | Docker registry for built images                     |           |
 | `DOCKER_REGISTRY_NAMESPACE` | Namespace within the docker registry to place images |           |
-| `DOCKER_REPOSITORY`         | Docker repository to use for the built images        | `ibmcom`  |
+| `DOCKER_REPOSITORY`         | Docker repository to use for the built images        | `default`  |
 | `TAG`                       | Build number to tag all artifacts with               | `latest`  |
 | `NAMESPACE`                 | Kubernetes namespace to deploy into                  | `default` |
 
