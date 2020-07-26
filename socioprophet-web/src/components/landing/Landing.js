@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Ticker from "react-ticker";
+import Parser from "rss-parser";
 
 import {
   HeaderContainer,
@@ -24,6 +25,40 @@ import "./styles/landing.css";
 const Landing = () => {
   const [isExpanded, setExpanded] = useState(false);
 
+  const [rssFeed, setRssFeed] = useState([]);
+
+  // const url = "https://hnrss.org/newest";
+  const url =
+    "https://cors-anywhere.herokuapp.com/https://www.proseptic.co.uk/news-advice/feed";
+
+  const GetRssFeedData = () => {
+    const [feed, setFeed] = useState("");
+    useEffect(() => {
+      const getFeed = async () => {
+        const text = await fetch(url).then((r) => r.text());
+        const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
+        const items = Array.from(xmlDoc.querySelectorAll("item")).map(
+          (item) => ({
+            title: item.querySelector("title").textContent,
+          })
+        );
+        console.log(items);
+        setFeed(items);
+        console.log();
+      };
+      getFeed();
+    }, []);
+    return feed ? (
+      <p
+        className="main__sub__ticker__text"
+        style={{ marginTop: "8px", whiteSpace: "nowrap" }}
+      >
+        {feed.map((items) => items.title + "-------------")}
+      </p>
+    ) : (
+      <p styles={{ visibility: "hidden" }}>Placeholder</p>
+    );
+  };
   const toggle = () => {
     setExpanded(isExpanded === false ? true : false);
   };
@@ -95,15 +130,23 @@ const Landing = () => {
       <div className="main">
         <div className="main__sub">
           <div className="main__sub__ticker">
-            <Ticker>
-              {({ index }) => (
-                <div className="main__sub__ticker__text">
-                  <p id="tickerText">
-                    <span style={{ fontWeight: "600" }}>News</span> / IM's #
-                    {index}!
-                  </p>
+            <Ticker offset="run-in">
+              {() => <GetRssFeedData />}
+              {/* {({ index }) => (
+                <div>
+                  <p className="main__sub__ticker__text"></p>
+                  {rssFeed
+                    .map((items) => (
+                      <div
+                        className="main__sub__ticker__text"
+                        key={items.title}
+                      >
+                        <p>{items.title}</p>
+                      </div>
+                    ))
+                    .toString()}
                 </div>
-              )}
+              )} */}
             </Ticker>
           </div>
         </div>
@@ -116,12 +159,12 @@ const Landing = () => {
             </span>
             <p
               style={{
-                marginTop: "10px",
+                marginTop: "25px",
                 fontWeight: "800",
                 paddingTop: "10px",
               }}
             >
-              <span style={{ color: "#fff", textDecoration: "underline" }}>
+              <span style={{ color: "#fff" }}>
                 <strong>
                   Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
                 </strong>

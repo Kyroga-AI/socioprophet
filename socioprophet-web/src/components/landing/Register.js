@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { registerUser } from "../../actions/authActions";
 import classnames from "classnames";
 import Ticker from "react-ticker";
+import Parser from "rss-parser";
 
 import {
   HeaderContainer,
@@ -26,15 +27,22 @@ import "./styles/common.css";
 import "./styles/register.css";
 
 class Register extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       name: "",
       email: "",
       // password: "", --> add later for actual registration
       // password2: "", --> add later for actual registration
       errors: {},
+      feed: [],
     };
+  }
+
+  async componentDidMount() {
+    const parser = new Parser();
+    const feed = await parser.parserURL("https://hnrss.org/newest");
+    this.setState({ feed });
   }
 
   componentDidMount() {
