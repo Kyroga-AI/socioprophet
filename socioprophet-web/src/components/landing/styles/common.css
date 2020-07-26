@@ -10,17 +10,17 @@
   color: #fff;
 }
 .main {
-  background-image: url("../images/grassFlat.jpg");
+  background-image: url("../images/newTest/fore-dusk-early.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 100%;
-  /* background-color: #fff; */
-  background-color: #0c0c0c;
+  background-color: rgb(170, 170, 170);
+
   height: calc(100vh);
   overflow: scroll;
 }
 .main__background {
-  background-image: url("../images/test11.jpg");
+  background-image: url("../images/newTest/back-dusk-early.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 100%;
@@ -45,7 +45,7 @@
   font-size: 16px;
   font-weight: 500;
   border: 2px solid #000;
-  background-color: #fff;
+  background-color: #f4f4f4;
   opacity: 0.8;
   /* padding-top: 9px; */
   box-sizing: border-box;
