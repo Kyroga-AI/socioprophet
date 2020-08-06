@@ -39,12 +39,6 @@ class Register extends Component {
     };
   }
 
-  async componentDidMount() {
-    const parser = new Parser();
-    const feed = await parser.parserURL("https://hnrss.org/newest");
-    this.setState({ feed });
-  }
-
   componentDidMount() {
     // If logged in and user navigates to Register page, should redirect them to dashboard
     if (this.props.auth.isAuthenticated) {

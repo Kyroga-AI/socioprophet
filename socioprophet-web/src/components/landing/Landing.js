@@ -27,9 +27,9 @@ const Landing = () => {
 
   const [rssFeed, setRssFeed] = useState([]);
 
-  // const url = "https://hnrss.org/newest";
-  const url =
-    "https://cors-anywhere.herokuapp.com/https://www.proseptic.co.uk/news-advice/feed";
+  const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
+  // const url =
+  //   "https://cors-anywhere.herokuapp.com/https://www.proseptic.co.uk/news-advice/feed";
 
   const GetRssFeedData = () => {
     const [feed, setFeed] = useState("");
