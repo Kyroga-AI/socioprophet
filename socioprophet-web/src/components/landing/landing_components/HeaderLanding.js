@@ -1,6 +1,6 @@
 import React from "react";
 
-import fish from "../images/fishCropFinal.gif";
+import fish from "../../../../public/images/fishCropFinal.gif";
 
 import "./styles/headerLanding.css";
 

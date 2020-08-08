@@ -10,7 +10,7 @@
   color: #fff;
 }
 .main {
-  background-image: url("../images/tester18.jpg");
+  background-image: url("../../../../public/images/tester18.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 100%;
@@ -20,7 +20,7 @@
   overflow: scroll;
 }
 .main__background {
-  background-image: url("../images/stoneTest17.jpg");
+  background-image: url("../../../../public/images/stoneTest17.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 100%;
