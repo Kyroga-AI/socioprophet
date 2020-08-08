@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search } from "@carbon/ibm-security";
+import { TextInput, Icon, ButtonsGroup } from "watson-react-components";
 
 import "./styles/headerLinks.css";
 
@@ -13,14 +14,16 @@ import "./styles/headerLinks.css";
 // });
 
 const HeaderLinks = () => {
-  // const classes = useStyles();
+  const [searchQuery, setSearchQuery] = useState("");
+  // Test
+  const [number, setNumber] = useState(0);
+
   return (
     <div className="headerLinks">
-      {/* Header Links Element */}
       <nav className="header__list">
         <ul>
           <li className="header__list__item hidden">
-            <Search
+            {/* <Search
               closeButtonLabelText="Clear search input"
               className="dark"
               defaultValue=""
@@ -28,10 +31,19 @@ const HeaderLinks = () => {
               labelText="Search"
               name=""
               onChange={function noRefCheck() {}}
+              // onClick={setNumber(1)}
               placeHolderText="Search..."
               size="sm"
               type="text"
               light={false}
+            /> */}
+            <TextInput
+              placeholder={"Search..."}
+              onKeyPress={() => {
+                setSearchQuery();
+              }}
+              onInput={(e) => setSearchQuery(e.target.value)}
+              defaultValue={searchQuery}
             />
           </li>
           <li id="spGitHub" className="header__list__item">
@@ -55,7 +67,6 @@ const HeaderLinks = () => {
               Docs
             </a>
           </li>
-          {/* Header Links Buttons Element */}
           <div className="header__list__btn">
             {/* no login yet - will be added in later when login becomes available*/}
             {/* <Link to="/login" className="header__list__btn__login">
