@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search } from "@carbon/ibm-security";
 import { TextInput, Icon, ButtonsGroup } from "watson-react-components";
+import queryString from "query-string";
+import axios from "axios";
 
 import "./styles/headerLinks.css";
 
@@ -15,8 +17,36 @@ import "./styles/headerLinks.css";
 
 const HeaderLinks = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  // Test
-  const [number, setNumber] = useState(0);
+  // const [searchValue, setSearchValue] = useState("");
+  const [afterEnter, setAfterEnter] = useState("This is before enter");
+
+  const handleKeyPress = (e) => {
+    const searchValue = e.target.value;
+    if (e.key === "Enter" && searchValue.match(/[^\s]+/)) {
+      // setSearchQuery(searchValue);
+      setAfterEnter(searchValue);
+
+      const qs = queryString.stringify({ searchQuery });
+      // axios({
+      //   method: "POST",
+      //   url: "/search/api/search",
+      //   data: qs,
+      // });
+      fetch(`/api/search`)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw response;
+          }
+        })
+
+        .catch((response) => {
+          console.log("bad");
+          console.error(response);
+        });
+    }
+  };
 
   return (
     <div className="headerLinks">
@@ -39,9 +69,7 @@ const HeaderLinks = () => {
             /> */}
             <TextInput
               placeholder={"Search..."}
-              onKeyPress={() => {
-                setSearchQuery();
-              }}
+              onKeyPress={handleKeyPress}
               onInput={(e) => setSearchQuery(e.target.value)}
               defaultValue={searchQuery}
             />
