@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Search } from "@carbon/ibm-security";
 import { TextInput, Icon, ButtonsGroup } from "watson-react-components";
 import queryString from "query-string";
+
 import axios from "axios";
 
 import "./styles/headerLinks.css";
@@ -27,24 +28,26 @@ const HeaderLinks = () => {
       setAfterEnter(searchValue);
 
       const qs = queryString.stringify({ searchQuery });
-      // axios({
-      //   method: "POST",
-      //   url: "/search/api/search",
-      //   data: qs,
-      // });
-      fetch(`/api/search`)
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw response;
-          }
+      axios
+        .post("/api/search", qs)
+        .then((res) => {
+          history.push("/");
         })
+        .catch((err) => console.error("errer here"));
 
-        .catch((response) => {
-          console.log("bad");
-          console.error(response);
-        });
+      // fetch(`/api/search`)
+      //   .then((response) => {
+      //     if (response.ok) {
+      //       return console.log(response);
+      //     } else {
+      //       throw response;
+      //     }
+      //   })
+
+      //   .catch((response) => {
+      //     console.log("bad");
+      //     console.error(response);
+      //   });
     }
   };
 
