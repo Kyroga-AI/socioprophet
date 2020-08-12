@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Ticker from "react-ticker";
-import Parser from "rss-parser";
+// import Parser from "rss-parser";
 
 import {
   HeaderContainer,
@@ -25,11 +25,7 @@ import "./styles/landing.css";
 const Landing = () => {
   const [isExpanded, setExpanded] = useState(false);
 
-  const [rssFeed, setRssFeed] = useState([]);
-
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
-  // const url =
-  //   "https://cors-anywhere.herokuapp.com/https://www.proseptic.co.uk/news-advice/feed";
 
   const GetRssFeedData = () => {
     const [feed, setFeed] = useState("");
@@ -40,6 +36,7 @@ const Landing = () => {
         const items = Array.from(xmlDoc.querySelectorAll("item")).map(
           (item) => ({
             title: item.querySelector("title").textContent,
+            link: item.querySelector("link").textContent,
           })
         );
         console.log(items);
@@ -53,7 +50,11 @@ const Landing = () => {
         className="main__sub__ticker__text"
         style={{ marginTop: "8px", whiteSpace: "nowrap" }}
       >
-        {feed.map((items) => items.title + "-------------")}
+        {feed.map((items) => (
+          <a id="rssLink" href={items.link} target="_blank">
+            {items.title}
+          </a>
+        ))}
       </p>
     ) : (
       <p styles={{ visibility: "hidden" }}>Placeholder</p>

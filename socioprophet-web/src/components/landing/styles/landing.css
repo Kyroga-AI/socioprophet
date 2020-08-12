@@ -38,6 +38,12 @@
   height: 30px;
 }
 
+#rssLink {
+  text-decoration: none;
+  color: #f4f4f4;
+  padding-right: 2rem;
+}
+
 #tickerText {
   font-size: 14px;
 }
