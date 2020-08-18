@@ -85,7 +85,7 @@ const Landing = () => {
                     <path d="M18 18h3v3h-3zm-7.5 0h3v3h-3zM3 18h3v3H3zm15-7.5h3v3h-3zm-7.5 0h3v3h-3zm-7.5 0h3v3H3zM18 3h3v3h-3zm-7.5 0h3v3h-3zM3 3h3v3H3z"></path>
                   </svg>
                 </HeaderGlobalAction>
-                <HeaderGlobalAction aria-label="App Switcher">
+                <HeaderGlobalAction aria-label="App Switcher" onClick={toggle}>
                   <svg width="20" height="20">
                     <title>user</title>
                     <path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
@@ -173,9 +173,9 @@ const Landing = () => {
             </p>
           </div>
           <div className="main__background__responsive">
-            <Link to="/login" className="main__background__login">
+            <button className="main__background__login" onClick={toggle}>
               Log In
-            </Link>
+            </button>
             <button className="main__background__register" onClick={toggle}>
               &#945; - Registry
             </button>
