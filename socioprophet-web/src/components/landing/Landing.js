@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import Ticker from "react-ticker";
 // import Parser from "rss-parser";
 
@@ -19,6 +19,8 @@ import HeaderLinks from "./landing_components/HeaderLinks";
 import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
+import RegisterNav from "./RegisterNav";
+
 import "./styles/common.css";
 import "./styles/landing.css";
 
@@ -29,6 +31,7 @@ const Landing = () => {
 
   const GetRssFeedData = () => {
     const [feed, setFeed] = useState("");
+
     useEffect(() => {
       const getFeed = async () => {
         const text = await fetch(url).then((r) => r.text());
@@ -39,12 +42,12 @@ const Landing = () => {
             link: item.querySelector("link").textContent,
           })
         );
-        console.log(items);
+
         setFeed(items);
-        console.log();
       };
       getFeed();
     }, []);
+
     return feed ? (
       <p
         className="main__sub__ticker__text"
@@ -57,12 +60,14 @@ const Landing = () => {
         ))}
       </p>
     ) : (
-      <p styles={{ visibility: "hidden" }}>Placeholder</p>
+      <p styles={{ visibility: "hidden" }}>----------</p>
     );
   };
+
   const toggle = () => {
     setExpanded(isExpanded === false ? true : false);
   };
+
   return (
     <div className="landing">
       <nav className="header">
@@ -94,7 +99,7 @@ const Landing = () => {
                 </HeaderGlobalAction>
               </HeaderGlobalBar>
               <HeaderPanel aria-label="Header Panel" expanded={isExpanded}>
-                <Switcher role="menu" aria-label="Switcher Container">
+                {/* <Switcher role="menu" aria-label="Switcher Container">
                   <SwitcherItem href="#" aria-label="your repositories">
                     First Name
                   </SwitcherItem>
@@ -122,7 +127,8 @@ const Landing = () => {
                   </SwitcherItem>
                   <SwitcherDivider />
                   <button>Register</button>
-                </Switcher>
+                </Switcher> */}
+                <RegisterNav />
               </HeaderPanel>
             </Header>
           )}
