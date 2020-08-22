@@ -10,6 +10,7 @@ import store from "./store";
 import Landing from "./components/landing/Landing";
 import Register from "./components/landing/Register";
 import Login from "./components/landing/Login";
+import LoginNav from "./components/landing/LoginNav";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import UInterface from "./components/postAuth/UInterface";
 import PopoutTerminal from "./components/postAuth/interface_components/dashboard_components/PopoutTerminal";

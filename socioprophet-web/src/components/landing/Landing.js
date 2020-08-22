@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Ticker from "react-ticker";
-// import Parser from "rss-parser";
-
 import {
   HeaderContainer,
   Header,
   HeaderGlobalBar,
   HeaderGlobalAction,
   HeaderPanel,
-  Switcher,
-  SwitcherItem,
-  SwitcherDivider,
 } from "carbon-components-react/lib/components/UIShell";
 
 import HeaderLanding from "./landing_components/HeaderLanding";
@@ -26,6 +21,8 @@ import "./styles/common.css";
 import "./styles/landing.css";
 
 const Landing = () => {
+  const history = useHistory();
+
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
@@ -97,7 +94,7 @@ const Landing = () => {
         <HeaderLanding />
         <HeaderLinks />
         <HeaderContainer
-          render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+          render={({}) => (
             <Header aria-label="SocioProphet Platform">
               <HeaderGlobalBar>
                 <HeaderGlobalAction aria-label="App Switcher">

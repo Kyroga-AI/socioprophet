@@ -1,125 +1,98 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { Search } from "@carbon/ibm-security";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
 import classnames from "classnames";
 
-import HeaderLanding from "./landing_components/HeaderLanding";
-import HeaderLinks from "./landing_components/HeaderLinks";
-import Offering from "./landing_components/Offering";
-import Footer from "./landing_components/Footer";
-
 import "./styles/common.css";
 import "./styles/login.css";
 
-class Login extends Component {
-  constructor() {
-    super();
-    this.state = {
-      email: "",
-      password: "",
-      errors: {},
-    };
-  }
+function LoginNav(props, nextprops) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
 
-  componentDidMount() {
-    // If logged in and user navigates to Login page, should redirect them to dashboard
-    if (this.props.auth.isAuthenticated) {
-      this.props.history.push("/dashboard");
+  useEffect(() => {
+    if (props.auth.isAuthenticated) {
+      props.history.push("/dashboard");
     }
-  }
+  }, [props]);
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
-      this.props.history.push("/dashboard");
+  useEffect(() => {
+    if (props.errors) {
+      setErrors(props.errors);
     }
+  }, [props]);
 
-    if (nextProps.errors) {
-      this.setState({
-        errors: nextProps.errors,
-      });
-    }
-  }
+  // const onChange = (e) => {
+  //   this.setState({ [e.target.id]: e.target.value });
+  // };
 
-  onChange = (e) => {
-    this.setState({ [e.target.id]: e.target.value });
-  };
-
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
 
     const userData = {
-      email: this.state.email,
-      password: this.state.password,
+      email: email,
+      password: password,
     };
-
-    this.props.loginUser(userData);
+    props.loginUser(userData);
   };
 
-  render() {
-    const { errors } = this.state;
+  // const { errors } = errors;
 
-    return (
-      <div>
-        <form
-          className="header__login__form"
-          noValidate
-          onSubmit={this.onSubmit}
-        >
-          <label className="header__login__form__field">
-            <div>
-              <input
-                className={classnames("header__login__form__field__input", {
-                  invalid: errors.email || errors.emailnotfound,
-                })}
-                onChange={this.onChange}
-                value={this.state.email}
-                error={errors.email}
-                id="email"
-                type="email"
-                placeholder="Email"
-              />
-              <span className="error">
-                {errors.email}
-                {errors.emailnotfound}
-              </span>
-            </div>
-          </label>
-          <label className="header__login__form__field">
-            <div>
-              <input
-                className={classnames("header__login__form__field__input", {
-                  invalid: errors.password || errors.passwordincorrect,
-                })}
-                onChange={this.onChange}
-                value={this.state.password}
-                error={errors.password}
-                id="password"
-                type="password"
-                placeholder="Password"
-              />
-              <span className="error">
-                {errors.password}
-                {errors.passwordincorrect}
-              </span>
-            </div>
-          </label>
-          <label className="header__login__form__field header__login__form__field--swidth">
-            <div>
-              <button className="header__login__form__field__btn" type="submit">
-                Log In
-              </button>
-            </div>
-          </label>
-        </form>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <form className="header__login__form" noValidate onSubmit={onSubmit}>
+        <label className="header__login__form__field">
+          <div>
+            <input
+              className={classnames("header__login__form__field__input", {
+                invalid: errors.email || errors.emailnotfound,
+              })}
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              error={email}
+              id="email"
+              type="email"
+              placeholder="Email"
+            />
+            <span className="error">
+              {errors.email}
+              {errors.emailnotfound}
+            </span>
+          </div>
+        </label>
+        <label className="header__login__form__field">
+          <div>
+            <input
+              className={classnames("header__login__form__field__input", {
+                invalid: errors.password || errors.passwordincorrect,
+              })}
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              error={errors.password}
+              id="password"
+              type="password"
+              placeholder="Password"
+            />
+            <span className="error">
+              {errors.password}
+              {errors.passwordincorrect}
+            </span>
+          </div>
+        </label>
+        <label className="header__login__form__field header__login__form__field--swidth">
+          <div>
+            <button className="header__login__form__field__btn" type="submit">
+              Log In
+            </button>
+          </div>
+        </label>
+      </form>
+    </div>
+  );
 }
-
-Login.propTypes = {
+LoginNav.propTypes = {
   loginUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
@@ -130,4 +103,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors,
 });
 
-export default connect(mapStateToProps, { loginUser })(Login);
+export default connect(mapStateToProps, { loginUser })(LoginNav);
