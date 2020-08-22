@@ -19,6 +19,7 @@ import HeaderLinks from "./landing_components/HeaderLinks";
 import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
+import LoginNav from "./LoginNav";
 import RegisterNav from "./RegisterNav";
 
 import "./styles/common.css";
@@ -26,6 +27,8 @@ import "./styles/landing.css";
 
 const Landing = () => {
   const [isExpanded, setExpanded] = useState(false);
+  const [login, renderLogin] = useState(false);
+  const [register, renderRegister] = useState(false);
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
 
@@ -66,6 +69,26 @@ const Landing = () => {
 
   const toggle = () => {
     setExpanded(isExpanded === false ? true : false);
+  };
+
+  const loginToggle = () => {
+    setExpanded(isExpanded === false ? true : false);
+    if (register && isExpanded) {
+      renderLogin(false);
+      renderRegister(false);
+    } else {
+      renderLogin(login === false ? true : false);
+    }
+  };
+
+  const registerToggle = () => {
+    setExpanded(isExpanded === false ? true : false);
+    if (login && isExpanded) {
+      renderRegister(false);
+      renderLogin(false);
+    } else {
+      renderRegister(register === false ? true : false);
+    }
   };
 
   return (
@@ -128,7 +151,9 @@ const Landing = () => {
                   <SwitcherDivider />
                   <button>Register</button>
                 </Switcher> */}
-                <RegisterNav />
+
+                {login && <LoginNav />}
+                {register && <RegisterNav />}
               </HeaderPanel>
             </Header>
           )}
@@ -179,10 +204,13 @@ const Landing = () => {
             </p>
           </div>
           <div className="main__background__responsive">
-            <button className="main__background__login" onClick={toggle}>
+            <button className="main__background__login" onClick={loginToggle}>
               Log In
             </button>
-            <button className="main__background__register" onClick={toggle}>
+            <button
+              className="main__background__register"
+              onClick={registerToggle}
+            >
               &#945; - Registry
             </button>
           </div>
