@@ -64,6 +64,41 @@
   text-decoration: none;
 }
 
+.form {
+  position: relative;
+  height: 100%;
+}
+
+.form__heading {
+  font-size: 24px;
+  text-align: center;
+  padding-top: 15px;
+}
+
+.form__field__input {
+  margin-left: 5%;
+  margin-top: 30px;
+  width: 90%;
+  height: 45px;
+  font-size: 16px;
+  padding-left: 10px;
+  color: #fff;
+  border: 0px;
+  border-radius: 7px;
+  background-color: #333;
+}
+
+.form__field__submitBtn {
+  margin-left: 5%;
+  margin-top: 30px;
+  width: 90%;
+  height: 50px;
+  font-size: 20px;
+  color: #333;
+  border: 0px;
+  border-radius: 7px;
+  background-color: #eee;
+}
 /* MEDIA QUERIES */
 
 @media (max-width: 490px) {

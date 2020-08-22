@@ -12,7 +12,6 @@ import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
 import "./styles/common.css";
-import "./styles/login.css";
 
 class Login extends Component {
   constructor() {

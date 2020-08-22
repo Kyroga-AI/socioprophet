@@ -6,8 +6,6 @@ import { registerUser } from "../../actions/authActions";
 import classnames from "classnames";
 import Ticker from "react-ticker";
 import {
-  HeaderContainer,
-  Header,
   HeaderGlobalBar,
   HeaderGlobalAction,
   HeaderPanel,
@@ -18,13 +16,10 @@ import HeaderLinks from "./landing_components/HeaderLinks";
 import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
-import LoginNav from "./LoginNav";
-// import RegisterNav from "./RegisterNav";
-
 import "./styles/common.css";
 import "./styles/landing.css";
 
-const Landing = (props, nextprops) => {
+const Landing = (props) => {
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
@@ -137,11 +132,12 @@ const Landing = (props, nextprops) => {
 
   const registerForm = () => {
     return (
-      <form className="body__login__form" noValidate onSubmit={handleRegister}>
-        <label className="body__login__form__field">
+      <form className="form" noValidate onSubmit={handleRegister}>
+        <h3 className="form__heading">Registration</h3>
+        <label className="form__field">
           <div>
             <input
-              className={classnames("body__login__form__field__input", {
+              className={classnames("form__field__input", {
                 invalid: registerErrors.registerName,
               })}
               onChange={(e) => setRegisterName(e.target.value)}
@@ -154,10 +150,10 @@ const Landing = (props, nextprops) => {
             <span className="error">{registerErrors.registerName}</span>
           </div>
         </label>
-        <label className="body__login__form__field">
+        <label className="form__field">
           <div>
             <input
-              className={classnames("body__login__form__field__input", {
+              className={classnames("form__field__input", {
                 invalid: registerErrors.registerEmail,
               })}
               onChange={(e) => setRegisterEmail(e.target.value)}
@@ -170,10 +166,10 @@ const Landing = (props, nextprops) => {
             <span className="error">{registerErrors.registerEmail}</span>
           </div>
         </label>
-        <label className="header__login__form__field">
+        <label className="form__field">
           <div>
             <input
-              className={classnames("header__login__form__field__input", {
+              className={classnames("form__field__input", {
                 invalid: registerErrors.registePassword,
               })}
               onChange={(e) => setRegisterPassword(e.target.value)}
@@ -186,10 +182,10 @@ const Landing = (props, nextprops) => {
             <span className="error">{registerErrors.registerPassword}</span>
           </div>
         </label>
-        <label className="header__login__form__field">
+        <label className="form__field">
           <div>
             <input
-              className={classnames("header__login__form__field__input", {
+              className={classnames("form__field__input", {
                 invalid: registerErrors.registerPassword2,
               })}
               onChange={(e) => setRegisterPassword2(e.target.value)}
@@ -202,9 +198,9 @@ const Landing = (props, nextprops) => {
             <span className="error">{registerErrors.registerPassword2}</span>
           </div>
         </label>
-        <label className="body__login__form__field body__login__form__field--swidth">
+        <label className="form__field">
           <div>
-            <button className="body__login__form__field__btn" type="submit">
+            <button className="form__field__submitBtn" type="submit">
               Register now
             </button>
           </div>
@@ -215,11 +211,12 @@ const Landing = (props, nextprops) => {
 
   const loginForm = () => {
     return (
-      <form className="header__login__form" noValidate onSubmit={handleLogin}>
-        <label className="header__login__form__field">
+      <form className="form" noValidate onSubmit={handleLogin}>
+        <h3 className="form__heading">Log In</h3>
+        <label className="form__field">
           <div>
             <input
-              className={classnames("header__login__form__field__input", {
+              className={classnames("form__field__input", {
                 invalid: loginErrors.loginEmail || loginErrors.emailnotfound,
               })}
               onChange={(e) => setLoginEmail(e.target.value)}
@@ -235,10 +232,10 @@ const Landing = (props, nextprops) => {
             </span>
           </div>
         </label>
-        <label className="header__login__form__field">
+        <label className="form__field">
           <div>
             <input
-              className={classnames("header__login__form__field__input", {
+              className={classnames("form__field__input", {
                 invalid:
                   loginErrors.loginPassword || loginErrors.passwordincorrect,
               })}
@@ -255,9 +252,9 @@ const Landing = (props, nextprops) => {
             </span>
           </div>
         </label>
-        <label className="header__login__form__field header__login__form__field--swidth">
+        <label className="form__field">
           <div>
-            <button className="header__login__form__field__btn" type="submit">
+            <button className="form__field__submitBtn" type="submit">
               Log In
             </button>
           </div>
@@ -296,9 +293,6 @@ const Landing = (props, nextprops) => {
           {login && loginForm()}
           {register && registerForm()}
         </HeaderPanel>
-        {/* </Header>
-          )}
-        /> */}
       </nav>
       <div className="main">
         <div className="main__sub">
@@ -347,10 +341,6 @@ const Landing = (props, nextprops) => {
     </div>
   );
 };
-
-// export default Landing;
-
-// ADD THIS -----------------------------------------------------------
 
 Landing.propTypes = {
   loginUser: PropTypes.func.isRequired,

@@ -5,7 +5,6 @@ import { loginUser } from "../../actions/authActions";
 import classnames from "classnames";
 
 import "./styles/common.css";
-import "./styles/login.css";
 
 function LoginNav(props) {
   const [email, setEmail] = useState("");
