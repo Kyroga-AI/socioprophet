@@ -122,36 +122,6 @@ const Landing = () => {
                 </HeaderGlobalAction>
               </HeaderGlobalBar>
               <HeaderPanel aria-label="Header Panel" expanded={isExpanded}>
-                {/* <Switcher role="menu" aria-label="Switcher Container">
-                  <SwitcherItem href="#" aria-label="your repositories">
-                    First Name
-                  </SwitcherItem>
-                  <SwitcherItem href="#" aria-label="your repositories">
-                    Last Name
-                  </SwitcherItem>
-                  <SwitcherDivider />
-                  <SwitcherItem href="#" aria-label="your repositories">
-                    SocioProphet ID
-                  </SwitcherItem>
-                  <SwitcherDivider />
-                  <SwitcherItem href="#" aria-label="your repositories">
-                    Password
-                  </SwitcherItem>
-                  <SwitcherItem href="#" aria-label="your repositories">
-                    Confirm Password
-                  </SwitcherItem>
-                  <SwitcherDivider />
-                  <SwitcherItem href="#" aria-label="your repositories">
-                    Phone Number (optional for 2FA)
-                  </SwitcherItem>
-                  <SwitcherDivider />
-                  <SwitcherItem href="#" aria-label="your repositories">
-                    Data Privacy Policy
-                  </SwitcherItem>
-                  <SwitcherDivider />
-                  <button>Register</button>
-                </Switcher> */}
-
                 {login && <LoginNav />}
                 {register && <RegisterNav />}
               </HeaderPanel>
@@ -162,24 +132,7 @@ const Landing = () => {
       <div className="main">
         <div className="main__sub">
           <div className="main__sub__ticker">
-            <Ticker offset="run-in">
-              {() => <GetRssFeedData />}
-              {/* {({ index }) => (
-                <div>
-                  <p className="main__sub__ticker__text"></p>
-                  {rssFeed
-                    .map((items) => (
-                      <div
-                        className="main__sub__ticker__text"
-                        key={items.title}
-                      >
-                        <p>{items.title}</p>
-                      </div>
-                    ))
-                    .toString()}
-                </div>
-              )} */}
-            </Ticker>
+            <Ticker offset="run-in">{() => <GetRssFeedData />}</Ticker>
           </div>
         </div>
 

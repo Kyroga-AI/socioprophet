@@ -192,6 +192,35 @@ class Register extends Component {
                   </div>
                 </label> */}
           {/* add back later for actual registration */}
+          {/* <Switcher role="menu" aria-label="Switcher Container">
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    First Name
+                  </SwitcherItem>
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Last Name
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    SocioProphet ID
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Password
+                  </SwitcherItem>
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Confirm Password
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Phone Number (optional for 2FA)
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <SwitcherItem href="#" aria-label="your repositories">
+                    Data Privacy Policy
+                  </SwitcherItem>
+                  <SwitcherDivider />
+                  <button>Register</button>
+                </Switcher> */}
           {/* <label className="header__login__form__field">
                   <div>
                     <input

@@ -1,27 +1,9 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { registerUser } from "../../actions/authActions";
 import classnames from "classnames";
-import Ticker from "react-ticker";
-import Parser from "rss-parser";
-
-import {
-  HeaderContainer,
-  Header,
-  HeaderGlobalBar,
-  HeaderGlobalAction,
-  HeaderPanel,
-  Switcher,
-  SwitcherItem,
-  SwitcherDivider,
-} from "carbon-components-react/lib/components/UIShell";
-
-import HeaderLanding from "./landing_components/HeaderLanding";
-import HeaderLinks from "./landing_components/HeaderLinks";
-import Offering from "./landing_components/Offering";
-import Footer from "./landing_components/Footer";
 
 import "./styles/common.css";
 import "./styles/register.css";
