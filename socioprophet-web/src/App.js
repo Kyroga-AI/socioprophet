@@ -8,9 +8,6 @@ import { Provider } from "react-redux";
 import store from "./store";
 
 import Landing from "./components/landing/Landing";
-import Register from "./components/landing/Register";
-import Login from "./components/landing/Login";
-import LoginNav from "./components/landing/LoginNav";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import UInterface from "./components/postAuth/UInterface";
 import PopoutTerminal from "./components/postAuth/interface_components/dashboard_components/PopoutTerminal";
@@ -33,7 +30,7 @@ if (localStorage.jwtToken) {
     store.dispatch(logoutUser());
 
     // Redirect to login
-    window.location.href = "./login";
+    window.location.href = "./";
   }
 }
 class App extends Component {
@@ -43,8 +40,6 @@ class App extends Component {
         <Router>
           <div className="App">
             <Route exact path="/" component={Landing} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
             <Switch>
               {/* This is route for now until private issues are fixed */}
               <PrivateRoute path="/dashboard" component={UInterface} />

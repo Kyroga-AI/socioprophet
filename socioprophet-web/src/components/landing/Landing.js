@@ -16,7 +16,6 @@ import HeaderLinks from "./landing_components/HeaderLinks";
 import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
-import "./styles/common.css";
 import "./styles/landing.css";
 
 const Landing = (props) => {
@@ -201,7 +200,7 @@ const Landing = (props) => {
         <label className="form__field">
           <div>
             <button className="form__field__submitBtn" type="submit">
-              Register now
+              Register Now
             </button>
           </div>
         </label>
