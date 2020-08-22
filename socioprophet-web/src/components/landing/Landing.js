@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { loginUser } from "../../actions/authActions";
+import classnames from "classnames";
 import Ticker from "react-ticker";
 import {
   HeaderContainer,
@@ -20,12 +23,13 @@ import RegisterNav from "./RegisterNav";
 import "./styles/common.css";
 import "./styles/landing.css";
 
-const Landing = () => {
-  const history = useHistory();
-
+const Landing = (props, nextprops) => {
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
 
@@ -88,43 +92,122 @@ const Landing = () => {
     }
   };
 
+  useEffect(() => {
+    if (props.auth.isAuthenticated) {
+      props.history.push("/dashboard");
+    }
+  }, [props]);
+
+  useEffect(() => {
+    if (props.errors) {
+      setErrors(props.errors);
+    }
+  }, [props]);
+
+  const update = (e) => {
+    console.log(e.target.value);
+    setEmail(e.target.value);
+    console.log(email);
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    const userData = {
+      email: email,
+      password: password,
+    };
+    props.loginUser(userData);
+  };
+
+  const form = () => {
+    return (
+      <form className="header__login__form" noValidate onSubmit={onSubmit}>
+        <label className="header__login__form__field">
+          <div>
+            <input
+              className={classnames("header__login__form__field__input", {
+                invalid: errors.email || errors.emailnotfound,
+              })}
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              error={email}
+              id="email"
+              type="email"
+              placeholder="Email"
+            />
+            <span className="error">
+              {errors.email}
+              {errors.emailnotfound}
+            </span>
+          </div>
+        </label>
+        <label className="header__login__form__field">
+          <div>
+            <input
+              className={classnames("header__login__form__field__input", {
+                invalid: errors.password || errors.passwordincorrect,
+              })}
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              error={errors.password}
+              id="password"
+              type="password"
+              placeholder="Password"
+            />
+            <span className="error">
+              {errors.password}
+              {errors.passwordincorrect}
+            </span>
+          </div>
+        </label>
+        <label className="header__login__form__field header__login__form__field--swidth">
+          <div>
+            <button className="header__login__form__field__btn" type="submit">
+              Log In
+            </button>
+          </div>
+        </label>
+      </form>
+    );
+  };
   return (
     <div className="landing">
       <nav className="header">
         <HeaderLanding />
         <HeaderLinks />
-        <HeaderContainer
+        {/* <HeaderContainer
           render={({}) => (
-            <Header aria-label="SocioProphet Platform">
-              <HeaderGlobalBar>
-                <HeaderGlobalAction aria-label="App Switcher">
-                  <svg
-                    focusable="false"
-                    preserveAspectRatio="xMidYMid meet"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path d="M18 18h3v3h-3zm-7.5 0h3v3h-3zM3 18h3v3H3zm15-7.5h3v3h-3zm-7.5 0h3v3h-3zm-7.5 0h3v3H3zM18 3h3v3h-3zm-7.5 0h3v3h-3zM3 3h3v3H3z"></path>
-                  </svg>
-                </HeaderGlobalAction>
-                <HeaderGlobalAction aria-label="App Switcher" onClick={toggle}>
-                  <svg width="20" height="20">
-                    <title>user</title>
-                    <path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
-                    <path d="M10 9.841a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
-                  </svg>
-                </HeaderGlobalAction>
-              </HeaderGlobalBar>
-              <HeaderPanel aria-label="Header Panel" expanded={isExpanded}>
-                {login && <LoginNav />}
-                {register && <RegisterNav />}
-              </HeaderPanel>
-            </Header>
+            <Header aria-label="SocioProphet Platform"> */}
+        <HeaderGlobalBar>
+          <HeaderGlobalAction aria-label="App Switcher">
+            <svg
+              focusable="false"
+              preserveAspectRatio="xMidYMid meet"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M18 18h3v3h-3zm-7.5 0h3v3h-3zM3 18h3v3H3zm15-7.5h3v3h-3zm-7.5 0h3v3h-3zm-7.5 0h3v3H3zM18 3h3v3h-3zm-7.5 0h3v3h-3zM3 3h3v3H3z"></path>
+            </svg>
+          </HeaderGlobalAction>
+          <HeaderGlobalAction aria-label="App Switcher" onClick={toggle}>
+            <svg width="20" height="20">
+              <title>user</title>
+              <path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
+              <path d="M10 9.841a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
+            </svg>
+          </HeaderGlobalAction>
+        </HeaderGlobalBar>
+        <HeaderPanel aria-label="Header Panel" expanded={isExpanded}>
+          {login && form()}
+          {register && <RegisterNav />}
+        </HeaderPanel>
+        {/* </Header>
           )}
-        />
+        /> */}
       </nav>
       <div className="main">
         <div className="main__sub">
@@ -150,6 +233,7 @@ const Landing = () => {
                 <strong>
                   Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
                 </strong>
+                <div></div>
               </span>
             </p>
           </div>
@@ -173,4 +257,19 @@ const Landing = () => {
   );
 };
 
-export default Landing;
+// export default Landing;
+
+// ADD THIS -----------------------------------------------------------
+
+Landing.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+  errors: state.errors,
+});
+
+export default connect(mapStateToProps, { loginUser })(Landing);

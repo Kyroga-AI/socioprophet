@@ -7,7 +7,7 @@ import classnames from "classnames";
 import "./styles/common.css";
 import "./styles/login.css";
 
-function LoginNav(props, nextprops) {
+function LoginNav(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
@@ -23,10 +23,6 @@ function LoginNav(props, nextprops) {
       setErrors(props.errors);
     }
   }, [props]);
-
-  // const onChange = (e) => {
-  //   this.setState({ [e.target.id]: e.target.value });
-  // };
 
   const onSubmit = (e) => {
     e.preventDefault();
