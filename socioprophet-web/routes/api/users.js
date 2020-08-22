@@ -57,6 +57,8 @@ router.post("/register", (req, res) => {
         ],
       };
 
+      // NEED TO ADD IN MORE FIELDS
+
       const postData = JSON.stringify(data);
 
       const options = {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
+import { registerUser } from "../../actions/authActions";
 import classnames from "classnames";
 import Ticker from "react-ticker";
 import {
@@ -18,7 +19,7 @@ import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
 import LoginNav from "./LoginNav";
-import RegisterNav from "./RegisterNav";
+// import RegisterNav from "./RegisterNav";
 
 import "./styles/common.css";
 import "./styles/landing.css";
@@ -27,9 +28,14 @@ const Landing = (props, nextprops) => {
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginErrors, setLoginErrors] = useState({});
+  const [registerName, setRegisterName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerPassword2, setRegisterPassword2] = useState("");
+  const [registerErrors, setRegisterErrors] = useState({});
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
 
@@ -99,46 +105,133 @@ const Landing = (props, nextprops) => {
   }, [props]);
 
   useEffect(() => {
-    if (props.errors) {
-      setErrors(props.errors);
+    if (props.loginErrors) {
+      setLoginErrors(props.loginErrors);
+    }
+    if (props.registerErrors) {
+      setRegisterErrors(props.registerErrors);
     }
   }, [props]);
 
-  const update = (e) => {
-    console.log(e.target.value);
-    setEmail(e.target.value);
-    console.log(email);
-  };
-
-  const onSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
 
     const userData = {
-      email: email,
-      password: password,
+      email: loginEmail,
+      password: loginPassword,
     };
     props.loginUser(userData);
   };
 
-  const form = () => {
+  const handleRegister = (e) => {
+    e.preventDefault();
+
+    const userData = {
+      name: registerName,
+      email: registerEmail,
+      password: registerPassword,
+      password2: registerPassword2,
+    };
+    props.registerUser(userData);
+  };
+
+  const registerForm = () => {
     return (
-      <form className="header__login__form" noValidate onSubmit={onSubmit}>
+      <form className="body__login__form" noValidate onSubmit={handleRegister}>
+        <label className="body__login__form__field">
+          <div>
+            <input
+              className={classnames("body__login__form__field__input", {
+                invalid: registerErrors.registerName,
+              })}
+              onChange={(e) => setRegisterName(e.target.value)}
+              value={registerName}
+              error={registerName}
+              id="registerName"
+              type="text"
+              placeholder="Name"
+            />
+            <span className="error">{registerErrors.registerName}</span>
+          </div>
+        </label>
+        <label className="body__login__form__field">
+          <div>
+            <input
+              className={classnames("body__login__form__field__input", {
+                invalid: registerErrors.registerEmail,
+              })}
+              onChange={(e) => setRegisterEmail(e.target.value)}
+              value={registerEmail}
+              error={registerEmail}
+              id="registerEmail"
+              type="email"
+              placeholder="Email"
+            />
+            <span className="error">{registerErrors.registerEmail}</span>
+          </div>
+        </label>
         <label className="header__login__form__field">
           <div>
             <input
               className={classnames("header__login__form__field__input", {
-                invalid: errors.email || errors.emailnotfound,
+                invalid: registerErrors.registePassword,
               })}
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              error={email}
-              id="email"
+              onChange={(e) => setRegisterPassword(e.target.value)}
+              value={registerPassword}
+              error={registerPassword}
+              id="registerPassword"
+              type="password"
+              placeholder="Password"
+            />
+            <span className="error">{registerErrors.registerPassword}</span>
+          </div>
+        </label>
+        <label className="header__login__form__field">
+          <div>
+            <input
+              className={classnames("header__login__form__field__input", {
+                invalid: registerErrors.registerPassword2,
+              })}
+              onChange={(e) => setRegisterPassword2(e.target.value)}
+              value={registerPassword2}
+              error={registerPassword2}
+              id="registerpassword2"
+              type="password"
+              placeholder="Confirm Password"
+            />
+            <span className="error">{registerErrors.registerPassword2}</span>
+          </div>
+        </label>
+        <label className="body__login__form__field body__login__form__field--swidth">
+          <div>
+            <button className="body__login__form__field__btn" type="submit">
+              Register now
+            </button>
+          </div>
+        </label>
+      </form>
+    );
+  };
+
+  const loginForm = () => {
+    return (
+      <form className="header__login__form" noValidate onSubmit={handleLogin}>
+        <label className="header__login__form__field">
+          <div>
+            <input
+              className={classnames("header__login__form__field__input", {
+                invalid: loginErrors.loginEmail || loginErrors.emailnotfound,
+              })}
+              onChange={(e) => setLoginEmail(e.target.value)}
+              value={loginEmail}
+              error={loginEmail}
+              id="loginEmail"
               type="email"
               placeholder="Email"
             />
             <span className="error">
-              {errors.email}
-              {errors.emailnotfound}
+              {loginErrors.loginEmail}
+              {loginErrors.emailnotfound}
             </span>
           </div>
         </label>
@@ -146,18 +239,19 @@ const Landing = (props, nextprops) => {
           <div>
             <input
               className={classnames("header__login__form__field__input", {
-                invalid: errors.password || errors.passwordincorrect,
+                invalid:
+                  loginErrors.loginPassword || loginErrors.passwordincorrect,
               })}
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              error={errors.password}
-              id="password"
+              onChange={(e) => setLoginPassword(e.target.value)}
+              value={loginPassword}
+              error={loginErrors.loginPassword}
+              id="loginPassword"
               type="password"
               placeholder="Password"
             />
             <span className="error">
-              {errors.password}
-              {errors.passwordincorrect}
+              {loginErrors.loginPassword}
+              {loginErrors.passwordincorrect}
             </span>
           </div>
         </label>
@@ -176,9 +270,6 @@ const Landing = (props, nextprops) => {
       <nav className="header">
         <HeaderLanding />
         <HeaderLinks />
-        {/* <HeaderContainer
-          render={({}) => (
-            <Header aria-label="SocioProphet Platform"> */}
         <HeaderGlobalBar>
           <HeaderGlobalAction aria-label="App Switcher">
             <svg
@@ -202,8 +293,8 @@ const Landing = (props, nextprops) => {
           </HeaderGlobalAction>
         </HeaderGlobalBar>
         <HeaderPanel aria-label="Header Panel" expanded={isExpanded}>
-          {login && form()}
-          {register && <RegisterNav />}
+          {login && loginForm()}
+          {register && registerForm()}
         </HeaderPanel>
         {/* </Header>
           )}
@@ -263,13 +354,15 @@ const Landing = (props, nextprops) => {
 
 Landing.propTypes = {
   loginUser: PropTypes.func.isRequired,
+  registerUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  errors: state.errors,
+  errors: state.loginErrors,
+  errors2: state.registerErrors,
 });
 
-export default connect(mapStateToProps, { loginUser })(Landing);
+export default connect(mapStateToProps, { loginUser, registerUser })(Landing);

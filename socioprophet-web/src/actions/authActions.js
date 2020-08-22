@@ -21,11 +21,13 @@ export const registerUser = (userData, history) => (dispatch) => {
       alert("Thank you for registering to the Alpha Release!");
       history.push("/");
     })
-    .catch((err) =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data,
-      })
+    .catch(
+      (err) =>
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.response.data,
+        }),
+      console.log("Error thrown here-----------")
     );
 };
 
