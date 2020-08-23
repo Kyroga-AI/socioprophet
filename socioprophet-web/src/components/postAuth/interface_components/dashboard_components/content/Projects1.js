@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { addProject } from "../../../../../actions/authActions";
+// import { addProject } from "../../../../../actions/authActions";
 
 import Form from "carbon-components-react/lib/components/Form";
 import TextArea from "carbon-components-react/lib/components/TextArea";
@@ -32,7 +32,7 @@ class Projects1 extends Component {
       name: this.state.name,
       description: this.state.description,
     };
-    this.props.addProject(newProject, this.props.history);
+    // this.props.addProject(newProject, this.props.history);
   };
 
   render() {
@@ -134,12 +134,4 @@ class Projects1 extends Component {
   }
 }
 
-Projects1.propTypes = {
-  addProject: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-  auth: state.auth,
-});
-
-export default connect(mapStateToProps, { addProject })(withRouter(Projects1));
+export default Projects1;

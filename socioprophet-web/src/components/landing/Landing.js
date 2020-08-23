@@ -24,12 +24,11 @@ const Landing = (props) => {
   const [register, renderRegister] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [loginErrors, setLoginErrors] = useState({});
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerPassword2, setRegisterPassword2] = useState("");
-  const [registerErrors, setRegisterErrors] = useState({});
+  const [errors, setErrors] = useState({});
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
 
@@ -53,10 +52,7 @@ const Landing = (props) => {
     }, []);
 
     return feed ? (
-      <p
-        className="main__sub__ticker__text"
-        style={{ marginTop: "8px", whiteSpace: "nowrap" }}
-      >
+      <p className="main__sub__ticker__text">
         {feed.map((items) => (
           <a id="rssLink" href={items.link} target="_blank">
             {items.title}
@@ -99,11 +95,8 @@ const Landing = (props) => {
   }, [props]);
 
   useEffect(() => {
-    if (props.loginErrors) {
-      setLoginErrors(props.loginErrors);
-    }
-    if (props.registerErrors) {
-      setRegisterErrors(props.registerErrors);
+    if (props.errors) {
+      setErrors(props.errors);
     }
   }, [props]);
 
@@ -137,7 +130,7 @@ const Landing = (props) => {
           <div>
             <input
               className={classnames("form__field__input", {
-                invalid: registerErrors.registerName,
+                invalid: errors.registerName,
               })}
               onChange={(e) => setRegisterName(e.target.value)}
               value={registerName}
@@ -146,14 +139,14 @@ const Landing = (props) => {
               type="text"
               placeholder="Name"
             />
-            <span className="error">{registerErrors.registerName}</span>
+            <span className="error">{errors.registerName}</span>
           </div>
         </label>
         <label className="form__field">
           <div>
             <input
               className={classnames("form__field__input", {
-                invalid: registerErrors.registerEmail,
+                invalid: errors.registerEmail,
               })}
               onChange={(e) => setRegisterEmail(e.target.value)}
               value={registerEmail}
@@ -162,14 +155,14 @@ const Landing = (props) => {
               type="email"
               placeholder="Email"
             />
-            <span className="error">{registerErrors.registerEmail}</span>
+            <span className="error">{errors.registerEmail}</span>
           </div>
         </label>
         <label className="form__field">
           <div>
             <input
               className={classnames("form__field__input", {
-                invalid: registerErrors.registePassword,
+                invalid: errors.registePassword,
               })}
               onChange={(e) => setRegisterPassword(e.target.value)}
               value={registerPassword}
@@ -178,14 +171,14 @@ const Landing = (props) => {
               type="password"
               placeholder="Password"
             />
-            <span className="error">{registerErrors.registerPassword}</span>
+            <span className="error">{errors.registerPassword}</span>
           </div>
         </label>
         <label className="form__field">
           <div>
             <input
               className={classnames("form__field__input", {
-                invalid: registerErrors.registerPassword2,
+                invalid: errors.registerPassword2,
               })}
               onChange={(e) => setRegisterPassword2(e.target.value)}
               value={registerPassword2}
@@ -194,7 +187,7 @@ const Landing = (props) => {
               type="password"
               placeholder="Confirm Password"
             />
-            <span className="error">{registerErrors.registerPassword2}</span>
+            <span className="error">{errors.registerPassword2}</span>
           </div>
         </label>
         <label className="form__field">
@@ -216,18 +209,18 @@ const Landing = (props) => {
           <div>
             <input
               className={classnames("form__field__input", {
-                invalid: loginErrors.loginEmail || loginErrors.emailnotfound,
+                invalid: errors.email || errors.emailnotfound,
               })}
               onChange={(e) => setLoginEmail(e.target.value)}
               value={loginEmail}
-              error={loginEmail}
+              error={errors.email}
               id="loginEmail"
               type="email"
               placeholder="Email"
             />
             <span className="error">
-              {loginErrors.loginEmail}
-              {loginErrors.emailnotfound}
+              {errors.email}
+              {errors.emailnotfound}
             </span>
           </div>
         </label>
@@ -235,19 +228,18 @@ const Landing = (props) => {
           <div>
             <input
               className={classnames("form__field__input", {
-                invalid:
-                  loginErrors.loginPassword || loginErrors.passwordincorrect,
+                invalid: errors.password || errors.passwordincorrect,
               })}
               onChange={(e) => setLoginPassword(e.target.value)}
               value={loginPassword}
-              error={loginErrors.loginPassword}
+              error={errors.password}
               id="loginPassword"
               type="password"
               placeholder="Password"
             />
             <span className="error">
-              {loginErrors.loginPassword}
-              {loginErrors.passwordincorrect}
+              {errors.password}
+              {errors.passwordincorrect}
             </span>
           </div>
         </label>
@@ -263,7 +255,7 @@ const Landing = (props) => {
   };
   return (
     <div className="landing">
-      <nav className="header">
+      <nav className="landing__header">
         <HeaderLanding />
         <HeaderLinks />
         <HeaderGlobalBar>
@@ -303,40 +295,28 @@ const Landing = (props) => {
         <div className="main__background">
           <div className="main__background__title">
             Socio
-            <span style={{ color: "#f4f4f4" }}>
-              <strong>Prophet</strong>
-            </span>
-            <p
-              style={{
-                marginTop: "25px",
-                fontWeight: "800",
-                paddingTop: "10px",
-              }}
-            >
-              <span style={{ color: "#fff" }}>
-                <strong>
-                  Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
-                </strong>
-                <div></div>
-              </span>
+            <strong>Prophet</strong>
+            <p className="main__background__title__sub">
+              <strong>
+                Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
+              </strong>
             </p>
           </div>
-          <div className="main__background__responsive">
-            <button className="main__background__login" onClick={loginToggle}>
-              Log In
-            </button>
-            <button
-              className="main__background__register"
-              onClick={registerToggle}
-            >
-              &#945; - Registry
-            </button>
-          </div>
-        </div>
 
+          <button className="main__background__login" onClick={loginToggle}>
+            Log In
+          </button>
+          <button
+            className="main__background__register"
+            onClick={registerToggle}
+          >
+            &#945; - Registry
+          </button>
+        </div>
+        {/* <div className="main__foreground"></div> */}
         <Offering />
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 };
@@ -350,8 +330,7 @@ Landing.propTypes = {
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  errors: state.loginErrors,
-  errors2: state.registerErrors,
+  errors: state.errors,
 });
 
 export default connect(mapStateToProps, { loginUser, registerUser })(Landing);

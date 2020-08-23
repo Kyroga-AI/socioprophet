@@ -5,7 +5,6 @@ const passport = require("passport");
 const path = require("path");
 
 const users = require("./routes/api/users");
-const projects = require("./routes/api/projects");
 const search = require("./routes/api/search");
 
 const app = express();
@@ -36,7 +35,6 @@ require("./src/validation/config/passport")(passport);
 
 // Routes
 app.use("/api/users", users);
-app.use("/api/projects", projects);
 app.use("/api/search", search);
 
 const port = process.env.PORT || 5001;
