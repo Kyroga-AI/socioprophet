@@ -59,37 +59,3 @@
   background-color: transparent;
   text-decoration: none;
 }
-
-/* MEDIA QUERIES */
-@media (max-width: 450px) {
-  #spGitHub {
-    display: none;
-  }
-}
-
-@media (max-width: 490px) {
-  .header__list {
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    font-size: 16px;
-  }
-  .header__list__item {
-    box-sizing: border-box;
-    cursor: pointer;
-    display: inline-block;
-    margin-left: 20px;
-  }
-}
-
-@media (max-width: 1000px) {
-  .hidden {
-    display: none;
-  }
-}
-
-@media (max-width: 700px) {
-  .header__list__btn {
-    display: none;
-  }
-}
