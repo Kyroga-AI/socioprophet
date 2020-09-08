@@ -55,7 +55,7 @@ const Landing = (props) => {
       <p className="main__sub__ticker__text">
         {feed.map((items) => (
           <a id="rssLink" href={items.link} target="_blank">
-            {items.title}
+            <strong>{items.title}</strong>
           </a>
         ))}
       </p>
