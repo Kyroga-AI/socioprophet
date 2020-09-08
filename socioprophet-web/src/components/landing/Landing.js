@@ -302,16 +302,17 @@ const Landing = (props) => {
               </strong>
             </p>
           </div>
-
-          <button className="main__background__login" onClick={loginToggle}>
-            Log In
-          </button>
-          <button
-            className="main__background__register"
-            onClick={registerToggle}
-          >
-            &#945; - Registry
-          </button>
+          <div className="btn--mobile">
+            <button className="main__background__login" onClick={loginToggle}>
+              Log In
+            </button>
+            <button
+              className="main__background__register"
+              onClick={registerToggle}
+            >
+              &#945; - Registry
+            </button>
+          </div>
         </div>
         {/* <div className="main__foreground"></div> */}
         <Offering />

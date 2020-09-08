@@ -56,7 +56,7 @@ const HeaderLinks = () => {
       <nav className="header__list">
         <ul>
           <li className="header__list__item hidden">
-            {/* <Search
+            <Search
               closeButtonLabelText="Clear search input"
               className="dark"
               defaultValue=""
@@ -69,13 +69,13 @@ const HeaderLinks = () => {
               size="sm"
               type="text"
               light={false}
-            /> */}
-            <TextInput
+            />
+            {/* <TextInput
               placeholder={"Search..."}
               onKeyPress={handleKeyPress}
               onInput={(e) => setSearchQuery(e.target.value)}
               defaultValue={searchQuery}
-            />
+            /> */}
           </li>
           <li id="spGitHub" className="header__list__item">
             <a
