@@ -105,9 +105,54 @@
     z-index: 10000;
     display: grid;
   }
+  .main__offering__card__description {
+    text-align: center;
+    font-size: 18px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
 }
 @media (min-width: 1050px) {
   .main__offering--mobile {
     display: none;
+  }
+}
+
+@media (max-height: 545px) {
+  .main__offering {
+    display: none;
+  }
+  .main__offering--mobile {
+    background-color: transparent;
+    width: 90%;
+    /* margin-top: -80px; */
+    margin-left: 5%;
+    justify-content: center;
+    z-index: 10000;
+    display: grid;
+  }
+  .main__offering__card__description {
+    text-align: center;
+    font-size: 18px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+}
+
+@media (max-width: 700px) {
+  .main__offering--mobile {
+    width: 100%;
+    margin-left: 0;
+  }
+  .main__offering__card {
+    margin-left: 3px;
+    margin-right: 3px;
+  }
+  .main__offering__card__description {
+    width: 100%;
+    color: #0c0c0c;
+    background-color: #fff;
+    /* padding: ; */
+    /* border: 1px solid red; */
   }
 }

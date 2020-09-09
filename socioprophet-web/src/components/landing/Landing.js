@@ -124,133 +124,143 @@ const Landing = (props) => {
 
   const registerForm = () => {
     return (
-      <form className="form" noValidate onSubmit={handleRegister}>
-        <h3 className="form__heading">Registration</h3>
-        <label className="form__field">
-          <div>
-            <input
-              className={classnames("form__field__input", {
-                invalid: errors.registerName,
-              })}
-              onChange={(e) => setRegisterName(e.target.value)}
-              value={registerName}
-              error={registerName}
-              id="registerName"
-              type="text"
-              placeholder="Name"
-            />
-            <span className="error">{errors.registerName}</span>
-          </div>
-        </label>
-        <label className="form__field">
-          <div>
-            <input
-              className={classnames("form__field__input", {
-                invalid: errors.registerEmail,
-              })}
-              onChange={(e) => setRegisterEmail(e.target.value)}
-              value={registerEmail}
-              error={registerEmail}
-              id="registerEmail"
-              type="email"
-              placeholder="Email"
-            />
-            <span className="error">{errors.registerEmail}</span>
-          </div>
-        </label>
-        <label className="form__field">
-          <div>
-            <input
-              className={classnames("form__field__input", {
-                invalid: errors.registePassword,
-              })}
-              onChange={(e) => setRegisterPassword(e.target.value)}
-              value={registerPassword}
-              error={registerPassword}
-              id="registerPassword"
-              type="password"
-              placeholder="Password"
-            />
-            <span className="error">{errors.registerPassword}</span>
-          </div>
-        </label>
-        <label className="form__field">
-          <div>
-            <input
-              className={classnames("form__field__input", {
-                invalid: errors.registerPassword2,
-              })}
-              onChange={(e) => setRegisterPassword2(e.target.value)}
-              value={registerPassword2}
-              error={registerPassword2}
-              id="registerpassword2"
-              type="password"
-              placeholder="Confirm Password"
-            />
-            <span className="error">{errors.registerPassword2}</span>
-          </div>
-        </label>
-        <label className="form__field">
-          <div>
-            <button className="form__field__submitBtn" type="submit">
-              Register Now
-            </button>
-          </div>
-        </label>
-      </form>
+      <div>
+        <p className="form__back" onClick={toggle}>
+          close
+        </p>
+        <form className="form" noValidate onSubmit={handleRegister}>
+          <h3 className="form__heading">Registration</h3>
+          <label className="form__field">
+            <div>
+              <input
+                className={classnames("form__field__input", {
+                  invalid: errors.registerName,
+                })}
+                onChange={(e) => setRegisterName(e.target.value)}
+                value={registerName}
+                error={registerName}
+                id="registerName"
+                type="text"
+                placeholder="Name"
+              />
+              <span className="error">{errors.registerName}</span>
+            </div>
+          </label>
+          <label className="form__field">
+            <div>
+              <input
+                className={classnames("form__field__input", {
+                  invalid: errors.registerEmail,
+                })}
+                onChange={(e) => setRegisterEmail(e.target.value)}
+                value={registerEmail}
+                error={registerEmail}
+                id="registerEmail"
+                type="email"
+                placeholder="Email"
+              />
+              <span className="error">{errors.registerEmail}</span>
+            </div>
+          </label>
+          <label className="form__field">
+            <div>
+              <input
+                className={classnames("form__field__input", {
+                  invalid: errors.registePassword,
+                })}
+                onChange={(e) => setRegisterPassword(e.target.value)}
+                value={registerPassword}
+                error={registerPassword}
+                id="registerPassword"
+                type="password"
+                placeholder="Password"
+              />
+              <span className="error">{errors.registerPassword}</span>
+            </div>
+          </label>
+          <label className="form__field">
+            <div>
+              <input
+                className={classnames("form__field__input", {
+                  invalid: errors.registerPassword2,
+                })}
+                onChange={(e) => setRegisterPassword2(e.target.value)}
+                value={registerPassword2}
+                error={registerPassword2}
+                id="registerpassword2"
+                type="password"
+                placeholder="Confirm Password"
+              />
+              <span className="error">{errors.registerPassword2}</span>
+            </div>
+          </label>
+          <label className="form__field">
+            <div>
+              <button className="form__field__submitBtn" type="submit">
+                Register Now x
+              </button>
+            </div>
+          </label>
+        </form>
+      </div>
     );
   };
 
   const loginForm = () => {
     return (
-      <form className="form" noValidate onSubmit={handleLogin}>
-        <h3 className="form__heading">Log In</h3>
-        <label className="form__field">
-          <div>
-            <input
-              className={classnames("form__field__input", {
-                invalid: errors.email || errors.emailnotfound,
-              })}
-              onChange={(e) => setLoginEmail(e.target.value)}
-              value={loginEmail}
-              error={errors.email}
-              id="loginEmail"
-              type="email"
-              placeholder="Email"
-            />
-            <span className="error">
-              {errors.email}
-              {errors.emailnotfound}
-            </span>
-          </div>
-        </label>
-        <label className="form__field">
-          <div>
-            <input
-              className={classnames("form__field__input", {
-                invalid: errors.password || errors.passwordincorrect,
-              })}
-              onChange={(e) => setLoginPassword(e.target.value)}
-              value={loginPassword}
-              error={errors.password}
-              id="loginPassword"
-              type="password"
-              placeholder="Password"
-            />
-            <span className="error">
-              {errors.password}
-              {errors.passwordincorrect}
-            </span>
-          </div>
-        </label>
-        <label className="form__field">
-          <div>
-            <button className="form__field__submitBtn" type="submit">
-              Log In
-            </button>
-          </div>
-        </label>
-      </form>
+      <div>
+        <p className="form__back" onClick={toggle}>
+          close
+        </p>
+        <form className="form" noValidate onSubmit={handleLogin}>
+          <h3 className="form__heading">Log In</h3>
+          <label className="form__field">
+            <div>
+              <input
+                className={classnames("form__field__input", {
+                  invalid: errors.email || errors.emailnotfound,
+                })}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                value={loginEmail}
+                error={errors.email}
+                id="loginEmail"
+                type="email"
+                placeholder="Email"
+              />
+              <span className="error">
+                {errors.email}
+                {errors.emailnotfound}
+              </span>
+            </div>
+          </label>
+          <label className="form__field">
+            <div>
+              <input
+                className={classnames("form__field__input", {
+                  invalid: errors.password || errors.passwordincorrect,
+                })}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                value={loginPassword}
+                error={errors.password}
+                id="loginPassword"
+                type="password"
+                placeholder="Password"
+              />
+              <span className="error">
+                {errors.password}
+                {errors.passwordincorrect}
+              </span>
+            </div>
+          </label>
+          <label className="form__field">
+            <div>
+              <button className="form__field__submitBtn" type="submit">
+                Log In
+              </button>
+            </div>
+          </label>
+        </form>
+      </div>
     );
   };
   return (
@@ -259,7 +269,7 @@ const Landing = (props) => {
         <HeaderLanding />
         <HeaderLinks />
         <HeaderGlobalBar>
-          <HeaderGlobalAction aria-label="App Switcher">
+          <HeaderGlobalAction id="appSwitcher" aria-label="App Switcher">
             <svg
               focusable="false"
               preserveAspectRatio="xMidYMid meet"
@@ -272,7 +282,11 @@ const Landing = (props) => {
               <path d="M18 18h3v3h-3zm-7.5 0h3v3h-3zM3 18h3v3H3zm15-7.5h3v3h-3zm-7.5 0h3v3h-3zm-7.5 0h3v3H3zM18 3h3v3h-3zm-7.5 0h3v3h-3zM3 3h3v3H3z"></path>
             </svg>
           </HeaderGlobalAction>
-          <HeaderGlobalAction aria-label="App Switcher" onClick={toggle}>
+          <HeaderGlobalAction
+            id="userIcon"
+            aria-label="App Switcher"
+            onClick={toggle}
+          >
             <svg width="20" height="20">
               <title>user</title>
               <path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>

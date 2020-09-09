@@ -73,3 +73,10 @@
     display: none;
   }
 }
+
+@media (max-width: 450px) {
+  .headerLinks {
+    margin: 0px 0px 0 auto;
+    z-index: 100000;
+  }
+}

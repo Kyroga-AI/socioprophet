@@ -11,6 +11,7 @@
 .landing .bx--header-panel {
   top: 3.5rem;
 }
+
 .landing .bx--header__global {
   flex: 0;
 }
@@ -148,6 +149,13 @@
   position: relative;
   height: 100%;
 }
+.form__back {
+  margin-top: 10px;
+  margin-left: 15px;
+  color: #f4f4f4;
+  background: transparent;
+  border: 0;
+}
 .form__heading {
   font-size: 24px;
   text-align: center;
@@ -179,22 +187,63 @@
 
 /* MEDIA QUERIES */
 @media (max-width: 500px) {
-  .main__background__title__sub {
-    display: none;
-  }
-
   .btn--mobile {
     display: grid;
     padding-left: calc(50% - 63.5px);
   }
 
+  .main__background__login {
+    margin-top: 5px;
+  }
+  .main__background__register {
+    margin-top: 8px;
+  }
+
   .main__background__title {
-    border: 1px solid red;
     height: 50px;
     width: 100%;
     font-size: 40px;
-    font-weight: 400;
-    /* color: #161c20; */
-    color: #f4f4f4;
+  }
+
+  .main__background {
+    background-size: 30rem;
+    height: 40%;
+    background-position: 50%;
+    padding: 85px 0px 0px;
+  }
+}
+@media (max-width: 920px) {
+  .landing .bx--header-panel--expanded {
+    width: 100%;
+  }
+  .main__background {
+    height: 50%;
+    padding: 100px 0px 100px;
+  }
+}
+@media (max-width: 750px) {
+  .main__background__title__sub {
+    display: none;
+  }
+  .main__background {
+    height: 45%;
+  }
+}
+
+@media (max-height: 645px) {
+  .main__background {
+    padding: 85px 0px 0px;
+  }
+}
+
+@media (max-width: 380px) {
+  .main__background {
+    height: 35%;
+  }
+}
+
+@media (max-width: 450px) {
+  #appSwitcher {
+    display: none;
   }
 }
