@@ -192,17 +192,24 @@
 }
 
 /* MEDIA QUERIES */
+@media (max-width: 1050px) {
+  .main__background {
+    height: 50%;
+  }
+}
 @media (max-width: 500px) {
   .btn--mobile {
     display: grid;
-    padding-left: calc(50% - 63.5px);
+    padding-left: calc(50% - 100px);
   }
 
   .main__background__login {
     margin-top: 5px;
+    width: 200px;
   }
   .main__background__register {
     margin-top: 8px;
+    width: 200px;
   }
 
   .main__background__title {
@@ -223,7 +230,7 @@
     width: 100%;
   }
   .main__background {
-    height: 50%;
+    height: 40%;
     padding: 100px 0px 100px;
   }
 }
@@ -232,7 +239,7 @@
     display: none;
   }
   .main__background {
-    height: 45%;
+    height: 35%;
   }
 }
 

@@ -148,10 +148,16 @@
     margin-left: 3px;
     margin-right: 3px;
   }
+  .main__offering__card__name {
+    opacity: 1;
+    background-color: #333;
+  }
   .main__offering__card__description {
     width: 100%;
     color: #0c0c0c;
-    background-color: #fff;
+    background-color: #f0faf9;
+    height: 225px;
+    margin-bottom: 40px;
     /* padding: ; */
     /* border: 1px solid red; */
   }
