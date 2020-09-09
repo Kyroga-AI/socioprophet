@@ -80,7 +80,7 @@
     height: 100px;
     text-align: center;
     padding-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 2.5rem;
     display: grid;
   }
   .footer__responsive__link {
@@ -91,17 +91,17 @@
     text-decoration: none !important;
   }
   .footer__social {
-    /* position: absolute;
-      height: 70px;
-      width: 50%;
-      padding-left: 5%; */
-    display: none;
+    position: absolute;
+    height: 70px;
+    width: 50%;
+    padding-left: 5%;
+    /* display: none; */
   }
   .footer__copyright {
-    float: left;
+    /* float: left;
     padding-left: 5%;
     color: #f4f4f4;
-    text-decoration: none !important;
+    text-decoration: none !important; */
   }
 }
 

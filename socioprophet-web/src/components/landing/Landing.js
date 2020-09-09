@@ -65,12 +65,24 @@ const Landing = (props) => {
   };
 
   const toggle = () => {
-    setExpanded(isExpanded === false ? true : false);
+    // setExpanded(isExpanded === false ? true : false);
+    // if (!isExpanded) {
+    //   console.log("here");
+    //   renderLogin(false);
+    //   renderRegister(false);
+    // }
+    if (isExpanded === true) {
+      setExpanded(false);
+      renderLogin(false);
+      renderRegister(false);
+    } else {
+      setExpanded(true);
+    }
   };
 
   const loginToggle = () => {
     setExpanded(isExpanded === false ? true : false);
-    if (register && isExpanded) {
+    if (register || isExpanded) {
       renderLogin(false);
       renderRegister(false);
     } else {
@@ -126,7 +138,7 @@ const Landing = (props) => {
     return (
       <div>
         <p className="form__back" onClick={toggle}>
-          close
+          &#10005;
         </p>
         <form className="form" noValidate onSubmit={handleRegister}>
           <h3 className="form__heading">Registration</h3>
@@ -197,7 +209,7 @@ const Landing = (props) => {
           <label className="form__field">
             <div>
               <button className="form__field__submitBtn" type="submit">
-                Register Now x
+                Register Now
               </button>
             </div>
           </label>
@@ -210,7 +222,7 @@ const Landing = (props) => {
     return (
       <div>
         <p className="form__back" onClick={toggle}>
-          close
+          &#10005;
         </p>
         <form className="form" noValidate onSubmit={handleLogin}>
           <h3 className="form__heading">Log In</h3>
@@ -285,7 +297,7 @@ const Landing = (props) => {
           <HeaderGlobalAction
             id="userIcon"
             aria-label="App Switcher"
-            onClick={toggle}
+            onClick={loginToggle}
           >
             <svg width="20" height="20">
               <title>user</title>
