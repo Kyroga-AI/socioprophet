@@ -18,6 +18,7 @@ import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
 import "./styles/landing.css";
+import { db } from "../../models/User";
 
 const Landing = (props) => {
   const [isExpanded, setExpanded] = useState(false);
@@ -135,6 +136,7 @@ const Landing = (props) => {
       // password2: registerPassword2,
     };
     props.registerUser(userData);
+
     setRegisterName("");
     setRegisterEmail("");
   };

@@ -97,7 +97,7 @@
 }
 .main__foreground {
   position: absolute;
-  background-image: url("../../../../public/images/newTest/fore-night-winter.jpg");
+  /* background-image: url("../../../../public/images/newTest/fore-night-winter.jpg"); */
   background-size: cover;
   /* background-repeat: no-repeat; */
   /* background-position: 50%; */
