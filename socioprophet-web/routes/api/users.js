@@ -76,6 +76,7 @@ router.post("/register", (req, res) => {
         } else {
           if (response.statusCode === 200) {
             console.log("Status = 200, successful registration");
+
             res.json(req.body);
           } else {
             console.log(

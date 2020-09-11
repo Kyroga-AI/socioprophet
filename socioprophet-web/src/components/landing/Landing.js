@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
@@ -146,48 +147,48 @@ const Landing = (props) => {
             <div>
               <input
                 className={classnames("form__field__input", {
-                  invalid: errors.registerName,
+                  invalid: errors.name,
                 })}
                 onChange={(e) => setRegisterName(e.target.value)}
                 value={registerName}
-                error={registerName}
+                error={errors.name}
                 id="registerName"
                 type="text"
                 placeholder="Name"
               />
-              <span className="error">{errors.registerName}</span>
+              <span className="error">{errors.name}</span>
             </div>
           </label>
           <label className="form__field">
             <div>
               <input
                 className={classnames("form__field__input", {
-                  invalid: errors.registerEmail,
+                  invalid: errors.email,
                 })}
                 onChange={(e) => setRegisterEmail(e.target.value)}
                 value={registerEmail}
-                error={registerEmail}
+                error={errors.email}
                 id="registerEmail"
                 type="email"
                 placeholder="Email"
               />
-              <span className="error">{errors.registerEmail}</span>
+              <span className="error">{errors.email}</span>
             </div>
           </label>
-          <label className="form__field">
+          {/* <label className="form__field">
             <div>
               <input
                 className={classnames("form__field__input", {
-                  invalid: errors.registePassword,
+                  invalid: errors.password,
                 })}
                 onChange={(e) => setRegisterPassword(e.target.value)}
                 value={registerPassword}
-                error={registerPassword}
+                error={errors.password}
                 id="registerPassword"
                 type="password"
                 placeholder="Password"
               />
-              <span className="error">{errors.registerPassword}</span>
+              <span className="error">{errors.password}</span>
             </div>
           </label>
           <label className="form__field">
@@ -205,11 +206,11 @@ const Landing = (props) => {
               />
               <span className="error">{errors.registerPassword2}</span>
             </div>
-          </label>
+          </label> */}
           <label className="form__field">
             <div>
               <button className="form__field__submitBtn" type="submit">
-                Register Now
+                Continue
               </button>
             </div>
           </label>

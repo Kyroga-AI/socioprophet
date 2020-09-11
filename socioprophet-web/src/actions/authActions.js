@@ -1,25 +1,27 @@
 import axios from "axios";
+import { browserHistory } from "react-router";
 import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 
 import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from "./types";
 
 // Register User
-export const registerUser = (userData, history) => (dispatch) => {
+export const registerUser = (userData, browserHistory) => (dispatch) => {
   axios
     .post("/api/users/register", userData)
     .then((res) => {
-      alert("Thank you for registering to the Alpha Release!");
-      history.push("/");
+      // alert("Thank you for registering to the Alpha Release!");
+      window.location.href =
+        "https://us19.list-manage.com/survey?u=3d90857bb31d0e344e94a23bd&id=4295600992";
+      console.log("here");
     })
-    .catch(
-      (err) =>
-        dispatch({
-          type: GET_ERRORS,
-          payload: err.response.data,
-        }),
-      console.log("Error thrown here-----------")
-    );
+    .catch((err) => {
+      console.error(err);
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      });
+    });
 };
 
 // Login - get user token
