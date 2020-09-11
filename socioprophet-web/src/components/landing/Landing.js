@@ -27,8 +27,8 @@ const Landing = (props) => {
   const [loginPassword, setLoginPassword] = useState("");
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
-  const [registerPassword, setRegisterPassword] = useState("");
-  const [registerPassword2, setRegisterPassword2] = useState("");
+  // const [registerPassword, setRegisterPassword] = useState("");
+  // const [registerPassword2, setRegisterPassword2] = useState("");
   const [errors, setErrors] = useState({});
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
@@ -121,6 +121,8 @@ const Landing = (props) => {
       password: loginPassword,
     };
     props.loginUser(userData);
+    setLoginEmail("");
+    setLoginPassword("");
   };
 
   const handleRegister = (e) => {
@@ -129,10 +131,12 @@ const Landing = (props) => {
     const userData = {
       name: registerName,
       email: registerEmail,
-      password: registerPassword,
-      password2: registerPassword2,
+      // password: registerPassword,
+      // password2: registerPassword2,
     };
     props.registerUser(userData);
+    setRegisterName("");
+    setRegisterEmail("");
   };
 
   const registerForm = () => {
