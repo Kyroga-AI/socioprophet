@@ -46,7 +46,7 @@
   /* height: calc(100vh - 2rem); */
   /* height: 100%; */
   background-color: #0c0c0c;
-  overflow: scroll;
+  /* overflow: scroll; */
 }
 
 .main__sub {
@@ -190,7 +190,7 @@
 /* MEDIA QUERIES */
 @media (max-width: 1050px) {
   .main__background {
-    height: 50%;
+    height: 400px;
   }
 }
 @media (max-width: 500px) {
@@ -200,11 +200,11 @@
   }
 
   .main__background__login {
-    margin-top: 5px;
+    margin-top: 25px;
     width: 200px;
   }
   .main__background__register {
-    margin-top: 8px;
+    margin-top: 18px;
     width: 200px;
   }
 
@@ -225,17 +225,17 @@
   .landing .bx--header-panel--expanded {
     width: 100%;
   }
-  .main__background {
+  /* .main__background {
     height: 40%;
     padding: 100px 0px 100px;
-  }
+  } */
 }
 @media (max-width: 750px) {
   .main__background__title__sub {
     display: none;
   }
   .main__background {
-    height: 35%;
+    height: 300px;
   }
 }
 
@@ -247,7 +247,7 @@
 
 @media (max-width: 380px) {
   .main__background {
-    height: 35%;
+    /* height: 35%; */
   }
 }
 

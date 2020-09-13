@@ -73,7 +73,7 @@
 
 /* MEDIA QUERIES */
 
-@media (max-width: 500px) {
+@media (max-width: 960px) {
   .footer__responsive {
     position: relative;
     width: 100%;

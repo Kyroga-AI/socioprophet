@@ -21,7 +21,7 @@
   margin-top: 400px;
   margin-left: 5%;
   justify-content: center;
-  z-index: 10000;
+  z-index: -10000;
 }
 
 .main__offering__card {
@@ -32,7 +32,7 @@
   box-sizing: border-box;
   display: inline-block;
   text-align: center;
-  z-index: 100000;
+  /* z-index: -100000; */
 }
 
 .main__offering__card__name {
@@ -46,7 +46,7 @@
   background-color: #0c0c0c;
   /* background-color: #5a6872; */
   /* background-color: #8498a7; */
-  opacity: 0.75;
+  opacity: 1;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
@@ -104,6 +104,7 @@
     justify-content: center;
     z-index: 10000;
     display: grid;
+    margin-top: 380px;
   }
   .main__offering__card__description {
     text-align: center;
@@ -118,6 +119,11 @@
   }
 }
 
+@media (max-width: 750px) {
+  .main__offering--mobile {
+    margin-top: 300px;
+  }
+}
 @media (max-height: 545px) {
   .main__offering {
     display: none;
@@ -155,10 +161,8 @@
   .main__offering__card__description {
     width: 100%;
     color: #0c0c0c;
-    background-color: #f0faf9;
+    /* background-color: #f0faf9; */
     height: 225px;
     margin-bottom: 40px;
-    /* padding: ; */
-    /* border: 1px solid red; */
   }
 }
