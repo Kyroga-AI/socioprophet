@@ -131,7 +131,6 @@
   .main__offering--mobile {
     background-color: transparent;
     width: 90%;
-    /* margin-top: -80px; */
     margin-left: 5%;
     justify-content: center;
     z-index: 10000;

@@ -239,17 +239,17 @@
   }
 }
 
-@media (max-height: 645px) {
+@media (max-height: 545px) {
   .main__background {
-    padding: 85px 0px 0px;
+    height: 400px;
   }
 }
 
-@media (max-width: 380px) {
+/* @media (max-width: 380px) {
   .main__background {
-    /* height: 35%; */
+    height: 35%;
   }
-}
+} */
 
 @media (max-width: 450px) {
   #appSwitcher {

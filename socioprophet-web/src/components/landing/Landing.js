@@ -347,7 +347,6 @@ const Landing = (props) => {
             </button>
           </div>
         </div>
-        {/* <div className="main__foreground"></div> */}
         <Offering />
       </div>
       <Footer />
