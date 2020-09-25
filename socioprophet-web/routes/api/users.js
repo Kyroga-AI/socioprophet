@@ -2,16 +2,16 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const keys = require("../../src/validation/config/keys");
+const keys = require("../../client/src/validation/config/keys");
 const passport = require("passport");
 const request = require("request");
 
 // Load input validation
-const validateRegisterInput = require("../../src/validation/register");
-const validateLoginInput = require("../../src/validation/login");
+const validateRegisterInput = require("../../client/src/validation/register");
+const validateLoginInput = require("../../client/src/validation/login");
 
 // Load User model
-const User = require("../../src/models/User");
+const User = require("../../client/src/models/User");
 
 // @route POST api/users/register
 // @desc Register user
