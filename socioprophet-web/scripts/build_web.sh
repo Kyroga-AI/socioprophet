@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 #build prophet-web
-cd .. && yarn
-cd ../docs/ && yarn
+cd .. && yarn 
+cd client && yarn

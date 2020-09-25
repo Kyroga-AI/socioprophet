@@ -18,7 +18,7 @@ app.use(
 app.use(bodyParser.json());
 
 // DB Config
-const db = require("./src/validation/config/keys").mongoURI;
+const db = require("./client/src/validation/config/keys").mongoURI;
 
 // Connect to MongoDB
 const mongo_uri = "mongodb://127.0.0.1:27017/socio_prophet_users";
@@ -31,7 +31,7 @@ mongoose
 app.use(passport.initialize());
 
 // Passport config
-require("./src/validation/config/passport")(passport);
+require("./client/src/validation/config/passport")(passport);
 
 // Routes
 app.use("/api/users", users);
