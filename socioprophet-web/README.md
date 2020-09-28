@@ -9,14 +9,17 @@ This is the directory of the monorepo for the website / user interfact of the pr
 
 ```bash
     socioprophet-web            # Directory containing website platform code (back-end and front-end)
-       ├── README.md               #
-       ├── content                 #
-       ├── public                  #
-       ├── routes                  #
-       ├── scripts                 #
-       ├── server.js               #
-       └── src                     #
-            └──**/**               
+    │   ├── README.md               #
+    │   ├── client                  #
+    	    └── webpack.config.js   #
+    │       └── pubilc              #
+    │        └──**/** 
+    │       └── src                 #
+    │           └──**/** 	             
+    │   ├── routes                  #
+    │   ├── scripts                 #
+    │   ├── server.js               #
+    │   ├── package.json            #             
 ```
 
 ## Build Setup 
