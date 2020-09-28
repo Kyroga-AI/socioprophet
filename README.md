@@ -36,14 +36,16 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
     │── scripts                     # Scripts for automating tasks
     │── socioprophet-web            # Directory containing website platform code (back-end and front-end)
     │   ├── README.md               #
-    │   ├── content                 #
-    │   ├── public                  #
+    │   ├── client                  #
+    	    └── webpack.config.js   #
+    │       └── pubilc              #
+    │        └──**/** 
+    │       └── src                 #
+    │           └──**/** 	             
     │   ├── routes                  #
     │   ├── scripts                 #
     │   ├── server.js               #
-    │   └── src                     #
-    │        └──**/**               
-    ├── webpack.config.js           #
+    │   ├── package.json            #
     ├── partials/templatetest       # Automated tests (alternatively `spec` or `tests`)
     └── utils                       # Non-script utilities
 ```
