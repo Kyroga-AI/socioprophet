@@ -52,7 +52,7 @@ This is the monorepo for the socioprophet platform. The codebase and repo is a w
 
 ## Folder Structure Conventions
 
-SocioProphet's source code is nested beneath the `src` directories. For deployment, `yoke` assumes that all the files (including the index page) required to run in `release` mode have been written to a directory called either `dist` or `build` off the root. Grunt or Gulp both have good facilities for writing the outputs of a task to a different directory.
+SocioProphet's core source code is nested beneath the `client/src` directory, with the server and api in socioprophet-web root. For deployment, `yoke` assumes that all the files (including the index page) required to run in `release` mode have been written to a directory called either `dist` or `build` off the root. Grunt or Gulp both have good facilities for writing the outputs of a task to a different directory.
 
 ## Build Targets
 
@@ -76,7 +76,7 @@ All of the variables that control the build are in `Makefile.inc` in the root of
 | --------------------------- | ---------------------------------------------------- | --------- |
 | `DOCKER_REGISTRY`           | Docker registry for built images                     |           |
 | `DOCKER_REGISTRY_NAMESPACE` | Namespace within the docker registry to place images |           |
-| `DOCKER_REPOSITORY`         | Docker repository to use for the built images        | `default`  |
+| `DOCKER_REPOSITORY`         | Docker repository to use for the built images        | `default` |
 | `TAG`                       | Build number to tag all artifacts with               | `latest`  |
 | `NAMESPACE`                 | Kubernetes namespace to deploy into                  | `default` |
 
@@ -178,18 +178,21 @@ After your environment is up and running you can build and deploy the system by 
 
 Some build setup documentation
 
-## Building with the Makefile vs. using Yarn
+## Building with the Makefile and Yarn
 
 SocioProphet-Web can be built and run using the Makefile within the project root directory. The commands executed by the Makefile are the same commands one would use to build a project and run the webserver--these commands are documented here:
 
 ``` bash
-.PHONY: build_web run_dev
+.PHONY: build_web run_server run_client
 
 build_web:
 	cd socioprophet-web/scripts/ && bash build_web.sh
 
-run_dev:
-	cd socioprophet-web/scripts && bash start_mongod.sh && bash run_dev.sh
+run_server:
+	cd socioprophet-web/scripts && bash start_mongod.sh && bash run_server.sh
+
+run_client:
+	cd socioprophet-web/scripts && bash run_client.sh
 ```
 
 To build the socioprophet-web repository, run the following commands in the root directory:
@@ -199,7 +202,10 @@ To build the socioprophet-web repository, run the following commands in the root
 make build_web
 
 # to run the development web-server:
-make run_dev
+make run_server
+
+# to run the webpack-dev-server for the client build:
+make run_client
 ```
 
 The 'make build_web' command documented above executes a shell script with the following:
@@ -209,16 +215,25 @@ The 'make build_web' command documented above executes a shell script with the f
 
 #build prophet-web
 cd .. && yarn 
-cd ../docs/ && yarn
+cd client && yarn
 ```
 
-The 'make run_dev' command documented above executes a shell script with the following:
+The 'make run_server' command documented above executes a shell script with the following:
 
 ``` bash
 #!/usr/bin/env bash
 
 #start-up socioprophet-web
 cd .. && yarn run dev
+```
+
+The 'make run_client' command documented above executes a shell script with the following:
+
+``` bash
+#!/usr/bin/env bash
+
+#start-up socioprophet-web
+cd .. && cd client && yarn run start
 ```
 
 As part of the process, the root Makefile calls 'start_mongod.sh'  which is a shell script with the following:
