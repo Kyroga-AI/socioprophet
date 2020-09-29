@@ -26,13 +26,19 @@
     "workflow",
     "federated"
   ],
+  "homepage": "https://github.com/SocioProphet/socioprophet",
+  "bugs": {
+    "url": "https://github.com/SocioProphet/socioprophet/issues",
+    "email": "will@socioprophet.ai"
+  },
+  "license": "UNLICENSED",
+  "private": true,
   "main": "./src/index.js",
   "scripts": {
     "start": "webpack-dev-server --mode development --hot",
     "build": "webpack --mode production"
   },
   "author": "Will Jones",
-  "private": true,
   "dependencies": {
     "@carbon/charts-react": "^0.29.1",
     "@carbon/ibm-security": "^1.13.0",
