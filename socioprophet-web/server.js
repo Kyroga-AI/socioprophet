@@ -1,11 +1,6 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const passport = require("passport");
-const path = require("path");
 
-const users = require("./routes/api/users");
-const search = require("./routes/api/search");
+const bodyParser = require("body-parser");
 
 const app = express();
 
@@ -16,26 +11,6 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-
-// DB Config
-const db = require("./client/src/validation/config/keys").mongoURI;
-
-// Connect to MongoDB
-const mongo_uri = "mongodb://127.0.0.1:27017/socio_prophet_users";
-mongoose
-  .connect(mongo_uri, { useNewUrlParser: true })
-  .then(() => console.log("MongoDB successfully connected"))
-  .catch((err) => console.log(err));
-
-// Passport middleware
-app.use(passport.initialize());
-
-// Passport config
-require("./client/src/validation/config/passport")(passport);
-
-// Routes
-app.use("/api/users", users);
-app.use("/api/search", search);
 
 const port = process.env.PORT || 5001;
 

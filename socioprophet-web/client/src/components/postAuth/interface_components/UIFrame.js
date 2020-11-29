@@ -1,9 +1,5 @@
 import React, { Component } from "react";
-import ReactDOM, { render } from "react-dom";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { logoutUser } from "../../../actions/authActions";
 import {
   HeaderContainer,
   Header,
@@ -25,7 +21,7 @@ import {
   SideNavMenu,
   SideNavMenuItem,
 } from "carbon-components-react/lib/components/UIShell";
-
+// import fbase from "../../../firebase";
 import "./styles/frame.css";
 
 class UIFrame extends Component {
@@ -199,7 +195,7 @@ class UIFrame extends Component {
       </svg>
     );
 
-    const { user } = this.props.auth;
+    // const { user } = this.props.auth;
 
     return (
       <div>
@@ -209,7 +205,7 @@ class UIFrame extends Component {
               <SkipToContent />
               <div className="footer__fish">
                 <img
-                  src="src/components/landing/images/fishbowl-landing.jpg"
+                  src="public/images/fishCropFinal.gif"
                   width="45px"
                   height="42px"
                 />
@@ -330,7 +326,7 @@ class UIFrame extends Component {
                   </SwitcherItem>
                   <SwitcherDivider />
 
-                  <button onClick={this.onLogoutClick}>Logout</button>
+                  <button>Logout</button>
                 </Switcher>
               </HeaderPanel>
               <div className="scroll">
@@ -452,13 +448,4 @@ class UIFrame extends Component {
   }
 }
 
-UIFrame.propTypes = {
-  logoutUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-  auth: state.auth,
-});
-
-export default connect(mapStateToProps, { logoutUser })(UIFrame);
+export default UIFrame;

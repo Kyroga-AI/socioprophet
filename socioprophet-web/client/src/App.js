@@ -1,56 +1,44 @@
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import jwt_decode from "jwt-decode";
-import setAuthToken from "./utils/setAuthToken";
-
-import { setCurrentUser, logoutUser } from "./actions/authActions";
-import { Provider } from "react-redux";
-import store from "./store";
-
-import Landing from "./components/landing/Landing";
-import PrivateRoute from "./components/private-route/PrivateRoute";
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom"; // provide application routing
+import Landing from "./components/landing/Landing"; // Landing Component for default route
+import PrivateRoute from "./components/private-route/PrivateRoute"; // Component for private route
+/**
+ *
+ *  Components for private routing
+ *
+ */
+import Welcome from "./components/postRegistration/Welcome"; // post auth component for alpha registration signup/login
+import PasswordReset from "./components/postRegistration/PasswordReset"; // post auth component for password reset
+import UpdateProfile from "./components/postRegistration/UpdateProfile"; // post auth component for email and/or password update
+// Component has routing but is dashboard for later launch...
 import UInterface from "./components/postAuth/UInterface";
+// Component has routing but is dashboard for later launch...
 import PopoutTerminal from "./components/postAuth/interface_components/dashboard_components/PopoutTerminal";
+
+import { AuthProvider } from "./authentication/contexts/AuthContext"; // context for authentication
 
 import "./App.scss";
 
-// Check for token to keep user logged in
-if (localStorage.jwtToken) {
-  // Set auth token header auth
-  const token = localStorage.jwtToken;
-  setAuthToken(token);
-  // Decode token and get user info and exp
-  const decoded = jwt_decode(token);
-  // Set user and isAuthenticated
-  store.dispatch(setCurrentUser(decoded));
-  // Check for expired token
-  const currentTime = Date.now() / 1000; // to get in milliseconds
-  if (decoded.exp < currentTime) {
-    // Logout user
-    store.dispatch(logoutUser());
+const App = () => {
+  return (
+    <Router>
+      <AuthProvider>
+        <div className="App">
+          <Route exact path="/" component={Landing} />
+          <Route path="/password-reset" component={PasswordReset} />
+          <Switch>
+            <PrivateRoute path="/dashboard" component={UInterface} />
+            <PrivateRoute path="/terminal" component={PopoutTerminal} />
+            <PrivateRoute path="/alpha" component={Welcome} />
+            <PrivateRoute path="/update-profile" component={UpdateProfile} />
 
-    // Redirect to login
-    window.location.href = "./";
-  }
-}
-class App extends Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <Router>
-          <div className="App">
-            <Route exact path="/" component={Landing} />
-            <Switch>
-              {/* This is route for now until private issues are fixed */}
-              <PrivateRoute path="/dashboard" component={UInterface} />
-              {/* This is route to render pages w/in dashboard */}
-              {/* <PrivateRoute path="/:id" component={UInterface} /> */}
-              <PrivateRoute exact path="/terminal" component={PopoutTerminal} />
-            </Switch>
-          </div>
-        </Router>
-      </Provider>
-    );
-  }
-}
+            {/* This is route to render pages w/in dashboard */}
+            {/* <PrivateRoute path="/:id" component={UInterface} /> */}
+            {/* This is route for now until private issues are fixed */}
+          </Switch>
+        </div>
+      </AuthProvider>
+    </Router>
+  );
+};
 export default App;

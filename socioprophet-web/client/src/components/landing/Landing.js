@@ -1,10 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { loginUser } from "../../actions/authActions";
-import { registerUser } from "../../actions/authActions";
-import classnames from "classnames";
 import Ticker from "react-ticker";
 import {
   HeaderGlobalBar,
@@ -16,21 +10,14 @@ import HeaderLanding from "./landing_components/HeaderLanding";
 import HeaderLinks from "./landing_components/HeaderLinks";
 import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
-
+import SignUp from "./Forms/SignUp";
+import Login from "./Forms/Login";
 import "./styles/landing.css";
-import { db } from "../../models/User";
 
-const Landing = (props) => {
+const Landing = () => {
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [registerName, setRegisterName] = useState("");
-  const [registerEmail, setRegisterEmail] = useState("");
-  // const [registerPassword, setRegisterPassword] = useState("");
-  // const [registerPassword2, setRegisterPassword2] = useState("");
-  const [errors, setErrors] = useState({});
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
 
@@ -66,22 +53,6 @@ const Landing = (props) => {
     );
   };
 
-  const toggle = () => {
-    // setExpanded(isExpanded === false ? true : false);
-    // if (!isExpanded) {
-    //   console.log("here");
-    //   renderLogin(false);
-    //   renderRegister(false);
-    // }
-    if (isExpanded === true) {
-      setExpanded(false);
-      renderLogin(false);
-      renderRegister(false);
-    } else {
-      setExpanded(true);
-    }
-  };
-
   const loginToggle = () => {
     setExpanded(isExpanded === false ? true : false);
     if (register || isExpanded) {
@@ -102,205 +73,12 @@ const Landing = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (props.auth.isAuthenticated) {
-      props.history.push("/dashboard");
-    }
-  }, [props]);
-
-  useEffect(() => {
-    if (props.errors) {
-      setErrors(props.errors);
-    }
-  }, [props]);
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    const userData = {
-      email: loginEmail,
-      password: loginPassword,
-    };
-    props.loginUser(userData);
-    setLoginEmail("");
-    setLoginPassword("");
-  };
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-
-    const userData = {
-      name: registerName,
-      email: registerEmail,
-      // password: registerPassword,
-      // password2: registerPassword2,
-    };
-    props.registerUser(userData);
-
-    setRegisterName("");
-    setRegisterEmail("");
-  };
-
-  const registerForm = () => {
-    return (
-      <div>
-        <p className="form__back" onClick={toggle}>
-          &#10005;
-        </p>
-        <form className="form" noValidate onSubmit={handleRegister}>
-          <h3 className="form__heading">Registration</h3>
-          <label className="form__field">
-            <div>
-              <input
-                className={classnames("form__field__input", {
-                  invalid: errors.name,
-                })}
-                onChange={(e) => setRegisterName(e.target.value)}
-                value={registerName}
-                error={errors.name}
-                id="registerName"
-                type="text"
-                placeholder="Name"
-              />
-              <span className="error">{errors.name}</span>
-            </div>
-          </label>
-          <label className="form__field">
-            <div>
-              <input
-                className={classnames("form__field__input", {
-                  invalid: errors.email,
-                })}
-                onChange={(e) => setRegisterEmail(e.target.value)}
-                value={registerEmail}
-                error={errors.email}
-                id="registerEmail"
-                type="email"
-                placeholder="Email"
-              />
-              <span className="error">{errors.email}</span>
-            </div>
-          </label>
-          {/* <label className="form__field">
-            <div>
-              <input
-                className={classnames("form__field__input", {
-                  invalid: errors.password,
-                })}
-                onChange={(e) => setRegisterPassword(e.target.value)}
-                value={registerPassword}
-                error={errors.password}
-                id="registerPassword"
-                type="password"
-                placeholder="Password"
-              />
-              <span className="error">{errors.password}</span>
-            </div>
-          </label>
-          <label className="form__field">
-            <div>
-              <input
-                className={classnames("form__field__input", {
-                  invalid: errors.registerPassword2,
-                })}
-                onChange={(e) => setRegisterPassword2(e.target.value)}
-                value={registerPassword2}
-                error={registerPassword2}
-                id="registerpassword2"
-                type="password"
-                placeholder="Confirm Password"
-              />
-              <span className="error">{errors.registerPassword2}</span>
-            </div>
-          </label> */}
-          <label className="form__field">
-            <div>
-              <button className="form__field__submitBtn" type="submit">
-                Continue
-              </button>
-            </div>
-          </label>
-        </form>
-      </div>
-    );
-  };
-
-  const loginForm = () => {
-    return (
-      <div>
-        <p className="form__back" onClick={toggle}>
-          &#10005;
-        </p>
-        <form className="form" noValidate onSubmit={handleLogin}>
-          <h3 className="form__heading">Log In</h3>
-          <label className="form__field">
-            <div>
-              <input
-                className={classnames("form__field__input", {
-                  invalid: errors.email || errors.emailnotfound,
-                })}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                value={loginEmail}
-                error={errors.email}
-                id="loginEmail"
-                type="email"
-                placeholder="Email"
-              />
-              <span className="error">
-                {errors.email}
-                {errors.emailnotfound}
-              </span>
-            </div>
-          </label>
-          <label className="form__field">
-            <div>
-              <input
-                className={classnames("form__field__input", {
-                  invalid: errors.password || errors.passwordincorrect,
-                })}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                value={loginPassword}
-                error={errors.password}
-                id="loginPassword"
-                type="password"
-                placeholder="Password"
-              />
-              <span className="error">
-                {errors.password}
-                {errors.passwordincorrect}
-              </span>
-            </div>
-          </label>
-          <label className="form__field">
-            <div>
-              <button className="form__field__submitBtn" type="submit">
-                Log In
-              </button>
-            </div>
-          </label>
-        </form>
-      </div>
-    );
-  };
   return (
     <div className="landing">
       <nav className="landing__header">
         <HeaderLanding />
         <HeaderLinks />
         <HeaderGlobalBar>
-          <HeaderGlobalAction id="appSwitcher" aria-label="App Switcher">
-            <svg
-              focusable="false"
-              preserveAspectRatio="xMidYMid meet"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path d="M18 18h3v3h-3zm-7.5 0h3v3h-3zM3 18h3v3H3zm15-7.5h3v3h-3zm-7.5 0h3v3h-3zm-7.5 0h3v3H3zM18 3h3v3h-3zm-7.5 0h3v3h-3zM3 3h3v3H3z"></path>
-            </svg>
-          </HeaderGlobalAction>
           <HeaderGlobalAction
             id="userIcon"
             aria-label="App Switcher"
@@ -314,8 +92,8 @@ const Landing = (props) => {
           </HeaderGlobalAction>
         </HeaderGlobalBar>
         <HeaderPanel aria-label="Header Panel" expanded={isExpanded}>
-          {login && loginForm()}
-          {register && registerForm()}
+          {login && <Login />}
+          {register && <SignUp />}
         </HeaderPanel>
       </nav>
       <div className="main">
@@ -354,16 +132,4 @@ const Landing = (props) => {
   );
 };
 
-Landing.propTypes = {
-  loginUser: PropTypes.func.isRequired,
-  registerUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-  auth: state.auth,
-  errors: state.errors,
-});
-
-export default connect(mapStateToProps, { loginUser, registerUser })(Landing);
+export default Landing;
