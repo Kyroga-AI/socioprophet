@@ -29,11 +29,11 @@ const PasswordReset = () => {
 
   return (
     <div className="reset">
+      <h4 className="reset__heading">Reset Your Password Here!</h4>
       {error && <p className="reset__error">{error}</p>}
       {message && <p className="reset__message">{message}</p>}
       <form className="reset__form" onSubmit={handleSubmit}>
         <div className="reset__form__label">
-          <label className="reset__form_label__text"></label>
           <input
             className="reset__form__input"
             name="email"

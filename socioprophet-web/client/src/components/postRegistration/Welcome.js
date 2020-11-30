@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../authentication/contexts/AuthContext";
+
+import Footer from "../landing/landing_components/Footer";
+
+// styles
 import "./styles/welcome.css";
 
 const Welcome = () => {
@@ -20,15 +24,37 @@ const Welcome = () => {
   };
 
   return (
-    <div className="container">
-      <h1 className="container__heading">Welcome to Alpha Registry</h1>
-      {error && <h3>{error}</h3>}
-      <div styles={{ color: "#fff" }}>
-        <strong>Email:</strong> {currentUser.email}
-        <Link to="/update-profile">Update Profile</Link>
+    <>
+      <div className="alpha"></div>
+      <div className="alpha__container">
+        <h1 className="alpha__container__heading">
+          Welcome to the Alpha Registry!
+        </h1>
+        <div className="alpha__container__card">
+          <p className="alpha__container__card__text">
+            SocioProphet will send you email updates of our progress, in
+            preparation of the Beta launch!
+          </p>
+        </div>
+
+        {error && <p className="alpha__container__error">{error}</p>}
+        <div className="alpha__container__profile">
+          <strong>Account - </strong> {currentUser.email}
+          <div className="alpha__container__profile__update">
+            <Link
+              className="alpha__container__profile__update__link"
+              to="/update-profile"
+            >
+              Update Profile
+            </Link>
+          </div>
+        </div>
+        <button className="alpha__container__btn" onClick={handleLogout}>
+          Log out and return
+        </button>
+        <Footer />
       </div>
-      <button onClick={handleLogout}>Return</button>
-    </div>
+    </>
   );
 };
 
