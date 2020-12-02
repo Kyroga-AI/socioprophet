@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { LocationHeartFilled16 } from "@carbon/icons-react";
 
 const Temp = () => {
   const location = useLocation();
