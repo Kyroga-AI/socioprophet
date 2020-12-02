@@ -1,53 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Search } from "@carbon/ibm-security";
 import { TextInput, Icon, ButtonsGroup } from "watson-react-components";
 import queryString from "query-string";
 
-import axios from "axios";
-
 import "./styles/headerLinks.css";
 
-// const discovery = new DiscoveryV1({
-//   version: "{version}",
-//   authenticator: new IamAuthenticator({
-//     apikey: "{apikey}",
-//   }),
-//   url: "{url}",
-// });
-
 const HeaderLinks = () => {
+  const history = useHistory();
   const [searchQuery, setSearchQuery] = useState("");
-  // const [searchValue, setSearchValue] = useState("");
-  const [afterEnter, setAfterEnter] = useState("This is before enter");
 
-  const handleKeyPress = (e) => {
-    const searchValue = e.target.value;
-    if (e.key === "Enter" && searchValue.match(/[^\s]+/)) {
-      // setSearchQuery(searchValue);
-      setAfterEnter(searchValue);
-
-      const qs = queryString.stringify({ searchQuery });
-      axios
-        .post("/api/search", qs)
-        .then((res) => {
-          history.push("/");
-        })
-        .catch((err) => console.error("errer here"));
-
-      // fetch(`/api/search`)
-      //   .then((response) => {
-      //     if (response.ok) {
-      //       return console.log(response);
-      //     } else {
-      //       throw response;
-      //     }
-      //   })
-
-      //   .catch((response) => {
-      //     console.log("bad");
-      //     console.error(response);
-      //   });
+  const handleQuery = (e) => {
+    const searchQuery = e.target.value;
+    if (e.key === "Enter") {
+      history.push({
+        pathname: "/search",
+        state: { data: searchQuery },
+      });
+      setSearchQuery(searchQuery);
     }
   };
 
@@ -56,26 +26,35 @@ const HeaderLinks = () => {
       <nav className="header__list">
         <ul>
           <li className="header__list__item hidden">
-            <Search
+            {/* <Search
               closeButtonLabelText="Clear search input"
               className="dark"
               defaultValue=""
               id="search-1"
               labelText="Search"
               name=""
+              handleKeyPress={handleKeyPress}
               onChange={function noRefCheck() {}}
               // onClick={setNumber(1)}
               placeHolderText="Search..."
               size="sm"
               type="text"
               light={false}
-            />
+            /> */}
             {/* <TextInput
               placeholder={"Search..."}
               onKeyPress={handleKeyPress}
               onInput={(e) => setSearchQuery(e.target.value)}
               defaultValue={searchQuery}
             /> */}
+            <label>
+              <input
+                onKeyDown={handleQuery}
+                name="query"
+                type="text"
+                placeholder="Search..."
+              />
+            </label>
           </li>
           <li id="spGitHub" className="header__list__item">
             <a

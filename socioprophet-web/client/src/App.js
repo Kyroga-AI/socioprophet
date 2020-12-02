@@ -17,6 +17,9 @@ import PopoutTerminal from "./components/postAuth/interface_components/dashboard
 
 import { AuthProvider } from "./authentication/contexts/AuthContext"; // context for authentication
 
+//temp route...
+import Temp from "./Temp";
+
 import "./App.scss";
 
 const App = () => {
@@ -25,6 +28,9 @@ const App = () => {
       <AuthProvider>
         <div className="App">
           <Route exact path="/" component={Landing} />
+
+          <Route path="/search" component={Temp} />
+
           <Route path="/password-reset" component={PasswordReset} />
           <Switch>
             <PrivateRoute path="/dashboard" component={UInterface} />
