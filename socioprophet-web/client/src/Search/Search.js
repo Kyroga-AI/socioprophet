@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
+
+import Footer from "../components/landing/landing_components/Footer";
+
+// styles
+import "./styles/search.css";
 
 const Temp = () => {
   const location = useLocation();
@@ -23,6 +28,7 @@ const Temp = () => {
           const items = Array.from(response.data.items).map((item) => ({
             title: item.title,
             link: item.link,
+            snippet: item.snippet,
           }));
 
           setData(items);
@@ -40,33 +46,47 @@ const Temp = () => {
     return data ? (
       <p
         style={{
+          position: "relative",
           display: "grid",
           color: "purple",
+          overflow: "scroll",
         }}
       >
         {data.map((items) => (
-          <div style={{ marginTop: "50px", marginLeft: "15px" }}>
+          <span style={{ marginTop: "40px", marginLeft: "25px" }}>
             <a href={items.link}>
               <strong>
-                <span style={{ border: "1px solid black" }}>{items.title}</span>
+                <span>{items.title}</span>
               </strong>
             </a>
-          </div>
+            <p>{items.snippet}</p>
+          </span>
         ))}
       </p>
     ) : (
-      <p styles={{ visibility: "hidden" }}>Loading...</p>
+      <p className="loading">Loading...</p>
     );
   };
 
   return (
-    <div>
-      <h1>Search results for "{location.state.data}"</h1>
+    <>
+      <div className="container"></div>
+      <div className="search">
+        <Link className="search__home" to="/">
+          SocioProphet Home
+        </Link>
+        <h3 className="search__heading">
+          Showing results for "
+          <span style={{ color: "#000" }}>{location.state.data}</span>"
+        </h3>
 
-      <div>
-        <GetSearchData />
+        <div>
+          <GetSearchData />
+          <Footer />
+        </div>
       </div>
-    </div>
+      <div className="container__footer"></div>
+    </>
   );
 };
 
