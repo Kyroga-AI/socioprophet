@@ -10,8 +10,11 @@ import HeaderLanding from "./landing_components/HeaderLanding";
 import HeaderLinks from "./landing_components/HeaderLinks";
 import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
-import SignUp from "./Forms/SignUp";
-import Login from "./Forms/Login";
+import SignUp from "./forms/SignUp";
+import Login from "./forms/Login";
+
+// styles
+
 import "./styles/landing.css";
 
 const Landing = () => {

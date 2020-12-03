@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
 #start mongod and run in packground
-mongod &
+# no using currently...
+# mongod &
 

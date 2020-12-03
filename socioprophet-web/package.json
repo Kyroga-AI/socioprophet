@@ -40,13 +40,8 @@
   },
   "author": "Will Jones",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "jsonwebtoken": "^8.3.0",
-    "mongoose": "^5.3.11",
-    "passport": "^0.4.0",
-    "request": "^2.88.2"
+    "express": "^4.16.4"
   },
   "devDependencies": {},
   "proxy": "http://localhost:5001"

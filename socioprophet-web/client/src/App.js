@@ -17,8 +17,7 @@ import PopoutTerminal from "./components/postAuth/interface_components/dashboard
 
 import { AuthProvider } from "./authentication/contexts/AuthContext"; // context for authentication
 
-//temp route...
-import Search from "./Search/Search";
+import Search from "./search/Search";
 
 import "./App.scss";
 
