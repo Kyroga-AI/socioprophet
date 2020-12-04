@@ -1,8 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
-import { Search } from "@carbon/ibm-security";
-import { TextInput, Icon, ButtonsGroup } from "watson-react-components";
-import queryString from "query-string";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import "./styles/headerLinks.css";
 
@@ -26,27 +23,6 @@ const HeaderLinks = () => {
       <nav className="header__list">
         <ul>
           <li className="header__list__item hidden">
-            {/* <Search
-              closeButtonLabelText="Clear search input"
-              className="dark"
-              defaultValue=""
-              id="search-1"
-              labelText="Search"
-              name=""
-              handleKeyPress={handleKeyPress}
-              onChange={function noRefCheck() {}}
-              // onClick={setNumber(1)}
-              placeHolderText="Search..."
-              size="sm"
-              type="text"
-              light={false}
-            /> */}
-            {/* <TextInput
-              placeholder={"Search..."}
-              onKeyPress={handleKeyPress}
-              onInput={(e) => setSearchQuery(e.target.value)}
-              defaultValue={searchQuery}
-            /> */}
             <label>
               <input
                 onKeyDown={handleQuery}

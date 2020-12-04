@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-// import { addProject } from "../../../../../actions/authActions";
 
 import Form from "carbon-components-react/lib/components/Form";
 import TextArea from "carbon-components-react/lib/components/TextArea";
@@ -8,8 +7,6 @@ import RadioButtonGroup from "carbon-components-react/lib/components/RadioButton
 import RadioButton from "carbon-components-react/lib/components/RadioButton";
 import Button from "carbon-components-react/lib/components/Button";
 import { Link, withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
 
 import "./styles/projects1.css";
 class Projects1 extends Component {

@@ -1,8 +1,11 @@
 # ignore node modules
-node_modules/
+node_modules
 
 # ignore DS Store - only in MacOS anyway...
 .DS_Store
 
-# ignore dist folder in production
-dist
+# ignore build folder in production
+build
+
+# ignore .env files
+.env

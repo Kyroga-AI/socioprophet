@@ -2,10 +2,12 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
+  // For docker
+  // entry: "./usr/src/app/",
   entry: "./src/index.js",
   output: {
-    path: path.join(__dirname, "/dist"),
-    filename: "index_bundle.js",
+    path: path.join(__dirname, "/build"),
+    filename: "bundle.js",
   },
   module: {
     rules: [
@@ -14,6 +16,13 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/react"],
+            plugins: [
+              "@babel/plugin-proposal-class-properties",
+              "@babel/transform-runtime",
+            ],
+          },
         },
       },
       {

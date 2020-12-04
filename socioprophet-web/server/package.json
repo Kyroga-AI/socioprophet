@@ -40,9 +40,10 @@
   },
   "author": "Will Jones",
   "dependencies": {
-    "body-parser": "^1.18.3",
     "express": "^4.16.4"
   },
-  "devDependencies": {},
+  "devDependencies": { 
+    "nodemon": "^2.0.6"
+  },
   "proxy": "http://localhost:5001"
 }

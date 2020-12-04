@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../authentication/contexts/AuthContext";
 
 // styles
-import "./styles/PasswordReset.css";
+import "./styles/passwordReset.css";
 
 const PasswordReset = () => {
   const emailRef = useRef();
