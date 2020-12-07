@@ -57,6 +57,7 @@
     "javascript-terminal": "^1.0.3",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-ga": "^3.3.0",
     "react-helmet": "^5.2.1",
     "react-osx-dock": "^1.0.0",
     "react-popout": "^1.0.2",

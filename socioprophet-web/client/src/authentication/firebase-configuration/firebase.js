@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/analytics";
 
 const app = firebase.initializeApp({
   apiKey: "AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc",
@@ -20,18 +21,4 @@ export default app;
  *  TODO: add in firebase analytics
  *
  */
-// firebase.analytics();
-
-// const firebaseConfig = {
-//   apiKey: "AIzaSyCfcazhFEQJNIkwG30Y4NS5JKnyH1TwrPM",
-//   authDomain: "login-2ca80.firebaseapp.com",
-//   databaseURL: "https://login-2ca80.firebaseio.com",
-//   projectId: "login-2ca80",
-//   storageBucket: "login-2ca80.appspot.com",
-//   messagingSenderId: "1044519019950",
-//   appId: "1:1044519019950:web:5d6fa2dea297af857f943f",
-// };
-
-// const fbase = firebase.initializeApp(firebaseConfig);
-
-// export default fbase;
+app.analytics();
