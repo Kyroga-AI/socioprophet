@@ -1,0 +1,49 @@
+{
+  "name": "socioprophet-web",
+  "version": "0.1.0",
+  "description": "server for socioprophet web",
+  "keywords": [
+    "server",
+    "sp",
+    "socioprophet",
+    "socioprophetweb",
+    "developer",
+    "cloud",
+    "network",
+    "social",
+    "platform",
+    "ai",
+    "learning",
+    "collaboration",
+    "search",
+    "community",
+    "reddit",
+    "hackernews",
+    "data",
+    "analytics",
+    "decentralized",
+    "democratized",
+    "workflow",
+    "federated"
+  ],
+  "homepage": "https://github.com/SocioProphet/socioprophet",
+  "bugs": {
+    "url": "https://github.com/SocioProphet/socioprophet/issues",
+    "email": "will@socioprophet.ai"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "./server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "Will Jones",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": { 
+    "nodemon": "^2.0.6"
+  },
+  "proxy": "http://localhost:5001"
+}

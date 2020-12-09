@@ -1,0 +1,358 @@
+// API callback
+hndlr({
+  "kind": "customsearch#search",
+  "url": {
+    "type": "application/json",
+    "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
+  },
+  "queries": {
+    "request": [
+      {
+        "title": "Google Custom Search - cars",
+        "totalResults": "8440000000",
+        "searchTerms": "cars",
+        "count": 10,
+        "startIndex": 1,
+        "inputEncoding": "utf8",
+        "outputEncoding": "utf8",
+        "safe": "off",
+        "cx": "017576662512468239146:omuauf_lfve"
+      }
+    ],
+    "nextPage": [
+      {
+        "title": "Google Custom Search - cars",
+        "totalResults": "8440000000",
+        "searchTerms": "cars",
+        "count": 10,
+        "startIndex": 11,
+        "inputEncoding": "utf8",
+        "outputEncoding": "utf8",
+        "safe": "off",
+        "cx": "017576662512468239146:omuauf_lfve"
+      }
+    ]
+  },
+  "context": {
+    "title": "CS Curriculum",
+    "facets": [
+      [
+        {
+          "anchor": "Lectures",
+          "label": "lectures",
+          "label_with_op": "more:lectures"
+        }
+      ],
+      [
+        {
+          "anchor": "Assignments",
+          "label": "assignments",
+          "label_with_op": "more:assignments"
+        }
+      ],
+      [
+        {
+          "anchor": "Reference",
+          "label": "reference",
+          "label_with_op": "more:reference"
+        }
+      ]
+    ]
+  },
+  "searchInformation": {
+    "searchTime": 0.161414,
+    "formattedSearchTime": "0.16",
+    "totalResults": "8440000000",
+    "formattedTotalResults": "8,440,000,000"
+  },
+  "items": [
+    {
+      "kind": "customsearch#result",
+      "title": "CS 414 Fall 1997: Homework 1 (due Sept",
+      "htmlTitle": "CS 414 Fall 1997: Homework 1 (due Sept",
+      "link": "http://www.cs.cornell.edu/courses/cs414/2003fa/HW3.htm",
+      "displayLink": "www.cs.cornell.edu",
+      "snippet": "A car enters the circle from a side road , drives around it until a desired exit point \n... a) Prove that deadlock can occur if cars entering the circle have priority over ...",
+      "htmlSnippet": "A \u003cb\u003ecar\u003c/b\u003e enters the circle from a side road , drives around it until a desired exit point \u003cbr\u003e\n... a) Prove that deadlock can occur if \u003cb\u003ecars\u003c/b\u003e entering the circle have priority over&nbsp;...",
+      "cacheId": "-CT7RgfefXQJ",
+      "formattedUrl": "www.cs.cornell.edu/courses/cs414/2003fa/HW3.htm",
+      "htmlFormattedUrl": "www.cs.cornell.edu/courses/cs414/2003fa/HW3.htm",
+      "pagemap": {
+        "metatags": [
+          {
+            "originator": "Microsoft Word 10",
+            "progid": "Word.Document"
+          }
+        ]
+      },
+      "labels": [
+        {
+          "name": "assignments",
+          "displayName": "Assignments",
+          "label_with_op": "more:assignments"
+        }
+      ]
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Advanced Applications (NLP, Games, Cars)/videos Autonomous Cars",
+      "htmlTitle": "Advanced Applications (NLP, Games, \u003cb\u003eCars\u003c/b\u003e)/videos Autonomous \u003cb\u003eCars\u003c/b\u003e",
+      "link": "https://zoo.cs.yale.edu/classes/cs470/lectures/aimaslides/Lecture%2024%20--%20Advanced%20Applications%20(NLP,%20Games,%20Cars)/videos%20Autonomous%20Cars/",
+      "displayLink": "zoo.cs.yale.edu",
+      "snippet": "Index of /classes/cs470/lectures/aimaslides/Lecture 24 -- Advanced Applications \n(NLP, Games, Cars)/videos Autonomous Cars ...",
+      "htmlSnippet": "Index of /classes/cs470/lectures/aimaslides/Lecture 24 -- Advanced Applications \u003cbr\u003e\n(NLP, Games, \u003cb\u003eCars\u003c/b\u003e)/videos Autonomous \u003cb\u003eCars\u003c/b\u003e&nbsp;...",
+      "cacheId": "IKpBpnuiL_EJ",
+      "formattedUrl": "https://zoo.cs.yale.edu/...%20Cars)/videos%20Autonomous%20Cars/",
+      "htmlFormattedUrl": "https://zoo.cs.yale.edu/...%20\u003cb\u003eCars\u003c/b\u003e)/videos%20Autonomous%20\u003cb\u003eCars\u003c/b\u003e/",
+      "labels": [
+        {
+          "name": "lectures",
+          "displayName": "Lectures",
+          "label_with_op": "more:lectures"
+        }
+      ]
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "of /classes/cs470/lectures/aimaslides/Lecture 24 -- Advanced ...",
+      "htmlTitle": "of /classes/cs470/lectures/aimaslides/Lecture 24 -- Advanced ...",
+      "link": "https://zoo.cs.yale.edu/classes/cs470/lectures/aimaslides/Lecture%2024%20--%20Advanced%20Applications%20(NLP,%20Games,%20Cars)/",
+      "displayLink": "zoo.cs.yale.edu",
+      "snippet": "Index of /classes/cs470/lectures/aimaslides/Lecture 24 -- Advanced Applications \n(NLP, Games, Cars). [ICO], Name · Last modified · Size · Description ...",
+      "htmlSnippet": "Index of /classes/cs470/lectures/aimaslides/Lecture 24 -- Advanced Applications \u003cbr\u003e\n(NLP, Games, \u003cb\u003eCars\u003c/b\u003e). [ICO], Name &middot; Last modified &middot; Size &middot; Description&nbsp;...",
+      "cacheId": "eq1nSYabv2AJ",
+      "formattedUrl": "https://zoo.cs.yale.edu/.../Lecture%2024%20-- %20Advanced%20Applications%20(NLP,%20Games,%20Cars)/",
+      "htmlFormattedUrl": "https://zoo.cs.yale.edu/.../Lecture%2024%20-- %20Advanced%20Applications%20(NLP,%20Games,%20\u003cb\u003eCars\u003c/b\u003e)/",
+      "labels": [
+        {
+          "name": "lectures",
+          "displayName": "Lectures",
+          "label_with_op": "more:lectures"
+        }
+      ]
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Experimental Security Analysis of a Modern Automobile",
+      "htmlTitle": "Experimental Security Analysis of a Modern Automobile",
+      "link": "https://www.cs.utexas.edu/~hovav/dist/cars-oakland2010.pdf",
+      "displayLink": "www.cs.utexas.edu",
+      "snippet": "causing the car to stop suddenly. Rather than focus just on individual attacks, we \nconduct a comprehensive analysis of our cars' digital components and.",
+      "htmlSnippet": "causing the \u003cb\u003ecar\u003c/b\u003e to stop suddenly. Rather than focus just on individual attacks, we \u003cbr\u003e\nconduct a comprehensive analysis of our \u003cb\u003ecars\u003c/b\u003e&#39; digital components and.",
+      "cacheId": "3o9K1jDopI0J",
+      "formattedUrl": "https://www.cs.utexas.edu/~hovav/dist/cars-oakland2010.pdf",
+      "htmlFormattedUrl": "https://www.cs.utexas.edu/~hovav/dist/\u003cb\u003ecars\u003c/b\u003e-oakland2010.pdf",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSDpNPIZ9FD7YeBESI2lf7Rz6UeAIbjii7yZ-QyaV-Yx_qLT4qcJ_XZR8Py",
+            "width": "226",
+            "height": "223"
+          }
+        ],
+        "metatags": [
+          {
+            "creator": "TeX",
+            "creationdate": "D:20100509205643-07'00'",
+            "fullbanner": "This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) kpathsea version 3.5.4",
+            "producer": "pdfeTeX-1.21a"
+          }
+        ],
+        "cse_image": [
+          {
+            "src": "x-raw-image:///391822bbeed1a7cfe2f217a68e9a9e43ea89d80a562bf635e7d81843991d3b86"
+          }
+        ]
+      },
+      "mime": "application/pdf",
+      "fileFormat": "PDF/Adobe Acrobat"
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "CS 5614 Homework #2",
+      "htmlTitle": "CS 5614 Homework #2",
+      "link": "http://courses.cs.vt.edu/~cs5614/assignments/two.html",
+      "displayLink": "courses.cs.vt.edu",
+      "snippet": "Sep 3, 1999 ... We wish to model people, cars, licenses, and insurance policies on cars etc.. \nPeople are either men or women. They are uniquely identified by ...",
+      "htmlSnippet": "Sep 3, 1999 \u003cb\u003e...\u003c/b\u003e We wish to model people, \u003cb\u003ecars\u003c/b\u003e, licenses, and insurance policies on \u003cb\u003ecars\u003c/b\u003e etc.. \u003cbr\u003e\nPeople are either men or women. They are uniquely identified by&nbsp;...",
+      "cacheId": "U3ixerW1dvsJ",
+      "formattedUrl": "courses.cs.vt.edu/~cs5614/assignments/two.html",
+      "htmlFormattedUrl": "courses.cs.vt.edu/~cs5614/assignments/two.html"
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "In a World of Driverless Cars | Department of Computer Science",
+      "htmlTitle": "In a World of Driverless \u003cb\u003eCars\u003c/b\u003e | Department of Computer Science",
+      "link": "https://www.cs.utexas.edu/news/2012/world-driverless-cars",
+      "displayLink": "www.cs.utexas.edu",
+      "snippet": "Mar 16, 2012 ... The Cities page on Atlantic.com takes a look at research on the intersections of \nthe future done by computer scientist Peter Stone.",
+      "htmlSnippet": "Mar 16, 2012 \u003cb\u003e...\u003c/b\u003e The Cities page on Atlantic.com takes a look at research on the intersections of \u003cbr\u003e\nthe future done by computer scientist Peter Stone.",
+      "cacheId": "TT2S7TmrQvUJ",
+      "formattedUrl": "https://www.cs.utexas.edu/news/2012/world-driverless-cars",
+      "htmlFormattedUrl": "https://www.cs.utexas.edu/news/2012/world-driverless-\u003cb\u003ecars\u003c/b\u003e",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROc6Vc745yuh_H6AiSdaENhGSZ8vwWrvyFfoQIDt2Lyaxg-H22pSUynHzb",
+            "width": "182",
+            "height": "276"
+          }
+        ],
+        "Item": [
+          {
+            "num_replies": "0",
+            "title": "CNS link"
+          },
+          {
+            "num_replies": "0",
+            "title": "UTCS Logo"
+          },
+          {
+            "num_replies": "0",
+            "title": "Archived content notice",
+            "encoded": "Attention: You are viewing archived content. The information may be outdated and links may no longer work."
+          },
+          {
+            "date": "2012-03-16T09:47:30-05:00",
+            "created": "2012-03-16T09:47:30-05:00",
+            "num_replies": "0",
+            "title": "In a World of Driverless Cars",
+            "encoded": "The Cities page on Atlantic.com takes a look at research on the intersections of the future done by computer scientist Peter Stone."
+          },
+          {
+            "num_replies": "0",
+            "title": "Social links"
+          },
+          {
+            "num_replies": "0",
+            "title": "Department address",
+            "encoded": "2317 Speedway, Stop D9500 Austin, TX 78712 Phone: 512.471.7316 © The University of Texas at Austin 2020"
+          },
+          {
+            "num_replies": "0",
+            "title": "Contact links",
+            "encoded": "Undergraduate Office Graduate Office Office of External Affairs Webmaster"
+          }
+        ],
+        "metatags": [
+          {
+            "handheldfriendly": "true",
+            "viewport": "width=device-width",
+            "mobileoptimized": "width"
+          }
+        ],
+        "cse_image": [
+          {
+            "src": "https://www.cs.utexas.edu/sites/default/files/images/ut-crest-on.png"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Strip-cars",
+      "htmlTitle": "Strip-\u003cb\u003ecars\u003c/b\u003e",
+      "link": "https://www.cs.utexas.edu/~ragerdl/acl2-manual/HTML/ACL2____STRIP-CARS.html",
+      "displayLink": "www.cs.utexas.edu",
+      "snippet": "(strip-cars x) is the list obtained by walking through the list x and collecting up all \nfirst components (cars). This function is implemented in a tail-recursive way, ...",
+      "htmlSnippet": "(strip-\u003cb\u003ecars\u003c/b\u003e x) is the list obtained by walking through the list x and collecting up all \u003cbr\u003e\nfirst components (\u003cb\u003ecar\u003c/b\u003es). This function is implemented in a tail-recursive way,&nbsp;...",
+      "cacheId": "qwGFjE8pNCAJ",
+      "formattedUrl": "https://www.cs.utexas.edu/~ragerdl/acl2.../ACL2____STRIP-CARS.html",
+      "htmlFormattedUrl": "https://www.cs.utexas.edu/~ragerdl/acl2.../ACL2____STRIP-\u003cb\u003eCARS\u003c/b\u003e.html"
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "To Make Intersections Smarter, We Need Cars To Be Smarter, Too ...",
+      "htmlTitle": "To Make Intersections Smarter, We Need \u003cb\u003eCars\u003c/b\u003e To Be Smarter, Too ...",
+      "link": "https://www.cs.utexas.edu/news/2014/make-intersections-smarter-we-need-cars-be-smarter-too",
+      "displayLink": "www.cs.utexas.edu",
+      "snippet": "Jan 8, 2014 ... Kurt Dresne, one of Professor Peter Stone's former UT Computer Science \ngraduate student spoke with NPR's Robert Siegel recently about his ...",
+      "htmlSnippet": "Jan 8, 2014 \u003cb\u003e...\u003c/b\u003e Kurt Dresne, one of Professor Peter Stone&#39;s former UT Computer Science \u003cbr\u003e\ngraduate student spoke with NPR&#39;s Robert Siegel recently about his&nbsp;...",
+      "cacheId": "OaNzVYncxbAJ",
+      "formattedUrl": "https://www.cs.utexas.edu/.../make-intersections-smarter-we-need-cars-be- smarter-too",
+      "htmlFormattedUrl": "https://www.cs.utexas.edu/.../make-intersections-smarter-we-need-\u003cb\u003ecars\u003c/b\u003e-be- smarter-too",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROc6Vc745yuh_H6AiSdaENhGSZ8vwWrvyFfoQIDt2Lyaxg-H22pSUynHzb",
+            "width": "182",
+            "height": "276"
+          }
+        ],
+        "Item": [
+          {
+            "num_replies": "0",
+            "title": "CNS link"
+          },
+          {
+            "num_replies": "0",
+            "title": "UTCS Logo"
+          },
+          {
+            "num_replies": "0",
+            "title": "Archived content notice",
+            "encoded": "Attention: You are viewing archived content. The information may be outdated and links may no longer work."
+          },
+          {
+            "date": "2014-01-08T16:07:03-06:00",
+            "created": "2014-01-08T16:07:03-06:00",
+            "num_replies": "0",
+            "title": "To Make Intersections Smarter, We Need Cars To Be Smarter, Too",
+            "encoded": "Kurt Dresner, one of Professor Peter Stone's former UT Computer Science graduate student spoke with Robert Siegel recently about his thesis research on autonomous intersection management in..."
+          },
+          {
+            "num_replies": "0",
+            "title": "Social links"
+          },
+          {
+            "num_replies": "0",
+            "title": "Department address",
+            "encoded": "2317 Speedway, Stop D9500 Austin, TX 78712 Phone: 512.471.7316 © The University of Texas at Austin 2020"
+          },
+          {
+            "num_replies": "0",
+            "title": "Contact links",
+            "encoded": "Undergraduate Office Graduate Office Office of External Affairs Webmaster"
+          }
+        ],
+        "metatags": [
+          {
+            "handheldfriendly": "true",
+            "viewport": "width=device-width",
+            "mobileoptimized": "width"
+          }
+        ],
+        "cse_image": [
+          {
+            "src": "https://www.cs.utexas.edu/sites/default/files/images/ut-crest-on.png"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Homework Assignment 13",
+      "htmlTitle": "Homework Assignment 13",
+      "link": "http://courses.cs.vt.edu/cs2104/Spring16Barnette/assignments/hw13.html",
+      "displayLink": "courses.cs.vt.edu",
+      "snippet": "Apr 25, 2016 ... Motorized car capable of propelling itself and a number of attached cars. Box car. \nA platform, with sides and top, for carrying cargo like boxes, ...",
+      "htmlSnippet": "Apr 25, 2016 \u003cb\u003e...\u003c/b\u003e Motorized \u003cb\u003ecar\u003c/b\u003e capable of propelling itself and a number of attached \u003cb\u003ecars\u003c/b\u003e. Box \u003cb\u003ecar\u003c/b\u003e. \u003cbr\u003e\nA platform, with sides and top, for carrying cargo like boxes,&nbsp;...",
+      "cacheId": "Dr3t0EHshq0J",
+      "formattedUrl": "courses.cs.vt.edu/cs2104/Spring16Barnette/assignments/hw13.html",
+      "htmlFormattedUrl": "courses.cs.vt.edu/cs2104/Spring16Barnette/assignments/hw13.html"
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "STRIP-CARS.html -- ACL2 Version 2.9",
+      "htmlTitle": "STRIP-\u003cb\u003eCARS\u003c/b\u003e.html -- ACL2 Version 2.9",
+      "link": "https://www.cs.utexas.edu/users/moore/acl2/v2-9/STRIP-CARS.html",
+      "displayLink": "www.cs.utexas.edu",
+      "snippet": "STRIP-CARS. collect up all first components of pairs in a list. Major Section: \nPROGRAMMING. (strip-cars x) is the list obtained by walking through the list x \nand ...",
+      "htmlSnippet": "STRIP-\u003cb\u003eCARS\u003c/b\u003e. collect up all first components of pairs in a list. Major Section: \u003cbr\u003e\nPROGRAMMING. (strip-\u003cb\u003ecars\u003c/b\u003e x) is the list obtained by walking through the list x \u003cbr\u003e\nand&nbsp;...",
+      "cacheId": "lhjX-w1w_VsJ",
+      "formattedUrl": "https://www.cs.utexas.edu/users/moore/acl2/v2-9/STRIP-CARS.html",
+      "htmlFormattedUrl": "https://www.cs.utexas.edu/users/moore/acl2/v2-9/STRIP-\u003cb\u003eCARS\u003c/b\u003e.html"
+    }
+  ]
+}
+);

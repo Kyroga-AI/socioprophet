@@ -1,0 +1,40 @@
+.uifooter {
+  z-index: 5000;
+  height: 50px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  background-color: #000;
+  border-bottom: .1px solid grey;
+  border-top: .1px solid grey;
+  display: flex;
+  justify-content: center;
+}
+
+.uifooter__dock {
+  display: hidden;
+}
+
+.uifooter__dock:hover {
+  margin-left: 3rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-self: flex-end;
+  z-index: 0;
+  color: teal;
+  border-bottom: 2px solid grey;
+}
+
+.uifooter__dock:hover .uifooter__dock--item {
+  margin: 0;
+  bottom: 1rem;
+}
+
+.uifooter__dock--item {
+  font-size: 0px;
+  margin-top: 2rem;;
+  bottom: 0;
+  height: 0px;
+  width: 0px;
+}
