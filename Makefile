@@ -1,4 +1,4 @@
-.PHONY: build_web run_server run_client
+.PHONY: build_web run_server run_client build_client
 
 build_web:
 	cd socioprophet-web/scripts/ && bash build_web.sh
