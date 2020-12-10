@@ -1,0 +1,24 @@
+cache:
+  paths:
+    - ./socioprophet-web/client/node_modules/
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  image: node
+  script:
+    - echo "Build Application"
+    - make build_web
+    - make build_client
+    - echo "Build Successful!" 
+    
+test:
+  stage: test
+  image: node
+  script:
+    - echo "Testing Application"
+    - make build_web
+    - echo "Test Successful!"
