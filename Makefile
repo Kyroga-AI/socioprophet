@@ -10,4 +10,4 @@ run_client:
 	cd socioprophet-web/scripts && bash run_client.sh
 
 build_client:
-	cd scripts && bash build_client.sh
+	cd socioprophet-web/scripts && bash build_client.sh
