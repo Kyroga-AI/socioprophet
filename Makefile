@@ -8,3 +8,6 @@ run_server:
 
 run_client:
 	cd socioprophet-web/scripts && bash run_client.sh
+
+build_client:
+	cd scripts && bash build_client.sh
