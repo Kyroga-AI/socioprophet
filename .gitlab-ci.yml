@@ -5,20 +5,33 @@ cache:
 stages:
   - build
   - test
+  - docker_image
 
 build:
   stage: build
   image: node
   script:
     - echo "Build Application"
-    - make build_web
-    - make build_client
-    - echo "Build Successful!" 
-    
+    # - make build_web
+    # - make build_client
+    - echo "Build Successful!"
+
 test:
   stage: test
   image: node
   script:
     - echo "Testing Application"
-    - make build_web
     - echo "Test Successful!"
+
+docker_image:
+  stage: docker_image
+  image: node:15-alpine
+  variables:
+    DOCKER_IMAGE_TAG: "gcr.io/socioprophet-web/sp-client"
+  script:
+    - docker build --cache-from "${DOCKER_IMAGE_TAG}" -t "{DOCKER_IMAGE_TAG" .
+    - echo "$SERVICE_ACCOUNT_KEY" > socioprophet-web-2956058128a6.json
+    - docker login -u _json_key --password-stdin https://gcr.io < socioprophet-web-2956058128a6.json
+    - docker push ${DOCKER_IMAGE_TAG}
+  only:
+    - master
