@@ -9,7 +9,7 @@ stages:
 
 build:
   stage: build
-  image: node
+  # image: node
   script:
     - echo "Build Application"
     # - make build_web
@@ -18,7 +18,7 @@ build:
 
 test:
   stage: test
-  image: node
+  # image: node
   script:
     - echo "Testing Application"
     - echo "Test Successful!"
@@ -29,7 +29,7 @@ docker_image:
   variables:
     DOCKER_IMAGE_TAG: "gcr.io/socioprophet-web/sp-client"
   script:
-    - docker build --cache-from "${DOCKER_IMAGE_TAG}" -t "{DOCKER_IMAGE_TAG" .
+    - docker build --cache-from "${DOCKER_IMAGE_TAG}" -t "{DOCKER_IMAGE_TAG}" .
     - echo "$SERVICE_ACCOUNT_KEY" > socioprophet-web-2956058128a6.json
     - docker login -u _json_key --password-stdin https://gcr.io < socioprophet-web-2956058128a6.json
     - docker push ${DOCKER_IMAGE_TAG}
