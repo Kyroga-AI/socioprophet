@@ -27,7 +27,7 @@ docker_image:
   stage: docker_image
   image: node:15-alpine
   variables:
-    DOCKER_IMAGE_TAG: "gcr.io/socioprophet-web/sp-client"
+    DOCKER_IMAGE_TAG: "us.gcr.io/socioprophet-web/sp-client"
   script:
     - docker build --cache-from "${DOCKER_IMAGE_TAG}" -t "{DOCKER_IMAGE_TAG}" .
     - echo "$SERVICE_ACCOUNT_KEY" > socioprophet-web-2956058128a6.json
