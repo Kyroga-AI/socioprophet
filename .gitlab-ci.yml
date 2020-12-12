@@ -28,6 +28,8 @@ docker_image:
   image: docker:stable
   variables:
     DOCKER_IMAGE_TAG: "gcr.io/socioprophet-web/sp-client:latest"
+  services:
+    - docker:dind
   script:
     - echo "SHOWING DOCKER INFO..."
     - docker info
