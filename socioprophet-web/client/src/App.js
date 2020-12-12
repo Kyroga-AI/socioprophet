@@ -40,11 +40,8 @@ const App = () => {
     <Router history={history}>
       <AuthProvider>
         <div className="App">
-          <h2>This is a NEW change from Gitlab local Repo</h2>
           <Route exact path="/" component={Landing} />
-
           <Route path="/search" component={Search} />
-
           <Route path="/password-reset" component={PasswordReset} />
           <Switch>
             <PrivateRoute path="/dashboard" component={UInterface} />
