@@ -29,6 +29,9 @@ docker_image:
   variables:
     DOCKER_IMAGE_TAG: "gcr.io/socioprophet-web/sp-client:latest"
   script:
+    - echo "SHOWING DOCKER INFO..."
+    - docker info
+    - echo "FINISHED SHOWING DOCKER INFO <<<"
     - docker pull gcr.io/socioprophet-web/sp-client:1.0.3
     - docker build -t "{DOCKER_IMAGE_TAG}" .
     - echo "$SERVICE_ACCOUNT_KEY" > socioprophet-web-2956058128a6.json
