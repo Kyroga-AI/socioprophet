@@ -25,7 +25,7 @@ stages:
 
 docker_image:
   stage: docker_image
-  image: node:15-alpine
+  image: docker:stable
   variables:
     DOCKER_IMAGE_TAG: "gcr.io/socioprophet-web/sp-client:latest"
   script:
