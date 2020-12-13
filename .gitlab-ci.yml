@@ -3,25 +3,26 @@ cache:
     - ./socioprophet-web/client/node_modules/
 
 stages:
-  # - build
-  # - test
+  - build
+  - test
   - docker_image
-# build:
-#   stage: build
-#   image: node
-#   script:
-#     - echo "Build Application"
-#     - make build_web
-#     - make build_client
-#     - echo "Build Successful!"
+build:
+  stage: build
+  image: node
+  script:
+    - echo "Build Application"
+    - make build_web
+    - make build_client
+    - echo "Build Successful!"
+  only:
+    - master
 
-# test:
-#   stage: test
-#   image: node
-#   script:
-#     - echo "Testing Application"
-#     - echo "Test Successful!"
-
+test:
+  stage: test
+  image: node
+  script:
+    - echo "Testing Application"
+    - echo "Test Successful!"
 # docker_image:
 #   stage: docker_image
 #   image: docker:stable
