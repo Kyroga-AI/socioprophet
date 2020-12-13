@@ -20,7 +20,7 @@ build:
 test:
   stage: test
   script:
-    - yarn ./socioprophet-web/client/ test
+    - "cd ./socioprophet-web/client/ && yarn test"
 # docker_image:
 #   stage: docker_image
 #   image: docker:stable
