@@ -14,7 +14,8 @@ build:
     - make build_web
     - make build_client
     - echo "Build Successful!"
-  only: master
+  only:
+    - master
 
 test:
   stage: test
