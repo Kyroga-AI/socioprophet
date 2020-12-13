@@ -35,9 +35,14 @@ docker_image:
     - docker:dind
 
   script:
+    - echo $GCP_PROJECT_ID
+    - echo $IMAGE_NAME
     - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
-    - docker pull gcr.io/socioprophet-web/sp-client:1.0.3
-    # - docker build -t "{DOCKER_IMAGE_TAG}" .
-    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.3
+    - docker pull gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:latest
+    - docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:latest
+    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:latest
+  # after_script:
+  # - docker logout  <--- add this in, not sure yet
+
   only:
     - master
