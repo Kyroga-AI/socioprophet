@@ -21,22 +21,23 @@ test:
   stage: test
   script:
     - "cd ./socioprophet-web/client/ && yarn test"
-# docker_image:
-#   stage: docker_image
-#   image: docker:stable
 
-#   variables:
-#     DOCKER_DRIVER: overlay
-#     GCP_PROJECT_ID: socioprophet-web
-#     IMAGE_NAME: sp-client
+docker_image:
+  stage: docker_image
+  image: docker:stable
 
-#   services:
-#     - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay
+    GCP_PROJECT_ID: socioprophet-web
+    IMAGE_NAME: sp-client
 
-#   script:
-#     - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
-#     - docker pull gcr.io/socioprophet-web/sp-client:1.0.3
-#     # - docker build -t "{DOCKER_IMAGE_TAG}" .
-#     - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.3
-#   only:
-#     - master
+  services:
+    - docker:dind
+
+  script:
+    - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
+    - docker pull gcr.io/socioprophet-web/sp-client:1.0.3
+    # - docker build -t "{DOCKER_IMAGE_TAG}" .
+    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.3
+  only:
+    - master
