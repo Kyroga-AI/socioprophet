@@ -112,7 +112,7 @@ const Landing = () => {
             <strong>Prophet</strong>
             <p className="main__background__title__sub">
               <strong>
-                Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
+                Open Collaborative Socio-Dat-Alytics... For geeks, by geeks.
               </strong>
             </p>
           </div>

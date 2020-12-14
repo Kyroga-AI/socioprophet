@@ -7,20 +7,20 @@ cache:
     - ./socioprophet-web/client/node_modules/
 
 stages:
-  - build
-  - test
+  # - build
+  # - test
   - docker_image
 
-build:
-  stage: build
-  script:
-    - make build_web
-    - make build_client
+# build:
+#   stage: build
+#   script:
+#     - make build_web
+#     - make build_client
 
-test:
-  stage: test
-  script:
-    - "cd ./socioprophet-web/client/ && yarn test"
+# test:
+#   stage: test
+#   script:
+#     - "cd ./socioprophet-web/client/ && yarn test"
 
 docker_image:
   stage: docker_image
@@ -38,11 +38,11 @@ docker_image:
     - echo $GCP_PROJECT_ID
     - echo $IMAGE_NAME
     - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
-#     - docker pull gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.3
-    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.6 ."
-    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.6
-#   # after_script:
-#   # - docker logout  <--- add this in, not sure yet
+    #     - docker pull gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.3
+    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:release-candidate ."
+    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:release-candidate
+  #   # after_script:
+  #   # - docker logout  <--- add this in, not sure yet
 
   only:
     - master
