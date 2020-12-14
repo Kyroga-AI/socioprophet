@@ -9,7 +9,7 @@ cache:
 stages:
   - build
   - test
-  # - docker_image
+  - docker_image
 
 build:
   stage: build
@@ -21,27 +21,28 @@ test:
   stage: test
   script:
     - "cd ./socioprophet-web/client/ && yarn test"
-# docker_image:
-#   stage: docker_image
-#   image: docker:stable
 
-#   variables:
-#     DOCKER_DRIVER: overlay
-#     GCP_PROJECT_ID: socioprophet-web
-#     IMAGE_NAME: sp-client
+docker_image:
+  stage: docker_image
+  image: docker:stable
 
-#   services:
-#     - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay
+    GCP_PROJECT_ID: socioprophet-web
+    IMAGE_NAME: sp-client
 
-#   script:
-#     - echo $GCP_PROJECT_ID
-#     - echo $IMAGE_NAME
-#     - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
+  services:
+    - docker:dind
+
+  script:
+    - echo $GCP_PROJECT_ID
+    - echo $IMAGE_NAME
+    - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
 #     - docker pull gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.3
-#     - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.4 ."
-#     - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.4
+    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.6 ."
+    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.6
 #   # after_script:
 #   # - docker logout  <--- add this in, not sure yet
 
-#   only:
-#     - master
+  only:
+    - master
