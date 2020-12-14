@@ -12,8 +12,6 @@ const Temp = () => {
 
   const query = location.state.data;
 
-  const API_KEY = "AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc";
-
   const API_URL = `https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=017576662512468239146:omuauf_lfve&q=${query}`;
 
   const GetSearchData = () => {
@@ -29,6 +27,7 @@ const Temp = () => {
             title: item.title,
             link: item.link,
             snippet: item.snippet,
+            cacheId: item.cacheId,
           }));
 
           setData(items);
@@ -53,13 +52,17 @@ const Temp = () => {
         }}
       >
         {data.map((items) => (
-          <span style={{ marginTop: "40px", marginLeft: "25px" }}>
+          <span
+            key={items.cacheId}
+            style={{ marginTop: "40px", marginLeft: "25px" }}
+          >
             <a href={items.link}>
               <strong>
                 <span>{items.title}</span>
               </strong>
             </a>
-            <p>{items.snippet}</p>
+            <br />
+            {items.snippet}
           </span>
         ))}
       </p>

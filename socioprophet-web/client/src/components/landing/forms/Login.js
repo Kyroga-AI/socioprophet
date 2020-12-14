@@ -30,7 +30,7 @@ const Login = () => {
   return (
     <div className="form">
       <h3 className="form__heading">Log In</h3>
-      {error && <h3>{error}</h3>}
+      {error && <p className="form__error">{error}</p>}
       <form onSubmit={handleSubmit}>
         <label>
           <input

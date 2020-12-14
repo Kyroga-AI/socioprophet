@@ -52,7 +52,7 @@ const Landing = () => {
         ))}
       </p>
     ) : (
-      <p styles={{ visibility: "hidden" }}>----------</p>
+      <p styles={{ visibility: "hidden" }}></p>
     );
   };
 
@@ -109,7 +109,7 @@ const Landing = () => {
         <div className="main__background">
           <div className="main__background__title">
             Socio
-            <strong>Prophet!!!!!!!</strong>
+            <strong>Prophet</strong>
             <p className="main__background__title__sub">
               <strong>
                 Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"; // provide application routing
 import Landing from "./components/landing/Landing"; // Landing Component for default route
 import PrivateRoute from "./components/private-route/PrivateRoute"; // Component for private route
@@ -17,8 +17,9 @@ import PopoutTerminal from "./components/postAuth/interface_components/dashboard
 
 import { AuthProvider } from "./authentication/contexts/AuthContext"; // context for authentication
 
-import Search from "./search/Search";
+import Search from "./search/Search"; // header search component
 
+// global styles
 import "./App.scss";
 
 const App = () => {
@@ -27,7 +28,7 @@ const App = () => {
       <AuthProvider>
         <div className="App">
           <Route exact path="/" component={Landing} />
-          <Route path="/search" component={Search} />
+          {/* <Route path="/search" component={Search} /> */}
           <Route path="/password-reset" component={PasswordReset} />
           <Switch>
             <PrivateRoute path="/dashboard" component={UInterface} />

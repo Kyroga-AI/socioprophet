@@ -9,6 +9,12 @@
   padding-top: 25px;
 }
 
+.form__error {
+  margin-top: 10px;
+  font-size: 18px;
+  text-align: center;
+  color: red;
+}
 .form__input {
   margin-left: 5%;
   margin-top: 30px;
