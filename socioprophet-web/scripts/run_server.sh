@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 #start-up socioprophet-web
-cd .. && yarn run dev
+cd .. && cd server && yarn run dev
 

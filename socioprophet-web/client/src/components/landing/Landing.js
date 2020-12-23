@@ -47,12 +47,12 @@ const Landing = () => {
       <p className="main__sub__ticker__text">
         {feed.map((items) => (
           <a key={items.title} id="rssLink" href={items.link} target="_blank">
-            <strong>{items.title}</strong>
+            {items.title}
           </a>
         ))}
       </p>
     ) : (
-      <p styles={{ visibility: "hidden" }}></p>
+      <p styles={{ visibility: "hidden" }}>-</p>
     );
   };
 
@@ -112,7 +112,7 @@ const Landing = () => {
             <strong>Prophet</strong>
             <p className="main__background__title__sub">
               <strong>
-                Open Collaborative Socio-Dat-Alytics... For geeks, by geeks.
+                Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
               </strong>
             </p>
           </div>

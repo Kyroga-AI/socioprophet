@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-#build socioprophet-web
-cd ../client && yarn build
+# build socioprophet-web
+cd .. && cd client && yarn build
