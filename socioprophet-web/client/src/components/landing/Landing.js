@@ -52,7 +52,7 @@ const Landing = () => {
         ))}
       </p>
     ) : (
-      <p styles={{ visibility: "hidden" }}></p>
+      <p styles={{ visibility: "hidden" }}>-</p>
     );
   };
 
