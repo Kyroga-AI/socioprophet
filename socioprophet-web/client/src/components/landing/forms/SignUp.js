@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../../authentication/contexts/AuthContext";
-
+import googleIcon from "../../../../public/images/google-sign-in-light.jpg";
 // styles
 import "./styles/form.css";
 
@@ -13,6 +13,20 @@ const SignUp = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const { googleSignIn } = useAuth();
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    console.log("td");
+    try {
+      setLoading(true);
+      await googleSignIn();
+      history.push("/alpha");
+    } catch (err) {
+      console.trace(err);
+    }
+    setLoading(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,6 +84,10 @@ const SignUp = () => {
         <button className="form__btn" disabled={loading} type="submit">
           Register
         </button>
+        <div style={{ textAlign: "center" }}>or</div>
+        <div className="form__googleBtn">
+          <img onClick={handleSignIn} src={googleIcon} />
+        </div>
       </form>
     </div>
   );

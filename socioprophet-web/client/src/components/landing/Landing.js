@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory, Route } from "react-router-dom";
 import Ticker from "react-ticker";
 import {
   HeaderGlobalBar,
@@ -13,6 +14,8 @@ import Footer from "./landing_components/Footer";
 import SignUp from "./forms/SignUp";
 import Login from "./forms/Login";
 
+import { useAuth } from "../../authentication/contexts/AuthContext";
+
 // styles
 
 import "./styles/landing.css";
@@ -21,8 +24,22 @@ const Landing = () => {
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { googleSignIn } = useAuth();
+  const currentUser = useAuth();
+
+  const history = useHistory();
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
+
+  // test function...
+  // const test = async () => {
+  //   const redirect = await fetch("/api/passportAuth/google").then((r) =>
+  //     r.text()
+  //   );
+  //   console.log(redirect);
+  //   window.location.href = redirect;
+  // };
 
   const GetRssFeedData = () => {
     const [feed, setFeed] = useState("");
@@ -37,7 +54,6 @@ const Landing = () => {
             link: item.querySelector("link").textContent,
           })
         );
-
         setFeed(items);
       };
       getFeed();
@@ -56,7 +72,16 @@ const Landing = () => {
     );
   };
 
+  const isLoggedIn = () => {
+    try {
+      if (currentUser.currentUser.email) {
+        history.push("/alpha");
+      }
+    } catch (err) {}
+  };
+
   const loginToggle = () => {
+    isLoggedIn();
     setExpanded(isExpanded === false ? true : false);
     if (register || isExpanded) {
       renderLogin(false);

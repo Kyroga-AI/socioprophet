@@ -17,7 +17,7 @@ import PopoutTerminal from "./components/postAuth/interface_components/dashboard
 
 import { AuthProvider } from "./authentication/contexts/AuthContext"; // context for authentication
 
-import Search from "./search/Search"; // header search component
+// import Search from "./search/Search"; // header search component
 
 // global styles
 import "./App.scss";

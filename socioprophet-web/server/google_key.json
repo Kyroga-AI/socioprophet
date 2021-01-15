@@ -1,0 +1,13 @@
+{
+    "client": {
+        "id": "392608809931-ledgl900563c73bd20eor7ubn19s6arj.apps.googleusercontent.com",
+        "secret":"FiEQih0Bxz_DxjrX1nD0ijti",
+        "redirect":["http://localhost:8081/api/auth/members/callback"]
+    },
+    "credentials": {
+        "access_token": "your access_token",
+        "token_type": "Bearer",
+        "expires_in": 3600,
+        "refresh_token": "your refresh_token"
+    }
+}

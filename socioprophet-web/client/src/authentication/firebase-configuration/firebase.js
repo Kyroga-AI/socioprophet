@@ -13,12 +13,6 @@ const app = firebase.initializeApp({
   measurementId: "G-3MMLTVVF2S",
 });
 
+export const googleProvider = new firebase.auth.GoogleAuthProvider();
 export const auth = app.auth();
 export default app;
-
-/**
- *
- *  TODO: add in firebase analytics
- *
- */
-app.analytics();

@@ -21,7 +21,7 @@ module.exports = {
         use: ["style-loader", "css-loader", "sass-loader"],
       },
       {
-        test: /\.(jpg|gif|ico|jpeg)$/i,
+        test: /\.(jpg|gif|ico|jpeg|png)$/i,
         use: ["file-loader"],
       },
       {
@@ -47,7 +47,8 @@ module.exports = {
       "www.socioprophet.com",
     ],
     proxy: {
-      "/api/users": "http://localhost:5001",
+      "/api": "http://localhost:5001",
+      // "/groups/update": "http://localhost:5001",
     },
   },
   plugins: [
