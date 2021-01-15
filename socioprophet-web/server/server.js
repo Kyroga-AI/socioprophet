@@ -9,6 +9,8 @@ const passport = require("passport");
 const cookieSession = require("cookie-session");
 require("./config/passport");
 
+// test prod route
+const testRouter = require("./routes/api/test-route");
 // route imports
 const authRouter = require("./routes/api/auth-route");
 const passportRouter = require("./routes/api/authWithPassport");
@@ -40,6 +42,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Test Prod Route
+app.use("/api/test", testRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/passportAuth", passportRouter);
 
