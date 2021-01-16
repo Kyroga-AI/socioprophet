@@ -7,6 +7,7 @@ import PrivateRoute from "./components/private-route/PrivateRoute"; // Component
  *  Components for private routing
  *
  */
+import Survey from "./components/postRegistration/Survey";
 import Welcome from "./components/postRegistration/Welcome"; // post auth component for alpha registration signup/login
 import PasswordReset from "./components/postRegistration/PasswordReset"; // post auth component for password reset
 import UpdateProfile from "./components/postRegistration/UpdateProfile"; // post auth component for email and/or password update
@@ -33,6 +34,7 @@ const App = () => {
           <Switch>
             <PrivateRoute path="/dashboard" component={UInterface} />
             <PrivateRoute path="/terminal" component={PopoutTerminal} />
+            {/* <PrivateRoute path="/survey" component={Survey} /> */}
             <PrivateRoute path="/alpha" component={Welcome} />
             <PrivateRoute path="/update-profile" component={UpdateProfile} />
 
