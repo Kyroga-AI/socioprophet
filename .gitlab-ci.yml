@@ -29,7 +29,8 @@ docker_image:
   variables:
     DOCKER_DRIVER: overlay
     GCP_PROJECT_ID: socioprophet-web
-    IMAGE_NAME: sp-client
+    IMAGE_NAME_CLIENT: sp-client
+    IMAGE_NAME_SERVER: sp-server
 
   services:
     - docker:dind
@@ -39,8 +40,10 @@ docker_image:
     - echo $IMAGE_NAME
     - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
     #     - docker pull gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.3
-    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:release-candidate ."
-    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:release-candidate
+    # - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate ."
+    # - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate
+    - "cd ../server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
+    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate
   #   # after_script:
   #   # - docker logout  <--- add this in, not sure yet
 
