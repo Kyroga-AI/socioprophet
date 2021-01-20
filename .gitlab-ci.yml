@@ -37,13 +37,21 @@ docker_image:
 
   script:
     - echo $GCP_PROJECT_ID
-    - echo $IMAGE_NAME
     - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
-    #     - docker pull gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:1.0.3
+    - echo $IMAGE_NAME_CLIENT
+    - echo "Current Directory ======"
+    - pwd
+    - cd ./socioprophet-web/client/
+    - echo "Current Directory ======"
+    - pwd
+    - cd .. && cd server/
+    - echo "Current Directory ======"
+    - pwd
     # - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate ."
     # - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate
-    - "cd ./socioprophet-web/server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
-    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate
+    # - echo $IMAGE_NAME_SERVER
+    # - "cd ./socioprophet-web/server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
+    # - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate
   #   # after_script:
   #   # - docker logout  <--- add this in, not sure yet
 
