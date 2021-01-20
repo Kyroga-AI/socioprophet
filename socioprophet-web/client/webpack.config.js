@@ -1,11 +1,12 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   entry: "./src/index.js",
   output: {
     path: path.join(__dirname, "/build"),
-    filename: "bundle.js",
+    filename: "[name].[contenthash].js",
   },
   module: {
     rules: [
@@ -48,7 +49,6 @@ module.exports = {
     ],
     proxy: {
       "/api": "http://localhost:5001",
-      // "/groups/update": "http://localhost:5001",
     },
   },
   plugins: [
@@ -56,5 +56,6 @@ module.exports = {
       template: "./public/index.html",
       favicon: "./public/favicon.ico",
     }),
+    new CleanWebpackPlugin(),
   ],
 };

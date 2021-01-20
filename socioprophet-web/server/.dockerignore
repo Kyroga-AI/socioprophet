@@ -1,1 +1,8 @@
+# ignore node modules
 node_modules
+
+# don't directly add git to container
+.git
+
+# ignore gitignore
+.gitignore

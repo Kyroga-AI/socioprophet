@@ -20,7 +20,6 @@ const Login = () => {
     try {
       setLoading(true);
       await googleSignIn();
-      history.push("/alpha");
     } catch (err) {
       console.trace(err);
     }

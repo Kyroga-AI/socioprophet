@@ -12,8 +12,8 @@ require("./config/passport");
 // test prod route
 const testRouter = require("./routes/api/test-route");
 // route imports
-const authRouter = require("./routes/api/auth-route");
-const passportRouter = require("./routes/api/authWithPassport");
+// const authRouter = require("./routes/api/auth-route");
+// const passportRouter = require("./routes/api/authWithPassport");
 
 // set up port
 const port = process.env.PORT || 5001;
@@ -44,7 +44,7 @@ app.use(cookieParser());
 
 // Test Prod Route
 app.use("/api/test", testRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/passportAuth", passportRouter);
+// app.use("/api/auth", authRouter);
+// app.use("/api/passportAuth", passportRouter);
 
 app.listen(port, () => console.log(`Server up and running on port ${port} !`));
