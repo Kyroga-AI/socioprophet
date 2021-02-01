@@ -14,11 +14,6 @@ const Users = () => {
   };
 
   useEffect(() => {
-    const surveyCompleted = () => {
-      surveyResponseCompleted();
-    };
-
-    surveyCompleted();
 
     toDashboard();
   }, []);
