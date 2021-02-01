@@ -16,9 +16,7 @@ const Survey = () => {
 
   const verifyEmail = async () => {
     try {
-      if (!currentUser) {
-        await emailVerification();
-      }
+      await emailVerification();
     } catch (err) {
       console.error(err);
     }

@@ -4,7 +4,6 @@ import { useAuth } from "../../authentication/contexts/AuthContext";
 
 const Users = () => {
   const currentUser = useAuth();
-  const { googleSignIn } = useAuth();
   const { surveyResponseCompleted } = useAuth();
   const history = useHistory();
 
@@ -14,22 +13,13 @@ const Users = () => {
     history.push(`/${currentUser.currentUser.uid}`);
   };
 
-  const signInUser = async () => {
-    try {
-      if (!currentUser) {
-        await googleSignIn();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
   useEffect(() => {
     const surveyCompleted = () => {
       surveyResponseCompleted();
     };
 
     surveyCompleted();
-    signInUser();
+
     toDashboard();
   }, []);
   return (
