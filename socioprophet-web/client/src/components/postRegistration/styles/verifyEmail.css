@@ -1,0 +1,29 @@
+.verify {
+  margin-top: 150px;
+  padding-top: 25px;
+  height: 150px;
+  width: 100%;
+  text-align: center;
+}
+
+.verify__heading {
+  color: #000;
+}
+
+.verify__email {
+  color: green;
+  padding-top: 10px;
+}
+
+.verify__signin {
+  margin-top: 30px;
+  height: 40px;
+}
+
+.verify__signin__btn {
+  height: 40px;
+  width: 200px;
+  font-size: 18px;
+  background-color: #fff;
+  border-radius: #000;
+}

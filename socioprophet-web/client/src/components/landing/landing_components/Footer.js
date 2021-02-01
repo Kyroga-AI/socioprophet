@@ -75,7 +75,7 @@ const Footer = () => {
           </a>
         </div>
         <a className="footer__copyright" href="#" target="_blank">
-          &copy; 2020 SocioProphet
+          &copy; {new Date().getFullYear()} SocioProphet
         </a>
       </footer>
     </div>

@@ -9,6 +9,7 @@ const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const { login } = useAuth();
+  const currentUser = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
@@ -16,7 +17,6 @@ const Login = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    console.log("td");
     try {
       setLoading(true);
       await googleSignIn();
@@ -34,9 +34,11 @@ const Login = () => {
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
       history.push("/alpha");
-    } catch {
+    } catch (err) {
       setError("Failed to sign in");
+      console.error(err);
     }
+
     setLoading(false);
   };
 
@@ -75,10 +77,10 @@ const Login = () => {
           Forgot Password?
         </Link>
       </div>
-      <div style={{ textAlign: "center" }}>or</div>
+      {/* <div style={{ textAlign: "center" }}>or</div>
       <div className="form__googleBtn">
         <img onClick={handleSignIn} src={googleIcon} />
-      </div>
+      </div> */}
     </div>
   );
 };

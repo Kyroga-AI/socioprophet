@@ -7,9 +7,12 @@ import PrivateRoute from "./components/private-route/PrivateRoute"; // Component
  *  Components for private routing
  *
  */
+import Redirect from "./components/landing/forms/Redirect";
 import Survey from "./components/postRegistration/Survey";
+import Users from "./components/postRegistration/Users";
 import Alpha from "./components/postRegistration/Alpha"; // post auth component for alpha registration signup/login
 import PasswordReset from "./components/postRegistration/PasswordReset"; // post auth component for password reset
+import VerifyEmail from "./components/postRegistration/VerifyEmail";
 import UpdateProfile from "./components/postRegistration/UpdateProfile"; // post auth component for email and/or password update
 // Component has routing but is dashboard for later launch...
 // import UInterface from "./components/postAuth/UInterface";
@@ -29,15 +32,16 @@ const App = () => {
       <AuthProvider>
         <div className="App">
           <Route exact path="/" component={Landing} />
-          {/* <Route path="/search" component={Search} /> */}
-          <Route path="/password-reset" component={PasswordReset} />
           <Switch>
+            <PrivateRoute path="/survey" component={Survey} />
+            <PrivateRoute path="/alpha" component={Users} />
+            <PrivateRoute path="/verify-email" component={VerifyEmail} />
+            <PrivateRoute path="/update-profile" component={UpdateProfile} />
+            <PrivateRoute path="/password-reset" component={PasswordReset} />
+            <PrivateRoute exact path="/:user" component={Alpha} />
+
             {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
             {/* <PrivateRoute path="/terminal" component={PopoutTerminal} /> */}
-            {/* <PrivateRoute path="/survey" component={Survey} /> */}
-            <PrivateRoute path="/alpha" component={Alpha} />
-            <PrivateRoute path="/update-profile" component={UpdateProfile} />
-
             {/* This is route to render pages w/in dashboard */}
             {/* <PrivateRoute path="/:id" component={UInterface} /> */}
             {/* This is route for now until private issues are fixed */}

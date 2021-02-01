@@ -35,8 +35,9 @@ const UpdateProfile = () => {
       .then(() => {
         history.push("/");
       })
-      .catch(() => {
+      .catch((err) => {
         setError("Failed to update account");
+        console.error(err);
       })
       .finally(() => {
         setLoading(false);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistory, Route } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Ticker from "react-ticker";
 import {
   HeaderGlobalBar,
@@ -24,8 +24,7 @@ const Landing = () => {
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { googleSignIn } = useAuth();
+
   const currentUser = useAuth();
 
   const history = useHistory();
@@ -45,6 +44,8 @@ const Landing = () => {
     const [feed, setFeed] = useState("");
 
     useEffect(() => {
+      let isCancelled = false;
+      console.log("render - FEED EFFECT");
       const getFeed = async () => {
         const text = await fetch(url).then((r) => r.text());
         const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
@@ -54,9 +55,15 @@ const Landing = () => {
             link: item.querySelector("link").textContent,
           })
         );
-        setFeed(items);
+        if (!isCancelled) {
+          setFeed(items);
+        }
       };
       getFeed();
+
+      return () => {
+        isCancelled = true;
+      };
     }, []);
 
     return feed ? (
@@ -72,12 +79,28 @@ const Landing = () => {
     );
   };
 
+  // useEffect(() => {
+  //   console.log("useEffect - Render");
+  //   const isLoggedIn = () => {
+  //     try {
+  //       if (currentUser.currentUser) {
+  //         history.push(`/survey`);
+  //       }
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+  //   isLoggedIn();
+  // }, [login]);
+
   const isLoggedIn = () => {
     try {
-      if (currentUser.currentUser.email) {
-        history.push("/alpha");
+      if (currentUser.currentUser) {
+        history.push(`/${currentUser.currentUser.uid}`);
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const loginToggle = () => {

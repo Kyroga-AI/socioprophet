@@ -9,22 +9,25 @@ const SignUp = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const { signup } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const { signup } = useAuth();
+
   const { googleSignIn } = useAuth();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    console.log("td");
-    try {
-      setLoading(true);
-      await googleSignIn();
-      history.push("/alpha");
-    } catch (err) {
-      console.trace(err);
-    }
+    // try {
+    //   setLoading(true);
+    //   await googleSignIn();
+    // } catch (err) {
+    //   console.trace(err);
+    // }
+
+    // setLoading(false);
+    setLoading(true);
+    history.push("/survey");
     setLoading(false);
   };
 
@@ -39,8 +42,7 @@ const SignUp = () => {
       setError("");
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
-      // history.push("/survey");
-      history.push("/alpha");
+      history.push("/survey");
     } catch {
       setError("Failed to create an account");
     }
@@ -85,10 +87,10 @@ const SignUp = () => {
         <button className="form__btn" disabled={loading} type="submit">
           Register
         </button>
-        <div style={{ textAlign: "center" }}>or</div>
+        {/* <div style={{ textAlign: "center" }}>or</div>
         <div className="form__googleBtn">
           <img onClick={handleSignIn} src={googleIcon} />
-        </div>
+        </div> */}
       </form>
     </div>
   );

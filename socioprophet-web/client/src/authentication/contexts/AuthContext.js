@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { auth, googleProvider } from "../firebase-configuration/firebase";
 
 const AuthContext = React.createContext();
@@ -9,7 +10,9 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
+  const [surveyResponse, setSurveyResponse] = useState(false);
   const [loading, setLoading] = useState(true);
+  const history = useHistory();
 
   const signup = (email, password) => {
     return auth.createUserWithEmailAndPassword(email, password);
@@ -29,16 +32,24 @@ export const AuthProvider = ({ children }) => {
 
   // Google Auth...
   const googleSignIn = () => {
-    return auth
-      .signInWithRedirect(googleProvider)
-      .then((response) => {
-        console.log(response.credential.accessToken);
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+    return auth.signInWithRedirect(googleProvider);
   };
 
+  const getGoogleResult = () => {
+    return auth.getRedirectResult().then((result) => {});
+  };
+
+  const emailVerification = () => {
+    return currentUser.sendEmailVerification();
+  };
+
+  const applyVerificationCode = (actionCode) => {
+    return auth.applyActionCode(actionCode);
+  };
+
+  const surveyResponseCompleted = () => {
+    setSurveyResponse(true);
+  };
   const updateEmail = (email) => {
     return currentUser.updateEmail(email);
   };
@@ -57,11 +68,16 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     currentUser,
+    surveyResponse,
     signup,
     login,
     logout,
     resetPassword,
     googleSignIn,
+    getGoogleResult,
+    emailVerification,
+    applyVerificationCode,
+    surveyResponseCompleted,
     updateEmail,
     updatePassword,
   };

@@ -1,8 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import { useAuth } from "../../authentication/contexts/AuthContext";
 
 import "./styles/survey.css";
 
 const Survey = () => {
+  const history = useHistory();
+  const { emailVerification } = useAuth();
+
+  const finishSurvey = (e) => {
+    e.preventDefault();
+
+    history.push("/alpha");
+  };
+
+  const verifyEmail = async () => {
+    try {
+      if (!currentUser) {
+        await emailVerification();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    verifyEmail();
+  }, []);
   return (
     <div>
       <iframe
@@ -13,6 +37,11 @@ const Survey = () => {
         allow="camera; microphone; autoplay; encrypted-media;"
         src="https://form.typeform.com/to/Uo505jQQ?typeform-medium=embed-snippet"
       ></iframe>
+      {/* <button
+        onClick={() => {
+          history.push("/alpha");
+        }}
+      ></button> */}
     </div>
   );
 };
