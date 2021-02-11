@@ -42,8 +42,8 @@ docker_image:
     - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate ."
     - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate
     - echo $IMAGE_NAME_SERVER
-    - "cd .. && cd server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
-    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate
+    # - "cd .. && cd server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
+    # - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate
   #   # after_script:
   #   # - docker logout  <--- add this in, not sure yet
 
