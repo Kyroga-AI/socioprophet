@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { useAuth } from "../../authentication/contexts/AuthContext";
 import HeaderLanding from "../landing/landing_components/HeaderLanding";
@@ -10,21 +10,8 @@ import "./styles/welcome.css";
 
 const Alpha = () => {
   const [error, setError] = useState("");
-  const { currentUser, surveyResponse, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
   const history = useHistory();
-  const { user } = useParams();
-
-  useEffect(() => {
-    console.log(currentUser.uid);
-
-    console.log("surveyResponse: " + surveyResponse);
-
-    if (user !== currentUser.uid) {
-      console.log(user);
-      console.log(currentUser.uid);
-      history.push("/");
-    }
-  });
 
   const handleLogout = async () => {
     setError("");

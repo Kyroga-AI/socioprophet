@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
 import { useHistory } from "react-router-dom";
 import Ticker from "react-ticker";
 import {
@@ -16,11 +17,38 @@ import Login from "./forms/Login";
 
 import { useAuth } from "../../authentication/contexts/AuthContext";
 
+import googleIcon from "../../../public/images/google-sign-in-light.jpg";
+
 // styles
 
 import "./styles/landing.css";
 
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "#000",
+    borderRadius: "10px",
+  },
+};
+
+Modal.setAppElement("#root");
+
 const Landing = () => {
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+  var subtitle;
+  const [modalIsOpen, setIsOpen] = useState(false);
+
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
@@ -28,6 +56,7 @@ const Landing = () => {
   const currentUser = useAuth();
 
   const history = useHistory();
+  const { googleSignIn } = useAuth();
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
 
@@ -39,6 +68,15 @@ const Landing = () => {
   //   console.log(redirect);
   //   window.location.href = redirect;
   // };
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    try {
+      await googleSignIn();
+    } catch (err) {
+      console.trace(err);
+    }
+  };
 
   const GetRssFeedData = () => {
     const [feed, setFeed] = useState("");
@@ -59,7 +97,7 @@ const Landing = () => {
           setFeed(items);
         }
       };
-      getFeed();
+      // getFeed();
 
       return () => {
         isCancelled = true;
@@ -75,36 +113,20 @@ const Landing = () => {
         ))}
       </p>
     ) : (
-      <p styles={{ visibility: "hidden" }}>-</p>
+      <p className="main__sub__ticker__text">
+        Welcome to SocioProphet! Just Waiting for the HackerNews Feed!
+      </p>
     );
   };
 
-  // useEffect(() => {
-  //   console.log("useEffect - Render");
-  //   const isLoggedIn = () => {
-  //     try {
-  //       if (currentUser.currentUser) {
-  //         history.push(`/survey`);
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-  //   isLoggedIn();
-  // }, [login]);
-
-  const isLoggedIn = () => {
+  useEffect(() => {
     try {
-      if (currentUser.currentUser) {
-        history.push(`/${currentUser.currentUser.uid}`);
-      }
+      console.log(currentUser);
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
-  };
-
+  });
   const loginToggle = () => {
-    isLoggedIn();
     setExpanded(isExpanded === false ? true : false);
     if (register || isExpanded) {
       renderLogin(false);
@@ -133,7 +155,7 @@ const Landing = () => {
           <HeaderGlobalAction
             id="userIcon"
             aria-label="App Switcher"
-            onClick={loginToggle}
+            onClick={registerToggle}
           >
             <svg width="20" height="20">
               <title>user</title>
@@ -165,9 +187,20 @@ const Landing = () => {
             </p>
           </div>
           <div className="btn--mobile">
-            <button className="main__background__login" onClick={loginToggle}>
-              Log In
+            <button className="main__background__login" onClick={openModal}>
+              SocioProphet Team
             </button>
+            <Modal
+              isOpen={modalIsOpen}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="SignIn Modal"
+            >
+              <h3 className="modal__heading">SocioProphet Internal SignIn</h3>
+              <div className="form__googleBtn">
+                <img onClick={handleSignIn} src={googleIcon} />
+              </div>
+            </Modal>
             <button
               className="main__background__register"
               onClick={registerToggle}

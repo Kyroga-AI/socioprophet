@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../../authentication/contexts/AuthContext";
-import googleIcon from "../../../../public/images/google-sign-in-light.jpg";
+
 // styles
 import "./styles/form.css";
 
@@ -14,30 +14,12 @@ const SignUp = () => {
   const history = useHistory();
   const { signup } = useAuth();
 
-  const { googleSignIn } = useAuth();
-
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    // try {
-    //   setLoading(true);
-    //   await googleSignIn();
-    // } catch (err) {
-    //   console.trace(err);
-    // }
-
-    // setLoading(false);
-    setLoading(true);
-    history.push("/survey");
-    setLoading(false);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
       return setError("Passwords do not match");
     }
-
     try {
       setError("");
       setLoading(true);

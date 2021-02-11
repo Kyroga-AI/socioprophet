@@ -1,18 +1,14 @@
-import React, { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../authentication/contexts/AuthContext";
+
+import SurveyEmbed from "./SurveyEmbed";
 
 import "./styles/survey.css";
 
 const Survey = () => {
-  const history = useHistory();
+  const [surveyId, setSurveyId] = useState(0);
   const { emailVerification } = useAuth();
-
-  const finishSurvey = (e) => {
-    e.preventDefault();
-
-    history.push("/alpha");
-  };
+  const { currentUser } = useAuth();
 
   const verifyEmail = async () => {
     try {
@@ -22,24 +18,24 @@ const Survey = () => {
     }
   };
 
+  const getId = () => {
+    const stringNum = () => {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    };
+
+    return `${stringNum()}-${stringNum()}-${stringNum()}`;
+  };
+
   useEffect(() => {
     verifyEmail();
+    const id = getId();
+    setSurveyId(id);
   }, []);
   return (
     <div>
-      <iframe
-        id="typeform-full"
-        width="100%"
-        height="100%"
-        frameBorder="0"
-        allow="camera; microphone; autoplay; encrypted-media;"
-        src="https://form.typeform.com/to/Uo505jQQ?typeform-medium=embed-snippet"
-      ></iframe>
-      {/* <button
-        onClick={() => {
-          history.push("/alpha");
-        }}
-      ></button> */}
+      <SurveyEmbed id={surveyId} email={currentUser.email} />
     </div>
   );
 };

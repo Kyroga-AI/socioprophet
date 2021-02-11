@@ -115,7 +115,7 @@
 .main__background__login {
   margin-top: 24px;
   margin-right: 20px;
-  width: 127px;
+  width: 170px;
   height: 40px;
   color: #fff;
   display: inline-block;
@@ -129,7 +129,7 @@
 }
 .main__background__register {
   margin-top: 24px;
-  width: 127px;
+  width: 170px;
   height: 40px;
   display: inline-block;
   color: #000;
@@ -185,6 +185,13 @@
   border: 0px;
   border-radius: 7px;
   background-color: #eee;
+}
+
+.modal__heading {
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 /* MEDIA QUERIES */

@@ -44,9 +44,12 @@ const Login = () => {
 
   return (
     <div className="form">
-      <h3 className="form__heading">Log In</h3>
+      <h3 className="form__heading">
+        SocioProphet <br />
+        Internal SignIn
+      </h3>
       {error && <p className="form__error">{error}</p>}
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
         <label>
           <input
             className="form__input"
@@ -76,11 +79,11 @@ const Login = () => {
         <Link className="form__reset__link" to="/password-reset">
           Forgot Password?
         </Link>
-      </div>
-      {/* <div style={{ textAlign: "center" }}>or</div>
+      </div> */}
+      {/* <div style={{ textAlign: "center" }}>or</div> */}
       <div className="form__googleBtn">
         <img onClick={handleSignIn} src={googleIcon} />
-      </div> */}
+      </div>
     </div>
   );
 };
