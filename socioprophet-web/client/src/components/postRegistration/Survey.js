@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../authentication/contexts/AuthContext";
-
+import { db } from "../../authentication/firebase-configuration/firebase";
 import SurveyEmbed from "./SurveyEmbed";
 
 import "./styles/survey.css";
 
 const Survey = () => {
-  const [surveyId, setSurveyId] = useState(0);
-  const { emailVerification } = useAuth();
-  const { currentUser } = useAuth();
+  const [id, setId] = useState("");
+  const { currentUser, documentId, emailVerification } = useAuth();
 
   const verifyEmail = async () => {
     try {
@@ -18,6 +17,9 @@ const Survey = () => {
     }
   };
 
+  /**
+   *  random ID generated function, format 'XXXX-XXXX-XXXX'
+   */
   const getId = () => {
     const stringNum = () => {
       return Math.floor((1 + Math.random()) * 0x10000)
@@ -28,14 +30,27 @@ const Survey = () => {
     return `${stringNum()}-${stringNum()}-${stringNum()}`;
   };
 
+  const getDocumentId = () => {
+    const docRef = db.collection("users");
+    docRef.onSnapshot((snapshot) => {
+      const docs = snapshot.docs.map((doc) => {
+        console.log(currentUser.email);
+        if (doc.data().emailAddress === currentUser.email) {
+          console.log(doc.id);
+          setId(doc.id);
+        }
+      });
+    });
+  };
+
   useEffect(() => {
-    verifyEmail();
-    const id = getId();
-    setSurveyId(id);
+    // verifyEmail();
+    getDocumentId();
   }, []);
   return (
     <div>
-      <SurveyEmbed id={surveyId} email={currentUser.email} />
+      <SurveyEmbed id={id} email={currentUser.email} />
+      <p>{id}</p>
     </div>
   );
 };

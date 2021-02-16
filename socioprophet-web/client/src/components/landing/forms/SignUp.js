@@ -7,12 +7,13 @@ import "./styles/form.css";
 
 const SignUp = () => {
   const emailRef = useRef();
+  const usernameRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
-  const { signup } = useAuth();
+  const { signup, addUser } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,16 +25,18 @@ const SignUp = () => {
       setError("");
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
+
+      await addUser(emailRef.current.value, usernameRef.current.value);
       history.push("/survey");
-    } catch {
-      setError("Failed to create an account");
+    } catch (err) {
+      setError("Failed to create an account: " + err);
     }
     setLoading(false);
   };
 
   return (
     <div className="form">
-      <h3 className="form__heading">Register</h3>
+      <h3 className="form__heading">Create an Account!</h3>
       {error && <p className="form__error">{error}</p>}
       <form onSubmit={handleSubmit}>
         <label>
@@ -49,10 +52,20 @@ const SignUp = () => {
         <label>
           <input
             className="form__input"
+            name="username"
+            type="text"
+            required
+            placeholder="Choose a username"
+            ref={usernameRef}
+          />
+        </label>
+        <label>
+          <input
+            className="form__input"
             name="password"
             type="password"
             required
-            placeholder="Password"
+            placeholder="Choose a password"
             ref={passwordRef}
           />
         </label>

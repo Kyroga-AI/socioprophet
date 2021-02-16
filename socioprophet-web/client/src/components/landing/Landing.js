@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { useHistory } from "react-router-dom";
 import Ticker from "react-ticker";
 import {
   HeaderGlobalBar,
@@ -39,23 +38,13 @@ const customStyles = {
 Modal.setAppElement("#root");
 
 const Landing = () => {
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
-  var subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
-
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
 
   const currentUser = useAuth();
 
-  const history = useHistory();
   const { googleSignIn } = useAuth();
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
@@ -68,6 +57,14 @@ const Landing = () => {
   //   console.log(redirect);
   //   window.location.href = redirect;
   // };
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  const openModal = () => {
+    setIsOpen(true);
+  };
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -83,7 +80,6 @@ const Landing = () => {
 
     useEffect(() => {
       let isCancelled = false;
-      console.log("render - FEED EFFECT");
       const getFeed = async () => {
         const text = await fetch(url).then((r) => r.text());
         const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
@@ -119,13 +115,6 @@ const Landing = () => {
     );
   };
 
-  useEffect(() => {
-    try {
-      console.log(currentUser);
-    } catch (err) {
-      console.log(err);
-    }
-  });
   const loginToggle = () => {
     setExpanded(isExpanded === false ? true : false);
     if (register || isExpanded) {

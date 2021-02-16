@@ -6,7 +6,7 @@ import HeaderLinks from "../landing/landing_components/HeaderLinks";
 import Footer from "../landing/landing_components/Footer";
 
 // styles
-import "./styles/welcome.css";
+import "./styles/alpha.css";
 
 const Alpha = () => {
   const [error, setError] = useState("");
@@ -34,18 +34,21 @@ const Alpha = () => {
       <div className="alpha__container">
         <div className="alpha__container__background">
           <div className="alpha__container__title">
-            Socio
+            Socio {currentUser.email}
             <strong>Prophet</strong>
             <p className="main__background__title__sub">
               <strong>
                 Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
               </strong>
             </p>
+            <p className="main__background__title__sub">
+              <strong>COMING SOON</strong>
+            </p>
           </div>
           <div className="alpha__container__profile">
-            <div className="alpha__container__profile__email">
+            {/* <div className="alpha__container__profile__email">
               {currentUser.email}
-            </div>
+            </div> */}
             <div className="alpha__container__profile__update">
               <Link
                 className="alpha__container__profile__update__link"

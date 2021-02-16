@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { auth, googleProvider } from "../firebase-configuration/firebase";
+import { auth, db, googleProvider } from "../firebase-configuration/firebase";
 
 const AuthContext = React.createContext();
 
@@ -10,12 +9,45 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
-  const [surveyResponse, setSurveyResponse] = useState(false);
+  const [documentId, setDocumentId] = useState(1234);
   const [loading, setLoading] = useState(true);
-  const history = useHistory();
 
   const signup = (email, password) => {
     return auth.createUserWithEmailAndPassword(email, password);
+  };
+
+  const addUser = (email, username) => {
+    const collectionName = "users";
+    const data = {
+      userName: username,
+      emailAddress: email,
+      surveyCompleted: false,
+    };
+
+    db.collection(collectionName)
+      .add(data)
+      .then((doc) => {
+        console.log(doc.id);
+        setDocumentId(doc.id);
+      });
+  };
+
+  const checkForUserDocument = (docId, password) => {
+    const usersRef = db.collection("users").doc(docId);
+
+    usersRef.get().then((docSnapshot) => {
+      if (docSnapshot.exists) {
+        const userData = docSnapshot.data();
+
+        return auth.signInWithEmailAndPassword(userData.emailAddress, password);
+      }
+    });
+  };
+
+  const updateUserSurveyCompleted = (docId) => {
+    db.collection("users").doc(docId).update({
+      surveyCompleted: true,
+    });
   };
 
   const login = (email, password) => {
@@ -30,13 +62,8 @@ export const AuthProvider = ({ children }) => {
     return auth.sendPasswordResetEmail(email);
   };
 
-  // Google Auth...
   const googleSignIn = () => {
     return auth.signInWithRedirect(googleProvider);
-  };
-
-  const getGoogleResult = () => {
-    return auth.getRedirectResult().then((result) => {});
   };
 
   const emailVerification = () => {
@@ -68,13 +95,15 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     currentUser,
-    surveyResponse,
+    documentId,
     signup,
+    addUser,
+    checkForUserDocument,
+    updateUserSurveyCompleted,
     login,
     logout,
     resetPassword,
     googleSignIn,
-    getGoogleResult,
     emailVerification,
     applyVerificationCode,
     surveyResponseCompleted,

@@ -1,4 +1,5 @@
 import firebase from "firebase/app";
+import "firebase/firestore";
 import "firebase/auth";
 import "firebase/analytics";
 
@@ -15,4 +16,5 @@ const app = firebase.initializeApp({
 
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
 export const auth = app.auth();
+export const db = app.firestore();
 export default app;
