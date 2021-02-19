@@ -87,7 +87,7 @@
 
 .main__background {
   position: fixed;
-  background-image: url("../../../../public/images/blueDarkStoneCrop4.jpg");
+  background-image: url("../../../../public/images/mothership-background.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 100%;
@@ -112,6 +112,90 @@
   font-weight: 800;
   padding-top: 10px;
 }
+
+.main__background__email {
+  margin-top: 34px;
+  max-width: unset;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.main__background__email__input {
+  display: inline-block;
+  box-shadow: none;
+  margin-right: 24px;
+  max-width: 240px;
+}
+
+.main__background__email__input__text {
+  color: #fff;
+  margin-top: 12px;
+  border-radius: 0;
+  font-size: 20px;
+  line-height: 30px;
+  position: relative;
+  top: 4px;
+  width: 100%;
+  background: 0 0;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: 0;
+  padding: 0;
+  text-rendering: auto;
+  letter-spacing: normal;
+  appearance: textfield;
+}
+
+.main__background__email__input__text__error {
+  color: #fff;
+  margin-top: 12px;
+  border-radius: 0;
+  font-size: 20px;
+  line-height: 30px;
+  position: relative;
+  top: 4px;
+  width: 100%;
+  background: 0 0;
+  border: none;
+  border-bottom: 1px solid #ee8d8d;
+  outline: 0;
+  padding: 0;
+  text-rendering: auto;
+  letter-spacing: normal;
+  appearance: textfield;
+}
+
+.main__background__email__input__text__error::placeholder {
+  color: #333;
+}
+.main__background__email__input__error {
+  color: #ee8d8d;
+  margin-top: 4px;
+  text-align: left;
+  font-size: 14px;
+}
+.main__background__email__input__text::placeholder {
+  color: #333;
+}
+
+.main__background__email__input__btn {
+  display: inline-block;
+  width: 240px;
+  height: 54px;
+  margin: 0;
+  user-select: none;
+  cursor: pointer;
+  color: #fff;
+  background: #333;
+  padding: 0 28px;
+  text-align: center;
+  white-space: nowrap;
+  outline: 0;
+  border-radius: 2px;
+  line-height: 54px;
+  box-shadow: 0 14px 34px -10px #333;
+}
+
 .main__background__login {
   margin-top: 24px;
   margin-right: 20px;

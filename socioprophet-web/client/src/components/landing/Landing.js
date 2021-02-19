@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Modal from "react-modal";
 import Ticker from "react-ticker";
 import {
@@ -17,6 +17,7 @@ import Login from "./forms/Login";
 import { useAuth } from "../../authentication/contexts/AuthContext";
 
 import googleIcon from "../../../public/images/google-sign-in-light.jpg";
+import logo from "../../../public/images/mothership-logo.png";
 
 // styles
 
@@ -42,8 +43,9 @@ const Landing = () => {
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
   const [register, renderRegister] = useState(false);
-
-  const currentUser = useAuth();
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const emailRef = useRef();
 
   const { googleSignIn } = useAuth();
 
@@ -135,6 +137,27 @@ const Landing = () => {
     }
   };
 
+  const handleEmail = () => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    const userEmail = re.test(String(emailRef.current.value).toLowerCase());
+
+    if (!userEmail) {
+      setEmailErrorMessage("PLEASE ENTER A VALID EMAIL");
+      setEmailError(true);
+      return;
+    }
+
+    setEmailErrorMessage("");
+    setEmailError(false);
+
+    console.log("Processing....");
+  };
+
+  const computedClassName = emailError
+    ? "main__background__email__input__text__error"
+    : "main__background__email__input__text";
+
   return (
     <div className="landing">
       <nav className="landing__header">
@@ -144,7 +167,7 @@ const Landing = () => {
           <HeaderGlobalAction
             id="userIcon"
             aria-label="App Switcher"
-            onClick={registerToggle}
+            // onClick={registerToggle}
           >
             <svg width="20" height="20">
               <title>user</title>
@@ -167,15 +190,41 @@ const Landing = () => {
 
         <div className="main__background">
           <div className="main__background__title">
-            Socio
-            <strong>Prophet</strong>
+            {/* Socio
+            <strong>Prophet</strong> */}
+            <img src={logo} width="450px" height="auto" />
             <p className="main__background__title__sub">
               <strong>
                 Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
               </strong>
             </p>
           </div>
-          <div className="btn--mobile">
+          <div className="main__background__email">
+            <div className="main__background__email__input">
+              <input
+                className={computedClassName}
+                name="email"
+                type="email"
+                spellCheck="false"
+                ref={emailRef}
+                required
+                placeholder="ENTER EMAIL"
+              />
+              {emailError && (
+                <p className="main__background__email__input__error">
+                  {emailErrorMessage}
+                </p>
+              )}
+            </div>
+
+            <div
+              className="main__background__email__input__btn"
+              onClick={handleEmail}
+            >
+              GET STARTED
+            </div>
+          </div>
+          {/* <div className="btn--mobile">
             <button className="main__background__login" onClick={openModal}>
               SocioProphet Team
             </button>
@@ -196,7 +245,7 @@ const Landing = () => {
             >
               &#945; - Registry
             </button>
-          </div>
+          </div> */}
         </div>
         <Offering />
       </div>
