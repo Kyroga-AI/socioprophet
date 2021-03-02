@@ -34,7 +34,7 @@ const Alpha = () => {
       <div className="alpha__container">
         <div className="alpha__container__background">
           <div className="alpha__container__title">
-            Socio {currentUser.email}
+            Socio
             <strong>Prophet</strong>
             <p className="main__background__title__sub">
               <strong>
@@ -54,7 +54,7 @@ const Alpha = () => {
                 className="alpha__container__profile__update__link"
                 to="/update-profile"
               >
-                Update Profile
+                My Profile
               </Link>
             </div>
           </div>

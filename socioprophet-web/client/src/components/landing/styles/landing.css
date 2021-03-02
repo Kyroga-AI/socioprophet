@@ -115,6 +115,7 @@
 
 .main__background__email {
   margin-top: 34px;
+  height: 60px;
   max-width: unset;
   display: flex;
   justify-content: center;
@@ -124,11 +125,12 @@
   display: inline-block;
   box-shadow: none;
   margin-right: 24px;
-  max-width: 240px;
+  width: 240px;
+  margin-top: 4px;
 }
 
 .main__background__email__input__text {
-  color: #fff;
+  color: rgba(237, 237, 237, 1);
   margin-top: 12px;
   border-radius: 0;
   font-size: 20px;
@@ -138,7 +140,7 @@
   width: 100%;
   background: 0 0;
   border: none;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid rgba(237, 237, 237, 1);
   outline: 0;
   padding: 0;
   text-rendering: auto;
@@ -166,7 +168,7 @@
 }
 
 .main__background__email__input__text__error::placeholder {
-  color: #333;
+  color: rgba(237, 237, 237, 1);
 }
 .main__background__email__input__error {
   color: #ee8d8d;
@@ -175,25 +177,29 @@
   font-size: 14px;
 }
 .main__background__email__input__text::placeholder {
-  color: #333;
+  color: rgba(237, 237, 237, 1);
 }
 
 .main__background__email__input__btn {
   display: inline-block;
-  width: 240px;
+  width: 140px;
   height: 54px;
   margin: 0;
   user-select: none;
   cursor: pointer;
   color: #fff;
-  background: #333;
+  /* background: #333; */
+  background: transparent;
   padding: 0 28px;
   text-align: center;
+  font-size: 20px;
   white-space: nowrap;
   outline: 0;
   border-radius: 2px;
   line-height: 54px;
-  box-shadow: 0 14px 34px -10px #333;
+  /* box-shadow: 0 14px 34px -10px #333; */
+
+  border: 2px solid rgba(237, 237, 237, 1);
 }
 
 .main__background__login {

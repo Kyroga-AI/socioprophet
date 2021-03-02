@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useHistory } from "react-router-dom";
 import Modal from "react-modal";
 import Ticker from "react-ticker";
 import {
@@ -46,7 +47,7 @@ const Landing = () => {
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const [emailError, setEmailError] = useState(false);
   const emailRef = useRef();
-
+  const history = useHistory();
   const { googleSignIn } = useAuth();
 
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
@@ -151,7 +152,9 @@ const Landing = () => {
     setEmailErrorMessage("");
     setEmailError(false);
 
-    console.log("Processing....");
+    const emailQuery = encodeURIComponent(emailRef.current.value);
+
+    history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
   };
 
   const computedClassName = emailError
@@ -221,7 +224,7 @@ const Landing = () => {
               className="main__background__email__input__btn"
               onClick={handleEmail}
             >
-              GET STARTED
+              BEGIN
             </div>
           </div>
           {/* <div className="btn--mobile">

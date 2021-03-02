@@ -1,12 +1,9 @@
 import React from "react";
-import { useAuth } from "../../authentication/contexts/AuthContext";
 
-const SurveyEmbed = ({ id, email }) => {
+const SurveyEmbed = ({ id }) => {
   const getSrc = () => {
     const surveyId = `id=${id}`;
-    const surveyEmail = `email=${email}`;
-    console.log("This id value is -> " + id);
-    return `https://form.typeform.com/to/Uo505jQQ?typeform-medium=embed-snippet#${surveyId}&${surveyEmail}`;
+    return `https://form.typeform.com/to/Uo505jQQ?typeform-medium=embed-snippet#${surveyId}`;
   };
 
   return (

@@ -1,9 +1,3 @@
-/**
- *
- *  Login in the user - user already exists in firebase (and will in firestore)
- *
- *
- */
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../authentication/contexts/AuthContext";
@@ -27,16 +21,15 @@ const User = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const id = urlParams.get("id");
+    console.log(id);
     if (id != null) {
       if (id.length > 0) {
         console.log(id);
         setRedirectId(id);
         setSurvey(true);
       } else {
-        history.push("/");
       }
     } else {
-      history.push("/");
     }
   };
 
@@ -62,7 +55,7 @@ const User = () => {
 
   useEffect(() => {
     // logoutForSurvey();
-    console.log(currentUser);
+    // console.log(currentUser);
     getId();
   }, []);
 

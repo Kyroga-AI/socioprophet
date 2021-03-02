@@ -16,10 +16,9 @@ export const AuthProvider = ({ children }) => {
     return auth.createUserWithEmailAndPassword(email, password);
   };
 
-  const addUser = (email, username) => {
+  const addUser = (email) => {
     const collectionName = "users";
     const data = {
-      userName: username,
       emailAddress: email,
       surveyCompleted: false,
     };

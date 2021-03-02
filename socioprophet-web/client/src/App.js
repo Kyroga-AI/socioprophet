@@ -1,18 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"; // provide application routing
+
 import Landing from "./components/landing/Landing"; // Landing Component for default route
+import Survey from "./components/registration/survey/Survey";
+import Registration from "./components/registration/Registration";
+
 import PrivateRoute from "./components/private-route/PrivateRoute"; // Component for private route
-/**
- *
- *  Components for private routing
- *
- */
-import Survey from "./components/postRegistration/Survey";
+
 import Alpha from "./components/postRegistration/Alpha"; // post auth component for alpha registration signup/login
 import PasswordReset from "./components/postRegistration/PasswordReset"; // post auth component for password reset
 import VerifyEmail from "./components/postRegistration/VerifyEmail";
 import UpdateProfile from "./components/postRegistration/UpdateProfile"; // post auth component for email and/or password update
-import User from "./components/postRegistration/User";
+// import User from "./components/postRegistration/User";
 // Component has routing but is dashboard for later launch...
 // import UInterface from "./components/postAuth/UInterface";
 // Component has routing but is dashboard for later launch...
@@ -32,8 +31,9 @@ const App = () => {
         <div className="App">
           <Switch>
             <Route exact path="/" component={Landing} />
-            <Route path="/user" component={User} />
-            <PrivateRoute path="/survey" component={Survey} />
+            <Route path="/get-started" component={Survey} />
+            <Route path="/signup" component={Registration} />
+
             <PrivateRoute path="/verify-email" component={VerifyEmail} />
             <PrivateRoute path="/update-profile" component={UpdateProfile} />
             <PrivateRoute path="/password-reset" component={PasswordReset} />
