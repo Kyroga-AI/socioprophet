@@ -25,9 +25,15 @@ const Registration = () => {
   const { signup, addUser } = useAuth();
   const history = useHistory();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    } else {
+      return;
+    }
+  };
 
+  const handleSubmit = async (e) => {
     if (passwordRef.current.value.length == 0) {
       return setPasswordError({
         isError: true,
@@ -55,8 +61,12 @@ const Registration = () => {
 
       history.push("/alpha");
     } catch (err) {
-      // setError("Failed to create an account: " + err); // be more specific here...
-      console.log(`ERROR: ${err}`);
+      if (err.code === "auth/email-already-in-use") {
+        return setPasswordConfirmError({
+          isError: true,
+          message: "A user with this email already exists!",
+        });
+      }
     }
     setLoading(false);
   };
@@ -64,6 +74,10 @@ const Registration = () => {
   const getEmailAddress = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const emailAddress = urlParams.get("id");
+    if (emailAddress === null) {
+      history.push("/");
+    }
+
     setEmailAddress(emailAddress);
   };
 
@@ -107,6 +121,7 @@ const Registration = () => {
                   spellCheck="false"
                   ref={passwordRef}
                   required
+                  onKeyDown={handleKeyPress}
                   placeholder="CREATE PASSWORD"
                 />
                 {passwordError.isError && (
@@ -123,6 +138,7 @@ const Registration = () => {
                   spellCheck="false"
                   ref={passwordConfirmRef}
                   required
+                  onKeyDown={handleKeyPress}
                   placeholder="RE-ENTER PASSWORD"
                 />
                 {passwordConfirmError.isError && (
@@ -135,6 +151,7 @@ const Registration = () => {
             <div
               className="registration__main__background__password__input__btn"
               onClick={handleSubmit}
+              disabled={loading}
             >
               ONWARD
             </div>

@@ -201,6 +201,13 @@
 
   border: 2px solid rgba(237, 237, 237, 1);
 }
+.main__background__email__input__btn:hover {
+  background: #eee;
+  color: #333;
+}
+.main__background__email__input__btn:active {
+  color: #fff;
+}
 
 .main__background__login {
   margin-top: 24px;

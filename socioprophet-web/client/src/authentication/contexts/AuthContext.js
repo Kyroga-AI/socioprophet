@@ -11,6 +11,11 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
   const [documentId, setDocumentId] = useState(1234);
   const [loading, setLoading] = useState(true);
+  const [emailAddress, setEmailAddress] = useState("");
+
+  const setEmail = (email) => {
+    setEmailAddress(email);
+  };
 
   const signup = (email, password) => {
     return auth.createUserWithEmailAndPassword(email, password);
@@ -93,6 +98,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const value = {
+    emailAddress,
+    setEmail,
     currentUser,
     documentId,
     signup,

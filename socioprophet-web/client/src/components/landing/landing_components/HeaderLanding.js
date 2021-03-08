@@ -36,7 +36,7 @@ const HeaderLanding = () => {
           <strong>[ SocioProphet ] Platform</strong>
         </a>
       </div>
-      <label className="header__search">
+      {/* <label className="header__search">
         <input
           className="header__search__input"
           onKeyDown={handleQuery}
@@ -44,7 +44,7 @@ const HeaderLanding = () => {
           type="text"
           placeholder="Search..."
         />
-      </label>
+      </label> */}
     </div>
   );
 };

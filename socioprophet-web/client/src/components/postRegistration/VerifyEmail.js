@@ -26,11 +26,13 @@ const VerifyEmail = () => {
   };
 
   useEffect(() => {
-    verifyEmail();
+    // verifyEmail();
+    console.log("lol");
   }, []);
 
   return (
     <div className="verify">
+      stuff
       {mode === "verifyEmail" && currentUser.emailVerified && (
         <>
           <h2 className="verify__heading">Email Verified!</h2>

@@ -126,6 +126,7 @@
   margin-top: 54px;
   user-select: none;
   cursor: pointer;
+  font-size: 20px;
   color: #fff;
   /* background: #333; */
   background: transparent;
@@ -137,4 +138,12 @@
   line-height: 54px;
   /* box-shadow: 0 14px 34px -10px #333; */
   border: 2px solid rgba(237, 237, 237, 1);
+}
+
+.registration__main__background__password__input__btn:hover {
+  background: #eee;
+  color: #333;
+}
+.registration__main__background__password__input__btn:active {
+  color: #fff;
 }

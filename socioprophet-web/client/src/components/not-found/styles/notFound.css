@@ -1,0 +1,21 @@
+.notFound {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background-color: #000;
+}
+
+.notFound__heading {
+  text-align: center;
+  padding-top: 12rem;
+  height: 100%;
+  font-size: 34px;
+  color: #fff;
+}
+
+.notFound__description {
+  margin-top: 2rem;
+  text-align: center;
+  color: #fff;
+  font-size: 24px;
+}

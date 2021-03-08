@@ -40,6 +40,7 @@ const customStyles = {
 Modal.setAppElement("#root");
 
 const Landing = () => {
+  const [loading, setLoading] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [isExpanded, setExpanded] = useState(false);
   const [login, renderLogin] = useState(false);
@@ -49,7 +50,8 @@ const Landing = () => {
   const emailRef = useRef();
   const history = useHistory();
   const { googleSignIn } = useAuth();
-
+  const { setEmail } = useAuth();
+  const { emailAddress } = useAuth();
   const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
 
   // test function...
@@ -138,7 +140,16 @@ const Landing = () => {
     }
   };
 
-  const handleEmail = () => {
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleEmail();
+    } else {
+      return;
+    }
+  };
+
+  const handleEmail = async () => {
+    setLoading(true);
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const userEmail = re.test(String(emailRef.current.value).toLowerCase());
@@ -154,6 +165,8 @@ const Landing = () => {
 
     const emailQuery = encodeURIComponent(emailRef.current.value);
 
+    setLoading(false);
+    setEmail(emailRef.current.value);
     history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
   };
 
@@ -186,9 +199,9 @@ const Landing = () => {
       </nav>
       <div className="main">
         <div className="main__sub">
-          <div className="main__sub__ticker">
+          {/* <div className="main__sub__ticker">
             <Ticker offset="run-in">{() => <GetRssFeedData />}</Ticker>
-          </div>
+          </div> */}
         </div>
 
         <div className="main__background">
@@ -204,13 +217,41 @@ const Landing = () => {
           </div>
           <div className="main__background__email">
             <div className="main__background__email__input">
+              {/* {emailAddress ? (
+                <input
+                  className={computedClassName}
+                  name="email"
+                  type="email"
+                  spellCheck="false"
+                  ref={emailRef}
+                  value={emailAddress || ""}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  onKeyDown={handleKeyPress}
+                  placeholder="ENTER EMAIL"
+                />
+              ) : (
+                <input
+                  className={computedClassName}
+                  name="email"
+                  type="email"
+                  spellCheck="false"
+                  ref={emailRef}
+                  required
+                  onKeyDown={handleKeyPress}
+                  placeholder="ENTER EMAIL"
+                />
+              )} */}
               <input
                 className={computedClassName}
                 name="email"
                 type="email"
                 spellCheck="false"
                 ref={emailRef}
+                value={emailAddress || ""}
+                onChange={(e) => setEmail(e.target.value)}
                 required
+                onKeyDown={handleKeyPress}
                 placeholder="ENTER EMAIL"
               />
               {emailError && (
@@ -223,6 +264,7 @@ const Landing = () => {
             <div
               className="main__background__email__input__btn"
               onClick={handleEmail}
+              disabled={loading}
             >
               BEGIN
             </div>

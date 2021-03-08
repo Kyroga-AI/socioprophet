@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"; // provide application routing
 
+import NotFound from "./components/not-found/NotFound";
 import Landing from "./components/landing/Landing"; // Landing Component for default route
 import Survey from "./components/registration/survey/Survey";
 import Registration from "./components/registration/Registration";
@@ -28,11 +29,12 @@ const App = () => {
   return (
     <Router history={history}>
       <AuthProvider>
-        <div className="App">
+        <div className="app">
           <Switch>
             <Route exact path="/" component={Landing} />
             <Route path="/get-started" component={Survey} />
             <Route path="/signup" component={Registration} />
+            <Route component={NotFound} />
 
             <PrivateRoute path="/verify-email" component={VerifyEmail} />
             <PrivateRoute path="/update-profile" component={UpdateProfile} />

@@ -36,8 +36,42 @@
     <script async src='https://www.google-analytics.com/analytics.js'></script>
     <!-- End Google Analytics -->
 
+    <style>
+      .loader-container {
+        font-size: 40px;
+        font-family: 'Courier New', Courier, monospace;
+        text-align: center;
+      }
+      .loader {
+        /* border: 16px solid #f3f3f3; */
+        border-top: 16px solid #333;
+        border-radius: 50%;
+        width: 130px;
+        height: 130px;
+        margin-left: calc(50% - 73px);
+        margin-top: 6rem;
+        animation: spin 2s linear infinite;
+        
+      }
+    
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+    
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="loader-container">
+        <div class="loader"></div>
+        SocioProphet
+      </div>
+      
+    </div>
   </body>
 </html>
