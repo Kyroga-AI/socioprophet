@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../authentication/contexts/AuthContext";
 import HeaderLanding from "../landing/landing_components/HeaderLanding";
 import HeaderLinks from "../landing/landing_components/HeaderLinks";
@@ -10,7 +10,7 @@ import "./styles/alpha.css";
 
 const Alpha = () => {
   const [error, setError] = useState("");
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, emailVerification } = useAuth();
   const history = useHistory();
 
   const handleLogout = async () => {
@@ -23,6 +23,20 @@ const Alpha = () => {
       setError("Failed to log out");
     }
   };
+
+  const verifyEmail = async () => {
+    try {
+      if (!currentUser.emailVerified) {
+        await emailVerification();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    verifyEmail();
+    console.log(currentUser);
+  }, []);
 
   return (
     <div className="alpha">

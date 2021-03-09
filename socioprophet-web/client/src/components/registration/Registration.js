@@ -61,6 +61,7 @@ const Registration = () => {
 
       history.push("/alpha");
     } catch (err) {
+      console.error(err);
       if (err.code === "auth/email-already-in-use") {
         return setPasswordConfirmError({
           isError: true,
@@ -74,6 +75,7 @@ const Registration = () => {
   const getEmailAddress = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const emailAddress = urlParams.get("id");
+    console.log(emailAddress);
     if (emailAddress === null) {
       history.push("/");
     }

@@ -8,13 +8,13 @@ const Survey = () => {
   const [surveyEmail, setSurveyEmail] = useState("");
   const history = useHistory();
 
-  const verifyEmail = async () => {
-    try {
-      await emailVerification();
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const verifyEmail = async () => {
+  //   try {
+  //     await emailVerification();
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   const getEmailAddress = () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -28,15 +28,12 @@ const Survey = () => {
   };
   useEffect(() => {
     getEmailAddress();
-
-    verifyEmail(); // this will be moved to after user is registered and authenticated (not here)...
-    // https: getDocumentId();
+    // verifyEmail(); // this will be moved to after user is registered and authenticated (not here)...
   }, []);
 
   return (
     <div className="survey">
       <SurveyEmbed id={surveyEmail} />
-      {/* <h3>Email: {surveyEmail}</h3> */}
     </div>
   );
 };

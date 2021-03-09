@@ -34,13 +34,13 @@ const App = () => {
             <Route exact path="/" component={Landing} />
             <Route path="/get-started" component={Survey} />
             <Route path="/signup" component={Registration} />
-            <Route component={NotFound} />
 
-            <PrivateRoute path="/verify-email" component={VerifyEmail} />
+            <Route path="/verify-email" component={VerifyEmail} />
+
             <PrivateRoute path="/update-profile" component={UpdateProfile} />
             <PrivateRoute path="/password-reset" component={PasswordReset} />
             <PrivateRoute exact path="/alpha" component={Alpha} />
-
+            <Route component={NotFound} />
             {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
             {/* <PrivateRoute path="/terminal" component={PopoutTerminal} /> */}
             {/* This is route to render pages w/in dashboard */}
