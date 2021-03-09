@@ -91,7 +91,7 @@ const VerifyEmail = () => {
       const actionCode = urlParams.get("oobCode");
       setActionCode(actionCode);
 
-      // await applyVerificationCode(actionCode);
+      await applyVerificationCode(actionCode);
       setVerified(true);
     } catch (err) {
       console.error(err);
