@@ -9,7 +9,7 @@
   padding-top: 5px;
 }
 .landing .bx--header-panel {
-  top: 3.5rem;
+  top: 2rem;
   height: calc(100% - 3.5rem);
   overflow: scroll;
 }
@@ -210,6 +210,21 @@
 }
 
 .main__background__login {
+  max-width: unset;
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.main__background__login__text {
+  font-size: 14px;
+  width: 404px;
+  text-align: left;
+  cursor: pointer;
+  font-style: oblique;
+}
+
+/* .main__background__login {
   margin-top: 24px;
   margin-right: 20px;
   width: 170px;
@@ -223,7 +238,7 @@
   cursor: pointer;
   background-color: #000;
   text-decoration: none;
-}
+} */
 .main__background__register {
   margin-top: 24px;
   width: 170px;

@@ -181,43 +181,6 @@ const VerifyEmail = () => {
               VERIFY
             </div>
           </div>
-          {/* <div className="verify__form">
-            <form onSubmit={handleSubmit}>
-              <label>
-                <input
-                  className="verify__form__input"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="Email"
-                  ref={emailRef}
-                />
-              </label>
-              {emailError && (
-                <p className="main__background__email__input__error">
-                  {emailErrorMessage}
-                </p>
-              )}
-              <label>
-                <input
-                  className="verify__form__input"
-                  name="password"
-                  type="password"
-                  required
-                  placeholder="Password"
-                  ref={passwordRef}
-                />
-              </label>
-              <button
-                className="verify__form__btn"
-                disabled={loading}
-                type="submit"
-              >
-                Log In
-              </button>
-              <br />
-            </form>
-          </div> */}
         </>
       )}
       {verificationError && (
@@ -240,7 +203,7 @@ const VerifyEmail = () => {
             <button
               className="verify__signin__btn"
               onClick={() => {
-                history.push("/");
+                history.push("/alpha");
               }}
             >
               Back to Sign In

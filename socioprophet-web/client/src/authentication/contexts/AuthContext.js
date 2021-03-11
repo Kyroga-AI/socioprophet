@@ -89,6 +89,10 @@ export const AuthProvider = ({ children }) => {
     return currentUser.updatePassword(password);
   };
 
+  const deleteUser = () => {
+    return currentUser.delete();
+  };
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
@@ -99,9 +103,9 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     emailAddress,
-    setEmail,
     currentUser,
     documentId,
+    setEmail,
     signup,
     addUser,
     checkForUserDocument,
@@ -115,6 +119,7 @@ export const AuthProvider = ({ children }) => {
     surveyResponseCompleted,
     updateEmail,
     updatePassword,
+    deleteUser,
   };
 
   return (

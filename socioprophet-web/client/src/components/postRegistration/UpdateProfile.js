@@ -9,7 +9,7 @@ const UpdateProfile = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const { currentUser, updatePassword, updateEmail } = useAuth();
+  const { currentUser, updatePassword, updateEmail, deleteUser } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
@@ -98,6 +98,13 @@ const UpdateProfile = () => {
             Cancel
           </Link>
         </div>
+        {/* <button
+          className="update__form__delete"
+          disabled={loading}
+          onClick={deleteUser}
+        >
+          Delete Account
+        </button> */}
       </form>
     </div>
   );

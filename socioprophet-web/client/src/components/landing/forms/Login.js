@@ -44,19 +44,19 @@ const Login = () => {
 
   return (
     <div className="form">
-      <h3 className="form__heading">
+      {/* <h3 className="form__heading">
         SocioProphet <br />
         Internal SignIn
-      </h3>
+      </h3> */}
       {error && <p className="form__error">{error}</p>}
-      {/* <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <label>
           <input
             className="form__input"
             name="email"
             type="email"
             required
-            placeholder="Email"
+            placeholder="Enter Email"
             ref={emailRef}
           />
         </label>
@@ -66,7 +66,7 @@ const Login = () => {
             name="password"
             type="password"
             required
-            placeholder="Password"
+            placeholder="Enter Password"
             ref={passwordRef}
           />
         </label>
@@ -79,11 +79,11 @@ const Login = () => {
         <Link className="form__reset__link" to="/password-reset">
           Forgot Password?
         </Link>
-      </div> */}
-      {/* <div style={{ textAlign: "center" }}>or</div> */}
-      <div className="form__googleBtn">
-        <img onClick={handleSignIn} src={googleIcon} />
       </div>
+      {/* <div style={{ textAlign: "center" }}>or</div> */}
+      {/* <div className="form__googleBtn">
+        <img onClick={handleSignIn} src={googleIcon} />
+      </div> */}
     </div>
   );
 };

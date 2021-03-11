@@ -35,7 +35,7 @@ const Alpha = () => {
   };
   useEffect(() => {
     verifyEmail();
-    console.log(currentUser);
+    // console.log(currentUser);
   }, []);
 
   return (

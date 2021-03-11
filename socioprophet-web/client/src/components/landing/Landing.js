@@ -183,7 +183,7 @@ const Landing = () => {
           <HeaderGlobalAction
             id="userIcon"
             aria-label="App Switcher"
-            // onClick={registerToggle}
+            onClick={loginToggle}
           >
             <svg width="20" height="20">
               <title>user</title>
@@ -268,6 +268,11 @@ const Landing = () => {
             >
               BEGIN
             </div>
+          </div>
+          <div className="main__background__login">
+            <p onClick={loginToggle} className="main__background__login__text">
+              Already have an account?
+            </p>
           </div>
           {/* <div className="btn--mobile">
             <button className="main__background__login" onClick={openModal}>

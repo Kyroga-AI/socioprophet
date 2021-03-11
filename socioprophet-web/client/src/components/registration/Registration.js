@@ -75,7 +75,7 @@ const Registration = () => {
   const getEmailAddress = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const emailAddress = urlParams.get("id");
-    console.log(emailAddress);
+    // console.log(emailAddress);
     if (emailAddress === null) {
       history.push("/");
     }

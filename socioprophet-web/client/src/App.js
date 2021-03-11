@@ -34,12 +34,12 @@ const App = () => {
             <Route exact path="/" component={Landing} />
             <Route path="/get-started" component={Survey} />
             <Route path="/signup" component={Registration} />
-
             <Route path="/verify-email" component={VerifyEmail} />
+            <Route path="/password-reset" component={PasswordReset} />
 
             <PrivateRoute path="/update-profile" component={UpdateProfile} />
-            <PrivateRoute path="/password-reset" component={PasswordReset} />
             <PrivateRoute exact path="/alpha" component={Alpha} />
+
             <Route component={NotFound} />
             {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
             {/* <PrivateRoute path="/terminal" component={PopoutTerminal} /> */}
