@@ -217,31 +217,6 @@ const Landing = () => {
           </div>
           <div className="main__background__email">
             <div className="main__background__email__input">
-              {/* {emailAddress ? (
-                <input
-                  className={computedClassName}
-                  name="email"
-                  type="email"
-                  spellCheck="false"
-                  ref={emailRef}
-                  value={emailAddress || ""}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  onKeyDown={handleKeyPress}
-                  placeholder="ENTER EMAIL"
-                />
-              ) : (
-                <input
-                  className={computedClassName}
-                  name="email"
-                  type="email"
-                  spellCheck="false"
-                  ref={emailRef}
-                  required
-                  onKeyDown={handleKeyPress}
-                  placeholder="ENTER EMAIL"
-                />
-              )} */}
               <input
                 className={computedClassName}
                 name="email"

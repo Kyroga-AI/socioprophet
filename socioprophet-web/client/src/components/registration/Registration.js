@@ -22,7 +22,7 @@ const Registration = () => {
   });
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const { signup, addUser } = useAuth();
+  const { signup, addUser, emailVerification } = useAuth();
   const history = useHistory();
 
   const handleKeyPress = (e) => {
@@ -58,7 +58,7 @@ const Registration = () => {
 
       await signup(emailAddress, passwordRef.current.value);
       await addUser(emailAddress);
-
+      await emailVerification();
       history.push("/alpha");
     } catch (err) {
       console.error(err);

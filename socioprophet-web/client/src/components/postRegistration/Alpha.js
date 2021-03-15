@@ -10,7 +10,7 @@ import "./styles/alpha.css";
 
 const Alpha = () => {
   const [error, setError] = useState("");
-  const { currentUser, logout, emailVerification } = useAuth();
+  const { currentUser, logout } = useAuth();
   const history = useHistory();
 
   const handleLogout = async () => {
@@ -23,20 +23,6 @@ const Alpha = () => {
       setError("Failed to log out");
     }
   };
-
-  const verifyEmail = async () => {
-    try {
-      if (!currentUser.emailVerified) {
-        await emailVerification();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  useEffect(() => {
-    verifyEmail();
-    // console.log(currentUser);
-  }, []);
 
   return (
     <div className="alpha">

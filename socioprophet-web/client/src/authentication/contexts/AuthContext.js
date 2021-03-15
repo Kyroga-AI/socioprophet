@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import firebase from "firebase/app"; // for emailProvider static object
 import { auth, db, googleProvider } from "../firebase-configuration/firebase";
 
 const AuthContext = React.createContext();
@@ -31,7 +32,6 @@ export const AuthProvider = ({ children }) => {
     db.collection(collectionName)
       .add(data)
       .then((doc) => {
-        console.log(doc.id);
         setDocumentId(doc.id);
       });
   };
@@ -81,6 +81,7 @@ export const AuthProvider = ({ children }) => {
   const surveyResponseCompleted = () => {
     setSurveyResponse(true);
   };
+
   const updateEmail = (email) => {
     return currentUser.updateEmail(email);
   };
@@ -89,7 +90,34 @@ export const AuthProvider = ({ children }) => {
     return currentUser.updatePassword(password);
   };
 
+  const reAuth = (password) => {
+    const credential = firebase.auth.EmailAuthProvider.credential(
+      currentUser.email,
+      password
+    );
+    console.log(credential);
+    return currentUser.reauthenticateWithCredential(credential);
+  };
+
   const deleteUser = () => {
+    const userRef = db
+      .collection("users")
+      .where("emailAddress", "==", currentUser.email);
+
+    userRef.get().then((userQuerySnapshot) => {
+      userQuerySnapshot.forEach((doc) => {
+        const userData = doc.data();
+        console.log(userData);
+        doc.ref
+          .delete()
+          .then(() => {
+            console.log("Successfully deleted...");
+          })
+          .catch((err) => {
+            console.error(`Error deleting document: ${err}`);
+          });
+      });
+    });
     return currentUser.delete();
   };
 
@@ -119,6 +147,7 @@ export const AuthProvider = ({ children }) => {
     surveyResponseCompleted,
     updateEmail,
     updatePassword,
+    reAuth,
     deleteUser,
   };
 
