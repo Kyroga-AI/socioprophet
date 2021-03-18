@@ -1,10 +1,11 @@
 import React from "react";
 
+// styles
 import "./styles/footer.css";
 
 const Footer = () => {
   return (
-    <div>
+    <>
       <div className="footer__responsive">
         <a
           className="footer__responsive__link"
@@ -78,7 +79,7 @@ const Footer = () => {
           &copy; {new Date().getFullYear()} SocioProphet
         </a>
       </footer>
-    </div>
+    </>
   );
 };
 

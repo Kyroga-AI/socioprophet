@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
       currentUser.email,
       password
     );
-    console.log(credential);
+
     return currentUser.reauthenticateWithCredential(credential);
   };
 
@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }) => {
     userRef.get().then((userQuerySnapshot) => {
       userQuerySnapshot.forEach((doc) => {
         const userData = doc.data();
-        console.log(userData);
+
         doc.ref
           .delete()
           .then(() => {

@@ -1,145 +1,85 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useReducer, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import Modal from "react-modal";
-import Ticker from "react-ticker";
 import {
   HeaderGlobalBar,
   HeaderGlobalAction,
   HeaderPanel,
 } from "carbon-components-react/lib/components/UIShell";
 
-import HeaderLanding from "./landing_components/HeaderLanding";
+import Header from "./landing_components/Header";
 import HeaderLinks from "./landing_components/HeaderLinks";
+import TickerFeed from "../ticker-feed/TickerFeed";
 import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
-import SignUp from "./forms/SignUp";
-import Login from "./forms/Login";
 
+import LoginForm from "./landing_components/login-form/LoginForm";
 import { useAuth } from "../../authentication/contexts/AuthContext";
 
-import googleIcon from "../../../public/images/google-sign-in-light.jpg";
+// main SocioProphet logo image
 import logo from "../../../public/images/mothership-logo.png";
 
+// email validator
+import { validateEmail } from "../landing/validate-email/validateEmail";
+// reducer
+import { emailReducer } from "../../reducers/emailReducer";
 // styles
-
 import "./styles/landing.css";
 
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    backgroundColor: "#000",
-    borderRadius: "10px",
-  },
+// state for reducer
+const emailState = {
+  loading: false,
+  emailError: { isError: false, message: "" },
 };
 
-Modal.setAppElement("#root");
-
 const Landing = () => {
-  const [loading, setLoading] = useState(false);
-  const [modalIsOpen, setIsOpen] = useState(false);
+  // states
+  const [state, dispatch] = useReducer(emailReducer, emailState);
   const [isExpanded, setExpanded] = useState(false);
-  const [login, renderLogin] = useState(false);
-  const [register, renderRegister] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState("");
-  const [emailError, setEmailError] = useState(false);
+
+  // refs
   const emailRef = useRef();
+  // other hooks
   const history = useHistory();
-  const { googleSignIn } = useAuth();
-  const { setEmail } = useAuth();
-  const { emailAddress } = useAuth();
-  const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
+  // custom hooks
+  const { currentUser, setEmail, emailAddress } = useAuth();
 
-  // test function...
-  // const test = async () => {
-  //   const redirect = await fetch("/api/passportAuth/google").then((r) =>
-  //     r.text()
-  //   );
-  //   console.log(redirect);
-  //   window.location.href = redirect;
-  // };
+  // computed css classes for invalid email error message
+  const computedClassName = state.emailError.isError
+    ? "landing__container__main__email__field__input--error"
+    : "";
 
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
-
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    try {
-      await googleSignIn();
-    } catch (err) {
-      console.trace(err);
-    }
-  };
-
-  const GetRssFeedData = () => {
-    const [feed, setFeed] = useState("");
-
-    useEffect(() => {
-      let isCancelled = false;
-      const getFeed = async () => {
-        const text = await fetch(url).then((r) => r.text());
-        const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
-        const items = Array.from(xmlDoc.querySelectorAll("item")).map(
-          (item) => ({
-            title: item.querySelector("title").textContent,
-            link: item.querySelector("link").textContent,
-          })
-        );
-        if (!isCancelled) {
-          setFeed(items);
-        }
-      };
-      // getFeed();
-
-      return () => {
-        isCancelled = true;
-      };
-    }, []);
-
-    return feed ? (
-      <p className="main__sub__ticker__text">
-        {feed.map((items) => (
-          <a key={items.title} id="rssLink" href={items.link} target="_blank">
-            {items.title}
-          </a>
-        ))}
-      </p>
-    ) : (
-      <p className="main__sub__ticker__text">
-        Welcome to SocioProphet! Just Waiting for the HackerNews Feed!
-      </p>
-    );
-  };
-
+  // toggles the side login panel
   const loginToggle = () => {
     setExpanded(isExpanded === false ? true : false);
-    if (register || isExpanded) {
-      renderLogin(false);
-      renderRegister(false);
-    } else {
-      renderLogin(login === false ? true : false);
-    }
   };
 
-  const registerToggle = () => {
-    setExpanded(isExpanded === false ? true : false);
-    if (login && isExpanded) {
-      renderRegister(false);
-      renderLogin(false);
-    } else {
-      renderRegister(register === false ? true : false);
+  // handles the email submission and sends user to survey
+  const handleEmail = async () => {
+    // set loading to disable 'begin' button
+    dispatch({ type: "SET_LOADING", payload: true });
+
+    // check for valid email and dispatch error accordingly
+    if (!validateEmail(emailRef.current.value)) {
+      return dispatch({ type: "EMAIL_ERROR", payload: true });
     }
+
+    // if email check passes, reset any previously dispatched error
+    dispatch({ type: "EMAIL_ERROR", payload: false });
+
+    // create email query string to pass to survey url
+    const emailQuery = encodeURIComponent(emailRef.current.value);
+
+    // set loading back to false and enable button again
+    dispatch({ type: "SET_LOADING", payload: false });
+
+    // using custom useAuth hook to set the user email in global context
+    setEmail(emailRef.current.value);
+
+    // send to survey route
+    history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
   };
 
+  // when user presses 'enter' for email submition
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleEmail();
@@ -148,77 +88,56 @@ const Landing = () => {
     }
   };
 
-  const handleEmail = async () => {
-    setLoading(true);
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    const userEmail = re.test(String(emailRef.current.value).toLowerCase());
-
-    if (!userEmail) {
-      setEmailErrorMessage("PLEASE ENTER A VALID EMAIL");
-      setEmailError(true);
-      return;
-    }
-
-    setEmailErrorMessage("");
-    setEmailError(false);
-
-    const emailQuery = encodeURIComponent(emailRef.current.value);
-
-    setLoading(false);
-    setEmail(emailRef.current.value);
-    history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
-  };
-
-  const computedClassName = emailError
-    ? "main__background__email__input__text__error"
-    : "main__background__email__input__text";
-
   return (
     <div className="landing">
       <nav className="landing__header">
-        <HeaderLanding />
+        <Header />
         <HeaderLinks />
         <HeaderGlobalBar>
-          <HeaderGlobalAction
-            id="userIcon"
-            aria-label="App Switcher"
-            onClick={loginToggle}
-          >
-            <svg width="20" height="20">
-              <title>user</title>
-              <path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
-              <path d="M10 9.841a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
-            </svg>
-          </HeaderGlobalAction>
+          {currentUser !== null ? (
+            <HeaderGlobalAction
+              id="userIcon"
+              aria-label="App Switcher"
+              onClick={() => {
+                history.push("/alpha");
+              }}
+            >
+              <svg width="20" height="20">
+                <title>user</title>
+                <path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
+                <path d="M10 9.841a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
+              </svg>
+            </HeaderGlobalAction>
+          ) : (
+            <p className="landing__header__login" onClick={loginToggle}>
+              Login
+            </p>
+          )}
         </HeaderGlobalBar>
         <HeaderPanel aria-label="Header Panel" expanded={isExpanded}>
-          {login && <Login />}
-          {register && <SignUp />}
+          <LoginForm />
         </HeaderPanel>
       </nav>
-      <div className="main">
-        <div className="main__sub">
-          {/* <div className="main__sub__ticker">
-            <Ticker offset="run-in">{() => <GetRssFeedData />}</Ticker>
-          </div> */}
-        </div>
 
-        <div className="main__background">
-          <div className="main__background__title">
-            {/* Socio
-            <strong>Prophet</strong> */}
-            <img src={logo} width="450px" height="auto" />
-            <p className="main__background__title__sub">
-              <strong>
-                Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
-              </strong>
-            </p>
-          </div>
-          <div className="main__background__email">
-            <div className="main__background__email__input">
+      <div className="landing__container">
+        {/* <TickerFeed /> */}
+        <div className="landing__container__main">
+          <img src={logo} width="450px" height="auto" />
+          <p className="landing__container__main__subtitle">
+            <strong>
+              Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
+            </strong>
+          </p>
+
+          <div className="landing__container__main__email">
+            <div className="landing__container__main__email__field">
+              {state.emailError.isError && (
+                <p className="landing__container__main__email__field__error">
+                  {"PLEASE ENTER A VALID EMAIL"}
+                </p>
+              )}
               <input
-                className={computedClassName}
+                className={`landing__container__main__email__field__input ${computedClassName}`}
                 name="email"
                 type="email"
                 spellCheck="false"
@@ -229,49 +148,26 @@ const Landing = () => {
                 onKeyDown={handleKeyPress}
                 placeholder="ENTER EMAIL"
               />
-              {emailError && (
-                <p className="main__background__email__input__error">
-                  {emailErrorMessage}
-                </p>
-              )}
             </div>
 
             <div
-              className="main__background__email__input__btn"
+              className="landing__container__main__email__btn"
               onClick={handleEmail}
-              disabled={loading}
+              disabled={state.loading}
             >
               BEGIN
             </div>
           </div>
-          <div className="main__background__login">
-            <p onClick={loginToggle} className="main__background__login__text">
+          <div className="landing__container__main__login">
+            <p
+              onClick={loginToggle}
+              className="landing__container__main__login__text"
+            >
               Already have an account?
             </p>
           </div>
-          {/* <div className="btn--mobile">
-            <button className="main__background__login" onClick={openModal}>
-              SocioProphet Team
-            </button>
-            <Modal
-              isOpen={modalIsOpen}
-              onRequestClose={closeModal}
-              style={customStyles}
-              contentLabel="SignIn Modal"
-            >
-              <h3 className="modal__heading">SocioProphet Internal SignIn</h3>
-              <div className="form__googleBtn">
-                <img onClick={handleSignIn} src={googleIcon} />
-              </div>
-            </Modal>
-            <button
-              className="main__background__register"
-              onClick={registerToggle}
-            >
-              &#945; - Registry
-            </button>
-          </div> */}
         </div>
+
         <Offering />
       </div>
       <Footer />

@@ -4,12 +4,12 @@
 }
 
 /* Header Links Element */
-.header__list {
+.headerLinks__list {
   margin: 0 20px 0 auto;
   height: 2rem;
   font-size: 14px;
 }
-.header__list__item {
+.headerLinks__list__item {
   box-sizing: border-box;
   cursor: pointer;
   height: 2rem;
@@ -17,33 +17,10 @@
   margin-left: 30px;
 }
 
-.header__list__item__link {
+.headerLinks__list__item__link {
   text-decoration: none;
   color: #fff;
-}
-.header__list__btn {
-  display: inline-block;
-  height: inherit;
-  margin-left: 40px;
-  z-index: 10000;
-}
-/* Header Buttons Element */
-.header__list__btn__login {
-  color: #fff;
-  font-size: 16px;
-}
-
-.header__list__btn__signup {
-  border: 2px solid #f4f7fb;
-  margin-left: 1.75rem;
-  box-sizing: border-box;
-  padding: 6px 16px;
-  display: inline;
-  font-size: 14px;
-  font-weight: 400;
-  color: #f4f7fb;
-  background-color: transparent;
-  text-decoration: none;
+  font-weight: 600;
 }
 
 /* MEDIA QUERIES */

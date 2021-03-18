@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../authentication/contexts/AuthContext";
+import { useAuth } from "../../../authentication/contexts/AuthContext";
 
 // styles
 import "./styles/passwordReset.css";
@@ -32,7 +32,7 @@ const PasswordReset = () => {
       <h4 className="reset__heading">Reset Your Password Here!</h4>
       {error && <p className="reset__error">{error}</p>}
       {message && <p className="reset__message">{message}</p>}
-      <form className="reset__form" onSubmit={handleSubmit}>
+      <form className="reset__form" disabled={loading} onSubmit={handleSubmit}>
         <div className="reset__form__label">
           <input
             className="reset__form__input"

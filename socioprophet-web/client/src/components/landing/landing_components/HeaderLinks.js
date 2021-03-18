@@ -1,31 +1,40 @@
 import React from "react";
 
+// styles
 import "./styles/headerLinks.css";
 
 const HeaderLinks = () => {
   return (
     <div className="headerLinks">
-      <nav className="header__list">
+      <nav className="headerLinks__list">
         <ul>
-          <li id="spGitHub" className="header__list__item">
+          <li id="spGitHub" className="headerLinks__list__item">
             <a
-              className="header__list__item__link"
+              className="headerLinks__list__item__link"
               href="https://github.com/SocioProphet"
+              target="_blank"
             >
               GitHub
             </a>
           </li>
-          <li id="spBlog" className="header__list__item">
-            <a className="header__list__item__link" href="#">
+          <li id="spBlog" className="headerLinks__list__item">
+            <a
+              className="headerLinks__list__item__link"
+              href="https://socioprophet.blog"
+              target="_blank"
+            >
               Blog
             </a>
           </li>
-          <li id="spDocs" className="header__list__item">
-            <a className="header__list__item__link" href="#">
+          {/* <li id="spDocs" className="headerLinks__list__item">
+            <a
+              className="headerLinks__list__item__link"
+              href="#"
+              target="_blank"
+            >
               Docs
             </a>
-          </li>
-          <div className="header__list__btn"></div>
+          </li> */}
         </ul>
       </nav>
     </div>

@@ -2,20 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import SurveyEmbed from "./SurveyEmbed";
 
+// styles
 import "./styles/survey.css";
 
 const Survey = () => {
   const [surveyEmail, setSurveyEmail] = useState("");
   const history = useHistory();
 
-  // const verifyEmail = async () => {
-  //   try {
-  //     await emailVerification();
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
+  // gets user email address and if one does not exist in url then redirects back to landing page
   const getEmailAddress = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const emailAddress = urlParams.get("email_address");
@@ -26,9 +20,10 @@ const Survey = () => {
 
     setSurveyEmail(emailAddress);
   };
+
+  // on render, gets the user email address from url
   useEffect(() => {
     getEmailAddress();
-    // verifyEmail(); // this will be moved to after user is registered and authenticated (not here)...
   }, []);
 
   return (

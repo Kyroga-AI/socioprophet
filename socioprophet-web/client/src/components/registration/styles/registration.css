@@ -10,52 +10,43 @@
   color: #fff;
 }
 
-.registration__main {
-  background-color: #0c0c0c;
-}
-
-.registration__main__background {
-  position: fixed;
+.registration__container {
   background-image: url("../../../../public/images/mothership-background.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 100%;
+  height: calc(100vh - 2rem);
+}
+
+.registration__container__main {
+  position: fixed;
   color: #fff;
   text-align: center;
-  height: calc(100vh - 2rem);
   width: 100%;
   padding: 135px 100px 200px;
 }
 
-.registration__main__background__title {
-  margin-top: 0px;
-}
-.registration__main__background__title__sub {
+.registration__container__main__subtitle {
   margin-top: 25px;
   font-weight: 800;
   padding-top: 10px;
   font-size: 25px;
 }
 
-.registration__main__background__password {
+.registration__container__main__password {
   margin-top: 64px;
   height: 150px;
-  /* max-width: unset; */
-  /* display: grid; */
-  /* justify-content: center; */
-  /* flex-wrap: wrap; */
   display: flex;
 }
 
-.password__container {
+.registration__container__main__password__section {
   position: relative;
   display: grid;
   width: 240px;
-  height: 150px;
   margin-left: calc(50% - 200px);
 }
 
-.registration__main__background__password__input {
+.registration__container__main__password__section__field {
   display: inline-block;
   box-shadow: none;
   margin-right: 24px;
@@ -63,9 +54,8 @@
   height: 35px;
 }
 
-.registration__main__background__password__input__text {
+.registration__container__main__password__section__field__input {
   color: rgba(237, 237, 237, 1);
-  /* margin-top: 12px; */
   border-radius: 0;
   font-size: 20px;
   line-height: 30px;
@@ -82,43 +72,23 @@
   text-align: left;
 }
 
-.registration__main__background__password__input__text__error {
+.registration__container__main__password__section__field__input::placeholder {
   color: rgba(237, 237, 237, 1);
-  /* margin-top: 12px; */
-  border-radius: 0;
-  font-size: 20px;
-  line-height: 30px;
-  position: relative;
-  width: 100%;
-  background: 0 0;
-  border: none;
-  border-bottom: 1px solid #ee8d8d;
-  outline: 0;
-  padding: 0;
-  text-rendering: auto;
-  letter-spacing: normal;
-  appearance: textfield;
-  text-align: left;
 }
 
-.registration__main__background__password__input__text__error::placeholder {
-  color: rgba(237, 237, 237, 1);
+.registration__container__main__password__section__field__input--error {
+  border-bottom: 1px solid #d56666;
 }
-.registration__main__background__password__input__error {
-  color: #ee8d8d;
+
+.registration__container__main__password__section__field__error {
+  color: #d56666;
   margin-top: 4px;
   text-align: left;
   font-size: 14px;
 }
-.registration__main__background__password__input__text::placeholder {
-  color: rgba(237, 237, 237, 1);
-}
 
-.registration__main__background__password__input__btn {
+.registration__container__main__password__btn {
   position: relative;
-  /* float: right; */
-  /* margin-right: ; */
-  /* display: inline-block; */
   width: 140px;
   height: 54px;
   margin: 0;
@@ -128,7 +98,6 @@
   cursor: pointer;
   font-size: 20px;
   color: #fff;
-  /* background: #333; */
   background: transparent;
   padding: 0 28px;
   text-align: center;
@@ -136,14 +105,14 @@
   outline: 0;
   border-radius: 2px;
   line-height: 54px;
-  /* box-shadow: 0 14px 34px -10px #333; */
   border: 2px solid rgba(237, 237, 237, 1);
 }
 
-.registration__main__background__password__input__btn:hover {
+.registration__container__main__password__btn:hover {
   background: #eee;
   color: #333;
 }
-.registration__main__background__password__input__btn:active {
+
+.registration__container__main__password__btn:active {
   color: #fff;
 }

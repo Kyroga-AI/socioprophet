@@ -13,13 +13,13 @@
   color: #fff;
 }
 
-.update__password {
+.update__container {
   margin-top: 4rem;
   height: 150px;
   display: flex;
 }
 
-.update__password__container {
+.update__container__password {
   position: relative;
   display: grid;
   width: 240px;
@@ -27,7 +27,7 @@
   margin-left: calc(50% - 200px);
 }
 
-.update__password__container__input {
+.update__container__password__field {
   display: inline-block;
   box-shadow: none;
   margin-right: 24px;
@@ -35,7 +35,7 @@
   height: 35px;
 }
 
-.update__password__container__input__text {
+.update__container__password__field__input {
   color: rgba(237, 237, 237, 1);
   margin-top: 12px;
   border-radius: 0;
@@ -54,39 +54,22 @@
   text-align: left;
 }
 
-.update__password__container__input__text__error {
+.update__container__password__field__input::placeholder {
   color: rgba(237, 237, 237, 1);
-  /* margin-top: 12px; */
-  border-radius: 0;
-  font-size: 20px;
-  line-height: 30px;
-  position: relative;
-  width: 100%;
-  background: 0 0;
-  border: none;
-  border-bottom: 1px solid #ee8d8d;
-  outline: 0;
-  padding: 0;
-  text-rendering: auto;
-  letter-spacing: normal;
-  appearance: textfield;
-  text-align: left;
 }
 
-.update__password__container__input__text__error::placeholder {
-  color: rgba(237, 237, 237, 1);
+.update__container__password__field__input--error {
+  border-bottom: 1px solid #d56666;
 }
-.update__password__container__input__error {
-  color: #ee8d8d;
-  margin-top: 4px;
+
+.update__container__password__field__error {
+  color: #d56666;
+  padding-top: 4px;
   text-align: left;
   font-size: 14px;
 }
-.update__password__container__input__text::placeholder {
-  color: rgba(237, 237, 237, 1);
-}
 
-.update__password__container__input__btn {
+.update__container__password__btn {
   position: relative;
   width: 220px;
   height: 54px;
@@ -106,77 +89,25 @@
   border: 2px solid rgba(237, 237, 237, 1);
 }
 
-.update__password__container__input__btn:hover {
+.update__container__password__btn:hover {
   background: #eee;
   color: #333;
 }
-.update__password__container__input__btn:active {
+.update__container__password__btn:active {
   color: #fff;
 }
 
-.update__error {
-  margin-top: 30px;
-  font-size: 18px;
-  text-align: center;
-  color: red;
-}
-
-.update__form {
-  height: 500px;
-  width: 100%;
-  margin-top: 40px;
-}
-
-.update__form__label {
-  margin-top: 10px;
-  position: relative;
-  height: 100px;
-  text-align: center;
-}
-
-.update__form__label__text {
-  font-size: 20px;
-  color: #333;
-}
-
-.update__form__input {
-  display: flex;
-  margin-left: calc(50% - 200px);
-  margin-top: 10px;
-  width: 400px;
-  height: 45px;
-  font-size: 16px;
-  padding-left: 10px;
-  color: #333;
-  border: 0px;
-  border-radius: 7px;
-  background-color: rgb(201, 201, 201);
-}
-
-.update__form__btn {
-  margin-top: 25px;
-  margin-left: calc(50% - 200px);
-  width: 400px;
-  height: 50px;
-  font-size: 20px;
-  color: #fff;
-  border: 0px;
-  border-radius: 7px;
-  background-color: #333;
-  cursor: pointer;
-}
-
-.update__form__cancel {
+.update__cancel {
   margin-top: 2rem;
   text-align: center;
 }
 
-.update__form__cancel__link {
+.update__cancel__link {
   color: #fff;
   font-size: 18px;
 }
 
-.update__form__delete {
+.update__delete {
   margin-top: 5rem;
   margin-left: calc(50% - 200px);
   width: 400px;
@@ -189,24 +120,17 @@
   cursor: pointer;
 }
 
-.delete__heading {
-  font-size: 24px;
-  text-align: center;
-  color: #fff;
-}
-
 .delete__container {
   margin-top: 2rem;
 }
 
-.delete__container__input {
+.delete__container__field {
   width: 300px;
   margin-left: calc(50% - 150px);
 }
 
-.delete__container__input__text {
+.delete__container__field__input {
   color: rgba(237, 237, 237, 1);
-
   border-radius: 0;
   font-size: 20px;
   line-height: 30px;
@@ -223,41 +147,27 @@
   text-align: left;
 }
 
-.delete__container__input__text__error {
-  color: rgba(237, 237, 237, 1);
-  border-radius: 0;
-  font-size: 20px;
-  line-height: 30px;
-  position: relative;
-  width: 100%;
-  background: 0 0;
-  border: none;
-  border-bottom: 1px solid #ee8d8d;
-  outline: 0;
-  padding: 0;
-  text-rendering: auto;
-  letter-spacing: normal;
-  appearance: textfield;
-  text-align: left;
+.delete__container__field__input--error {
+  border-bottom: 1px solid #d56666;
 }
 
-.delete__container__input__btn {
+.delete__container__btn {
   width: 300px;
-  height: 54px;
+  height: 48px;
   text-align: center;
   padding: 0 28px;
   user-select: none;
   cursor: pointer;
   margin-left: calc(50% - 150px);
   margin-top: 2rem;
-  line-height: 54px;
+  line-height: 48px;
   background-color: #990f02;
   color: #fff;
-  font-size: 24px;
+  font-size: 20px;
   border-radius: 10px;
 }
 
-.cancel__delete__btn {
+.cancel__container__btn {
   background-color: #fff;
   color: #333;
   margin-top: 1rem;

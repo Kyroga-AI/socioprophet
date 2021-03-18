@@ -4,13 +4,7 @@
   width: 100%;
   background-color: #000;
   overflow: scroll;
-}
-
-.alpha__error {
-  margin-top: 30px;
-  font-size: 18px;
-  text-align: center;
-  color: red;
+  padding-bottom: 2rem;
 }
 
 .alpha__header {
@@ -25,7 +19,7 @@
   color: #fff;
 }
 
-.alpha__container__title {
+.alpha__container {
   color: #fff;
   font-size: 40px;
   width: 100%;
@@ -34,16 +28,15 @@
   text-align: center;
 }
 
+.alpha__container__sub {
+  margin-top: 2rem;
+}
+
 .alpha__container__profile {
   margin-top: 100px;
   height: 80px;
   color: #fff;
   text-align: center;
-}
-
-.alpha__container__profile__email {
-  font-size: 30px;
-  font-family: "Courier New", Courier, monospace;
 }
 
 .alpha__container__profile__update {
@@ -56,30 +49,36 @@
 }
 
 .alpha__container__btn {
-  text-align: center;
-}
-
-.alpha__container__btn__link {
-  border: 0;
-  height: 30px;
-  width: 200px;
+  position: relative;
+  width: 220px;
+  height: 54px;
+  margin: 0;
+  margin-left: calc(50% - 110px);
+  user-select: none;
+  cursor: pointer;
+  font-size: 20px;
   color: #fff;
-  background-color: #333;
-  border-radius: 10px;
-  font-weight: 800;
+  background: transparent;
+  text-align: center;
+  white-space: nowrap;
+  outline: 0;
+  border-radius: 2px;
+  line-height: 54px;
+  border: 2px solid rgba(237, 237, 237, 1);
 }
 
-@media (max-width: 450px) {
-  .alpha__container__heading {
-    font-size: 1.8rem;
-  }
+.alpha__container__btn:hover {
+  background: #eee;
+  color: #333;
+}
 
-  .alpha__container__card {
-    margin-left: calc(50% - 150px);
-    width: 300px;
-  }
+.alpha__container__btn:active {
+  color: #fff;
+}
 
-  .alpha__container__card__text {
-    font-size: 16px;
-  }
+.alpha__container__error {
+  margin-top: 10px;
+  font-size: 18px;
+  text-align: center;
+  color: #d56666;
 }

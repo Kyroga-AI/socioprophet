@@ -1,30 +1,88 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import { useAuth } from "../../authentication/contexts/AuthContext";
-import HeaderLanding from "../landing/landing_components/HeaderLanding";
+import Header from "../landing/landing_components/Header";
 import HeaderLinks from "../landing/landing_components/HeaderLinks";
 import Footer from "../landing/landing_components/Footer";
+
+// custom hook
+import { useAuth } from "../../authentication/contexts/AuthContext";
+
+// reducer
+import { registrationReducer } from "../../reducers/registrationReducer";
 
 // styles
 import "./styles/registration.css";
 import logo from "../../../public/images/mothership-logo.png";
 
+// state for reducer
+const registrationState = {
+  loading: false,
+  emailAddress: "",
+  errors: {
+    passwordError: { isError: false, message: "" },
+    confirmationError: { isError: false, message: "" },
+  },
+};
+
 const Registration = () => {
-  const [loading, setLoading] = useState(false);
-  const [emailAddress, setEmailAddress] = useState("");
-  const [passwordError, setPasswordError] = useState({
-    isError: false,
-    message: "",
-  });
-  const [passwordConfirmError, setPasswordConfirmError] = useState({
-    isError: false,
-    message: "",
-  });
+  // states
+  const [state, dispatch] = useReducer(registrationReducer, registrationState);
+  // refs
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const { signup, addUser, emailVerification } = useAuth();
+  // hooks
   const history = useHistory();
+  // custom hooks
+  const { signup, addUser, emailVerification } = useAuth();
 
+  // computed css classes for invalid email error message
+  const computedClassNamePasswordError = state.errors.passwordError.isError
+    ? "registration__container__main__password__section__field__input--error"
+    : "";
+
+  const computedClassNamePasswordConfirmError = state.errors.confirmationError
+    .isError
+    ? "registration__container__main__password__section__field__input--error"
+    : "";
+
+  // handles password confirmation submission and sends user to alpha
+  const handleSubmit = async (e) => {
+    // check as password has been entered
+    if (passwordRef.current.value.length == 0) {
+      return dispatch({ type: "MISSING_PASSWORD" });
+    }
+    // check password created is at least six characters long
+    if (passwordRef.current.value.length < 6) {
+      return dispatch({ type: "INVALID_PASSWORD" });
+    }
+    // check if password and password confirmation are the same
+    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
+      return dispatch({ type: "NO_MATCH" });
+    }
+
+    try {
+      // set loading to disable 'begin' button
+      dispatch({ type: "SET_LOADING", payload: true });
+
+      // signup user to Firebase with email and password
+      await signup(emailAddress, passwordRef.current.value);
+      // add user to Firestore with email
+      await addUser(emailAddress);
+      // send email address verifcation email to user
+      await emailVerification();
+      // after successful authentication, send user to alpha dashboard
+      history.push("/alpha");
+    } catch (err) {
+      // check if the error is because a user with the email address already exists
+      if (err.code === "auth/email-already-in-use") {
+        return dispatch({ type: "EMAIL_TAKEN" });
+      }
+    }
+    // set loading back to false and enable button again
+    dispatch({ type: "SET_LOADING", payload: false });
+  };
+
+  // when user presses 'enter' for email submition
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSubmit();
@@ -33,91 +91,46 @@ const Registration = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    if (passwordRef.current.value.length == 0) {
-      return setPasswordError({
-        isError: true,
-        message: "Please create a password to continue!",
-      });
-    }
-    if (passwordRef.current.value.length < 6) {
-      return setPasswordError({
-        isError: true,
-        message: "Must be at least six characters long!",
-      });
-    }
-    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      return setPasswordConfirmError({
-        isError: true,
-        message: "Passwords do not match!",
-      });
-    }
-
-    try {
-      setLoading(true);
-
-      await signup(emailAddress, passwordRef.current.value);
-      await addUser(emailAddress);
-      await emailVerification();
-      history.push("/alpha");
-    } catch (err) {
-      console.error(err);
-      if (err.code === "auth/email-already-in-use") {
-        return setPasswordConfirmError({
-          isError: true,
-          message: "A user with this email already exists!",
-        });
-      }
-    }
-    setLoading(false);
-  };
-
+  // set the user email address in state
   const getEmailAddress = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const emailAddress = urlParams.get("id");
-    // console.log(emailAddress);
     if (emailAddress === null) {
       history.push("/");
     }
-
-    setEmailAddress(emailAddress);
+    // update emailAddress state with email search query
+    dispatch({ type: "SET_EMAIL", payload: emailAddress });
   };
 
+  // on initial render, get the email address from url
   useEffect(() => {
     getEmailAddress();
+    console.log(state.emailAddress);
   }, []);
 
-  const computedClassNamePasswordError = passwordError.isError
-    ? "registration__main__background__password__input__text__error"
-    : "registration__main__background__password__input__text";
-
-  const computedClassNamePasswordConfirmError = passwordConfirmError.isError
-    ? "registration__main__background__password__input__text__error"
-    : "registration__main__background__password__input__text";
   return (
     <div className="registration">
       <nav className="registration__header">
-        <HeaderLanding />
+        <Header />
         <HeaderLinks />
       </nav>
-      <div className="registration___main">
-        <div className="registration__main__background">
-          <div className="registration__main__background__title">
-            <img src={logo} width="450px" height="auto" />
-            <p className="registration__main__background__title__sub">
-              <strong>
-                {/* Open Collaborative Socio-Dat-Alytics. For geeks, by geeks. */}
-                COMMUNITY. DATA. ANALYTICS. AI. SOCIAL.
-                <br />
-                For geeks, but easy enough for everyone.
-              </strong>
-            </p>
-          </div>
-          <div className="registration__main__background__password">
-            <div className="password__container">
-              <div className="registration__main__background__password__input">
+      <div className="registration__container">
+        <div className="registration__container__main">
+          <img src={logo} width="450px" height="auto" />
+          <p className="registration__container__main__subtitle">
+            <strong>
+              {/* Open Collaborative Socio-Dat-Alytics. For geeks, by geeks. */}
+              COMMUNITY. DATA. ANALYTICS. AI. SOCIAL.
+              <br />
+              For geeks, but easy enough for everyone.
+            </strong>
+          </p>
+
+          <div className="registration__container__main__password">
+            <div className="registration__container__main__password__section">
+              <div className="registration__container__main__password__section__field">
                 <input
-                  className={computedClassNamePasswordError}
+                  className={`registration__container__main__password__section__field__input ${computedClassNamePasswordError}`}
                   name="password"
                   type="password"
                   spellCheck="false"
@@ -126,15 +139,15 @@ const Registration = () => {
                   onKeyDown={handleKeyPress}
                   placeholder="CREATE PASSWORD"
                 />
-                {passwordError.isError && (
-                  <p className="main__background__email__input__error">
-                    {passwordError.message}
+                {state.errors.passwordError.isError && (
+                  <p className="registration__container__main__password__section__field__error">
+                    {state.errors.passwordError.message}
                   </p>
                 )}
               </div>
-              <div className="registration__main__background__password__input">
+              <div className="registration__container__main__password__section__field">
                 <input
-                  className={computedClassNamePasswordConfirmError}
+                  className={`registration__container__main__password__section__field__input ${computedClassNamePasswordConfirmError}`}
                   name="password-confirmation"
                   type="password"
                   spellCheck="false"
@@ -143,17 +156,17 @@ const Registration = () => {
                   onKeyDown={handleKeyPress}
                   placeholder="RE-ENTER PASSWORD"
                 />
-                {passwordConfirmError.isError && (
-                  <p className="main__background__email__input__error">
-                    {passwordConfirmError.message}
+                {state.errors.confirmationError.isError && (
+                  <p className="registration__container__main__password__section__field__error">
+                    {state.errors.confirmationError.message}
                   </p>
                 )}
               </div>
             </div>
             <div
-              className="registration__main__background__password__input__btn"
+              className="registration__container__main__password__btn"
               onClick={handleSubmit}
-              disabled={loading}
+              disabled={state.loading}
             >
               ONWARD
             </div>
