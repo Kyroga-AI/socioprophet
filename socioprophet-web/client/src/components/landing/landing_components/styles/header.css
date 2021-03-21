@@ -1,7 +1,7 @@
 .header {
   align-items: center;
   display: inline-flex;
-  padding-left: 0.5rem;
+  padding-left: 15px;
   font-size: 18px;
   white-space: nowrap;
   vertical-align: middle;

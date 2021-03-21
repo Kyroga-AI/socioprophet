@@ -1,18 +1,18 @@
 .headerLinks {
-  margin: 0px 80px 0 auto;
+  margin: 0px 30px 0 auto;
   z-index: 100000;
 }
 
 /* Header Links Element */
 .headerLinks__list {
   margin: 0 20px 0 auto;
-  height: 2rem;
+  height: 40px;
   font-size: 14px;
 }
 .headerLinks__list__item {
   box-sizing: border-box;
   cursor: pointer;
-  height: 2rem;
+  height: 40px;
   display: inline-block;
   margin-left: 30px;
 }

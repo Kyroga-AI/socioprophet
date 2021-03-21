@@ -1,7 +1,11 @@
-@import "~carbon-components/scss/globals/scss/styles.scss";
+// @import "~carbon-components/scss/globals/scss/styles.scss";
 @import url("https://fonts.googleapis.com/css2?family=Raleway:wght@500;600&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+}
 body {
   overflow: scroll;
-  background-color: #333;
+  background-color: #fff;
   font-family: "Raleway", sans-serif;
 }

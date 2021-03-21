@@ -9,75 +9,52 @@
 
 .alpha__header {
   width: 100%;
-  height: 2rem;
-  line-height: 2rem;
+  height: 40px;
+  line-height: 40px;
   position: fixed;
   display: flex;
-  align-items: center;
   z-index: 10000;
   background-color: #0c0c0c;
-  color: #fff;
+  color: rgb(217, 216, 255);
+}
+
+.alpha__header__link {
+  height: 40px;
+  width: 60px;
+  margin-right: 30px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 40px;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 .alpha__container {
-  color: #fff;
-  font-size: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 100%;
-  height: 150px;
-  margin-top: 200px;
+  transform: translate(-50%, -50%);
   text-align: center;
 }
 
 .alpha__container__sub {
-  margin-top: 2rem;
-}
-
-.alpha__container__profile {
-  margin-top: 100px;
-  height: 80px;
-  color: #fff;
-  text-align: center;
-}
-
-.alpha__container__profile__update {
-  margin-top: 25px;
   font-size: 24px;
+  color: rgb(75, 78, 84);
 }
 
-.alpha__container__profile__update__link {
-  color: #fff;
+.alpha__container__tag {
+  margin-top: 80px;
+  font-size: 30px;
+  color: rgb(75, 78, 84);
 }
 
-.alpha__container__btn {
+.alpha__error {
+  margin-top: 80px;
   position: relative;
-  width: 220px;
-  height: 54px;
-  margin: 0;
-  margin-left: calc(50% - 110px);
-  user-select: none;
-  cursor: pointer;
-  font-size: 20px;
-  color: #fff;
-  background: transparent;
-  text-align: center;
-  white-space: nowrap;
-  outline: 0;
-  border-radius: 2px;
-  line-height: 54px;
-  border: 2px solid rgba(237, 237, 237, 1);
-}
-
-.alpha__container__btn:hover {
-  background: #eee;
-  color: #333;
-}
-
-.alpha__container__btn:active {
-  color: #fff;
-}
-
-.alpha__container__error {
-  margin-top: 10px;
+  float: right;
+  width: 200px;
   font-size: 18px;
   text-align: center;
   color: #d56666;

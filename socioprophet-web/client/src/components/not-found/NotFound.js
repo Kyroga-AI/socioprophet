@@ -9,7 +9,7 @@ const NotFound = () => {
       <nav className="notFound__header">
         <Header />
       </nav>
-      <div>
+      <div className="notFound__container">
         <h1 className="notFound__heading notFound__heading--main">404</h1>
         <h2 className="notFound__heading notFound__heading--sub">
           This is unknown internet space

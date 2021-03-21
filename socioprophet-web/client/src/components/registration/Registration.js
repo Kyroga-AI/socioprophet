@@ -1,7 +1,8 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { Suspense, useEffect, useReducer, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import Header from "../landing/landing_components/Header";
 import HeaderLinks from "../landing/landing_components/HeaderLinks";
+const TickerFeed = React.lazy(() => import("../ticker-feed/TickerFeed"));
 import Footer from "../landing/landing_components/Footer";
 
 // custom hook
@@ -115,8 +116,13 @@ const Registration = () => {
         <HeaderLinks />
       </nav>
       <div className="registration__container">
+        <Suspense fallback={<p>Loading ...</p>}>
+          <TickerFeed />
+        </Suspense>
         <div className="registration__container__main">
-          <img src={logo} width="450px" height="auto" />
+          <div className="registration__container__main__logo">
+            <img src={logo} width="450px" height="77px" />
+          </div>
           <p className="registration__container__main__subtitle">
             <strong>
               {/* Open Collaborative Socio-Dat-Alytics. For geeks, by geeks. */}

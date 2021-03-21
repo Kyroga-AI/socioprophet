@@ -14,6 +14,7 @@
 .loginForm__container__field {
   width: 240px;
 }
+
 .loginForm__container__field__input {
   color: rgba(237, 237, 237, 1);
   margin-top: 12px;
@@ -62,10 +63,10 @@
 
 .loginForm__container__field__btn {
   display: inline-block;
-  width: 120px;
-  height: 46px;
+  padding: 0 20px;
+  height: 50px;
   margin: 0;
-  margin-top: 1.5rem;
+  margin-top: 30px;
   margin-left: calc(50% - 70px);
   user-select: none;
   cursor: pointer;
@@ -77,6 +78,6 @@
   white-space: nowrap;
   outline: 0;
   border-radius: 2px;
-  line-height: 46px;
+  line-height: 50px;
   border: 2px solid rgba(237, 237, 237, 1);
 }

@@ -1,15 +1,9 @@
-import React, { useState, useReducer, useRef } from "react";
+import React, { Suspense, useState, useReducer, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import {
-  HeaderGlobalBar,
-  HeaderGlobalAction,
-  HeaderPanel,
-} from "carbon-components-react/lib/components/UIShell";
-
 import Header from "./landing_components/Header";
 import HeaderLinks from "./landing_components/HeaderLinks";
-import TickerFeed from "../ticker-feed/TickerFeed";
-import Offering from "./landing_components/Offering";
+const TickerFeed = React.lazy(() => import("../ticker-feed/TickerFeed"));
+// import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
 import LoginForm from "./landing_components/login-form/LoginForm";
@@ -46,6 +40,10 @@ const Landing = () => {
   // computed css classes for invalid email error message
   const computedClassName = state.emailError.isError
     ? "landing__container__main__email__field__input--error"
+    : "";
+
+  const togglePanelClassName = isExpanded
+    ? "landing__header__panel--expanded"
     : "";
 
   // toggles the side login panel
@@ -93,36 +91,32 @@ const Landing = () => {
       <nav className="landing__header">
         <Header />
         <HeaderLinks />
-        <HeaderGlobalBar>
-          {currentUser !== null ? (
-            <HeaderGlobalAction
-              id="userIcon"
-              aria-label="App Switcher"
-              onClick={() => {
-                history.push("/alpha");
-              }}
+        {currentUser !== null ? (
+          <div className="landing__header__login">
+            <p
+              className="landing__header__login__avatar"
+              onClick={() => history.push("/alpha")}
             >
-              <svg width="20" height="20">
-                <title>user</title>
-                <path d="M6 15.745A6.968 6.968 0 0 0 10 17a6.968 6.968 0 0 0 4-1.255V15.5a2.5 2.5 0 0 0-2.5-2.5h-3A2.5 2.5 0 0 0 6 15.5v.245zm-.956-.802A3.5 3.5 0 0 1 8.5 12h3a3.5 3.5 0 0 1 3.456 2.943 7 7 0 1 0-9.912 0zM10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
-                <path d="M10 9.841a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
-              </svg>
-            </HeaderGlobalAction>
-          ) : (
-            <p className="landing__header__login" onClick={loginToggle}>
-              Login
+              <i className="fa fa-user-circle" aria-hidden="true"></i>
             </p>
-          )}
-        </HeaderGlobalBar>
-        <HeaderPanel aria-label="Header Panel" expanded={isExpanded}>
+          </div>
+        ) : (
+          <p className="landing__header__login" onClick={loginToggle}>
+            Login
+          </p>
+        )}
+        <div className={`landing__header__panel ${togglePanelClassName}`}>
           <LoginForm />
-        </HeaderPanel>
+        </div>
       </nav>
-
+      <Suspense fallback={<p>Loading ...</p>}>
+        <TickerFeed />
+      </Suspense>
       <div className="landing__container">
-        {/* <TickerFeed /> */}
         <div className="landing__container__main">
-          <img src={logo} width="450px" height="auto" />
+          <div className="landing__container__main__logo">
+            <img src={logo} width="450px" height="77px" />
+          </div>
           <p className="landing__container__main__subtitle">
             <strong>
               Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
@@ -133,7 +127,7 @@ const Landing = () => {
             <div className="landing__container__main__email__field">
               {state.emailError.isError && (
                 <p className="landing__container__main__email__field__error">
-                  {"PLEASE ENTER A VALID EMAIL"}
+                  {state.emailError.message}
                 </p>
               )}
               <input
@@ -168,7 +162,7 @@ const Landing = () => {
           </div>
         </div>
 
-        <Offering />
+        {/* <Offering /> */}
       </div>
       <Footer />
     </div>

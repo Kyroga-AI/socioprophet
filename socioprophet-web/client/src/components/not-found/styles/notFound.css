@@ -7,9 +7,9 @@
 
 .notFound__header {
   position: fixed;
-  height: 2rem;
+  height: 40px;
   width: 100%;
-  line-height: 2rem;
+  line-height: 40px;
   z-index: 10000;
   background-color: #0c0c0c;
 }
@@ -19,17 +19,24 @@
   color: #fff;
 }
 
+.notFound__container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+}
+
 .notFound__heading--main {
-  padding-top: 12rem;
   font-size: 50px;
 }
 
 .notFound__heading--sub {
-  padding-top: 2rem;
+  padding-top: 40px;
   font-size: 34px;
 }
 
 .notFound__heading--description {
-  margin-top: 2rem;
+  margin-top: 40px;
   font-size: 24px;
 }

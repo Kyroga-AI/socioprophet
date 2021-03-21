@@ -45,6 +45,10 @@ const UpdateProfile = () => {
   // states
   const [state, dispatch] = useReducer(updateReducer, updateState);
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [logoutError, setLogoutError] = useState({
+    isError: false,
+    message: "",
+  });
 
   // refs
   const oldPasswordRef = useRef();
@@ -54,7 +58,7 @@ const UpdateProfile = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { updatePassword, reAuth, deleteUser } = useAuth();
+  const { updatePassword, reAuth, logout, deleteUser } = useAuth();
 
   // computed css classes based on errors
   const computedClassNameOldPasswordError = state.passwordErrors.oldPassword
@@ -171,6 +175,19 @@ const UpdateProfile = () => {
     }
   };
 
+  // handles the user logout action
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      return setLogoutError({
+        isError: true,
+        message: "Failed to logout!",
+      });
+    }
+    history.push("/");
+  };
+
   return (
     <div className="update">
       <h4 className="update__heading">Change Password or Delete Account</h4>
@@ -245,12 +262,22 @@ const UpdateProfile = () => {
       </div>
 
       <div className="update__cancel">
-        <Link className="update__cancel__link" to="/">
+        <Link className="update__cancel__link" to="/alpha">
           Cancel
         </Link>
       </div>
       <button
-        className="update__delete"
+        className="update__btn update__logout"
+        disabled={state.loading}
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
+      {logoutError.isError && (
+        <p className="alpha__error">{logoutError.message}</p>
+      )}
+      <button
+        className="update__btn"
         disabled={state.loading}
         onClick={openModal}
       >

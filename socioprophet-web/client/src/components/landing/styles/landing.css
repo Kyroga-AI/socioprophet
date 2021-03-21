@@ -1,50 +1,55 @@
-/* Carbon Modifications */
-.landing .bx--header {
-  height: 2rem;
-}
-
-.landing .bx--header__action {
-  height: 2rem;
-  width: 2rem;
-  padding-right: 25px;
-  padding-top: 5px;
-}
-
-.landing .bx--header-panel {
-  top: 2rem;
-  height: calc(100% - 3.5rem);
-  overflow: scroll;
-  background-color: #070708;
-  border-left: #070708;
-  border-right: #070708;
-}
-
-.landing .bx--header__global {
-  flex: 0;
-}
-
 .landing__header {
   position: fixed;
   width: 100%;
-  height: 2rem;
-  line-height: 2rem;
+  height: 40px;
+  line-height: 40px;
   display: flex;
-  align-items: center;
   z-index: 10000;
   background-color: #070708;
   color: #fff;
 }
 
 .landing__header__login {
-  height: 2rem;
+  height: 40px;
   width: 60px;
   margin-right: 30px;
   font-size: 14px;
   cursor: pointer;
   font-weight: 600;
-  line-height: 2rem;
+  line-height: 40px;
   box-sizing: border-box;
   text-align: center;
+}
+
+.landing__header__login__avatar {
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.landing__header__panel {
+  top: 2rem;
+  height: calc(100% - 3.5rem);
+  overflow: scroll;
+  background-color: #070708;
+  border-left: #070708;
+  border-right: #070708;
+  transition-timing-function: cubic-bezier(0.2, 0, 1, 0.9);
+  position: fixed;
+
+  right: 0;
+  bottom: 0;
+  z-index: 8000;
+  width: 0;
+
+  color: #c6c6c6;
+
+  border: none;
+  transition: width 0.11s;
+  will-change: width;
+}
+
+.landing__header__panel--expanded {
+  width: 360px;
 }
 
 .landing__container {
@@ -59,8 +64,14 @@
   position: fixed;
   text-align: center;
   width: 100%;
-  padding: 135px 100px 200px;
   color: #fff;
+}
+
+.landing__container__main__logo {
+  justify-content: center;
+  margin-top: 180px;
+  /* padding-top: 140px; */
+  height: 100px;
 }
 
 .landing__container__main__subtitle {
@@ -123,21 +134,20 @@
 
 .landing__container__main__email__btn {
   display: inline-block;
-  width: 140px;
-  height: 54px;
+  padding: 0 20px;
+  height: 50px;
   margin: 0;
   user-select: none;
   cursor: pointer;
   color: #fff;
   background: transparent;
-  padding: 0 28px;
   text-align: center;
   font-size: 20px;
   font-weight: 600;
   white-space: nowrap;
   outline: 0;
   border-radius: 2px;
-  line-height: 54px;
+  line-height: 50px;
   border: 2px solid rgba(237, 237, 237, 1);
 }
 
@@ -150,16 +160,13 @@
 }
 
 .landing__container__main__login {
-  max-width: unset;
+  width: 355px;
+  margin-left: calc(50% - 184px);
   display: flex;
-  justify-content: center;
-  margin-top: 12px;
 }
 
 .landing__container__main__login__text {
   font-size: 14px;
-  width: 404px;
-  text-align: left;
   cursor: pointer;
   font-style: oblique;
 }
