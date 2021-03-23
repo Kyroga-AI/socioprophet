@@ -25,6 +25,25 @@ const emailState = {
   emailError: { isError: false, message: "" },
 };
 
+function FadeInSection(props) {
+  const [isVisible, setVisible] = React.useState(false);
+  const domRef = React.useRef();
+  React.useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => setVisible(entry.isIntersecting));
+    });
+    observer.observe(domRef.current);
+  }, []);
+  return (
+    <div
+      className={`fade-in-section ${isVisible ? "is-visible" : ""}`}
+      ref={domRef}
+    >
+      {props.children}
+    </div>
+  );
+}
+
 const Landing = () => {
   // states
   const [state, dispatch] = useReducer(emailReducer, emailState);
@@ -88,7 +107,7 @@ const Landing = () => {
 
   return (
     <div className="landing">
-      <nav className="landing__header">
+      <nav className="nav--header">
         <Header />
         <HeaderLinks />
         {currentUser !== null ? (
@@ -163,6 +182,39 @@ const Landing = () => {
         </div>
 
         {/* <Offering /> */}
+      </div>
+
+      <div className="landing__more">
+        <div className="landing__more__section">
+          <h2 className="landing__more__section__heading">PLATFORM</h2>
+          <FadeInSection>
+            <p className="landing__more__section__info">
+              Distributed infrastructure, data, analytics & AI. Built as a
+              social networking platform. For geeks, but simple enough for
+              everyone to use.
+            </p>
+          </FadeInSection>
+        </div>
+        <FadeInSection>
+          <div className="landing__more__section">
+            <h2 className="landing__more__section__heading">COMMUNITY</h2>
+            <p className="landing__more__section__info">
+              Unlock the world's best ideas through democratized social
+              intelligence
+            </p>
+          </div>
+        </FadeInSection>
+
+        <FadeInSection>
+          <div className="landing__more__section">
+            <h2 className="landing__more__section__heading">DATA & AI</h2>
+
+            <p className="landing__more__section__info">
+              Share your compute through leveraging peer to peer and federated
+              networks or centralized collaboration models.
+            </p>
+          </div>
+        </FadeInSection>
       </div>
       <Footer />
     </div>

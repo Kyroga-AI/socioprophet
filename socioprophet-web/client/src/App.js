@@ -9,6 +9,7 @@ import PasswordReset from "./components/dashboard/profile/PasswordReset";
 import UpdateProfile from "./components/dashboard/profile/UpdateProfile";
 import Alpha from "./components/dashboard/Alpha";
 import NotFound from "./components/not-found/NotFound";
+import Terms from "./components/legal/Terms";
 
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import { AuthProvider } from "./authentication/contexts/AuthContext";
@@ -16,7 +17,7 @@ import { AuthProvider } from "./authentication/contexts/AuthContext";
 // import UInterface from "./components/original-carbon-dashboard/UInterface";
 // import PopoutTerminal from "./components/original-carbon-dashboard/interface_components/dashboard_components/PopoutTerminal";
 
-import "./App.scss";
+import "./App.css";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <div className="app">
           <Switch>
             <Route exact path="/" component={Landing} />
+            <Route path="/terms-of-use" component={Terms} />
             <Route path="/get-started" component={Survey} />
             <Route path="/signup" component={Registration} />
             <Route path="/verify-email" component={VerifyEmail} />

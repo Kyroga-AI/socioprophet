@@ -58,7 +58,7 @@ const UpdateProfile = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { updatePassword, reAuth, logout, deleteUser } = useAuth();
+  const { currentUser, updatePassword, reAuth, logout, deleteUser } = useAuth();
 
   // computed css classes based on errors
   const computedClassNameOldPasswordError = state.passwordErrors.oldPassword
@@ -191,7 +191,7 @@ const UpdateProfile = () => {
   return (
     <div className="update">
       <h4 className="update__heading">Change Password or Delete Account</h4>
-      <h4 className="update__heading"></h4>
+      <p className="update__email">Account Email: {currentUser.email}</p>
       <div className="update__container">
         <div className="update__container__password">
           <div className="update__container__password__field">

@@ -11,7 +11,7 @@ const Header = () => {
         <img src={fish} width="35px" height="30px" alt="fish bowl" />
       </div>
       <a className="header__title" href="/">
-        <strong>[ SocioProphet ] Platform</strong>
+        <strong>SocioProphet</strong>
       </a>
     </div>
   );

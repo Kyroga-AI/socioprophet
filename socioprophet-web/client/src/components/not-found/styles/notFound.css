@@ -5,14 +5,14 @@
   background-color: #000;
 }
 
-.notFound__header {
+/* .notFound__header {
   position: fixed;
   height: 40px;
   width: 100%;
   line-height: 40px;
   z-index: 10000;
   background-color: #0c0c0c;
-}
+} */
 
 .notFound__heading {
   text-align: center;

@@ -6,7 +6,7 @@ import "./styles/notFound.css";
 const NotFound = () => {
   return (
     <div className="notFound">
-      <nav className="notFound__header">
+      <nav className="nav--header">
         <Header />
       </nav>
       <div className="notFound__container">

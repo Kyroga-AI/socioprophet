@@ -4,7 +4,7 @@ import Ticker from "react-ticker";
 import "./styles/tickerFeed.css";
 
 const TickerFeed = () => {
-  const url = "https://cors-anywhere.herokuapp.com/https://hnrss.org/newest";
+  const url = "https://corsanywhere.herokuapp.com/https://hnrss.org/newest";
 
   const GetRssFeedData = () => {
     const [feed, setFeed] = useState("");
@@ -24,7 +24,7 @@ const TickerFeed = () => {
           setFeed(items);
         }
       };
-      // getFeed();
+      getFeed();
 
       return () => {
         isCancelled = true;

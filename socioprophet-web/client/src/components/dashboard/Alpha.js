@@ -15,7 +15,7 @@ const Alpha = () => {
 
   return (
     <div className="alpha">
-      <nav className="alpha__header">
+      <nav className="nav--header">
         <Header />
         <HeaderLinks />
         <p

@@ -111,7 +111,7 @@ const Registration = () => {
 
   return (
     <div className="registration">
-      <nav className="registration__header">
+      <nav className="nav--header">
         <Header />
         <HeaderLinks />
       </nav>
