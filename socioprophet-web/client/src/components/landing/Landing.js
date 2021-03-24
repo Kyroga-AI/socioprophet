@@ -125,6 +125,11 @@ const Landing = () => {
           </p>
         )}
         <div className={`landing__header__panel ${togglePanelClassName}`}>
+          <div className="landing__login__close">
+            <p className="landing__login__close__btn" onClick={loginToggle}>
+              &#10005;
+            </p>
+          </div>
           <LoginForm />
         </div>
       </nav>
@@ -185,7 +190,7 @@ const Landing = () => {
       </div>
 
       <div className="landing__more">
-        <div className="landing__more__section">
+        <div className="landing__more__section platform">
           <h2 className="landing__more__section__heading">PLATFORM</h2>
           <FadeInSection>
             <p className="landing__more__section__info">
@@ -195,26 +200,26 @@ const Landing = () => {
             </p>
           </FadeInSection>
         </div>
-        <FadeInSection>
-          <div className="landing__more__section">
-            <h2 className="landing__more__section__heading">COMMUNITY</h2>
+
+        <div className="landing__more__section community">
+          <h2 className="landing__more__section__heading ">COMMUNITY</h2>
+          <FadeInSection>
             <p className="landing__more__section__info">
               Unlock the world's best ideas through democratized social
               intelligence
             </p>
-          </div>
-        </FadeInSection>
+          </FadeInSection>
+        </div>
 
-        <FadeInSection>
-          <div className="landing__more__section">
-            <h2 className="landing__more__section__heading">DATA & AI</h2>
-
+        <div className="landing__more__section dataAi">
+          <h2 className="landing__more__section__heading">DATA & AI</h2>
+          <FadeInSection>
             <p className="landing__more__section__info">
               Share your compute through leveraging peer to peer and federated
               networks or centralized collaboration models.
             </p>
-          </div>
-        </FadeInSection>
+          </FadeInSection>
+        </div>
       </div>
       <Footer />
     </div>

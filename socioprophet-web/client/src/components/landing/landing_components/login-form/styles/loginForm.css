@@ -1,6 +1,6 @@
 .loginForm {
   position: relative;
-  height: 100%;
+  height: calc(100% - 40px);
   background-color: #070708;
 }
 
@@ -36,6 +36,14 @@
   font-weight: 500;
 }
 
+@media (max-width: 500px) {
+  .loginForm__container__field__input {
+    text-align: center;
+    padding: 0;
+    margin-top: 15px;
+  }
+}
+
 .loginForm__container__field__input::placeholder {
   color: rgba(237, 237, 237, 1);
   font-weight: 500;
@@ -56,6 +64,13 @@
   text-align: left;
 }
 
+@media (max-width: 500px) {
+  .loginForm__container__field__reset {
+    text-align: center;
+    margin-top: 8px;
+  }
+}
+
 .loginForm__container__field__reset__link {
   color: #eee;
   font-size: 14px;
@@ -63,8 +78,7 @@
 
 .loginForm__container__field__btn {
   display: inline-block;
-  padding: 0 20px;
-  height: 50px;
+  height: 46px;
   margin: 0;
   margin-top: 30px;
   margin-left: calc(50% - 70px);
@@ -78,6 +92,14 @@
   white-space: nowrap;
   outline: 0;
   border-radius: 2px;
-  line-height: 50px;
+  line-height: 46px;
   border: 2px solid rgba(237, 237, 237, 1);
+}
+
+@media (max-width: 500px) {
+  .loginForm__container__field__btn {
+    padding: 0;
+    width: 240px;
+    margin-left: 0;
+  }
 }

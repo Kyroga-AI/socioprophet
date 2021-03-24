@@ -17,7 +17,10 @@ const Footer = () => {
         <a className="footer__responsive__link" href="#" target="_blank">
           <strong>Privacy</strong>
         </a>
-        <a className="footer__responsive__link" href="#">
+        <a
+          className="footer__responsive__link"
+          href="https://socioprophet.com/terms-of-use"
+        >
           <strong>Terms of Use</strong>
         </a>
         <a
