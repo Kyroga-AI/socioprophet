@@ -31,7 +31,12 @@ const VerifyEmail = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { currentUser, login, applyVerificationCode } = useAuth();
+  const {
+    currentUser,
+    login,
+    emailVerification,
+    applyVerificationCode,
+  } = useAuth();
 
   // computed css classes for invalid email error message
   const computedClassName = state.emailError.isError
@@ -41,6 +46,14 @@ const VerifyEmail = () => {
   const computedClassNamePasswordError = state.passwordError.isError
     ? "verify__container__field__input__text--error"
     : "";
+
+  const sendLink = async () => {
+    try {
+      await emailVerification();
+    } catch (err) {
+      console.log(`There was a problem sending the verification link: ${err}`);
+    }
+  };
 
   // handles email and password login submission
   const handleLogin = async () => {
@@ -189,7 +202,12 @@ const VerifyEmail = () => {
             hmm, looks like something went wrong
           </h2>
           <div className="verify__signin">
-            <button className="verify__signin__btn" onClick={() => {}}>
+            <button
+              className="verify__signin__btn"
+              onClick={() => {
+                sendLink;
+              }}
+            >
               Resend Link
             </button>
           </div>

@@ -58,7 +58,14 @@ const UpdateProfile = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { currentUser, updatePassword, reAuth, logout, deleteUser } = useAuth();
+  const {
+    currentUser,
+    updatePassword,
+    reAuth,
+    logout,
+    deleteUser,
+    emailVerification,
+  } = useAuth();
 
   // computed css classes based on errors
   const computedClassNameOldPasswordError = state.passwordErrors.oldPassword
@@ -188,10 +195,34 @@ const UpdateProfile = () => {
     history.push("/");
   };
 
+  const handleVerify = async () => {
+    try {
+      await emailVerification();
+    } catch (err) {
+      console.log(`There was a problem sending the verification link: ${err}`);
+    }
+  };
+
   return (
     <div className="update">
       <h4 className="update__heading">Change Password or Delete Account</h4>
-      <p className="update__email">Account Email: {currentUser.email}</p>
+      {currentUser.emailVerified ? (
+        <p className="update__email">
+          {currentUser.email}
+          <span className="verified"> &#10003; Verified</span>
+        </p>
+      ) : (
+        <>
+          <p className="update__email">
+            {currentUser.email}{" "}
+            <span className="not-verified">&#10008; Not Verified</span>
+          </p>
+          <p className="update__verify" onClick={handleVerify}>
+            Verify your email address
+          </p>
+        </>
+      )}
+
       <div className="update__container">
         <div className="update__container__password">
           <div className="update__container__password__field">

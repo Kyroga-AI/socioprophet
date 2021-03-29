@@ -218,6 +218,13 @@
   text-align: left;
   font-size: 14px;
   width: 240px;
+  font-weight: 800;
+}
+
+@media (max-width: 450px) {
+  .landing__container__main__email__field__error {
+    margin-top: 10px;
+  }
 }
 
 .landing__container__main__email__btn {

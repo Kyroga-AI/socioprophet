@@ -60,6 +60,12 @@
   font-size: 14px;
 }
 
+@media (max-width: 500px) {
+  .loginForm__container__field__error {
+    text-align: center;
+  }
+}
+
 .loginForm__container__field__reset {
   text-align: left;
 }

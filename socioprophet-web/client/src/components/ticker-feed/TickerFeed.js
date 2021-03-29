@@ -24,7 +24,7 @@ const TickerFeed = () => {
           setFeed(items);
         }
       };
-      getFeed();
+      // getFeed();
 
       return () => {
         isCancelled = true;
