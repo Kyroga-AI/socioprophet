@@ -283,7 +283,7 @@
 }
 
 .landing__more {
-  height: 600px;
+  height: 520px;
   margin-bottom: 40px;
   display: flex;
   justify-content: space-between;
@@ -314,12 +314,24 @@
 .landing__more__section {
   margin-top: 60px;
   width: 300px;
-  height: 400px;
-  padding: 30px 15px 30px 15px;
+  height: 340px;
+  padding: 25px 15px 25px 15px;
   color: #fff;
   text-align: center;
   border-top: 1px solid rgb(75, 78, 84);
   border-bottom: 1px solid rgb(75, 78, 84);
+}
+
+@media (min-width: 1600px) {
+  .landing__more__section {
+    width: 400px;
+  }
+}
+
+@media (min-width: 1900px) {
+  .landing__more__section {
+    width: 500px;
+  }
 }
 
 @media (max-width: 1150px) {
@@ -331,7 +343,7 @@
 @media (max-width: 950px) {
   .landing__more__section {
     width: 70%;
-    height: 200px;
+    height: 170px;
     margin-left: 15%;
     padding: 30px 0px 30px 0px;
   }
@@ -345,7 +357,7 @@
 
 @media (max-width: 500px) {
   .landing__more__section {
-    height: 250px;
+    height: 230px;
   }
 }
 
@@ -396,6 +408,24 @@
   padding: 0px 10px 0px 10px;
 }
 
+@media (min-width: 1600px) {
+  .landing__more__section__heading {
+    font-size: 40px;
+  }
+  .landing__more__section__info {
+    font-size: 22px;
+  }
+}
+
+@media (min-width: 1900px) {
+  .landing__more__section__heading {
+    font-size: 44px;
+  }
+  .landing__more__section__info {
+    font-size: 26px;
+  }
+}
+
 @media (max-width: 1150px) {
   .landing__more__section__heading {
     font-size: 30px;
@@ -411,7 +441,7 @@
     font-size: 28px;
   }
   .landing__more__section__info {
-    font-size: 18px;
+    font-size: 15px;
   }
 }
 

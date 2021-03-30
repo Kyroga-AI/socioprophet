@@ -188,15 +188,13 @@ const Landing = () => {
 
         {/* <Offering /> */}
       </div>
-
       <div className="landing__more">
         <div className="landing__more__section platform">
           <h2 className="landing__more__section__heading">PLATFORM</h2>
           <FadeInSection>
             <p className="landing__more__section__info">
-              Distributed infrastructure, data, analytics & AI. Built as a
-              social networking platform. For geeks, but simple enough for
-              everyone to use.
+              Built as a social networking platform. For geeks, but simple
+              enough for everyone to use.
             </p>
           </FadeInSection>
         </div>
@@ -206,7 +204,7 @@ const Landing = () => {
           <FadeInSection>
             <p className="landing__more__section__info">
               Unlock the world's best ideas through democratized social
-              intelligence
+              intelligence, data, analytics & AI.
             </p>
           </FadeInSection>
         </div>

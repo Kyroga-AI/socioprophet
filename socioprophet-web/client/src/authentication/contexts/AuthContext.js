@@ -62,14 +62,26 @@ export const AuthProvider = ({ children }) => {
     return auth.signOut();
   };
 
-  const resetPassword = (email) => {
-    return auth.sendPasswordResetEmail(email);
-  };
-
   const googleSignIn = () => {
     return auth.signInWithRedirect(googleProvider);
   };
 
+  const resetPassword = (email) => {
+    return auth.sendPasswordResetEmail(email);
+  };
+
+  const verifyResetCode = (actionCode, newPassword) => {
+    auth
+      .verifyPasswordResetCode(actionCode)
+      .then(() => {
+        auth.confirmPasswordReset(actionCode, newPassword).then(() => {
+          console.log("successful");
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   const emailVerification = () => {
     return currentUser.sendEmailVerification();
   };
@@ -140,8 +152,9 @@ export const AuthProvider = ({ children }) => {
     updateUserSurveyCompleted,
     login,
     logout,
-    resetPassword,
     googleSignIn,
+    resetPassword,
+    verifyResetCode,
     emailVerification,
     applyVerificationCode,
     surveyResponseCompleted,

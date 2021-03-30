@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Landing from "./components/landing/Landing";
 import Survey from "./components/registration/survey/Survey";
 import Registration from "./components/registration/Registration";
-import VerifyEmail from "./components/registration/VerifyEmail";
+import Account from "./components/registration/Account";
 import PasswordReset from "./components/dashboard/profile/PasswordReset";
 import UpdateProfile from "./components/dashboard/profile/UpdateProfile";
 import Alpha from "./components/dashboard/Alpha";
@@ -29,7 +29,7 @@ const App = () => {
             <Route path="/terms-of-use" component={Terms} />
             <Route path="/get-started" component={Survey} />
             <Route path="/signup" component={Registration} />
-            <Route path="/verify-email" component={VerifyEmail} />
+            <Route path="/account" component={Account} />
             <Route path="/password-reset" component={PasswordReset} />
             <PrivateRoute path="/update-profile" component={UpdateProfile} />
             <PrivateRoute exact path="/alpha" component={Alpha} />

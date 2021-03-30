@@ -122,8 +122,6 @@ const UpdateProfile = () => {
       await reAuth(oldPasswordRef.current.value);
       // update user password with new password reference
       await updatePassword(passwordRef.current.value);
-      // push user to the alpha dashboard page
-      history.push("/alpha");
     } catch (err) {
       if (err.code === "auth/wrong-password") {
         // dispatch error for wrong password
@@ -135,6 +133,8 @@ const UpdateProfile = () => {
     }
     // set loading back to false and enable button again
     dispatch({ type: "SET_LOADING", payload: false });
+    // push user to the alpha dashboard page
+    history.push("/alpha");
   };
 
   // when user presses 'enter' for change password submission
