@@ -1,0 +1,237 @@
+.profile {
+  position: relative;
+  padding: 20px 20px 20px 30px;
+  color: #fff;
+}
+
+.profile__container {
+  position: relative;
+  margin-bottom: 40px;
+  height: 690px;
+}
+
+.profile__container__header {
+  margin-top: 20px;
+}
+
+.profile__container__header__heading {
+  font-size: 26px;
+  color: #777;
+}
+
+.profile__container__header__creationTime {
+  padding-bottom: 20px;
+  font-size: 12px;
+  color: #777;
+  border-bottom: 1px solid rgb(75, 78, 84);
+}
+
+.profile__container__user {
+  margin-top: 40px;
+  font-size: 18px;
+}
+
+.email-verified {
+  margin-left: 40px;
+  color: rgb(23, 101, 23);
+}
+
+.email-not-verified {
+  margin-left: 40px;
+  color: rgb(145, 30, 30);
+}
+
+.verification-link {
+  font-size: 16px;
+  color: #c6c6c6;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.verification-link:hover {
+  color: rgb(181, 181, 181);
+}
+
+.verification-link:active {
+  color: #333;
+}
+
+.update-notification {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgb(32, 127, 32);
+}
+
+.verification-link--error {
+  font-size: 14px;
+  font-weight: 400;
+  color: #d56666;
+}
+
+.profile__container__user__password {
+  margin-top: 20px;
+}
+
+.profile__container__user__password__btn {
+  color: #c6c6c6;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.profile__container__user__password__btn:hover {
+  color: rgb(181, 181, 181);
+}
+
+.profile__container__user__password__btn:active {
+  color: #333;
+}
+
+.profile__container__user__password__field {
+  margin-left: 20px;
+  margin-bottom: 10px;
+  width: 250px;
+}
+
+.profile__container__password__field__input {
+  color: rgba(237, 237, 237, 1);
+  margin-top: 12px;
+  border-radius: 0;
+  font-size: 18px;
+  line-height: 30px;
+  position: relative;
+  width: 100%;
+  background: 0 0;
+  border: none;
+  border-bottom: 1px solid rgba(237, 237, 237, 1);
+  outline: 0;
+  padding: 0;
+  text-rendering: auto;
+  letter-spacing: normal;
+  appearance: textfield;
+  text-align: left;
+}
+
+.profile__container__password__field__input--error {
+  border-bottom: 1px solid #d56666;
+}
+
+.profile__container__password__field__error {
+  color: #d56666;
+  padding-top: 4px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.profile__container__password__field__btn {
+  display: inline-block;
+  padding: 0 18px;
+  height: 40px;
+  margin: 0;
+  margin-top: 20px;
+  user-select: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #fff;
+  background: transparent;
+  text-align: center;
+  white-space: nowrap;
+  outline: 0;
+  border-radius: 2px;
+  line-height: 40px;
+  border: 2px solid rgba(237, 237, 237, 1);
+}
+
+.profile__container__password__field__btn:hover {
+  background: #eee;
+  color: #333;
+}
+.profile__container__password__field__btn:active {
+  color: #fff;
+}
+
+.profile__container__footer {
+  position: absolute;
+  padding-top: 10px;
+  bottom: 0px;
+  height: 145px;
+  width: 100%;
+  border-top: 1px solid rgb(75, 78, 84);
+}
+
+.profile__container__footer__btn {
+  font-size: 16px;
+  cursor: pointer;
+  color: #c6c6c6;
+  font-weight: bold;
+}
+
+.profile__container__footer__btn:hover {
+  color: rgb(181, 181, 181);
+}
+
+.profile__container__footer__btn:active {
+  color: #333;
+}
+
+.logout {
+  display: inline-block;
+}
+
+.logout-error {
+  color: #d56666;
+  text-align: left;
+  font-size: 14px;
+}
+
+.profile__container__footer__confirm {
+  display: flex;
+  width: 100%;
+}
+
+.profile__container__footer__confirm__input {
+  color: rgba(237, 237, 237, 1);
+  margin-top: 12px;
+  border-radius: 0;
+  font-size: 18px;
+  line-height: 30px;
+  position: relative;
+  width: 200px;
+  background: 0 0;
+  border: none;
+  border-bottom: 1px solid rgba(237, 237, 237, 1);
+  outline: 0;
+  padding: 0;
+  text-rendering: auto;
+  letter-spacing: normal;
+  appearance: textfield;
+  text-align: left;
+}
+
+.profile__container__footer__confirm__btn {
+  display: inline-block;
+  padding: 0 18px;
+  height: 40px;
+  margin: 0;
+  margin-left: 50px;
+  user-select: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+  background: transparent;
+  text-align: center;
+  white-space: nowrap;
+  outline: 0;
+  border-radius: 2px;
+  line-height: 40px;
+  border: 2px solid rgba(237, 237, 237, 1);
+}
+
+.profile__container__footer__confirm__btn:hover {
+  background: #eee;
+  color: #333;
+}
+
+.profile__container__footer__confirm__btn:active {
+  color: #fff;
+}

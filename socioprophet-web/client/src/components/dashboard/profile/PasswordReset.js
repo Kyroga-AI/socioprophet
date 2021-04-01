@@ -1,57 +1,111 @@
 import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+
+import Header from "../../landing/landing_components/Header";
+import HeaderLinks from "../../landing/landing_components/HeaderLinks";
+import Footer from "../../landing/landing_components/Footer";
 import { useAuth } from "../../../authentication/contexts/AuthContext";
+
+// email validator
+import { validateEmail } from "../../landing/validate-email/validateEmail";
 
 // styles
 import "./styles/passwordReset.css";
 
 const PasswordReset = () => {
-  const emailRef = useRef();
-  const { resetPassword } = useAuth();
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  // states
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState({
+    isError: false,
+    message: "",
+  });
+  const [notification, setNotification] = useState();
+  // refs
+  const emailRef = useRef();
+  // custom hooks
+  const { resetPassword } = useAuth();
+  // other hooks
+  const history = useHistory();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // computed css classes for invalid email error message
+  const computedClassName = emailError.isError
+    ? "reset__container__field__input--error"
+    : "";
+
+  // handles the email submission and sends user to survey
+  const handleEmail = async () => {
+    // set loading to disable 'begin' button
+    setLoading(true);
+
+    // check for valid email and dispatch error accordingly
+    if (!validateEmail(emailRef.current.value)) {
+      return setEmailError({
+        isError: true,
+        message: "Invalid email address!",
+      });
+    }
+
+    // if email check passes, reset any previously dispatched error
+    setEmailError({ isError: false });
 
     try {
-      setMessage("");
-      setError("");
-      setLoading(true);
       await resetPassword(emailRef.current.value);
-      setMessage("Please check your inbox for further instructions");
+      setNotification("Please check your inbox for further instructions!");
     } catch {
-      setError("Account does not exist, unable to reset password");
+      return setEmailError({
+        isError: true,
+        message: "An account does not exist with this email address",
+      });
     }
-    setLoading(false);
+    setTimeout(() => {
+      history.push("/");
+    }, 2000);
+  };
+
+  // when user presses 'enter' for email submition
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleEmail();
+    } else {
+      return;
+    }
   };
 
   return (
     <div className="reset">
-      <h4 className="reset__heading">Reset Your Password Here!</h4>
-      {error && <p className="reset__error">{error}</p>}
-      {message && <p className="reset__message">{message}</p>}
-      <form className="reset__form" disabled={loading} onSubmit={handleSubmit}>
-        <div className="reset__form__label">
+      <nav className="nav--header">
+        <Header />
+        <HeaderLinks />
+      </nav>
+      {notification && <p className="reset-notification">{notification}</p>}
+      <div className="reset__container">
+        <div className="reset__container__field">
           <input
-            className="reset__form__input"
+            className={`reset__container__field__input ${computedClassName}`}
             name="email"
             type="email"
-            required
-            placeholder="Email"
+            spellCheck="false"
             ref={emailRef}
+            required
+            onKeyDown={handleKeyPress}
+            placeholder="ENTER EMAIL"
           />
+          {emailError.isError && (
+            <p className="reset__container__field__error">
+              {emailError.message}
+            </p>
+          )}
         </div>
-        <button className="reset__form__btn" type="submit">
+
+        <div
+          className="reset__container__field__btn"
+          onClick={handleEmail}
+          disabled={loading}
+        >
           Send Reset Password Link
-        </button>
-        <div className="reset__form__return">
-          <Link className="reset__form__return__link" to="/">
-            Return
-          </Link>
         </div>
-      </form>
+      </div>
+      <Footer />
     </div>
   );
 };

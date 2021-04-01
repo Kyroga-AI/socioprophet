@@ -15,7 +15,7 @@ export const updateReducer = (state, action) => {
         },
         newPassword: { isError: false, message: "" },
         confirmPassword: { isError: false, message: "" },
-        modalPassword: { isError: false, message: "" },
+        confirmDeletePassword: { isError: false, message: "" },
       },
     };
   }
@@ -29,7 +29,7 @@ export const updateReducer = (state, action) => {
           message: "Must be at least six characters long!",
         },
         confirmPassword: { isError: false, message: "" },
-        modalPassword: { isError: false, message: "" },
+        confirmDeletePassword: { isError: false, message: "" },
       },
     };
   }
@@ -40,7 +40,7 @@ export const updateReducer = (state, action) => {
         oldPassword: { isError: false, message: "" },
         newPassword: { isError: false, message: "" },
         confirmPassword: { isError: true, message: "Passwords do not match!" },
-        modalPassword: { isError: false, message: "" },
+        confirmDeletePassword: { isError: false, message: "" },
       },
     };
   }
@@ -51,7 +51,7 @@ export const updateReducer = (state, action) => {
         oldPassword: { isError: true, message: "Password is incorrect!" },
         newPassword: { isError: false, message: "" },
         confirmPassword: { isError: false, message: "" },
-        modalPassword: { isError: false, message: "" },
+        confirmDeletePassword: { isError: false, message: "" },
       },
     };
   }
@@ -62,7 +62,7 @@ export const updateReducer = (state, action) => {
         oldPassword: { isError: true, message: "Something went wrong!" },
         newPassword: { isError: false, message: "" },
         confirmPassword: { isError: false, message: "" },
-        modalPassword: { isError: false, message: "" },
+        confirmDeletePassword: { isError: false, message: "" },
       },
     };
   }
@@ -73,7 +73,7 @@ export const updateReducer = (state, action) => {
         oldPassword: { isError: false, message: "" },
         newPassword: { isError: false, message: "" },
         confirmPassword: { isError: false, message: "" },
-        modalPassword: {
+        confirmDeletePassword: {
           isError: true,
           message: "Please enter your password!",
         },
@@ -87,7 +87,7 @@ export const updateReducer = (state, action) => {
         oldPassword: { isError: false, message: "" },
         newPassword: { isError: false, message: "" },
         confirmPassword: { isError: false, message: "" },
-        modalPassword: {
+        confirmDeletePassword: {
           isError: true,
           message: "Password is incorrect!",
         },
@@ -101,7 +101,7 @@ export const updateReducer = (state, action) => {
         oldPassword: { isError: false, message: "" },
         newPassword: { isError: false, message: "" },
         confirmPassword: { isError: false, message: "" },
-        modalPassword: {
+        confirmDeletePassword: {
           isError: true,
           message: "Something went wrong!",
         },

@@ -6,7 +6,6 @@ import Survey from "./components/registration/survey/Survey";
 import Registration from "./components/registration/Registration";
 import Account from "./components/registration/Account";
 import PasswordReset from "./components/dashboard/profile/PasswordReset";
-import UpdateProfile from "./components/dashboard/profile/UpdateProfile";
 import Alpha from "./components/dashboard/Alpha";
 import NotFound from "./components/not-found/NotFound";
 import Terms from "./components/legal/Terms";
@@ -31,7 +30,6 @@ const App = () => {
             <Route path="/signup" component={Registration} />
             <Route path="/account" component={Account} />
             <Route path="/password-reset" component={PasswordReset} />
-            <PrivateRoute path="/update-profile" component={UpdateProfile} />
             <PrivateRoute exact path="/alpha" component={Alpha} />
             <Route component={NotFound} />
             {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}

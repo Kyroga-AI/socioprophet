@@ -34,7 +34,7 @@ const Registration = () => {
   // hooks
   const history = useHistory();
   // custom hooks
-  const { signup, addUser, emailVerification } = useAuth();
+  const { signup, addUser } = useAuth();
 
   // computed css classes for invalid email error message
   const computedClassNamePasswordError = state.errors.passwordError.isError
@@ -64,16 +64,13 @@ const Registration = () => {
     try {
       // set loading to disable 'begin' button
       dispatch({ type: "SET_LOADING", payload: true });
-
+      const emailAddress = getUrlParams();
       // signup user to Firebase with email and password
       await signup(emailAddress, passwordRef.current.value);
       // add user to Firestore with email
       await addUser(emailAddress);
-      // send email address verifcation email to user
-      await emailVerification();
-      // after successful authentication, send user to alpha dashboard
-      history.push("/alpha");
     } catch (err) {
+      console.error(err);
       // check if the error is because a user with the email address already exists
       if (err.code === "auth/email-already-in-use") {
         return dispatch({ type: "EMAIL_TAKEN" });
@@ -81,6 +78,8 @@ const Registration = () => {
     }
     // set loading back to false and enable button again
     dispatch({ type: "SET_LOADING", payload: false });
+    // after successful authentication, send user to alpha dashboard
+    history.push("/alpha");
   };
 
   // when user presses 'enter' for email submition
@@ -93,20 +92,18 @@ const Registration = () => {
   };
 
   // set the user email address in state
-  const getEmailAddress = () => {
+  const getUrlParams = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const emailAddress = urlParams.get("id");
-    if (emailAddress === null) {
-      history.push("/");
-    }
-    // update emailAddress state with email search query
-    dispatch({ type: "SET_EMAIL", payload: emailAddress });
+    return emailAddress;
   };
 
-  // on initial render, get the email address from url
+  // on initial render, check the email address from url
   useEffect(() => {
-    getEmailAddress();
-    console.log(state.emailAddress);
+    const emailAddress = getUrlParams();
+    if (emailAddress === null || emailAddress === "") {
+      history.push("/");
+    }
   }, []);
 
   return (

@@ -1,5 +1,9 @@
 import React, { useEffect, useState, useReducer, useRef } from "react";
 import { useHistory } from "react-router-dom";
+
+import Header from "../landing/landing_components/Header";
+import HeaderLinks from "../landing/landing_components/HeaderLinks";
+import Footer from "../landing/landing_components/Footer";
 import { useAuth } from "../../authentication/contexts/AuthContext";
 
 // email validator
@@ -28,6 +32,10 @@ const Account = () => {
   const [actionCode, setActionCode] = useState();
   const [verificationError, setVerificationError] = useState(false);
   const [newPasswordError, setNewPasswordError] = useState({
+    isError: false,
+    message: "",
+  });
+  const [linkSent, setLinkSent] = useState({
     isError: false,
     message: "",
   });
@@ -65,7 +73,11 @@ const Account = () => {
     try {
       await emailVerification();
     } catch (err) {
-      console.log(`There was a problem sending the verification link: ${err}`);
+      return setLinkSent({
+        isError: true,
+        message:
+          "There is still a problem sending the verification link! Please try again in an hour.",
+      });
     }
   };
 
@@ -187,39 +199,44 @@ const Account = () => {
   }, []);
 
   return (
-    <>
+    <div className="account">
+      <nav className="nav--header">
+        <Header />
+        <HeaderLinks />
+      </nav>
       {renderReset && (
-        <div className="account">
-          <div className="account__reset">
+        <div className="account__reset">
+          <div className="reset__container__field">
             <input
-              className={`verify__container__field__input__text ${computedClassNameNewPasswordError}`}
-              name="password"
+              className={`reset__container__field__input ${computedClassNameNewPasswordError}`}
+              name="new-password"
               type="password"
               spellCheck="false"
               ref={newPasswordRef}
               required
+              onKeyDown={handleKeyPress}
               placeholder="ENTER NEW PASSWORD"
             />
             {newPasswordError.isError && (
-              <p className="verify__container__field__error">
+              <p className="reset__container__field__error">
                 {newPasswordError.message}
               </p>
             )}
           </div>
 
           <div
-            className="account__reset__btn"
+            className="reset__container__field__btn"
             onClick={resetPassword}
             disabled={state.loading}
           >
-            RESET PASSWORD
+            Reset Password
           </div>
         </div>
       )}
       {renderVerification && (
-        <div className="account">
+        <div className="">
           {authRequired && (
-            <>
+            <div className="account__verify__container">
               <h2 className="verify__heading">Please login to continue</h2>
 
               <div className="verify__container">
@@ -267,44 +284,46 @@ const Account = () => {
                   VERIFY
                 </div>
               </div>
-            </>
+            </div>
           )}
           {verificationError && (
-            <>
+            <div className="account__verify__container">
               <h2 className="verify__heading">
                 hmm, looks like something went wrong
               </h2>
               <div className="verify__signin">
-                <button
-                  className="verify__signin__btn"
-                  onClick={() => {
-                    sendLink;
-                  }}
-                >
+                <div className="verify__signin__btn" onClick={sendLink}>
                   Resend Link
-                </button>
+                </div>
+                {linkSent.isError && (
+                  <h2 className="verify__heading verify--error">
+                    {linkSent.message}
+                  </h2>
+                )}
               </div>
-            </>
+            </div>
           )}
           {verified && (
-            <>
-              <h2 className="verify__heading">Email Verified!</h2>
+            <div className="account__verify__container">
+              <h2 className="verify__heading">
+                Thanks for verifing your email address!
+              </h2>
               <h4 className="verify__email">{currentUser.email}</h4>
               <div className="verify__signin">
-                <button
+                <div
                   className="verify__signin__btn"
                   onClick={() => {
                     history.push("/alpha");
                   }}
                 >
                   Continue
-                </button>
+                </div>
               </div>
-            </>
+            </div>
           )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

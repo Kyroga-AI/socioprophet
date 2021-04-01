@@ -2,21 +2,66 @@
   position: fixed;
   height: 100%;
   width: 100%;
-  background-color: #000;
+  background-color: rgb(171, 171, 171);
   overflow: scroll;
-  padding-bottom: 2rem;
+  padding-bottom: 40px;
 }
 
-/* .alpha__header {
-  width: 100%;
+.alpha__header__login {
   height: 40px;
+  width: 60px;
+  margin-right: 30px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
   line-height: 40px;
+  box-sizing: border-box;
+  text-align: center;
+  color: #fff;
+}
+
+.alpha__header__login__avatar {
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.alpha__header__panel {
+  top: 40px;
+  height: calc(100% - 40px);
+  overflow: scroll;
+  background-color: #070708;
+  border-left: #070708;
+  border-right: #070708;
+  transition-timing-function: cubic-bezier(0.2, 0, 1, 0.9);
   position: fixed;
-  display: flex;
-  z-index: 10000;
-  background-color: #0c0c0c;
+  right: 0;
+  bottom: 0;
+  z-index: 8000;
+  width: 0;
+  color: #c6c6c6;
+  border: none;
+  transition: width 0.11s;
+  will-change: width;
+}
+
+.alpha__header__panel--expanded {
+  width: 600px;
+}
+
+.alpha__login__close {
+  padding: 10px 20px;
+}
+
+@media (min-width: 720px) {
+  .alpha__login__close {
+    display: none;
+  }
+}
+
+.alpha__login__close__btn {
+  font-size: 28px;
   color: rgb(217, 216, 255);
-} */
+}
 
 .alpha__header__link {
   height: 40px;
