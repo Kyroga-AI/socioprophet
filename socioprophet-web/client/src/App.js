@@ -13,7 +13,6 @@ import Terms from "./components/legal/Terms";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import { AuthProvider } from "./authentication/contexts/AuthContext";
 
-import Button from "./components/ui-components/button/Button";
 // import UInterface from "./components/original-carbon-dashboard/UInterface";
 // import PopoutTerminal from "./components/original-carbon-dashboard/interface_components/dashboard_components/PopoutTerminal";
 
@@ -33,7 +32,6 @@ const App = () => {
             <Route path="/signup" component={Registration} />
             <Route path="/account" component={Account} />
             <Route path="/password-reset" component={PasswordReset} />
-            <Route path="/button" component={Button} />
             <PrivateRoute exact path="/alpha" component={Alpha} />
             <Route component={NotFound} />
             {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
