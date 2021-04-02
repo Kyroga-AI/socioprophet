@@ -327,11 +327,7 @@ const Profile = () => {
                   placeholder="Enter Password"
                 />
 
-                <div
-                  style={{ marginLeft: "50px" }}
-                  className="button button--sm"
-                  onClick={handleDelete}
-                >
+                <div className="button button--sm" onClick={handleDelete}>
                   Confirm Delete
                 </div>
               </div>

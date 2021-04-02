@@ -167,13 +167,14 @@ const Landing = () => {
                 placeholder="ENTER EMAIL"
               />
             </div>
-
-            <div
-              className="button button--lg"
-              onClick={handleEmail}
-              disabled={state.loading}
-            >
-              BEGIN
+            <div className="btn__container">
+              <div
+                className="button button--lg"
+                onClick={handleEmail}
+                disabled={state.loading}
+              >
+                BEGIN
+              </div>
             </div>
           </div>
           <div className="landing__container__main__login">

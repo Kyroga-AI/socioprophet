@@ -112,17 +112,16 @@ const Registration = () => {
         <Header />
         <HeaderLinks />
       </nav>
+      <Suspense fallback={<p>Loading ...</p>}>
+        <TickerFeed />
+      </Suspense>
       <div className="registration__container">
-        <Suspense fallback={<p>Loading ...</p>}>
-          <TickerFeed />
-        </Suspense>
         <div className="registration__container__main">
           <div className="registration__container__main__logo">
             <img src={logo} width="450px" height="77px" />
           </div>
           <p className="registration__container__main__subtitle">
             <strong>
-              {/* Open Collaborative Socio-Dat-Alytics. For geeks, by geeks. */}
               COMMUNITY. DATA. ANALYTICS. AI. SOCIAL.
               <br />
               For geeks, but easy enough for everyone.
@@ -176,6 +175,19 @@ const Registration = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="registration__more">
+        <div className="registration__more__section platform">
+          <h2 className="landing__more__section__heading">PLATFORM</h2>
+        </div>
+
+        <div className="registration__more__section community">
+          <h2 className="landing__more__section__heading ">COMMUNITY</h2>
+        </div>
+
+        <div className="registration__more__section dataAi">
+          <h2 className="landing__more__section__heading">DATA & AI</h2>
         </div>
       </div>
       <Footer />

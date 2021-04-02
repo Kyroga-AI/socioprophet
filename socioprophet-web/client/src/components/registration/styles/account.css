@@ -9,12 +9,19 @@
 
 .account__reset {
   position: absolute;
-  top: calc(50% - 100px);
+  top: calc(50% - 60px);
   height: 200px;
   width: 100%;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+  .account__reset {
+    display: grid;
+    top: calc(50% - 100px);
+  }
 }
 
 .account__reset__btn:hover {
@@ -35,6 +42,16 @@
   font-size: 20px;
   font-weight: 400;
   text-align: center;
+}
+
+@media (max-width: 450px) {
+  .verify__heading {
+    font-size: 16px;
+  }
+
+  .verify__email {
+    font-size: 16px;
+  }
 }
 
 .verify--error {

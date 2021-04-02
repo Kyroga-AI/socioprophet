@@ -63,8 +63,9 @@
 
 @media (max-width: 500px) {
   .loginForm__container__field__btn {
+    display: flex;
     padding: 0;
-    width: 240px;
+    justify-content: center;
     margin-left: 0;
   }
 }

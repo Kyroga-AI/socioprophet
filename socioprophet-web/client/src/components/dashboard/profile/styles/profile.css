@@ -7,11 +7,23 @@
 .profile__container {
   position: relative;
   margin-bottom: 40px;
-  height: 690px;
+  height: 720px;
+}
+
+@media (max-width: 550px) {
+  .profile__container {
+    height: 780px;
+  }
+}
+
+@media (max-width: 440px) {
+  .profile__container {
+    height: 830px;
+  }
 }
 
 .profile__container__header {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .profile__container__header__heading {
@@ -39,6 +51,18 @@
 .email-not-verified {
   margin-left: 40px;
   color: rgb(145, 30, 30);
+}
+
+@media (max-width: 460px) {
+  .email-verified {
+    display: grid;
+    margin-left: 0;
+  }
+
+  .email-not-verified {
+    display: grid;
+    margin-left: 0;
+  }
 }
 
 .verification-link {
@@ -93,6 +117,12 @@
   width: 250px;
 }
 
+@media (max-width: 460px) {
+  .profile__container__user__password__field {
+    margin-left: 0;
+  }
+}
+
 .profile__container__password__field__input--error {
   border-bottom: 1px solid #d56666;
 }
@@ -141,4 +171,26 @@
 .profile__container__footer__confirm {
   display: flex;
   width: 460px;
+}
+
+.profile__container__footer__confirm > div {
+  margin-left: 50px;
+}
+
+@media (max-width: 550px) {
+  .profile__container__footer__confirm {
+    display: grid;
+    width: 100%;
+
+    padding-bottom: 80px;
+  }
+
+  .profile__container__footer__confirm > input {
+    width: 240px;
+  }
+  .profile__container__footer__confirm > div {
+    width: 200px;
+    margin-top: 25px;
+    margin-left: 0px;
+  }
 }
