@@ -1,15 +1,3 @@
-/* .registration__header {
-  width: 100%;
-  height: 40px;
-  line-height: 40px;
-  position: fixed;
-  display: flex;
-  align-items: center;
-  z-index: 10000;
-  background-color: #070708;
-  color: #fff;
-} */
-
 .registration__container {
   background-image: url("../../../../public/images/mothership-background.jpg");
   background-size: cover;
@@ -62,28 +50,6 @@
   height: 35px;
 }
 
-.registration__container__main__password__section__field__input {
-  color: rgba(237, 237, 237, 1);
-  border-radius: 0;
-  font-size: 20px;
-  line-height: 30px;
-  position: relative;
-  width: 100%;
-  background: 0 0;
-  border: none;
-  border-bottom: 1px solid rgba(237, 237, 237, 1);
-  outline: 0;
-  padding: 0;
-  text-rendering: auto;
-  letter-spacing: normal;
-  appearance: textfield;
-  text-align: left;
-}
-
-.registration__container__main__password__section__field__input::placeholder {
-  color: rgba(237, 237, 237, 1);
-}
-
 .registration__container__main__password__section__field__input--error {
   border-bottom: 1px solid #d56666;
 }
@@ -96,30 +62,6 @@
 }
 
 .registration__container__main__password__btn {
-  display: inline-block;
-  padding: 0 20px;
-  height: 50px;
-  margin: 0;
   margin-left: 20px;
-  margin-top: 54px;
-  user-select: none;
-  cursor: pointer;
-  font-size: 20px;
-  color: #fff;
-  background: transparent;
-  text-align: center;
-  white-space: nowrap;
-  outline: 0;
-  border-radius: 2px;
-  line-height: 50px;
-  border: 2px solid rgba(237, 237, 237, 1);
-}
-
-.registration__container__main__password__btn:hover {
-  background: #eee;
-  color: #333;
-}
-
-.registration__container__main__password__btn:active {
-  color: #fff;
+  margin-top: 78px;
 }

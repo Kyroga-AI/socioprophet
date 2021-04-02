@@ -50,10 +50,10 @@ const Footer = () => {
           </a>
           <a
             className="footer__social__btn"
-            href="https://github.com/SocioProphet"
+            href="https://gitlab.com/socioprophet"
             target="_blank"
           >
-            <i className="fa fa-github" aria-hidden="true"></i>
+            <i className="fa fa-gitlab" aria-hidden="true"></i>
           </a>
         </div>
         <div className="footer__references">

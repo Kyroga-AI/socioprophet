@@ -8,6 +8,7 @@ import { validateEmail } from "../../validate-email/validateEmail";
 import { loginReducer } from "../../../../reducers/loginReducer";
 // styles
 import "./styles/loginForm.css";
+
 import googleIcon from "../../../../../public/images/google-sign-in-light.jpg";
 
 // state for reducer
@@ -102,7 +103,7 @@ const LoginForm = () => {
       <div className="loginForm__container">
         <div className="loginForm__container__field">
           <input
-            className={`loginForm__container__field__input ${computedClassName}`}
+            className={`inputText inputText--sm ${computedClassName}`}
             name="email"
             type="email"
             spellCheck="false"
@@ -119,7 +120,7 @@ const LoginForm = () => {
 
           <input
             style={{ marginTop: "2rem" }}
-            className={`loginForm__container__field__input ${computedClassNamePasswordError}`}
+            className={`inputText inputText--sm ${computedClassNamePasswordError}`}
             name="password"
             type="password"
             spellCheck="false"
@@ -151,12 +152,14 @@ const LoginForm = () => {
               SocioProphet Team
             </p>
           </div>
-          <div
-            className="loginForm__container__field__btn"
-            onClick={handleLogin}
-            disabled={state.loading}
-          >
-            LOGIN
+          <div className="loginForm__container__field__btn">
+            <div
+              className="button button--sm"
+              onClick={handleLogin}
+              disabled={state.loading}
+            >
+              LOGIN
+            </div>
           </div>
 
           <br />

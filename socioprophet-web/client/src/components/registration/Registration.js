@@ -133,7 +133,7 @@ const Registration = () => {
             <div className="registration__container__main__password__section">
               <div className="registration__container__main__password__section__field">
                 <input
-                  className={`registration__container__main__password__section__field__input ${computedClassNamePasswordError}`}
+                  className={`inputText inputText--lg ${computedClassNamePasswordError}`}
                   name="password"
                   type="password"
                   spellCheck="false"
@@ -150,7 +150,7 @@ const Registration = () => {
               </div>
               <div className="registration__container__main__password__section__field">
                 <input
-                  className={`registration__container__main__password__section__field__input ${computedClassNamePasswordConfirmError}`}
+                  className={`inputText inputText--lg ${computedClassNamePasswordConfirmError}`}
                   name="password-confirmation"
                   type="password"
                   spellCheck="false"
@@ -166,12 +166,14 @@ const Registration = () => {
                 )}
               </div>
             </div>
-            <div
-              className="registration__container__main__password__btn"
-              onClick={handleSubmit}
-              disabled={state.loading}
-            >
-              ONWARD
+            <div className="registration__container__main__password__btn">
+              <div
+                className="button button--lg"
+                onClick={handleSubmit}
+                disabled={state.loading}
+              >
+                ONWARD
+              </div>
             </div>
           </div>
         </div>

@@ -11,10 +11,10 @@ const HeaderLinks = () => {
           <li id="spGitHub" className="headerLinks__list__item">
             <a
               className="headerLinks__list__item__link"
-              href="https://github.com/SocioProphet"
+              href="https://gitlab.com/socioprophet"
               target="_blank"
             >
-              GitHub
+              GitLab
             </a>
           </li>
           <li id="spBlog" className="headerLinks__list__item">

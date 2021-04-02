@@ -208,7 +208,7 @@ const Account = () => {
         <div className="account__reset">
           <div className="reset__container__field">
             <input
-              className={`reset__container__field__input ${computedClassNameNewPasswordError}`}
+              className={`inputText inputText--lg ${computedClassNameNewPasswordError}`}
               name="new-password"
               type="password"
               spellCheck="false"
@@ -225,7 +225,7 @@ const Account = () => {
           </div>
 
           <div
-            className="reset__container__field__btn"
+            className="button button--lg"
             onClick={resetPassword}
             disabled={state.loading}
           >
@@ -243,7 +243,7 @@ const Account = () => {
                 <div className="verify__container__field">
                   <div className="verify__container__field__input">
                     <input
-                      className={`verify__container__field__input__text ${computedClassName}`}
+                      className={`inputText inputText--lg ${computedClassName}`}
                       name="email"
                       type="email"
                       spellCheck="false"
@@ -260,7 +260,7 @@ const Account = () => {
                   </div>
                   <div className="verify__container__field__input">
                     <input
-                      className={`verify__container__field__input__text ${computedClassNamePasswordError}`}
+                      className={`inputText inputText--lg ${computedClassNamePasswordError}`}
                       name="password"
                       type="password"
                       spellCheck="false"
@@ -276,12 +276,14 @@ const Account = () => {
                     )}
                   </div>
                 </div>
-                <div
-                  className="verify__container__btn"
-                  onClick={handleLogin}
-                  disabled={state.loading}
-                >
-                  VERIFY
+                <div className="verify__container__btn">
+                  <div
+                    className="button button--lg"
+                    onClick={handleLogin}
+                    disabled={state.loading}
+                  >
+                    VERIFY
+                  </div>
                 </div>
               </div>
             </div>
@@ -292,7 +294,7 @@ const Account = () => {
                 hmm, looks like something went wrong
               </h2>
               <div className="verify__signin">
-                <div className="verify__signin__btn" onClick={sendLink}>
+                <div className="button button--lg" onClick={sendLink}>
                   Resend Link
                 </div>
                 {linkSent.isError && (
@@ -311,7 +313,7 @@ const Account = () => {
               <h4 className="verify__email">{currentUser.email}</h4>
               <div className="verify__signin">
                 <div
-                  className="verify__signin__btn"
+                  className="button button--lg"
                   onClick={() => {
                     history.push("/alpha");
                   }}

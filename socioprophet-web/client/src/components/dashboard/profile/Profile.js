@@ -238,7 +238,7 @@ const Profile = () => {
             {changePassword && (
               <div className="profile__container__user__password__field">
                 <input
-                  className={`profile__container__password__field__input ${computedClassNameOldPasswordError}`}
+                  className={`inputText inputText--sm ${computedClassNameOldPasswordError}`}
                   name="old-password"
                   type="password"
                   spellCheck="false"
@@ -252,7 +252,7 @@ const Profile = () => {
                   </p>
                 )}
                 <input
-                  className={`profile__container__password__field__input ${computedClassNamePasswordError}`}
+                  className={`inputText inputText--sm ${computedClassNamePasswordError}`}
                   style={{ marginTop: "30px" }}
                   name="password"
                   type="password"
@@ -267,7 +267,7 @@ const Profile = () => {
                   </p>
                 )}
                 <input
-                  className={`profile__container__password__field__input ${computedClassNamePasswordConfirmError}`}
+                  className={`inputText inputText--sm ${computedClassNamePasswordConfirmError}`}
                   name="password-confirmation"
                   type="password"
                   spellCheck="false"
@@ -282,7 +282,8 @@ const Profile = () => {
                   </p>
                 )}
                 <div
-                  className="profile__container__password__field__btn"
+                  style={{ marginTop: "20px" }}
+                  className="button button--sm"
                   onClick={handleChangePassword}
                   disabled={state.loading}
                 >
@@ -316,7 +317,7 @@ const Profile = () => {
             <>
               <div className="profile__container__footer__confirm">
                 <input
-                  className={`profile__container__footer__confirm__input ${computedClassNamePasswordConfirmDeleteError}`}
+                  className={`inputText inputText--sm ${computedClassNamePasswordConfirmDeleteError}`}
                   name="password-delete-confirm"
                   type="password"
                   spellCheck="false"
@@ -327,7 +328,8 @@ const Profile = () => {
                 />
 
                 <div
-                  className="profile__container__footer__confirm__btn"
+                  style={{ marginLeft: "50px" }}
+                  className="button button--sm"
                   onClick={handleDelete}
                 >
                   Confirm Delete

@@ -155,7 +155,7 @@ const Landing = () => {
                 </p>
               )}
               <input
-                className={`landing__container__main__email__field__input ${computedClassName}`}
+                className={`inputText inputText--lg ${computedClassName}`}
                 name="email"
                 type="email"
                 spellCheck="false"
@@ -169,7 +169,7 @@ const Landing = () => {
             </div>
 
             <div
-              className="landing__container__main__email__btn"
+              className="button button--lg"
               onClick={handleEmail}
               disabled={state.loading}
             >

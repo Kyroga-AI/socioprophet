@@ -15,38 +15,12 @@
   width: 240px;
 }
 
-.loginForm__container__field__input {
-  color: rgba(237, 237, 237, 1);
-  margin-top: 12px;
-  border-radius: 0;
-  font-size: 20px;
-  line-height: 30px;
-  position: relative;
-  top: 4px;
-  width: 100%;
-  background: 0 0;
-  border: none;
-  border-bottom: 1px solid rgba(237, 237, 237, 1);
-  outline: 0;
-  padding: 0;
-  padding-left: 3px;
-  text-rendering: auto;
-  letter-spacing: normal;
-  appearance: textfield;
-  font-weight: 500;
-}
-
 @media (max-width: 500px) {
   .loginForm__container__field__input {
     text-align: center;
     padding: 0;
     margin-top: 15px;
   }
-}
-
-.loginForm__container__field__input::placeholder {
-  color: rgba(237, 237, 237, 1);
-  font-weight: 500;
 }
 
 .loginForm__container__field__input--error {
@@ -83,23 +57,8 @@
 }
 
 .loginForm__container__field__btn {
-  display: inline-block;
-  height: 46px;
-  margin: 0;
   margin-top: 30px;
-  margin-left: calc(50% - 70px);
-  user-select: none;
-  cursor: pointer;
-  color: #fff;
-  background: transparent;
-  padding: 0 28px;
-  text-align: center;
-  font-size: 16px;
-  white-space: nowrap;
-  outline: 0;
-  border-radius: 2px;
-  line-height: 46px;
-  border: 2px solid rgba(237, 237, 237, 1);
+  margin-left: calc(50% - 66px);
 }
 
 @media (max-width: 500px) {

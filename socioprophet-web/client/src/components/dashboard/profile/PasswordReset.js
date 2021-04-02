@@ -81,7 +81,7 @@ const PasswordReset = () => {
       <div className="reset__container">
         <div className="reset__container__field">
           <input
-            className={`reset__container__field__input ${computedClassName}`}
+            className={`inputText inputText--lg ${computedClassName}`}
             name="email"
             type="email"
             spellCheck="false"
@@ -98,7 +98,7 @@ const PasswordReset = () => {
         </div>
 
         <div
-          className="reset__container__field__btn"
+          className="button button--lg"
           onClick={handleEmail}
           disabled={loading}
         >
