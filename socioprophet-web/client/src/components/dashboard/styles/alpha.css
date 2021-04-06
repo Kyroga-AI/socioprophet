@@ -2,7 +2,7 @@
   position: fixed;
   height: 100%;
   width: 100%;
-  background-color: #111114;
+  background-color: #070708;
   overflow: scroll;
   padding-bottom: 40px;
 }
@@ -82,52 +82,41 @@
 }
 
 .alpha__container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  position: fixed;
+  background-image: url("../../../../public/images/dashboard-temp-background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   width: 100%;
-  transform: translate(-50%, -50%);
+  height: 100%;
+  color: #fff;
   text-align: center;
+  opacity: 0.8;
 }
 
-.alpha__container__sub {
-  font-size: 24px;
-  color: #333;
+.alpha__container__logo {
+  justify-content: center;
+  margin-top: 200px;
+  height: 100px;
 }
 
-.alpha__container__tag {
-  margin-top: 80px;
-  font-size: 30px;
-  color: #333;
+.alpha__container__subtitle {
+  margin-top: 40px;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  font-size: 35px;
+  color: #f4f4f4;
+  opacity: 0.9;
 }
 
-@media (max-width: 750px) {
-  .alpha__container__sub {
-    font-size: 20px;
+@media (max-width: 620px) {
+  .alpha__container__logo img {
+    width: 300px;
+    height: 50px;
   }
 
-  .alpha__container__tag {
-    font-size: 26px;
-  }
-}
-
-@media (max-width: 600px) {
-  .alpha__container__sub {
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 470px) {
-  .alpha__container__sub {
-    font-size: 14px;
-  }
-  .alpha__container__tag {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 400px) {
-  .alpha__container__sub {
-    padding: 0px 15px 0px 15px;
+  .alpha__container__subtitle {
+    margin-top: 10px;
+    font-size: 28px;
   }
 }

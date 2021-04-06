@@ -190,7 +190,7 @@ const Landing = () => {
         {/* <Offering /> */}
       </div>
       <div className="landing__more">
-        <div className="landing__more__section platform">
+        <div className="landing__more__section landing-platform">
           <h2 className="landing__more__section__heading">PLATFORM</h2>
           <FadeInSection>
             <p className="landing__more__section__info">
@@ -200,7 +200,7 @@ const Landing = () => {
           </FadeInSection>
         </div>
 
-        <div className="landing__more__section community">
+        <div className="landing__more__section community landing-community">
           <h2 className="landing__more__section__heading ">COMMUNITY</h2>
           <FadeInSection>
             <p className="landing__more__section__info">
@@ -210,7 +210,7 @@ const Landing = () => {
           </FadeInSection>
         </div>
 
-        <div className="landing__more__section dataAi">
+        <div className="landing__more__section landing-dataAi">
           <h2 className="landing__more__section__heading">DATA & AI</h2>
           <FadeInSection>
             <p className="landing__more__section__info">

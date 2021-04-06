@@ -9,6 +9,9 @@ import Footer from "../landing/landing_components/Footer";
 
 import { useAuth } from "../../authentication/contexts/AuthContext";
 
+// main SocioProphet logo image
+import logo from "../../../public/images/mothership-logo.png";
+
 // styles
 import "./styles/alpha.css";
 
@@ -51,18 +54,12 @@ const Alpha = () => {
         <TickerFeed />
       </Suspense>
       <div className="alpha__container">
-        <div className="alpha__container__sub">
-          <p>
-            <strong>
-              Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
-            </strong>
-          </p>
+        <div className="alpha__container__logo">
+          <img src={logo} width="450px" height="77px" />
         </div>
-        <div className="alpha__container__tag">
-          <p>
-            <strong>COMING SOON</strong>
-          </p>
-        </div>
+        <p className="alpha__container__subtitle">
+          <strong>Profile Coming Soon. </strong>
+        </p>
       </div>
 
       <Footer />
