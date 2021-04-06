@@ -3,7 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 
 import Header from "../landing/landing_components/Header";
 import HeaderLinks from "../landing/landing_components/HeaderLinks";
-const TickerFeed = React.lazy(() => import("../ticker-feed/TickerFeed"));
+import TickerFeed from "../ticker-feed/TickerFeed";
 import Profile from "../dashboard/profile/Profile";
 import Footer from "../landing/landing_components/Footer";
 
@@ -50,9 +50,7 @@ const Alpha = () => {
           <Profile />
         </div>
       </nav>
-      <Suspense fallback={<p>Loading ...</p>}>
-        <TickerFeed />
-      </Suspense>
+      <TickerFeed />
       <div className="alpha__container">
         <div className="alpha__container__logo">
           <img src={logo} width="450px" height="77px" />

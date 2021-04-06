@@ -2,7 +2,7 @@ import React, { Suspense, useState, useReducer, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import Header from "./landing_components/Header";
 import HeaderLinks from "./landing_components/HeaderLinks";
-const TickerFeed = React.lazy(() => import("../ticker-feed/TickerFeed"));
+import TickerFeed from "../ticker-feed/TickerFeed";
 // import Offering from "./landing_components/Offering";
 import Footer from "./landing_components/Footer";
 
@@ -133,9 +133,7 @@ const Landing = () => {
           <LoginForm />
         </div>
       </nav>
-      <Suspense fallback={<p>Loading ...</p>}>
-        <TickerFeed />
-      </Suspense>
+      <TickerFeed />
       <div className="landing__container">
         <div className="landing__container__main">
           <div className="landing__container__main__logo">
