@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useReducer, useRef } from "react";
+import React, { useEffect, useState, useReducer, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import Header from "./landing_components/Header";
 import HeaderLinks from "./landing_components/HeaderLinks";
@@ -11,6 +11,8 @@ import { useAuth } from "../../authentication/contexts/AuthContext";
 
 // main SocioProphet logo image
 import logo from "../../../public/images/mothership-logo.png";
+// google button
+import googleBtn from "../../../public/images/google-sign-in-light.jpg";
 
 // email validator
 import { validateEmail } from "../landing/validate-email/validateEmail";
@@ -54,7 +56,13 @@ const Landing = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { currentUser, setEmail, emailAddress } = useAuth();
+  const {
+    currentUser,
+    setEmail,
+    emailAddress,
+    googleSignIn,
+    getSigninResult,
+  } = useAuth();
 
   // computed css classes for invalid email error message
   const computedClassName = state.emailError.isError
@@ -105,6 +113,27 @@ const Landing = () => {
     }
   };
 
+  const googleSignin = () => {
+    // send to survey route
+    if (localStorage.getItem("surveyCompleted") === "true") {
+      try {
+        googleSignIn();
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      history.push(`/get-started?email_address=googleSignin&via=site_signup`);
+    }
+  };
+
+  useEffect(() => {
+    const getResult = async () => {
+      await getSigninResult();
+    };
+    if (currentUser) {
+      getResult();
+    }
+  }, []);
   return (
     <div className="landing">
       <nav className="nav--header">
@@ -182,6 +211,15 @@ const Landing = () => {
             >
               Already have an account?
             </p>
+          </div>
+          <div className="landing__container__main__google">
+            OR <br />
+            <img
+              src={googleBtn}
+              height="auo"
+              width="180px"
+              onClick={googleSignin}
+            ></img>
           </div>
         </div>
 

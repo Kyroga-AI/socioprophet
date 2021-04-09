@@ -8,7 +8,7 @@ const HeaderLinks = () => {
     <div className="headerLinks">
       <nav className="headerLinks__list">
         <ul>
-          <li id="spGitHub" className="headerLinks__list__item">
+          {/* <li id="spGitHub" className="headerLinks__list__item">
             <a
               className="headerLinks__list__item__link"
               href="https://gitlab.com/socioprophet"
@@ -16,7 +16,7 @@ const HeaderLinks = () => {
             >
               GitLab
             </a>
-          </li>
+          </li> */}
           <li id="spBlog" className="headerLinks__list__item">
             <a
               className="headerLinks__list__item__link"

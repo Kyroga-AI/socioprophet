@@ -9,6 +9,7 @@ import PasswordReset from "./components/dashboard/profile/PasswordReset";
 import Alpha from "./components/dashboard/Alpha";
 import NotFound from "./components/not-found/NotFound";
 import Terms from "./components/legal/Terms";
+import Privacy from "./components/legal/Privacy";
 
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import { AuthProvider } from "./authentication/contexts/AuthContext";
@@ -28,6 +29,7 @@ const App = () => {
           <Switch>
             <Route exact path="/" component={Landing} />
             <Route path="/terms-of-use" component={Terms} />
+            <Route path="/privacy-policy" component={Privacy} />
             <Route path="/get-started" component={Survey} />
             <Route path="/signup" component={Registration} />
             <Route path="/account" component={Account} />

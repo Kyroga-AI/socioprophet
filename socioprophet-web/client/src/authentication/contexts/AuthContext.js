@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import firebase from "firebase/app"; // for emailProvider static object
 import { auth, db, googleProvider } from "../firebase-configuration/firebase";
 
@@ -12,6 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
   const [emailAddress, setEmailAddress] = useState("");
+  const history = useHistory();
 
   /**
    *
@@ -67,6 +69,14 @@ export const AuthProvider = ({ children }) => {
    */
   const googleSignIn = () => {
     return auth.signInWithRedirect(googleProvider);
+  };
+
+  const getSigninResult = () => {
+    auth.getRedirectResult().then((result) => {
+      if (result.credential) {
+        history.push("/alpha");
+      }
+    });
   };
 
   /**
@@ -205,6 +215,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     googleSignIn,
+    getSigninResult,
     resetPassword,
     verifyResetCode,
     emailVerification,

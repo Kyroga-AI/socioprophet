@@ -14,7 +14,10 @@ const Footer = () => {
         >
           <strong>Contact</strong>
         </a>
-        <a className="footer__responsive__link" href="#" target="_blank">
+        <a
+          className="footer__responsive__link"
+          href="https://socioprophet.com/privacy-policy"
+        >
           <strong>Privacy</strong>
         </a>
         <a
@@ -64,7 +67,11 @@ const Footer = () => {
           >
             <strong>Contact</strong>
           </a>
-          <a className="footer__references__link" href="" target="_blank">
+          <a
+            className="footer__references__link"
+            href="https://socioprophet.com/privacy-policy"
+            target="_blank"
+          >
             <strong>Privacy</strong>
           </a>
           <a

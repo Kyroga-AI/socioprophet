@@ -83,7 +83,7 @@
 
 @media (max-width: 500px) {
   .landing__container {
-    height: 450px;
+    height: 550px;
   }
 }
 
@@ -208,6 +208,28 @@
   font-style: oblique;
 }
 
+.landing__container__main__google {
+  position: relative;
+  padding-top: 10px;
+}
+
+.landing__container__main__google img {
+  padding-top: 10px;
+  cursor: pointer;
+}
+
+.landing__container__main__google img:active {
+  opacity: 0.9;
+}
+
+@media (max-width: 501px) {
+  .landing__container__main__google {
+    margin-top: 70px;
+  }
+  .landing__container__main__google img {
+    width: 150px;
+  }
+}
 .landing__more {
   height: 520px;
   margin-bottom: 40px;
