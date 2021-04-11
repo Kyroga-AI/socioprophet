@@ -1,14 +1,12 @@
 const { google } = require("googleapis");
 const express = require("express");
-
-const authKey = require("../../google_key.json");
-
 const router = express.Router();
 
 // credentials...
-const CLIENT_ID = authKey.client.id;
-const CLIENT_SECRET = authKey.client.secret;
-const REDIRECT_URL = authKey.client.redirect;
+const CLIENT_ID =
+  "392608809931-uktf79hjt5o91r2fmvvm8fnfe4grfipv.apps.googleusercontent.com";
+const CLIENT_SECRET = "T-iHQ2ZwqfW7OIUesi6XlQuX";
+const REDIRECT_URL = "http://localhost:8081/api/auth/members/callback";
 
 const SCOPES = [
   "https://www.googleapis.com/auth/admin.directory.group",
@@ -18,28 +16,19 @@ const SCOPES = [
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
-  REDIRECT_URL[0]
+  REDIRECT_URL
 );
-var authorized = false;
 
 router.get("/members", (req, res) => {
-  if (!authorized) {
-    // generate OAuth 2.0 url to redirect user...
-    const authUrl = oAuth2Client.generateAuthUrl({
-      access_type: "offline",
-      scope: SCOPES,
-    });
-    res.send(authUrl);
-  } else {
-    const service = google.admin({ version: "directory_v1", oAuth2Client });
-    res.send("Logged in");
-  }
+  const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: SCOPES,
+  });
+  res.send(authUrl);
 });
 
 router.get("/members/callback", (req, res) => {
-  console.log("in the callback");
   const code = req.query.code;
-  console.log(code);
   if (code) {
     oAuth2Client.getToken(code, (err, token) => {
       if (err) {
@@ -47,13 +36,13 @@ router.get("/members/callback", (req, res) => {
       } else {
         // console.log(token);
         oAuth2Client.credentials = token;
-        console.log(oAuth2Client.credentials);
-        authorized = true;
+        console.log(oAuth2Client);
+
         console.log("USER IS AUTHORIZED");
-        const service = google.admin({
-          version: "directory_v1",
-          auth: oAuth2Client,
-        });
+        // const service = google.admin({
+        //   version: "directory_v1",
+        //   auth: oAuth2Client,
+        // });
         // service.members.insert({
         //   groupKey: "free-tier-users@socioprophet.ai",
         //   requestBody: {
@@ -61,16 +50,7 @@ router.get("/members/callback", (req, res) => {
         //   },
         // });
 
-        console.log(oAuth2Client.credentials.getIdTokens());
-
-        // probably want to set JWT here...
-        /**
-         *  need to extract user information here as well
-         *
-         *
-         *
-         */
-        res.redirect("/members/alpha");
+        res.send("success!");
       }
     });
   }

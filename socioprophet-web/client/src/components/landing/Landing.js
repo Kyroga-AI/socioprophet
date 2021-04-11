@@ -115,14 +115,25 @@ const Landing = () => {
 
   const googleSignin = () => {
     // send to survey route
-    if (localStorage.getItem("surveyCompleted") === "true") {
-      try {
-        googleSignIn();
-      } catch (err) {
-        console.error(err);
-      }
-    } else {
-      history.push(`/get-started?email_address=googleSignin&via=site_signup`);
+    // if (localStorage.getItem("surveyCompleted") === "true") {
+    //   try {
+    //     googleSignIn();
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // } else {
+    //   history.push(`/get-started?email_address=googleSignin&via=site_signup`);
+    // }
+
+    /**
+     *
+     * For verification purposes
+     *
+     */
+    try {
+      googleSignIn();
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -130,9 +141,6 @@ const Landing = () => {
     const getResult = async () => {
       await getSigninResult();
     };
-    if (currentUser) {
-      getResult();
-    }
   }, []);
   return (
     <div className="landing">

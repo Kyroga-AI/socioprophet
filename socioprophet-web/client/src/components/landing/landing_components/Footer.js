@@ -70,7 +70,6 @@ const Footer = () => {
           <a
             className="footer__references__link"
             href="https://socioprophet.com/privacy-policy"
-            target="_blank"
           >
             <strong>Privacy</strong>
           </a>

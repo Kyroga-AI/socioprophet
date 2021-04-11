@@ -1,17 +1,55 @@
 const express = require("express");
-const fetch = require("node-fetch");
+const { google } = require("googleapis");
 const router = express.Router();
 
 router.get("/data", (req, res) => {
-  // const data = fetch("https://hnrss.org/newest");
-  // const feedData = fetch("https://hnrss.org/newest")
-  //   .then((res) => res.text())
-  //   .then((body) => console.log(typeof body));
-  // console.log(feedData);
-  // res.status(200).send(feedData);
-  const data = fetch("https://jsonplaceholder.typicode.com/todos/1");
-  // .then((json) => res.json());
-  res.json(data);
+  res.status(200).json({ serverProd: "server data" });
+});
+
+router.post("/data", (req, res) => {
+  const accessToken = req.body.accessToken;
+  const refreshToken = req.body.refreshToken;
+
+  console.log(accessToken);
+  console.log(
+    "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  );
+  console.log(refreshToken);
+
+  const client_id =
+    "392608809931-uktf79hjt5o91r2fmvvm8fnfe4grfipv.apps.googleusercontent.com";
+
+  const client_secret = "T-iHQ2ZwqfW7OIUesi6XlQuX";
+
+  const redirect_uris = "http://localhost:8081";
+
+  const oauth2Client = new google.auth.OAuth2(
+    client_id,
+    client_secret,
+    redirect_uris
+  );
+
+  const token = {
+    access_token: accessToken,
+    scope:
+      "https://www.googleapis.com/auth/admin.directory.group https://www.googleapis.com/auth/admin.directory.group.member",
+    token_type: "Bearer",
+    expiry_date: 1617865480817,
+    refresh_token: refreshToken,
+  };
+
+  oauth2Client.credentials = token;
+
+  console.log(oauth2Client);
+  const service = google.admin({ version: "directory_v1", auth: oauth2Client });
+  service.members.insert({
+    groupKey: "free-tier-users@socioprophet.ai",
+    requestBody: {
+      email: "willjones484@gmail.com",
+    },
+  });
+
+  res.status(200).json({ serverProd: "server data" });
 });
 
 module.exports = router;

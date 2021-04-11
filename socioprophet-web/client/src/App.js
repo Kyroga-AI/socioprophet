@@ -22,6 +22,20 @@ import "./components/global-styles/button.css";
 import "./components/global-styles/inputText.css";
 
 const App = () => {
+  gapi.load("client", () => {
+    console.log("loaded client");
+
+    gapi.client.init({
+      apiKey: "AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc",
+      clientId:
+        "392608809931-uktf79hjt5o91r2fmvvm8fnfe4grfipv.apps.googleusercontent.com",
+      discoveryDocs: [
+        "https://www.googleapis.com/discovery/v1/apis/admin/directory_v1/rest",
+      ],
+      scope:
+        "https://www.googleapis.com/auth/admin.directory.group https://www.googleapis.com/auth/admin.directory.group.member",
+    });
+  });
   return (
     <Router history={history}>
       <AuthProvider>

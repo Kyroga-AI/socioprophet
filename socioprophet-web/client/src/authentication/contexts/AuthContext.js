@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
   const [emailAddress, setEmailAddress] = useState("");
+  const [addUserEmail, setAddUserEmail] = useState("");
   const history = useHistory();
 
   /**
@@ -67,14 +68,53 @@ export const AuthProvider = ({ children }) => {
    * signs in a user using Google Signin with Redirect
    *
    */
-  const googleSignIn = () => {
-    return auth.signInWithRedirect(googleProvider);
+  const googleSignIn = async () => {
+    // return auth
+    //   .signInWithRedirect(googleProvider)
+    //   .catch((err) => console.log(err));
+
+    const googleAuth = gapi.auth2.getAuthInstance();
+    const googleUser = await googleAuth.signIn({ prompt: "consent" });
+    const profile = googleAuth.currentUser.get().getBasicProfile();
+
+    const token = googleUser.getAuthResponse().id_token;
+
+    const credential = firebase.auth.GoogleAuthProvider.credential(token);
+
+    await auth.signInWithCredential(credential);
+
+    await gapi.client.directory.members.insert(
+      {
+        groupKey: "free-tier-users@socioprophet.ai",
+      },
+      {
+        email: profile.getEmail(),
+      }
+    );
   };
 
   const getSigninResult = () => {
     auth.getRedirectResult().then((result) => {
       if (result.credential) {
-        history.push("/alpha");
+        // history.push("/alpha");
+        console.log(result);
+        const accessToken = result.credential.accessToken;
+        const refreshToken = currentUser.refreshToken;
+        const postData = async () => {
+          const response = await fetch("/api/test/data", {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            }),
+          });
+          console.log(response);
+        };
+        postData();
       }
     });
   };
