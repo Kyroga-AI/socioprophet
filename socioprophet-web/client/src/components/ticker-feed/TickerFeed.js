@@ -10,25 +10,43 @@ const TickerFeed = () => {
     const [feed, setFeed] = useState("");
 
     useEffect(() => {
-      let isCancelled = false;
-      const getFeed = async () => {
-        const text = await fetch(url).then((r) => r.text());
-        const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
-        const items = Array.from(xmlDoc.querySelectorAll("item")).map(
-          (item) => ({
-            title: item.querySelector("title").textContent,
-            link: item.querySelector("link").textContent,
-          })
-        );
-        if (!isCancelled) {
-          setFeed(items);
-        }
-      };
+      // let isCancelled = false;
+      // const getFeed = async () => {
+      //   const text = await fetch(url).then((r) => r.text());
+      //   const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
+      //   const items = Array.from(xmlDoc.querySelectorAll("item")).map(
+      //     (item) => ({
+      //       title: item.querySelector("title").textContent,
+      //       link: item.querySelector("link").textContent,
+      //     })
+      //   );
+      //   if (!isCancelled) {
+      //     setFeed(items);
+      //   }
+      // };
       // getFeed();
 
-      return () => {
-        isCancelled = true;
+      // return () => {
+      //   isCancelled = true;
+      // };
+
+      const getRss = async () => {
+        const text = await fetch("/api/test/rss")
+          .then((res) => res.text())
+          .then((data) => {
+            console.log(data);
+            const xmlDoc = new DOMParser().parseFromString(data, "text/xml");
+            console.log(xmlDoc);
+            const items = Array.from(xmlDoc.querySelectorAll("item")).map(
+              (item) => ({
+                title: item.querySelector("title").textContent,
+                link: item.querySelector("link").textContent,
+              })
+            );
+            setFeed(items);
+          });
       };
+      getRss();
     }, []);
 
     return feed ? (
