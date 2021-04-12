@@ -47,12 +47,11 @@ router.get("/data", (req, res) => {
 // });
 
 router.get("/rss", (req, res) => {
-  // console.log("hit");
-  // const url = "https://hnrss.org/newest";
-  // const data = fetch(url)
-  //   .then((r) => r.text(r))
-  //   .then((data) => res.send(data));
-  res.status(200).json({ serverProd: "server data" });
+  console.log("hit");
+  const url = "https://hnrss.org/newest";
+  const data = fetch(url)
+    .then((r) => r.text(r))
+    .then((data) => res.send(data));
 });
 
 module.exports = router;

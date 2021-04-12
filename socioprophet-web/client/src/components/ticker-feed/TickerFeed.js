@@ -34,9 +34,8 @@ const TickerFeed = () => {
         const text = await fetch("/api/test/rss")
           .then((res) => res.text())
           .then((data) => {
-            console.log(data);
             const xmlDoc = new DOMParser().parseFromString(data, "text/xml");
-            console.log(xmlDoc);
+
             const items = Array.from(xmlDoc.querySelectorAll("item")).map(
               (item) => ({
                 title: item.querySelector("title").textContent,
