@@ -10,26 +10,7 @@ const TickerFeed = () => {
     const [feed, setFeed] = useState("");
 
     useEffect(() => {
-      // let isCancelled = false;
-      // const getFeed = async () => {
-      //   const text = await fetch(url).then((r) => r.text());
-      //   const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
-      //   const items = Array.from(xmlDoc.querySelectorAll("item")).map(
-      //     (item) => ({
-      //       title: item.querySelector("title").textContent,
-      //       link: item.querySelector("link").textContent,
-      //     })
-      //   );
-      //   if (!isCancelled) {
-      //     setFeed(items);
-      //   }
-      // };
-      // getFeed();
-
-      // return () => {
-      //   isCancelled = true;
-      // };
-
+      let isCancelled = false;
       const getRss = async () => {
         const text = await fetch("/api/test/rss")
           .then((res) => res.text())
@@ -46,6 +27,10 @@ const TickerFeed = () => {
           });
       };
       getRss();
+
+      return () => {
+        isCancelled = true;
+      };
     }, []);
 
     return feed ? (

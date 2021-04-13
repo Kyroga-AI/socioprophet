@@ -27,15 +27,21 @@ const emailState = {
   emailError: { isError: false, message: "" },
 };
 
-function FadeInSection(props) {
+const FadeInSection = (props) => {
   const [isVisible, setVisible] = React.useState(false);
   const domRef = React.useRef();
-  React.useEffect(() => {
+
+  useEffect(() => {
+    let isCancelled = false;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => setVisible(entry.isIntersecting));
     });
     observer.observe(domRef.current);
+    return () => {
+      isCancelled = true;
+    };
   }, []);
+
   return (
     <div
       className={`fade-in-section ${isVisible ? "is-visible" : ""}`}
@@ -44,7 +50,7 @@ function FadeInSection(props) {
       {props.children}
     </div>
   );
-}
+};
 
 const Landing = () => {
   // states
@@ -113,34 +119,30 @@ const Landing = () => {
     }
   };
 
-  const googleSignin = () => {
+  const googleSignin = async () => {
     // send to survey route
-    // if (localStorage.getItem("surveyCompleted") === "true") {
-    //   try {
-    //     googleSignIn();
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // } else {
-    //   history.push(`/get-started?email_address=googleSignin&via=site_signup`);
-    // }
-
-    /**
-     *
-     * For verification purposes
-     *
-     */
-    try {
-      googleSignIn();
-    } catch (err) {
-      console.error(err);
+    if (localStorage.getItem("surveyCompleted") === "true") {
+      try {
+        await googleSignIn();
+      } catch (err) {
+        console.log(`There was an error signing in: ${err}`);
+      }
+    } else {
+      history.push(`/get-started?email_address=googleSignin&via=site_signup`);
     }
   };
 
   useEffect(() => {
-    const getResult = async () => {
-      await getSigninResult();
+    const getGoogleSigninResult = async () => {
+      try {
+        await getSigninResult();
+      } catch (err) {
+        console.log(`Problem getting signin result: ${err}`);
+      }
     };
+    if (currentUser) {
+      getGoogleSigninResult();
+    }
   }, []);
   return (
     <div className="landing">

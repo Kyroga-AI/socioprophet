@@ -5,7 +5,7 @@ import "firebase/analytics";
 
 const app = firebase.initializeApp({
   apiKey: "AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc",
-  authDomain: "socioprophet-web.firebaseapp.com",
+  authDomain: "auth.socioprophet.com",
   databaseURL: "https://socioprophet-web.firebaseio.com",
   projectId: "socioprophet-web",
   storageBucket: "socioprophet-web.appspot.com",

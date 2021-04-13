@@ -69,54 +69,37 @@ export const AuthProvider = ({ children }) => {
    *
    */
   const googleSignIn = async () => {
-    // return auth
-    //   .signInWithRedirect(googleProvider)
-    //   .catch((err) => console.log(err));
+    return auth
+      .signInWithRedirect(googleProvider)
+      .catch((err) => console.log(`There was an error signing in: ${err}`));
 
-    const googleAuth = gapi.auth2.getAuthInstance();
-    const googleUser = await googleAuth.signIn({ prompt: "consent" });
-    const profile = googleAuth.currentUser.get().getBasicProfile();
-
-    const token = googleUser.getAuthResponse().id_token;
-
-    const credential = firebase.auth.GoogleAuthProvider.credential(token);
-
-    await auth.signInWithCredential(credential);
-
-    await gapi.client.directory.members.insert(
-      {
-        groupKey: "free-tier-users@socioprophet.ai",
-      },
-      {
-        email: profile.getEmail(),
-      }
-    );
+    // const googleAuth = gapi.auth2.getAuthInstance();
+    // const googleUser = await googleAuth.signIn();
+    // const profile = googleAuth.currentUser.get().getBasicProfile();
+    // const token = googleUser.getAuthResponse().id_token;
+    // const credential = firebase.auth.GoogleAuthProvider.credential(token);
+    // await auth.signInWithCredential(credential);
+    // await gapi.client.directory.members.insert(
+    //   {
+    //     groupKey: "free-tier-users@socioprophet.ai",
+    //   },
+    //   {
+    //     email: profile.getEmail(),
+    //   }
+    // );
   };
 
   const getSigninResult = () => {
-    auth.getRedirectResult().then((result) => {
-      if (result.credential) {
-        // history.push("/alpha");
-        console.log(result);
-        const accessToken = result.credential.accessToken;
-        const refreshToken = currentUser.refreshToken;
-        const postData = async () => {
-          const response = await fetch("/api/test/data", {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-            }),
-          });
-          console.log(response);
-        };
-        postData();
-      }
-    });
+    auth
+      .getRedirectResult()
+      .then((result) => {
+        if (result.credential) {
+          history.push("/alpha");
+        }
+      })
+      .catch((err) => {
+        return err;
+      });
   };
 
   /**
@@ -241,6 +224,13 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
+      if (user) {
+        if (!user.emailVerified) {
+          user.sendEmailVerification().catch((err) => {
+            console.log(`Error`);
+          });
+        }
+      }
       setLoading(false);
     });
     return unsubscribe;

@@ -45,6 +45,7 @@ const Registration = () => {
     currentUser,
     signup,
     addUser,
+    emailVerification,
     googleSignIn,
     getSigninResult,
   } = useAuth();
@@ -92,7 +93,8 @@ const Registration = () => {
     // set loading back to false and enable button again
     dispatch({ type: "SET_LOADING", payload: false });
     // after successful authentication, send user to alpha dashboard
-    history.push("/alpha");
+
+    // history.push("/alpha");
   };
 
   // when user presses 'enter' for email submition

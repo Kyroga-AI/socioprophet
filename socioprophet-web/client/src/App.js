@@ -23,8 +23,6 @@ import "./components/global-styles/inputText.css";
 
 const App = () => {
   gapi.load("client", () => {
-    console.log("loaded client");
-
     gapi.client.init({
       apiKey: "AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc",
       clientId:
