@@ -32,8 +32,7 @@ const App = () => {
       discoveryDocs: [
         "https://www.googleapis.com/discovery/v1/apis/admin/directory_v1/rest",
       ],
-      scope:
-        "https://www.googleapis.com/auth/admin.directory.group https://www.googleapis.com/auth/admin.directory.group.member",
+      scope: "https://www.googleapis.com/auth/admin.directory.group.member",
     });
   });
   return (
