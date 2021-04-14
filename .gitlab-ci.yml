@@ -50,11 +50,11 @@ docker_image:
 
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-    - "cd ./socioprophet-web/client/ && docker build -t registry.gitlab.com/$GITLAB_GROUP_NAME/GITLAB_PROJECT_NAME/$IMAGE_NAME_CLIENT:latest ."
-    - docker push registry.gitlab.com/$GITLAB_GROUP_NAME/GITLAB_PROJECT_NAME/$IMAGE_NAME_CLIENT:latest
+    - "cd ./socioprophet-web/client/ && docker build -t registry.gitlab.com/$GITLAB_GROUP_NAME/$GITLAB_PROJECT_NAME/$IMAGE_NAME_CLIENT:latest ."
+    - docker push registry.gitlab.com/$GITLAB_GROUP_NAME/$GITLAB_PROJECT_NAME/$IMAGE_NAME_CLIENT:latest
 
-    - "cd ../server/ && docker build -t registry.gitlab.com/$GITLAB_GROUP_NAME/GITLAB_PROJECT_NAME/$IMAGE_NAME_SERVER:latest ."
-    - docker push registry.gitlab.com/$GITLAB_GROUP_NAME/GITLAB_PROJECT_NAME/$IMAGE_NAME_SERVER:latest
+    - "cd ../server/ && docker build -t registry.gitlab.com/$GITLAB_GROUP_NAME/$GITLAB_PROJECT_NAME/$IMAGE_NAME_SERVER:latest ."
+    - docker push registry.gitlab.com/$GITLAB_GROUP_NAME/$GITLAB_PROJECT_NAME/$IMAGE_NAME_SERVER:latest
 
   #   # after_script:
   #   # - docker logout  <--- add this in, not sure yet
