@@ -42,6 +42,7 @@ docker_image:
     - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
 
     - echo $IMAGE_NAME_CLIENT
+
     - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate ."
     - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate
 
@@ -52,7 +53,7 @@ docker_image:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
     - echo $IMAGE_NAME_CLIENT
-    - "cd ./socioprophet-web/client/ && docker build -t registry.gitlab.com/$GITLAB_GROUP_NAME/$GITLAB_PROJECT_NAME/$IMAGE_NAME_CLIENT:latest ."
+    - "cd ../client/ && docker build -t registry.gitlab.com/$GITLAB_GROUP_NAME/$GITLAB_PROJECT_NAME/$IMAGE_NAME_CLIENT:latest ."
     - docker push registry.gitlab.com/$GITLAB_GROUP_NAME/$GITLAB_PROJECT_NAME/$IMAGE_NAME_CLIENT:latest
 
     - echo $IMAGE_NAME_SERVER
