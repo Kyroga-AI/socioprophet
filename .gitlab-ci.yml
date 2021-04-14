@@ -41,7 +41,7 @@ docker_image:
     - echo $IMAGE_NAME_CLIENT
     # - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate ."
     # - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate
-    - docker login registry.gitlab.com
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - "cd ./socioprophet-web/client/ && docker build -t registry.gitlab.com/socioprophet/socioprophet:1.0.1 ."
     - docker push registry.gitlab.com/socioprophet/socioprophet
     # - echo $IMAGE_NAME_SERVER
