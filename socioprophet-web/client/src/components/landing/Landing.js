@@ -7,6 +7,7 @@ import TickerFeed from "../ticker-feed/TickerFeed";
 import Footer from "./landing_components/Footer";
 
 import LoginForm from "./landing_components/login-form/LoginForm";
+import Signin from "./landing_components/signin/Signin";
 import { useAuth } from "../../authentication/contexts/AuthContext";
 
 // main SocioProphet logo image
@@ -56,6 +57,8 @@ const Landing = () => {
   // states
   const [state, dispatch] = useReducer(emailReducer, emailState);
   const [isExpanded, setExpanded] = useState(false);
+  const [login, setLogin] = useState(false);
+  const [signin, setSignin] = useState(false);
 
   // refs
   const emailRef = useRef();
@@ -82,6 +85,23 @@ const Landing = () => {
   // toggles the side login panel
   const loginToggle = () => {
     setExpanded(isExpanded === false ? true : false);
+    if (signin || isExpanded) {
+      setSignin(false);
+      setLogin(false);
+    } else {
+      setLogin(login === false ? true : false);
+    }
+  };
+
+  // toggles the side login panel
+  const signinToggle = () => {
+    setExpanded(isExpanded === false ? true : false);
+    if (login && isExpanded) {
+      setSignin(false);
+      setLogin(false);
+    } else {
+      setSignin(signin === false ? true : false);
+    }
   };
 
   // handles the email submission and sends user to survey
@@ -119,19 +139,6 @@ const Landing = () => {
     }
   };
 
-  const googleSignin = async () => {
-    // send to survey route
-    if (localStorage.getItem("surveyCompleted") === "true") {
-      try {
-        await googleSignIn();
-      } catch (err) {
-        console.log(`There was an error signing in: ${err}`);
-      }
-    } else {
-      history.push(`/get-started?email_address=googleSignin&via=site_signup`);
-    }
-  };
-
   useEffect(() => {
     const getGoogleSigninResult = async () => {
       try {
@@ -159,9 +166,14 @@ const Landing = () => {
             </p>
           </div>
         ) : (
-          <p className="landing__header__login" onClick={loginToggle}>
-            Login
-          </p>
+          <>
+            <p className="landing__header__begin" onClick={signinToggle}>
+              Begin
+            </p>
+            <p className="landing__header__login" onClick={loginToggle}>
+              Login
+            </p>
+          </>
         )}
         <div className={`landing__header__panel ${togglePanelClassName}`}>
           <div className="landing__login__close">
@@ -169,7 +181,8 @@ const Landing = () => {
               &#10005;
             </p>
           </div>
-          <LoginForm />
+          {login && <LoginForm />}
+          {signin && <Signin />}
         </div>
       </nav>
       <TickerFeed />
@@ -183,54 +196,48 @@ const Landing = () => {
               Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.
             </strong>
           </p>
-
-          <div className="landing__container__main__email">
-            <div className="landing__container__main__email__field">
-              {state.emailError.isError && (
-                <p className="landing__container__main__email__field__error">
-                  {state.emailError.message}
-                </p>
-              )}
-              <input
-                className={`inputText inputText--lg ${computedClassName}`}
-                name="email"
-                type="email"
-                spellCheck="false"
-                ref={emailRef}
-                value={emailAddress || ""}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                onKeyDown={handleKeyPress}
-                placeholder="ENTER EMAIL"
-              />
-            </div>
-            <div className="btn__container">
-              <div
-                className="button button--lg"
-                onClick={handleEmail}
-                disabled={state.loading}
-              >
-                BEGIN
+          {currentUser === null && (
+            <>
+              <div className="landing__container__main__email">
+                <div className="landing__container__main__email__field">
+                  {state.emailError.isError && (
+                    <p className="landing__container__main__email__field__error">
+                      {state.emailError.message}
+                    </p>
+                  )}
+                  <input
+                    className={`inputText inputText--lg ${computedClassName}`}
+                    name="email"
+                    type="email"
+                    spellCheck="false"
+                    ref={emailRef}
+                    value={emailAddress || ""}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    onKeyDown={handleKeyPress}
+                    placeholder="ENTER EMAIL"
+                  />
+                </div>
+                <div className="btn__container">
+                  <div
+                    className="button button--lg"
+                    onClick={handleEmail}
+                    disabled={state.loading}
+                  >
+                    BEGIN
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="landing__container__main__login">
-            <p
-              onClick={loginToggle}
-              className="landing__container__main__login__text"
-            >
-              Already have an account?
-            </p>
-          </div>
-          <div className="landing__container__main__google">
-            OR <br />
-            <img
-              src={googleBtn}
-              height="auo"
-              width="180px"
-              onClick={googleSignin}
-            ></img>
-          </div>
+              <div className="landing__container__main__login">
+                <p
+                  onClick={loginToggle}
+                  className="landing__container__main__login__text"
+                >
+                  Already have an account?
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
         {/* <Offering /> */}

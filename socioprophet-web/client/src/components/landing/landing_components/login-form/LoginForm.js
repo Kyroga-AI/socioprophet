@@ -9,7 +9,7 @@ import { loginReducer } from "../../../../reducers/loginReducer";
 // styles
 import "./styles/loginForm.css";
 
-import googleIcon from "../../../../../public/images/google-sign-in-light.jpg";
+import googleBtn from "../../../../../public/images/google-sign-in-light.jpg";
 
 // state for reducer
 const loginState = {
@@ -21,6 +21,7 @@ const loginState = {
 const LoginForm = () => {
   // states
   const [state, dispatch] = useReducer(loginReducer, loginState);
+
   // refs
   const emailRef = useRef();
   const passwordRef = useRef();

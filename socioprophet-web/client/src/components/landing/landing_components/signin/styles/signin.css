@@ -1,0 +1,26 @@
+.googleSignin {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.googleSignin__btn {
+  margin-top: 30px;
+  display: flex;
+  height: 35px;
+  width: 212px;
+  border-radius: 60px;
+  cursor: pointer;
+  color: #070708;
+  background-color: #fff;
+  line-height: 35px;
+  border: 1px solid #070708;
+}
+
+.googleSignin__text {
+  font-family: Roboto-Medium, "Helvetica Neue";
+  font-size: 14px;
+  padding-left: 12px;
+  text-align: center;
+}
