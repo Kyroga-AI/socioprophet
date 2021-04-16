@@ -1,11 +1,12 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { useAuth } from "../../../../authentication/contexts/AuthContext";
 
 import "./styles/signin.css";
 
 const Signin = () => {
   const { googleSignIn } = useAuth();
-
+  const history = useHistory();
   const googleSignin = async () => {
     // send to survey route
     if (localStorage.getItem("surveyCompleted") === "true") {
