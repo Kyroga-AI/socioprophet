@@ -16,7 +16,7 @@ const TickerFeed = () => {
           .then((res) => res.text())
           .then((data) => {
             const xmlDoc = new DOMParser().parseFromString(data, "text/xml");
-
+            console.log(xmlDoc);
             const items = Array.from(xmlDoc.querySelectorAll("item")).map(
               (item) => ({
                 title: item.querySelector("title").textContent,
@@ -36,7 +36,14 @@ const TickerFeed = () => {
     return feed ? (
       <p className="ticker__field__text">
         {feed.map((items) => (
-          <a key={items.title} id="rssLink" href={items.link} target="_blank">
+          <a
+            key={items.title}
+            id={items.title}
+            href={items.link}
+            target="_blank"
+            rel="noopener"
+            className="rss-link"
+          >
             {items.title}
           </a>
         ))}

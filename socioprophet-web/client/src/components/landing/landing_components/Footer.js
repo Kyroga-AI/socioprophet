@@ -30,6 +30,7 @@ const Footer = () => {
           className="footer__responsive__link"
           href="https://gitter.im/socioprophet/"
           target="_blank"
+          rel="noopener"
         >
           <strong>Support</strong>
         </a>
@@ -41,6 +42,7 @@ const Footer = () => {
             className="footer__social__btn"
             href="https://twitter.com/socioprophet"
             target="_blank"
+            rel="noopener"
           >
             <i className="fa fa-twitter-square" aria-hidden="true"></i>
           </a>
@@ -48,6 +50,7 @@ const Footer = () => {
             className="footer__social__btn"
             href="https://medium.com/@socioprophet"
             target="_blank"
+            rel="noopener"
           >
             <i className="fa fa-medium" aria-hidden="true"></i>
           </a>
@@ -55,6 +58,7 @@ const Footer = () => {
             className="footer__social__btn"
             href="https://gitlab.com/socioprophet"
             target="_blank"
+            rel="noopener"
           >
             <i className="fa fa-gitlab" aria-hidden="true"></i>
           </a>
@@ -83,6 +87,7 @@ const Footer = () => {
             className="footer__references__link"
             href="https://gitter.im/socioprophet/"
             target="_blank"
+            rel="noopener"
           >
             <strong>Support</strong>
           </a>

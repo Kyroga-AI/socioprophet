@@ -189,7 +189,12 @@ const Landing = () => {
       <div className="landing__container">
         <div className="landing__container__main">
           <div className="landing__container__main__logo">
-            <img src={logo} width="450px" height="77px" />
+            <img
+              src={logo}
+              width="450px"
+              height="77px"
+              alt="socioprophet logo"
+            />
           </div>
           <p className="landing__container__main__subtitle">
             <strong>

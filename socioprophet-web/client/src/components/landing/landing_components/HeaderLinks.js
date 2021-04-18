@@ -22,6 +22,7 @@ const HeaderLinks = () => {
               className="headerLinks__list__item__link"
               href="https://socioprophet.blog"
               target="_blank"
+              rel="noopener"
             >
               Blog
             </a>
