@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import Landing from "./components/landing/Landing";
@@ -14,7 +14,7 @@ import Privacy from "./components/legal/Privacy";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import { AuthProvider } from "./authentication/contexts/AuthContext";
 
-// import UInterface from "./components/original-carbon-dashboard/UInterface";
+// import UInterface from "./components/original-carbon-dashboard/UInterface";,
 // import PopoutTerminal from "./components/original-carbon-dashboard/interface_components/dashboard_components/PopoutTerminal";
 
 import "./App.css";
@@ -22,17 +22,21 @@ import "./components/global-styles/button.css";
 import "./components/global-styles/inputText.css";
 
 const App = () => {
-  gapi.load("client", () => {
-    gapi.client.init({
-      apiKey: "AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc",
-      clientId:
-        "392608809931-uktf79hjt5o91r2fmvvm8fnfe4grfipv.apps.googleusercontent.com",
-      discoveryDocs: [
-        "https://www.googleapis.com/discovery/v1/apis/admin/directory_v1/rest",
-      ],
-      scope: "https://www.googleapis.com/auth/admin.directory.group.member",
+  useEffect(() => {}, []);
+  window.onGoogleScriptLoad = () => {
+    console.log("The google script has really loaded, cool!");
+    gapi.load("client", () => {
+      gapi.client.init({
+        apiKey: "AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc",
+        clientId:
+          "392608809931-uktf79hjt5o91r2fmvvm8fnfe4grfipv.apps.googleusercontent.com",
+        discoveryDocs: [
+          "https://www.googleapis.com/discovery/v1/apis/admin/directory_v1/rest",
+        ],
+        scope: "https://www.googleapis.com/auth/admin.directory.group.member",
+      });
     });
-  });
+  };
   return (
     <Router history={history}>
       <AuthProvider>

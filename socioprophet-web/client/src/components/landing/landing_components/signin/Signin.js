@@ -23,7 +23,7 @@ const Signin = () => {
   return (
     <div>
       <div className="googleSignin">
-        Join SocioProphet.
+        <h3 className="googleSignin__heading">Join SocioProphet.</h3>
         <div className="googleSignin__btn" onClick={googleSignin}>
           <svg
             style={{
