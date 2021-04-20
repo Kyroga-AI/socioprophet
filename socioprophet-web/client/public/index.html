@@ -17,22 +17,15 @@
     />
    
     <title>SocioProphet - For Geeks, By Geeks</title> 
-    
-    <!-- Google Analytics -->
-    <script>
-      window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) }; ga.l = +new Date;
-      ga('create', 'UA-184834195-1', 'auto');
-      ga('send', 'pageview');
-    </script>
-    <script async src='https://www.google-analytics.com/analytics.js'></script>
-    <!-- End Google Analytics -->
 
+    <!-- Loader styles -->
     <style>
       .loader-container {
         font-size: 40px;
         font-family: 'Courier New', Courier, monospace;
         text-align: center;
       }
+    
       .loader {
         /* border: 16px solid #f3f3f3; */
         border-top: 16px solid #333;
@@ -42,7 +35,7 @@
         margin-left: calc(50% - 73px);
         margin-top: 6rem;
         animation: spin 2s linear infinite;
-        
+    
       }
     
       @keyframes spin {
@@ -55,6 +48,14 @@
         }
       }
     </style>
+    
+    <!-- Google Analytics -->
+    <script>
+      window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) }; ga.l = +new Date;
+      ga('create', 'UA-184834195-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>    
   </head>
   <body>
     <div id="root">
@@ -62,8 +63,8 @@
         <div class="loader"></div>
         SocioProphet
       </div>
-      
     </div>
+    <!-- Client side Google api -->
     <script src="https://apis.google.com/js/api.js?onload=onGoogleScriptLoad" type="text/javascript" async defer></script>
   </body>
 </html>
