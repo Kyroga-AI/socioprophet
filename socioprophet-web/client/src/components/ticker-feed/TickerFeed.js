@@ -4,15 +4,14 @@ import Ticker from "react-ticker";
 import "./styles/tickerFeed.css";
 
 const TickerFeed = () => {
-  const url = "https://corsanywhere.herokuapp.com/https://hnrss.org/newest";
-
   const GetRssFeedData = () => {
     const [feed, setFeed] = useState("");
+    const path = "/api/test/rss";
 
     useEffect(() => {
       let isCancelled = false;
       const getRss = async () => {
-        const text = await fetch("/api/test/rss")
+        const text = await fetch(path)
           .then((res) => res.text())
           .then((data) => {
             const xmlDoc = new DOMParser().parseFromString(data, "text/xml");

@@ -24,7 +24,6 @@ import "./components/global-styles/inputText.css";
 const App = () => {
   useEffect(() => {}, []);
   window.onGoogleScriptLoad = () => {
-    console.log("The google script has really loaded, cool!");
     gapi.load("client", () => {
       gapi.client.init({
         apiKey: "AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc",
