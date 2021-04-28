@@ -1,0 +1,39 @@
+@import '../../../../global-styles/partials/global';
+
+.googleSignin {
+  margin-top: $nav-height;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  .googleSignin__heading {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .googleSignin__btn {
+    margin-top: 30px;
+    display: flex;
+    height: 35px;
+    width: 212px;
+    border-radius: 60px;
+    cursor: pointer;
+    color: $primary-background-color;
+    background-color: #fff;
+    line-height: 35px;
+    border: 1px solid $primary-background-color;
+
+    .googleSignin__text {
+      font-family: Roboto-Medium, 'Helvetica Neue';
+      font-size: 14px;
+      padding-left: 12px;
+      text-align: center;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .googleSignin {
+    display: grid;
+  }
+}

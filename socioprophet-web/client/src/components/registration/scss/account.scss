@@ -1,0 +1,156 @@
+@import '../../global-styles/partials/global';
+
+.account {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background-color: $primary-background-color;
+  overflow: scroll;
+  padding-bottom: 40px;
+
+  .account__reset {
+    position: absolute;
+    top: calc(50% - 60px);
+    height: 200px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 700px) {
+    .account__reset {
+      display: grid;
+      top: calc(50% - 100px);
+    }
+  }
+
+  .account__reset__btn:hover {
+    background: #333;
+    color: #fff;
+  }
+
+  .account__reset__btn:active {
+    color: #000;
+  }
+
+  .account__verify__container {
+    margin-top: 200px;
+  }
+
+  .verify__heading {
+    color: #f4f4f4;
+    font-size: 20px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  @media (max-width: 450px) {
+    .verify__heading {
+      font-size: 16px;
+    }
+
+    .verify__email {
+      font-size: 16px;
+    }
+  }
+
+  .verify--error {
+    color: $primary-field-error;
+    margin-top: 50px;
+  }
+  .verify__container {
+    margin-top: 64px;
+    height: 150px;
+    display: flex;
+  }
+
+  .verify__container__field {
+    position: relative;
+    display: grid;
+    width: 240px;
+    height: 150px;
+    margin-left: calc(50% - 200px);
+  }
+
+  .verify__container__field__input {
+    display: inline-block;
+    box-shadow: none;
+    margin-right: 24px;
+    width: 240px;
+    height: 35px;
+  }
+
+  .verify__container__field__input__text--error {
+    border-bottom: 1px solid $primary-field-error;
+  }
+
+  .verify__container__field__error {
+    color: $primary-field-error;
+    margin-top: 4px;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .verify__container__btn {
+    margin-left: 20px;
+    margin-top: 78px;
+  }
+
+  .verify__container__btn:hover {
+    background: #333;
+    color: #fff;
+  }
+  .verify__container__btn:active {
+    color: #000;
+  }
+
+  .verify__signin {
+    display: flex;
+    margin-top: 40px;
+    justify-content: center;
+  }
+
+  .verify__signin__btn:hover {
+    background: #eee;
+    color: #333;
+  }
+
+  .verify__signin__btn:active {
+    color: #fff;
+  }
+
+  .verify__email {
+    color: green;
+    padding-top: 40px;
+    text-align: center;
+  }
+
+  .verify__form {
+    margin-left: calc(50% - 150px);
+    width: 300px;
+    display: flex;
+  }
+  .verify__form__input {
+    margin-top: 60px;
+    width: 300px;
+    height: 45px;
+    font-size: 16px;
+    padding-left: 10px;
+    color: #fff;
+    border: 0px;
+    border-radius: 7px;
+    background-color: #333;
+  }
+
+  .verify__form__btn {
+    margin-top: 30px;
+    width: 200px;
+    height: 50px;
+    font-size: 20px;
+    color: #333;
+    border: 0px;
+    border-radius: 7px;
+    background-color: #eee;
+  }
+}
