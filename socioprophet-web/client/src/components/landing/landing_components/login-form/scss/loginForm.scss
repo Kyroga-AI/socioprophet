@@ -68,6 +68,31 @@
           margin-left: 0;
         }
       }
+
+      .loginForm__container__field__signin {
+        display: grid;
+        margin-top: 20px;
+
+        .loginForm__container__field__btn__googleSignin {
+          margin-top: 30px;
+          display: flex;
+          height: 35px;
+          width: 212px;
+          border-radius: 60px;
+          cursor: pointer;
+          color: $primary-background-color;
+          background-color: #fff;
+          line-height: 35px;
+          border: 1px solid $primary-background-color;
+
+          .loginForm__container__field__btn__googleSign__text {
+            font-family: Roboto-Medium, 'Helvetica Neue';
+            font-size: 14px;
+            padding-left: 12px;
+            text-align: center;
+          }
+        }
+      }
     }
   }
 }

@@ -12,8 +12,6 @@ import { useAuth } from '../../authentication/contexts/AuthContext';
 
 // main SocioProphet logo image
 import logo from '../../../public/images/mothership-logo.png';
-// google button
-import googleBtn from '../../../public/images/google-sign-in-light.jpg';
 
 // email validator
 import { validateEmail } from './validate-email/validateEmail';
@@ -30,7 +28,6 @@ interface Props {
 
 const emailState = {
   loading: false,
-
   error: '',
 };
 
@@ -40,15 +37,16 @@ const FadeInSection = (props: Props) => {
 
   useEffect(() => {
     let mounted: boolean = true;
-    if (mounted) {
-      const observer = new IntersectionObserver((entries) => {
+
+    const observer = new IntersectionObserver((entries) => {
+      if (mounted) {
         entries.forEach((entry) => setVisible(entry.isIntersecting));
-      });
-      observer.observe(domRef.current);
-    }
+      }
+    });
+    observer.observe(domRef.current);
 
     return () => {
-      mounted = true;
+      mounted = false;
     };
   }, []);
 
@@ -71,7 +69,7 @@ const Landing = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { currentUser, setEmail, emailAddress, googleSignIn, getSigninResult } = useAuth();
+  const { currentUser, setEmail, emailAddress, getSigninResult } = useAuth();
 
   // computed css classes for invalid email error message
   const computedClassName = state.error
@@ -166,7 +164,7 @@ const Landing = () => {
         ) : (
           <>
             <p className="landing__header__begin" onClick={signinToggle}>
-              Begin
+              Registry
             </p>
             <p className="landing__header__login" onClick={loginToggle}>
               Login
@@ -214,7 +212,7 @@ const Landing = () => {
                 </div>
                 <div className="btn__container">
                   <div className="button button--lg" onClick={handleEmail}>
-                    BEGIN
+                    ALPHA REGISTRY
                   </div>
                 </div>
               </div>

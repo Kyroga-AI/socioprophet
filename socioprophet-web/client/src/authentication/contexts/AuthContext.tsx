@@ -37,8 +37,14 @@ export const AuthProvider = ({ children }: Props) => {
    * creates a firebase user with email and password - simultaneous authentication occurs
    *
    */
-  const signup = (email: string, password: string): Promise<firebase.auth.UserCredential> => {
-    return auth.createUserWithEmailAndPassword(email, password);
+  const signup = (
+    email: string,
+    password: string,
+  ): Promise<firebase.auth.UserCredential | void> => {
+    return auth.createUserWithEmailAndPassword(email, password).then((result) => {
+      console.log(result);
+      emailVerification(result.user);
+    });
   };
 
   /**
@@ -120,10 +126,13 @@ export const AuthProvider = ({ children }: Props) => {
    * sends a verification link to user for email address verification
    *
    */
-  const emailVerification = (): Promise<void> | undefined => {
-    if (currentUser) {
+  const emailVerification = (user?: firebase.User): Promise<void> | undefined => {
+    if (user) {
+      return user.sendEmailVerification();
+    } else if (currentUser) {
       return currentUser.sendEmailVerification();
     }
+
     return;
   };
 
@@ -158,9 +167,7 @@ export const AuthProvider = ({ children }: Props) => {
     auth
       .verifyPasswordResetCode(actionCode)
       .then(() => {
-        auth.confirmPasswordReset(actionCode, newPassword).then(() => {
-          console.log('successful');
-        });
+        auth.confirmPasswordReset(actionCode, newPassword);
       })
       .catch((error) => {
         console.error(error);
@@ -219,12 +226,9 @@ export const AuthProvider = ({ children }: Props) => {
 
       userRef.get().then((userQuerySnapshot) => {
         userQuerySnapshot.forEach((doc) => {
-          const userData = doc.data();
-          console.log(userData);
           doc.ref
             .delete()
             .then(() => {
-              console.log('Successfully deleted...');
               currentUser.delete();
             })
             .catch((err) => {
@@ -238,13 +242,6 @@ export const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
-      if (user) {
-        if (!user.emailVerified) {
-          user.sendEmailVerification().catch((err) => {
-            console.log(`Error in sending email verification: ${err.message}`);
-          });
-        }
-      }
       setLoading(false);
     });
     return unsubscribe;

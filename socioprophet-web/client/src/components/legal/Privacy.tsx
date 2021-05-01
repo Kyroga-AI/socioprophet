@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 // styles
-import './scss/privacy.scss';
+import './scss/terms.scss';
 
 const Privacy = () => {
   return (
-    <div className="privacy">
+    <div className="terms">
       <h1 className="terms__main">SocioProphet, Inc. Privacy Policy</h1>
 
       <p className="terms__description">

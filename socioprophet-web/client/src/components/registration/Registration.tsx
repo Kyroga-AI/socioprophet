@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState, useReducer, useRef } from 'react';
+import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import Header from '../landing/landing_components/Header';
 import HeaderLinks from '../landing/landing_components/HeaderLinks';
@@ -87,7 +87,7 @@ const Registration = () => {
       dispatch({ type: 'SET_LOADING', payload: false });
       // after successful authentication, send user to alpha dashboard
 
-      // history.push("/alpha");
+      history.push('/alpha');
     }
   };
 
@@ -108,7 +108,6 @@ const Registration = () => {
       if (currentUser) {
         getSigninResult();
       } else {
-        localStorage.setItem('surveyCompleted', 'true');
         try {
           googleSignIn();
         } catch (err) {

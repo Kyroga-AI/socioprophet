@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 
 import Header from '../landing/landing_components/Header';
 import HeaderLinks from '../landing/landing_components/HeaderLinks';
-import Footer from '../landing/landing_components/Footer';
 import { useAuth } from '../../authentication/contexts/AuthContext';
 
 // email validator
@@ -130,6 +129,7 @@ const Account = () => {
       // verify the reset password code
       try {
         await verifyResetCode(actionCode, newPasswordRef.current.value);
+        window.location.href = '/alpha';
       } catch (err) {
         console.log(`There was a problem: ${err}`);
       }
@@ -197,7 +197,7 @@ const Account = () => {
       </nav>
       {renderReset && (
         <div className="account__reset">
-          <div className="reset__container__field">
+          <div className="password-reset__container__field">
             <input
               className={`inputText inputText--lg ${computedClassNameNewPasswordError}`}
               name="new-password"
@@ -209,7 +209,7 @@ const Account = () => {
               placeholder="ENTER NEW PASSWORD"
             />
             {newPasswordError && (
-              <p className="reset__container__field__error">{newPasswordError}</p>
+              <p className="password-reset__container__field__error">{newPasswordError}</p>
             )}
           </div>
 

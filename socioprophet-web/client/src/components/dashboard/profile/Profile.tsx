@@ -62,6 +62,8 @@ const Profile = () => {
       });
       await emailVerification();
     } catch (err) {
+      console.log(err);
+
       setVerification({
         isError: true,
         message: 'There was a problem sending the verification link, please wait and try again.',
@@ -106,6 +108,11 @@ const Profile = () => {
       }
       // set loading back to false and enable button again
       dispatch({ type: 'SET_LOADING', payload: false });
+      setChangePassword(changePassword === false ? true : false);
+      setPasswordUpdated(true);
+      setTimeout(() => {
+        setPasswordUpdated(false);
+      }, 2000);
     }
   };
 
@@ -225,7 +232,7 @@ const Profile = () => {
                 )}
                 <input
                   className={`inputText inputText--sm ${computedClassNamePasswordError}`}
-                  style={{ marginTop: '30px' }}
+                  style={{ marginTop: '20px' }}
                   name="password"
                   type="password"
                   spellCheck="false"

@@ -1,23 +1,13 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAuth } from '../../../../authentication/contexts/AuthContext';
 
 import './scss/signin.scss';
 
 const Signin = () => {
-  const { googleSignIn } = useAuth();
   const history = useHistory();
   const googleSignin = async () => {
     // send to survey route
-    if (localStorage.getItem('surveyCompleted') === 'true') {
-      try {
-        await googleSignIn();
-      } catch (err) {
-        console.log(`There was an error signing in: ${err}`);
-      }
-    } else {
-      history.push(`/get-started?email_address=googleSignin&via=site_signup`);
-    }
+    history.push(`/get-started?email_address=googleSignin&via=site_signup`);
   };
 
   return (

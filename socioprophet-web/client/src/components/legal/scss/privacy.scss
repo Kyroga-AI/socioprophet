@@ -7,3 +7,9 @@
 .privacy a {
   color: #000;
 }
+
+@media (max-width: 800px) {
+  .privacy {
+    padding: 60px;
+  }
+}

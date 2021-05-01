@@ -52,7 +52,9 @@ const TickerFeed = () => {
       </p>
     ) : (
       <p className="ticker__field__text">
-        Welcome to SocioProphet! Just Waiting for the HackerNews Feed!
+        <span style={{ color: '#f4f4f4' }}>
+          Welcome to SocioProphet! Just Waiting for the HackerNews Feed!
+        </span>
       </p>
     );
   };
