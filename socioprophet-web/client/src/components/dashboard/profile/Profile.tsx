@@ -1,6 +1,6 @@
 import React, { useState, useRef, useReducer } from 'react';
 import { useAuth } from '../../../authentication/contexts/AuthContext';
-
+import { useDarkMode } from './ThemeContext';
 // reducer
 import { updateReducer } from '../../../reducers/updateReducer';
 
@@ -173,6 +173,17 @@ const Profile = () => {
     }
   };
 
+  const { toggleTheme, theme, componentMounted } = useDarkMode();
+  let themeClass = '';
+
+  if (!componentMounted) {
+    return <div />;
+  }
+  if (theme === 'light') {
+    themeClass = 'lightTheme';
+  } else {
+    themeClass = 'darkTheme';
+  }
   return (
     <div className="profile">
       <div className="profile__container">
@@ -181,6 +192,9 @@ const Profile = () => {
           <p className="profile__container__header__creationTime">
             Created {currentUser.metadata.creationTime}
           </p>
+          <button className={themeClass} onClick={toggleTheme}>
+            {theme}
+          </button>
         </div>
 
         <div className="profile__container__user">

@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import Header from './landing_components/Header';
-import HeaderLinks from './landing_components/HeaderLinks';
+import Header from '../header/Header';
 import TickerFeed from '../ticker-feed/TickerFeed';
-// import Offering from "./landing_components/Offering";
-import Footer from './landing_components/Footer';
+import ScrollSection from './ScrollSection';
 
-import LoginForm from './landing_components/login-form/LoginForm';
-import Signin from './landing_components/signin/Signin';
+import Footer from '../footer/Footer';
+
+import Login from './forms/login/Login';
+import Signin from './forms/signin/Signin';
 import { useAuth } from '../../authentication/contexts/AuthContext';
 
 // main SocioProphet logo image
@@ -20,41 +20,11 @@ import { emailReducer } from '../../reducers/emailReducer';
 // styles
 import './scss/landing.scss';
 
-interface Props {
-  props: React.ReactNode;
-  children: React.ReactNode;
-}
 // state for reducer
 
 const emailState = {
   loading: false,
   error: '',
-};
-
-const FadeInSection = (props: Props) => {
-  const [isVisible, setVisible] = React.useState(false);
-  const domRef = React.useRef<any>();
-
-  useEffect(() => {
-    let mounted: boolean = true;
-
-    const observer = new IntersectionObserver((entries) => {
-      if (mounted) {
-        entries.forEach((entry) => setVisible(entry.isIntersecting));
-      }
-    });
-    observer.observe(domRef.current);
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  return (
-    <div className={`fade-in-section ${isVisible ? 'is-visible' : ''}`} ref={domRef}>
-      {props.children}
-    </div>
-  );
 };
 
 const Landing = () => {
@@ -152,9 +122,7 @@ const Landing = () => {
   }, []);
   return (
     <div className="landing">
-      <nav className="nav--header">
-        <Header />
-        <HeaderLinks />
+      <Header>
         {currentUser !== null ? (
           <div className="landing__header__login">
             <p className="landing__header__login__avatar" onClick={() => history.push('/alpha')}>
@@ -177,10 +145,10 @@ const Landing = () => {
               &#10005;
             </p>
           </div>
-          {login && <LoginForm />}
+          {login && <Login />}
           {signin && <Signin />}
         </div>
-      </nav>
+      </Header>
       <TickerFeed />
       <div className="landing__container">
         <div className="landing__container__main">
@@ -224,40 +192,8 @@ const Landing = () => {
             </>
           )}
         </div>
-
-        {/* <Offering /> */}
       </div>
-      <div className="landing__more">
-        <div className="landing__more__section landing-platform">
-          <h2 className="landing__more__section__heading">PLATFORM</h2>
-          <FadeInSection props>
-            <p className="landing__more__section__info">
-              Built as a social networking platform. For geeks, but simple enough for everyone to
-              use.
-            </p>
-          </FadeInSection>
-        </div>
-
-        <div className="landing__more__section community landing-community">
-          <h2 className="landing__more__section__heading ">COMMUNITY</h2>
-          <FadeInSection props>
-            <p className="landing__more__section__info">
-              Unlock the world's best ideas through democratized social intelligence, data,
-              analytics & AI.
-            </p>
-          </FadeInSection>
-        </div>
-
-        <div className="landing__more__section landing-dataAi">
-          <h2 className="landing__more__section__heading">DATA & AI</h2>
-          <FadeInSection props>
-            <p className="landing__more__section__info">
-              Share your compute through leveraging peer to peer and federated networks or
-              centralized collaboration models.
-            </p>
-          </FadeInSection>
-        </div>
-      </div>
+      <ScrollSection />
       <Footer />
     </div>
   );

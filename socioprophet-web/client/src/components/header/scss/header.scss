@@ -1,0 +1,66 @@
+@import '../../global-styles/partials/global';
+
+.header {
+  nav {
+    position: fixed;
+    width: 100%;
+    height: $nav-height;
+    line-height: 40px;
+    display: flex;
+    z-index: 10000;
+    background-color: $primary-background-color;
+
+    .header__logo {
+      align-items: center;
+      display: inline-flex;
+      width: 200px;
+      padding-left: 15px;
+      font-size: 18px;
+      white-space: nowrap;
+      vertical-align: middle;
+      text-decoration: none;
+      height: $nav-height;
+
+      .header__logo__fish {
+        position: relative;
+        float: left;
+        margin-right: 10px;
+        height: 38px;
+        width: 40px;
+        padding-top: 7px;
+        opacity: 0.9;
+        z-index: 1000000;
+      }
+
+      .header__logo__title {
+        text-decoration: none;
+        color: #fff;
+        z-index: 1000000;
+      }
+    }
+
+    .header__links {
+      position: relative;
+      width: calc(100% - 232px);
+
+      .float {
+        float: right;
+      }
+      .header__links__item {
+        text-decoration: none;
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        height: $nav-height;
+        line-height: $nav-height;
+        padding-right: 80px;
+        float: left;
+      }
+
+      .header__links__list {
+        display: flex;
+        float: right;
+      }
+    }
+  }
+}

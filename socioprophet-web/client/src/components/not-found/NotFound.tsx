@@ -1,14 +1,12 @@
 import React from 'react';
-import Header from '../landing/landing_components/Header';
+import Header from '../header/Header';
 
 import './scss/notFound.scss';
 
 const NotFound = () => {
   return (
     <div className="notFound">
-      <nav className="nav--header">
-        <Header />
-      </nav>
+      <Header />
       <div className="notFound__container">
         <h1 className="notFound__heading notFound__heading--main">404</h1>
         <h2 className="notFound__heading notFound__heading--sub">This is unknown internet space</h2>

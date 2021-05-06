@@ -13,7 +13,11 @@
 
     .loginForm__container__field {
       width: 240px;
+      display: grid;
 
+      .loginForm__container__field__input {
+        border: 1px solid red;
+      }
       @media (max-width: 500px) {
         .loginForm__container__field__input {
           text-align: center;
@@ -73,6 +77,10 @@
         display: grid;
         margin-top: 20px;
 
+        @media (max-width: 500px) {
+          width: 100%;
+          padding-left: calc(50% - 106px);
+        }
         .loginForm__container__field__btn__googleSignin {
           margin-top: 30px;
           display: flex;

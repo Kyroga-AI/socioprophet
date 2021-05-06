@@ -7,7 +7,7 @@ import { validateEmail } from '../../validate-email/validateEmail';
 // reducer
 import { loginReducer } from '../../../../reducers/loginReducer';
 // styles
-import './scss/loginForm.scss';
+import './scss/login.scss';
 import '../signin/scss/signin.scss';
 
 // state for reducer

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Landing from './components/landing/Landing';
@@ -13,7 +13,7 @@ import Privacy from './components/legal/Privacy';
 
 import PrivateRoute from './components/private-route/PrivateRoute';
 import { AuthProvider } from './authentication/contexts/AuthContext';
-
+import { ThemeProvider } from './components/dashboard/profile/ThemeContext';
 // import UInterface from "./components/original-carbon-dashboard/UInterface";,
 // import PopoutTerminal from "./components/original-carbon-dashboard/interface_components/dashboard_components/PopoutTerminal";
 
@@ -35,23 +35,25 @@ const App = () => {
   // };
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <div className="app">
-          <Switch>
-            <Route exact path="/" component={Landing} />
-            <Route path="/terms-of-use" component={Terms} />
-            <Route path="/privacy-policy" component={Privacy} />
-            <Route path="/get-started" component={Survey} />
-            <Route path="/signup" component={Registration} />
-            <Route path="/account" component={Account} />
-            <Route path="/password-reset" component={PasswordReset} />
-            <PrivateRoute exact path="/alpha" component={Alpha} />
-            <Route component={NotFound} />
-            {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
-            {/* <PrivateRoute path="/terminal" component={PopoutTerminal} /> */}
-          </Switch>
-        </div>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <div className="app">
+            <Switch>
+              <Route exact path="/" component={Landing} />
+              <Route path="/terms-of-use" component={Terms} />
+              <Route path="/privacy-policy" component={Privacy} />
+              <Route path="/get-started" component={Survey} />
+              <Route path="/signup" component={Registration} />
+              <Route path="/account" component={Account} />
+              <Route path="/password-reset" component={PasswordReset} />
+              <PrivateRoute exact path="/alpha" component={Alpha} />
+              <Route component={NotFound} />
+              {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
+              {/* <PrivateRoute path="/terminal" component={PopoutTerminal} /> */}
+            </Switch>
+          </div>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 };

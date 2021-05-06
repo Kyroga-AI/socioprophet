@@ -1,13 +1,11 @@
-import React, { Suspense, useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
 
-import Header from '../landing/landing_components/Header';
-import HeaderLinks from '../landing/landing_components/HeaderLinks';
+import Header from '../header/Header';
 import TickerFeed from '../ticker-feed/TickerFeed';
 import Profile from './profile/Profile';
-import Footer from '../landing/landing_components/Footer';
+import Footer from '../footer/Footer';
 
-import { useAuth } from '../../authentication/contexts/AuthContext';
+import { useDarkMode } from './profile/ThemeContext';
 
 // main SocioProphet logo image
 import logo from '../../../public/images/mothership-logo.png';
@@ -19,8 +17,18 @@ const Alpha = () => {
   // states
   const [isExpanded, setExpanded] = useState(false);
   // other hooks
-  const history = useHistory();
-  const { currentUser } = useAuth();
+  const { theme, componentMounted } = useDarkMode();
+
+  let themeClass = '';
+
+  if (!componentMounted) {
+    return <div />;
+  }
+  if (theme === 'light') {
+    themeClass = 'lightTheme';
+  } else {
+    themeClass = 'darkTheme';
+  }
 
   const togglePanelClassName = isExpanded ? 'alpha__header__panel--expanded' : '';
 
@@ -31,15 +39,13 @@ const Alpha = () => {
 
   return (
     <div className="alpha">
-      <nav className="nav--header">
-        <Header />
-        <HeaderLinks />
+      <Header>
         <div className="alpha__header__login">
           <p className="alpha__header__login__avatar" onClick={loginToggle}>
             <i className="fa fa-user-circle" aria-hidden="true"></i>
           </p>
         </div>
-        <div className={`alpha__header__panel ${togglePanelClassName}`}>
+        <div className={`alpha__header__panel ${togglePanelClassName} ${themeClass}`}>
           <div className="alpha__login__close">
             <p className="alpha__login__close__btn" onClick={loginToggle}>
               &#10005;
@@ -47,7 +53,7 @@ const Alpha = () => {
           </div>
           <Profile />
         </div>
-      </nav>
+      </Header>
       <TickerFeed />
       <div className="alpha__container">
         <div className="alpha__container__logo">

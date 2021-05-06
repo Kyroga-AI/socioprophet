@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import Header from '../landing/landing_components/Header';
-import HeaderLinks from '../landing/landing_components/HeaderLinks';
+import Header from '../header/Header';
 import TickerFeed from '../ticker-feed/TickerFeed';
 
-import Footer from '../landing/landing_components/Footer';
+import Footer from '../footer/Footer';
 
 // custom hook
 import { useAuth } from '../../authentication/contexts/AuthContext';
@@ -133,11 +132,7 @@ const Registration = () => {
     <div className="registration">
       {emailSignup && (
         <>
-          <nav className="nav--header">
-            <Header />
-            <HeaderLinks />
-          </nav>
-
+          <Header />
           <TickerFeed />
 
           <div className="registration__container">

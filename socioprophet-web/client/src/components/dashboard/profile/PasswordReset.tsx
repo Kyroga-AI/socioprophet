@@ -1,9 +1,8 @@
-import React, { useState, useRef, KeyboardEventHandler } from 'react';
+import React, { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import Header from '../../landing/landing_components/Header';
-import HeaderLinks from '../../landing/landing_components/HeaderLinks';
-import Footer from '../../landing/landing_components/Footer';
+import Header from '../../header/Header';
+import Footer from '../../footer/Footer';
 import { useAuth } from '../../../authentication/contexts/AuthContext';
 
 // email validator
@@ -67,10 +66,7 @@ const PasswordReset: React.FC = () => {
 
   return (
     <div className="reset">
-      <nav className="nav--header">
-        <Header />
-        <HeaderLinks />
-      </nav>
+      <Header />
       {notification && <p className="reset-notification">{notification}</p>}
       <div className="reset__container">
         <div className="reset__container__field">

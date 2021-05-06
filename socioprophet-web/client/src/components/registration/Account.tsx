@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import Header from '../landing/landing_components/Header';
-import HeaderLinks from '../landing/landing_components/HeaderLinks';
+import Header from '../header/Header';
 import { useAuth } from '../../authentication/contexts/AuthContext';
 
 // email validator
@@ -191,10 +190,7 @@ const Account = () => {
 
   return (
     <div className="account">
-      <nav className="nav--header">
-        <Header />
-        <HeaderLinks />
-      </nav>
+      <Header />
       {renderReset && (
         <div className="account__reset">
           <div className="password-reset__container__field">
@@ -284,7 +280,7 @@ const Account = () => {
                 <div
                   className="button button--lg"
                   onClick={() => {
-                    history.push('/alpha');
+                    window.location.href = '/alpha';
                   }}
                 >
                   Continue
