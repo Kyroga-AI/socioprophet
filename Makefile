@@ -4,6 +4,10 @@
 install_web:
 	cd socioprophet-web/scripts/ && bash install_web.sh
 
+# run client and server 
+run_web:
+	cd socioprophet-web/scripts/ && bash run_web.sh
+
 # local run server
 run_server:
 	cd socioprophet-web/scripts/ && bash run_server.sh
