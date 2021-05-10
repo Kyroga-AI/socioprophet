@@ -8,7 +8,6 @@
     line-height: 40px;
     display: flex;
     z-index: 10000;
-    background-color: $primary-background-color;
 
     .header__logo {
       align-items: center;
@@ -34,7 +33,7 @@
 
       .header__logo__title {
         text-decoration: none;
-        color: #fff;
+        // color: #fff;
         z-index: 1000000;
       }
     }
@@ -48,7 +47,6 @@
       }
       .header__links__item {
         text-decoration: none;
-        color: #fff;
         font-weight: 600;
         font-size: 14px;
         height: $nav-height;

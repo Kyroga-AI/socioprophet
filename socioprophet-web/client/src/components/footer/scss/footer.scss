@@ -60,7 +60,6 @@
   width: 100%;
   position: fixed;
   bottom: 0;
-  background-color: #1b1b1b;
   z-index: 10000;
 
   .footer__social {
@@ -72,7 +71,6 @@
 
     .footer__social__btn {
       font-size: 14px;
-      color: #f4f4f4;
       float: left;
       margin-left: 15%;
     }
@@ -97,7 +95,7 @@
       padding: 0 25px;
       font-size: 14px;
       font-weight: 400;
-      color: #f4f7fb;
+
       text-decoration: none !important;
     }
   }
@@ -111,7 +109,7 @@
   .footer__copyright {
     float: right;
     padding-right: 5%;
-    color: #f4f4f4;
+
     font-size: 14px;
     text-decoration: none !important;
   }

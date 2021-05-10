@@ -36,6 +36,19 @@ const Profile = () => {
 
   const { currentUser, emailVerification, reAuth, updatePassword, logout, deleteUser } = useAuth();
 
+  const { theme, toggleTheme, componentMounted } = useDarkMode();
+
+  let themeClass = '';
+
+  if (!componentMounted) {
+    return <div />;
+  }
+  if (theme === 'light') {
+    themeClass = 'lightTheme';
+  } else {
+    themeClass = 'darkTheme';
+  }
+
   // computed css classes based on errors
   const computedClassNameOldPasswordError = state.oldPassword
     ? 'profile__container__password__field__input--error'
@@ -173,30 +186,28 @@ const Profile = () => {
     }
   };
 
-  const { toggleTheme, theme, componentMounted } = useDarkMode();
-  let themeClass = '';
-
-  if (!componentMounted) {
-    return <div />;
-  }
-  if (theme === 'light') {
-    themeClass = 'lightTheme';
-  } else {
-    themeClass = 'darkTheme';
-  }
   return (
-    <div className="profile">
+    <div className={`profile ${themeClass}`}>
       <div className="profile__container">
         <div className="profile__container__header">
           <p className="profile__container__header__heading">My Account</p>
           <p className="profile__container__header__creationTime">
             Created {currentUser.metadata.creationTime}
           </p>
-          <button className={themeClass} onClick={toggleTheme}>
-            {theme}
-          </button>
+          <span style={{ fontSize: '12px', marginTop: '0' }}>Theme</span>
+          {/* <button
+            className={`${themeClass} profile__container__header__toggle`}
+            onClick={toggleTheme}
+          >
+            hi
+          </button> */}
+          <div className={`${themeClass} profile__container__header__toggle`}>
+            <label className="switch">
+              <input type="checkbox" onClick={toggleTheme} />
+              <span className="slider round"></span>
+            </label>
+          </div>
         </div>
-
         <div className="profile__container__user">
           {currentUser.emailVerified ? (
             <p>
@@ -231,9 +242,9 @@ const Profile = () => {
             </p>
             {passwordUpdated && <p className="update-notification">Password has been changed!</p>}
             {changePassword && (
-              <div className="profile__container__user__password__field">
+              <div className={`profile__container__user__password__field ${themeClass}`}>
                 <input
-                  className={`inputText inputText--sm ${computedClassNameOldPasswordError}`}
+                  className={`inputText inputText--sm ${computedClassNameOldPasswordError} ${themeClass}`}
                   name="old-password"
                   type="password"
                   spellCheck="false"
@@ -283,7 +294,7 @@ const Profile = () => {
             )}
           </div>
         </div>
-        <div className="profile__container__footer">
+        <div className={`profile__container__footer ${themeClass}`}>
           <div className="profile__container__footer__btn logout" onClick={handleLogout}>
             Sign out
           </div>
