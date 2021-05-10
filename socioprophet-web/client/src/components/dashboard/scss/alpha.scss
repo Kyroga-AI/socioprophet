@@ -17,7 +17,6 @@
     line-height: $nav-height;
     box-sizing: border-box;
     text-align: center;
-    color: #fff;
 
     .alpha__header__login__avatar {
       font-size: 16px;
@@ -57,16 +56,6 @@
         display: none;
       }
     }
-  }
-
-  .lightTheme {
-    background-color: $primary-light-color;
-    color: #333;
-  }
-
-  .darkTheme {
-    background-color: $primary-dark-color;
-    color: #fff;
   }
 
   .alpha__header__panel--expanded {

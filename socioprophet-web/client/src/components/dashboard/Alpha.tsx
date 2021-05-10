@@ -40,7 +40,7 @@ const Alpha = () => {
   return (
     <div className="alpha">
       <Header>
-        <div className="alpha__header__login">
+        <div className={`alpha__header__login ${themeClass}`}>
           <p className="alpha__header__login__avatar" onClick={loginToggle}>
             <i className="fa fa-user-circle" aria-hidden="true"></i>
           </p>

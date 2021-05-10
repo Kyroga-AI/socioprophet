@@ -3,7 +3,6 @@
 .profile {
   position: relative;
   padding: 20px 20px 20px 30px;
-  color: #fff;
 
   .profile__container {
     position: relative;
@@ -15,19 +14,88 @@
 
       .profile__container__header__heading {
         font-size: 26px;
-        color: #777;
       }
 
       .profile__container__header__creationTime {
-        padding-bottom: 20px;
+        padding-bottom: 0px;
         font-size: 12px;
-        color: #777;
+
         border-bottom: 1px solid rgb(75, 78, 84);
+      }
+
+      .profile__container__header__toggle {
+        position: absolute;
+
+        display: flex;
+        font-size: 12px;
+
+        /* The switch - the box around the slider */
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 40px;
+          height: 20px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        /* The slider */
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: 0.4s;
+          transition: 0.4s;
+        }
+
+        .slider:before {
+          position: absolute;
+          content: '';
+          height: 16px;
+          width: 16px;
+          left: 2px;
+          bottom: 2px;
+          background-color: white;
+          -webkit-transition: 0.4s;
+          transition: 0.4s;
+        }
+
+        input:checked + .slider {
+          background-color: #313131;
+        }
+
+        input:focus + .slider {
+          box-shadow: 0 0 1px #2196f3;
+        }
+
+        input:checked + .slider:before {
+          -webkit-transform: translateX(16px);
+          -ms-transform: translateX(16px);
+          transform: translateX(20px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+          border-radius: 20px;
+        }
+
+        .slider.round:before {
+          border-radius: 50%;
+        }
       }
     }
 
     .profile__container__user {
-      margin-top: 40px;
+      margin-top: 30px;
       font-size: 18px;
 
       .email-verified {
@@ -54,7 +122,6 @@
 
       .verification-link {
         font-size: 16px;
-        color: #c6c6c6;
         font-weight: bold;
         cursor: pointer;
       }
@@ -80,10 +147,9 @@
       }
 
       .profile__container__user__password {
-        margin-top: 20px;
+        margin-top: 10px;
 
         .profile__container__user__password__btn {
-          color: #c6c6c6;
           font-weight: bold;
           cursor: pointer;
           font-size: 18px;
@@ -132,7 +198,7 @@
       .profile__container__footer__btn {
         font-size: 16px;
         cursor: pointer;
-        color: #c6c6c6;
+
         font-weight: bold;
       }
 
