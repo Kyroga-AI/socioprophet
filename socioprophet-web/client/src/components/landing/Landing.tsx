@@ -9,7 +9,7 @@ import Footer from '../footer/Footer';
 import Login from './forms/login/Login';
 import Signin from './forms/signin/Signin';
 import { useAuth } from '../../authentication/contexts/AuthContext';
-
+import { useDarkMode } from '../dashboard/profile/ThemeContext';
 // main SocioProphet logo image
 import logo from '../../../public/images/mothership-logo.png';
 
@@ -40,6 +40,19 @@ const Landing = () => {
   const history = useHistory();
   // custom hooks
   const { currentUser, setEmail, emailAddress, getSigninResult } = useAuth();
+
+  const { theme, componentMounted } = useDarkMode();
+
+  let themeClass = '';
+
+  if (!componentMounted) {
+    return <div />;
+  }
+  if (theme === 'light') {
+    themeClass = 'lightTheme';
+  } else {
+    themeClass = 'darkTheme';
+  }
 
   // computed css classes for invalid email error message
   const computedClassName = state.error
@@ -124,7 +137,7 @@ const Landing = () => {
     <div className="landing">
       <Header>
         {currentUser !== null ? (
-          <div className="landing__header__login">
+          <div className={`landing__header__login ${themeClass}`}>
             <p className="landing__header__login__avatar" onClick={() => history.push('/alpha')}>
               <i className="fa fa-user-circle" aria-hidden="true"></i>
             </p>
@@ -139,7 +152,7 @@ const Landing = () => {
             </p>
           </>
         )}
-        <div className={`landing__header__panel ${togglePanelClassName}`}>
+        <div className={`landing__header__panel ${togglePanelClassName} ${themeClass}`}>
           <div className="landing__login__close">
             <p className="landing__login__close__btn" onClick={loginToggle}>
               &#10005;
