@@ -12,7 +12,7 @@ export const useDarkMode = () => {
 };
 
 export const ThemeProvider = ({ children }: Props) => {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('dark');
   const [componentMounted, setComponentMounted] = useState(false);
 
   const setMode = (mode: string) => {
@@ -33,7 +33,7 @@ export const ThemeProvider = ({ children }: Props) => {
     if (localTheme) {
       setTheme(localTheme);
     } else {
-      setMode('light');
+      setMode('dark');
     }
     setComponentMounted(true);
   }, []);

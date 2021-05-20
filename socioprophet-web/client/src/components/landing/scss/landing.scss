@@ -35,6 +35,16 @@
   text-align: center;
 }
 
+@media (max-width: 450px) {
+  .landing__header__begin {
+    margin-right: 10px;
+  }
+
+  .landing__header__login {
+    margin-right: 0px;
+  }
+}
+
 .landing__header__login__avatar {
   font-size: 16px;
   cursor: pointer;
@@ -94,9 +104,13 @@
   height: 600px;
   color: #fff;
   text-align: center;
-  opacity: 0.9;
 }
 
+@media (max-width: 550px) {
+  .landing__container {
+    background-image: url('../../../../public/images/dashboard-temp-background.jpg');
+  }
+}
 @media (max-width: 500px) {
   .landing__container {
     height: 550px;
@@ -120,11 +134,11 @@
   }
 }
 
-@media (max-width: 480px) {
-  .landing__container__main__logo {
-    margin-top: 120px;
-  }
-}
+// @media (max-width: 480px) {
+//   .landing__container__main__logo {
+//     margin-top: 120px;
+//   }
+// }
 
 .landing__container__main__subtitle {
   padding-top: 15px;
@@ -145,7 +159,7 @@
   }
 }
 
-@media (max-width: 440px) {
+@media (max-width: 480px) {
   .landing__container__main__subtitle {
     padding: 0px 15px 0px 15px;
     line-height: 25px;
@@ -161,10 +175,10 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 530px) {
   .landing__container__main__email {
     display: grid;
-    margin-top: 5px;
+    margin-top: 25px;
   }
 }
 
@@ -176,13 +190,18 @@
   height: 54px;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 530px) {
   .landing__container__main__email__field {
     margin-right: 0;
-    width: 180px;
+    // width: 180px;
+
+    input {
+      text-align: center;
+      margin-top: 10px;
+    }
   }
   .btn__container {
-    margin-top: 20px;
+    margin-top: 40px;
   }
 }
 
@@ -200,6 +219,12 @@
   font-weight: 800;
 }
 
+@media (max-width: 530px) {
+  .landing__container__main__email__field__error {
+    text-align: center;
+  }
+}
+
 @media (max-width: 450px) {
   .landing__container__main__email__field__error {
     margin-top: 10px;
@@ -212,7 +237,7 @@
   display: flex;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 530px) {
   .landing__container__main__login {
     display: none;
   }

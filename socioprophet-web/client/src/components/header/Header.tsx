@@ -39,14 +39,16 @@ const Header = ({ children }: Props) => {
         <div className="header__links">
           <div className="header__links__list">{children}</div>
           <div className="float">
-            <a
-              className={`header__links__item ${themeClass}`}
-              href="https://socioprophet.blog"
-              target="_blank"
-              rel="noopener"
-            >
-              Blog
-            </a>
+            <div className={`header__links__item ${themeClass}`}>
+              <a
+                className={`header__links__item__blog ${themeClass}`}
+                href="https://socioprophet.blog"
+                target="_blank"
+                rel="noopener"
+              >
+                Blog
+              </a>
+            </div>
           </div>
         </div>
       </nav>

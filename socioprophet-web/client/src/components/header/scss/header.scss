@@ -31,6 +31,12 @@
         z-index: 1000000;
       }
 
+      @media (max-width: 380px) {
+        .header__logo__fish {
+          display: none;
+        }
+      }
+
       .header__logo__title {
         text-decoration: none;
         // color: #fff;
@@ -44,15 +50,27 @@
 
       .float {
         float: right;
+        justify-content: space-between;
+
+        .header__links__item {
+          font-weight: 600;
+          font-size: 14px;
+          height: $nav-height;
+          line-height: $nav-height;
+          width: 70px;
+          float: left;
+
+          .header__links__item__blog {
+            text-decoration: none;
+            cursor: pointer;
+          }
+        }
       }
-      .header__links__item {
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 14px;
-        height: $nav-height;
-        line-height: $nav-height;
-        padding-right: 80px;
-        float: left;
+
+      @media (max-width: 540px) {
+        .float {
+          display: none;
+        }
       }
 
       .header__links__list {
