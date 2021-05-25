@@ -33,6 +33,7 @@ const Landing = () => {
   const [isExpanded, setExpanded] = useState(false);
   const [login, setLogin] = useState(false);
   const [signin, setSignin] = useState(false);
+  const [tooltip, setTooltip] = useState(false);
 
   // refs
   const emailRef = useRef<HTMLInputElement>(null);
@@ -61,6 +62,7 @@ const Landing = () => {
 
   const togglePanelClassName = isExpanded ? 'landing__header__panel--expanded' : '';
 
+  const toggleTooltip = tooltip ? 'tooltip tooltip--toggled' : '';
   // toggles the side login panel
   const loginToggle = () => {
     setExpanded(isExpanded === false ? true : false);
@@ -80,6 +82,13 @@ const Landing = () => {
       setLogin(false);
     } else {
       setSignin(signin === false ? true : false);
+
+      if (signin === true) {
+        setTooltip(true);
+        setTimeout(() => {
+          setTooltip(false);
+        }, 2000);
+      }
     }
   };
 
@@ -145,7 +154,7 @@ const Landing = () => {
         ) : (
           <>
             <p className="landing__header__begin" onClick={signinToggle}>
-              Registry
+              Register
             </p>
             <p className="landing__header__login" onClick={loginToggle}>
               Login
@@ -159,7 +168,7 @@ const Landing = () => {
             </p>
           </div>
           {login && <Login />}
-          {signin && <Signin />}
+          {signin && <Signin onPress={signinToggle} />}
         </div>
       </Header>
       <TickerFeed />
@@ -192,8 +201,15 @@ const Landing = () => {
                   />
                 </div>
                 <div className="btn__container">
-                  <div className="button button--lg" onClick={handleEmail}>
-                    ALPHA REGISTRY
+                  <div className="tooltip">
+                    <div className="button button--lg" onClick={handleEmail}>
+                      REGISTER
+                    </div>
+                    <div className="tooltip--mobile">
+                      <span className={`tooltiptext ${toggleTooltip}`}>
+                        Sign up for the Alpha Release of SocioProphet!
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

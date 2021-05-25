@@ -3,7 +3,11 @@ import { useHistory } from 'react-router-dom';
 
 import './scss/signin.scss';
 
-const Signin = () => {
+interface Props {
+  onPress: React.MouseEventHandler;
+}
+
+const Signin = ({ onPress }: Props) => {
   const history = useHistory();
   const googleSignin = async () => {
     // send to survey route
@@ -12,9 +16,20 @@ const Signin = () => {
 
   return (
     <div>
-      <div className="googleSignin">
-        <h3 className="googleSignin__heading">Join SocioProphet.</h3>
-        <div className="googleSignin__btn" onClick={googleSignin}>
+      <div className="signin">
+        <h3 className="signin__heading"> Sign Up for the SocioProphet Alpha Release.</h3>
+
+        <div className="signin__btn" onClick={onPress}>
+          <i
+            className="fa fa-envelope"
+            style={{
+              marginTop: '7px',
+              marginLeft: '13px',
+            }}
+          ></i>
+          <span className="signin__text">Sign up with Email</span>
+        </div>
+        <div className="signin__btn" onClick={googleSignin}>
           <svg
             style={{
               marginTop: '5px',
@@ -42,7 +57,7 @@ const Signin = () => {
               ></path>
             </g>
           </svg>
-          <span className="googleSignin__text">Sign in with Google</span>
+          <span className="signin__text">Sign in with Google</span>
         </div>
       </div>
     </div>

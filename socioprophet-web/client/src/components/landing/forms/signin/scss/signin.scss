@@ -1,17 +1,18 @@
 @import '../../../../global-styles/partials/global';
 
-.googleSignin {
+.signin {
   margin-top: $nav-height;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
 
-  .googleSignin__heading {
-    font-size: 22px;
+  .signin__heading {
+    font-size: 20px;
+    padding: 0 15px 0 15px;
     text-align: center;
   }
 
-  .googleSignin__btn {
+  .signin__btn {
     margin-top: 30px;
     display: flex;
     height: 35px;
@@ -23,17 +24,23 @@
     line-height: 35px;
     border: 1px solid $primary-background-color;
 
-    .googleSignin__text {
+    .signin__text {
       font-family: Roboto-Medium, 'Helvetica Neue';
       font-size: 14px;
       padding-left: 12px;
       text-align: center;
     }
   }
+
+  @media (max-width: 720px) {
+    .signin__btn {
+      margin-left: calc(50% - 107px);
+    }
+  }
 }
 
 @media (max-width: 720px) {
-  .googleSignin {
+  .signin {
     display: grid;
   }
 }
