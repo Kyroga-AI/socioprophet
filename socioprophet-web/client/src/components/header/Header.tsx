@@ -83,7 +83,10 @@ const Header = ({ children, dashboard, onPress }: Props) => {
                 target="_blank"
                 rel="noopener"
               >
-                Blog
+                <span className="blog-label">Blog</span>
+                <span className="blog-icon">
+                  <i className="fa fa-medium" aria-hidden="true"></i>
+                </span>
               </a>
             </div>
 
