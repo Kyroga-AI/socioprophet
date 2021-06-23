@@ -32,6 +32,94 @@ export const AuthProvider = ({ children }: Props) => {
 
   /**
    *
+   *  signs in user with email link authentication -> then call checkSurveyCompletion function
+   *
+   */
+  const signinUser = () => {
+    // check for url details from emailed link
+    if (auth.isSignInWithEmailLink(window.location.href)) {
+      // check email in link matches local storage (ensure same device sign in)
+      let email = window.localStorage.getItem('signin_email');
+      const emailQuery = encodeURIComponent(email);
+      // get user to re-enter email if different device
+      if (!email) {
+        email = window.prompt('Please provide your email for confirmation');
+      }
+
+      // use link code to authenticate user
+      auth.signInWithEmailLink(email, window.location.href).then((result) => {
+        window.localStorage.removeItem('signin_email');
+
+        // check for a new user sign up
+        if (result.additionalUserInfo.isNewUser) {
+          // add user to firestore
+          addUser(email);
+          // user won't have completed survey at this point, but this function will
+          // direct them accordingly
+          checkSurveyCompletion(email, emailQuery, false);
+        } else {
+          // check if existing user has completed the survey
+          checkSurveyCompletion(email, emailQuery, false);
+        }
+      });
+    }
+  };
+
+  /**
+   *
+   *  @param {string} email
+   *  @param {string} emailQuery
+   *  @param {boolean} fromDashboard
+   *  checks if currently authenticated user has completed the survey or not
+   *
+   */
+  const checkSurveyCompletion = async (
+    email: string,
+    emailQuery: string,
+    fromDashboard: boolean,
+  ) => {
+    // create doc reference from firestore collection
+    const userRef = db.collection('users');
+    const snapshot = await userRef.where('emailAddress', '==', email).get();
+    if (snapshot.empty) {
+      console.log('No matching documents found');
+    }
+    snapshot.forEach((doc) => {
+      // if user has not completed survey -> set email to local storage for an id check
+      // send user to protected survey route
+      if (!doc.data().survey) {
+        window.localStorage.setItem('id', emailQuery);
+        window.location.href = `/get-started?email_address=${emailQuery}&via=site_signup`;
+      } else {
+        // in this case, user has completed survey, remove email from local storage
+        window.localStorage.removeItem('id');
+        if (!fromDashboard) {
+          window.location.href = '/alpha';
+        }
+      }
+    });
+  };
+
+  /**
+   *
+   *  @param {string} email
+   *  updates the survey field in user document to 'true'
+   *
+   */
+  const updateSurveyCompleted = async (email: string) => {
+    const userRef = db.collection('users');
+
+    const snapshot = await userRef.where('emailAddress', '==', email).get();
+    if (snapshot.empty) {
+      console.log('No matching documents found');
+    }
+    // update survey completion to true
+    snapshot.forEach((doc) => {
+      doc.ref.update({ survey: true });
+    });
+  };
+  /**
+   *
    * @param {string} email
    * @param {string} password
    * creates a firebase user with email and password - simultaneous authentication occurs
@@ -53,13 +141,14 @@ export const AuthProvider = ({ children }: Props) => {
    * adds new firebase user to Firestore db under 'users' collection with 'emailAddress: email' field
    *
    */
-  const addUser = (email: string): void => {
+  const addUser = async (email: string): Promise<void> => {
     const collectionName = 'users';
     const data = {
       emailAddress: email,
+      survey: false,
     };
 
-    db.collection(collectionName).add(data);
+    await db.collection(collectionName).add(data);
   };
 
   /**
@@ -250,8 +339,11 @@ export const AuthProvider = ({ children }: Props) => {
   const value = {
     emailAddress,
     currentUser,
+    signinUser,
     setEmail,
     signup,
+    checkSurveyCompletion,
+    updateSurveyCompleted,
     addUser,
     login,
     logout,

@@ -47,8 +47,6 @@ const Header = ({ children, dashboard, onPress }: Props) => {
     document.addEventListener('mousedown', handleClick);
 
     return () => {
-      console.log(switcherExpanded);
-
       document.removeEventListener('mousedown', handleClick);
     };
   }, []);

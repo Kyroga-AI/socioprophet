@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../authentication/contexts/AuthContext';
 import Header from '../header/Header';
 import TickerFeed from '../ticker-feed/TickerFeed';
 import Profile from './profile/Profile';
@@ -19,6 +19,7 @@ const Alpha = () => {
   // other hooks
   const { theme, componentMounted } = useDarkMode();
 
+  const { currentUser, checkSurveyCompletion, updateSurveyCompleted } = useAuth();
   let themeClass = '';
 
   if (!componentMounted) {
@@ -36,6 +37,27 @@ const Alpha = () => {
   const loginToggle = () => {
     setExpanded(isExpanded === false ? true : false);
   };
+
+  const isSurveyCompleted = async () => {
+    try {
+      const emailQuery = encodeURIComponent(currentUser.email);
+      await checkSurveyCompletion(currentUser.email, emailQuery, true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('id');
+
+    const emailQuery = encodeURIComponent(email);
+    if (emailQuery === window.localStorage.getItem('id')) {
+      updateSurveyCompleted(currentUser.email);
+    } else {
+      isSurveyCompleted();
+    }
+  }, []);
 
   return (
     <div className="alpha">

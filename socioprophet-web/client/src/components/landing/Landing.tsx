@@ -32,15 +32,17 @@ const Landing = () => {
   const [state, dispatch] = useReducer(emailReducer, emailState);
   const [isExpanded, setExpanded] = useState(false);
   const [login, setLogin] = useState(false);
+  const [logoutError, setLogoutError] = useState('');
   const [signin, setSignin] = useState(false);
   const [tooltip, setTooltip] = useState(false);
 
   // refs
+  const emailRefOne = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { currentUser, setEmail, emailAddress, getSigninResult } = useAuth();
+  const { currentUser, setEmail, emailAddress, getSigninResult, logout } = useAuth();
 
   const { theme, componentMounted } = useDarkMode();
 
@@ -94,13 +96,16 @@ const Landing = () => {
 
   // handles the email submission and sends user to survey
   const handleEmail = async () => {
+    // check hidden input field
+    if (emailRefOne.current.value != '') {
+      return;
+    }
     if (emailRef.current) {
       // set loading to disable 'begin' button
       dispatch({ type: 'SET_LOADING', payload: true });
 
       // check for valid email and dispatch error accordingly
       if (!validateEmail(emailRef.current.value)) {
-        console.log(state.isError);
         return dispatch({ type: 'EMAIL_ERROR', payload: true });
       }
 
@@ -117,7 +122,8 @@ const Landing = () => {
       setEmail(emailRef.current.value);
 
       // send to survey route
-      history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
+      // history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
+      history.push(`/submit?email_address=${emailQuery}`);
     }
   };
 
@@ -127,6 +133,15 @@ const Landing = () => {
       handleEmail();
     } else {
       return;
+    }
+  };
+
+  // handles the user logout action
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      return setLogoutError('Failed to logout!');
     }
   };
 
@@ -146,11 +161,17 @@ const Landing = () => {
     <div className="landing">
       <Header>
         {currentUser !== null ? (
-          <div className={`landing__header__login ${themeClass}`}>
-            <p className="landing__header__login__avatar" onClick={() => history.push('/alpha')}>
-              <i className="fa fa-user-circle" aria-hidden="true"></i>
-            </p>
-          </div>
+          <>
+            <div className={`landing__header__login ${themeClass}`}>
+              <p className="landing__header__login__avatar" onClick={() => history.push('/alpha')}>
+                <i className="fa fa-user-circle" aria-hidden="true"></i>
+              </p>
+            </div>
+            <div className="landing__header__login" onClick={handleLogout}>
+              Logout
+            </div>
+            {logoutError && <p className="logout-error">{logoutError}</p>}
+          </>
         ) : (
           <>
             <p className="landing__header__begin" onClick={signinToggle}>
@@ -187,6 +208,13 @@ const Landing = () => {
                   {state.error && (
                     <p className="landing__container__main__email__field__error">{state.error}</p>
                   )}
+                  <input
+                    style={{ position: 'absolute', opacity: '0' }}
+                    name="email"
+                    value=""
+                    onChange={(e) => e.target.value}
+                    ref={emailRefOne}
+                  />
                   <input
                     className={`inputText inputText--lg ${computedClassName}`}
                     name="email"

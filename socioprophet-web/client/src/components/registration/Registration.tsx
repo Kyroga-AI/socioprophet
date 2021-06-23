@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
+// import Modal from 'react-modal';
 import Header from '../header/Header';
 import TickerFeed from '../ticker-feed/TickerFeed';
 
@@ -27,20 +28,36 @@ const Registration = () => {
   // states
   const [state, dispatch] = useReducer(registrationReducer, registrationState);
   const [emailSignup, setEmailSignup] = useState(false);
+  // const [modalIsOpen, setIsOpen] = useState(false);
   // refs
   const passwordRef = useRef<HTMLInputElement>(null);
   const passwordConfirmRef = useRef<HTMLInputElement>(null);
   // hooks
   const history = useHistory();
   // custom hooks
-  const {
-    currentUser,
-    signup,
-    addUser,
-    emailVerification,
-    googleSignIn,
-    getSigninResult,
-  } = useAuth();
+  const { signinUser, currentUser, signup, addUser, googleSignIn, getSigninResult } = useAuth();
+
+  // const customStyles = {
+  //   content: {
+  //     top: '50%',
+  //     left: '50%',
+  //     right: 'auto',
+  //     bottom: 'auto',
+  //     marginRight: '-50%',
+  //     transform: 'translate(-50%, -50%)',
+  //     color: 'red',
+  //   },
+  // };
+
+  // Modal.setAppElement('#root');
+
+  // const openModal = () => {
+  //   setIsOpen(true);
+  // };
+
+  // const closeModal = () => {
+  //   setIsOpen(false);
+  // };
 
   // computed css classes for invalid email error message
   const computedClassNamePasswordError = state.passwordError
@@ -121,15 +138,49 @@ const Registration = () => {
   };
 
   // on initial render, check the email address from url
-  useEffect(() => {
-    const emailAddress = getUrlParams();
-    if (emailAddress === null || emailAddress === '') {
-      history.push('/');
+  // useEffect(() => {
+  //   const emailAddress = getUrlParams();
+  //   if (emailAddress === null || emailAddress === '') {
+  //     history.push('/');
+  //   }
+  // }, []);
+
+  const register = async () => {
+    try {
+      await signinUser();
+    } catch (err) {
+      console.log('There was an error in Registration');
+      console.log(err);
     }
+  };
+
+  useEffect(() => {
+    register();
   }, []);
 
   return (
     <div className="registration">
+      {/* <Modal
+        className="regitration__modal"
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+      >
+        <div>Please provide your email for confirmation</div>
+        <form>
+          <input
+            className={`inputText inputText--lg ${computedClassNamePasswordError}`}
+            name="password"
+            type="password"
+            spellCheck="false"
+            ref={passwordRef}
+            required
+            onKeyDown={handleKeyPress}
+            placeholder="CREATE PASSWORD"
+          />
+        </form>
+      </Modal> */}
+      ;
       {emailSignup && (
         <>
           <Header />

@@ -7,10 +7,11 @@ import './scss/survey.scss';
 
 const Survey = () => {
   const [surveyEmail, setSurveyEmail] = useState<string | null>('');
+
   const history = useHistory();
 
   // gets user email address and if one does not exist in url then redirects back to landing page
-  const getEmailAddress = () => {
+  const getEmailAddress = async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const emailAddress = urlParams.get('email_address');
 

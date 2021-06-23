@@ -1,7 +1,8 @@
 const express = require("express");
-
+require("dotenv").config({ path: "../.env" });
 // middleware imports
 const cookieParser = require("cookie-parser");
+
 const compression = require("compression");
 const helmet = require("helmet");
 const cors = require("cors");

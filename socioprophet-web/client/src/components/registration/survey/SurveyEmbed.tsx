@@ -7,6 +7,7 @@ interface Props {
 const SurveyEmbed = ({ id }: Props) => {
   const getSrc = () => {
     const surveyId = `id=${id}`;
+
     return `https://form.typeform.com/to/Uo505jQQ?typeform-medium=embed-snippet#${surveyId}`;
   };
 

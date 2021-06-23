@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Landing from './components/landing/Landing';
+import EmailSubmission from './components/landing/forms/email-submission/EmailSubmission';
 import Survey from './components/registration/survey/Survey';
 import Registration from './components/registration/Registration';
 import Account from './components/registration/Account';
@@ -40,9 +41,10 @@ const App = () => {
           <div className="app">
             <Switch>
               <Route exact path="/" component={Landing} />
+              <Route exact path="/submit" component={EmailSubmission} />
               <Route path="/terms-of-use" component={Terms} />
               <Route path="/privacy-policy" component={Privacy} />
-              <Route path="/get-started" component={Survey} />
+              <PrivateRoute path="/get-started" component={Survey} />
               <Route path="/signup" component={Registration} />
               <Route path="/account" component={Account} />
               <Route path="/password-reset" component={PasswordReset} />
