@@ -20,7 +20,7 @@ admin.initializeApp({
 router.post("/data", (req, res) => {
   const email = req.body.email;
   const actionCodeSettings = {
-    url: "http://localhost:8081/signup",
+    url: "https://socioprophet.com/signup",
     handleCodeInApp: true,
   };
   admin
@@ -72,7 +72,8 @@ router.post("/data", (req, res) => {
   //   "gmail-client-secret": process.env.GMAIL_CLIENT_SECRET,
   //   "gmail-refresh-token": process.env.GMAIL_REFRESH_TOKEN,
   // });
-  res.send("gg");
+  // res.send("gg");
+  res.json({ requestBody: "data" });
 });
 
 router.get("/rss", (req, res) => {
