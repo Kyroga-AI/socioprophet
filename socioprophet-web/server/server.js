@@ -10,11 +10,8 @@ const passport = require("passport");
 const cookieSession = require("cookie-session");
 require("./config/passport");
 
-// test prod route
-const testRouter = require("./routes/api/test-route");
-// route imports
-const authRouter = require("./routes/api/auth-route");
-// const passportRouter = require("./routes/api/authWithPassport");
+const rssRouter = require("./routes/api/rss-route");
+const emailRouter = require("./routes/api/email-route");
 
 // set up port
 const port = process.env.PORT || 5001;
@@ -43,10 +40,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// Test Prod Route
-app.use("/api/test", testRouter);
-// app.use("/api/rss", rssRouter);
-app.use("/api/auth", authRouter);
-// app.use("/api/passportAuth", passportRouter);
+app.use("/api/feed", rssRouter);
+app.use("/api/auth", emailRouter);
 
 app.listen(port, () => console.log(`Server up and running on port ${port} !`));

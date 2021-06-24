@@ -1,23 +1,14 @@
 const express = require("express");
-const NodeCache = require("node-cache");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
-const fetch = require("node-fetch");
 const router = express.Router();
-
-const cache = new NodeCache({ stdTTL: 600 });
-
-const url = "https://hnrss.org/newest";
-
-// change this to dotenv
-// const serviceAccount = require("./adminSDKToken.json");
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 
-router.post("/data", (req, res) => {
+router.post("/email", (req, res) => {
   const email = req.body.email;
   const actionCodeSettings = {
     url: "https://socioprophet.com/signup",
@@ -65,29 +56,8 @@ router.post("/data", (req, res) => {
     .catch((err) => {
       console.error("An error happened: " + err);
     });
-  // res.json({
-  //   "gmail-username": process.env.GMAIL_USERNAME,
-  //   "gmail-password": process.env.GMAIL_PASSWORD,
-  //   "gmail-client-id": process.env.GMAIL_CLIENT_ID,
-  //   "gmail-client-secret": process.env.GMAIL_CLIENT_SECRET,
-  //   "gmail-refresh-token": process.env.GMAIL_REFRESH_TOKEN,
-  // });
-  // res.send("gg");
-  res.json({ requestBody: "data" });
-});
 
-router.get("/rss", (req, res) => {
-  const cachedData = cache.get(url);
-  if (cachedData) {
-    res.send(cachedData);
-  } else {
-    fetch(url)
-      .then((r) => r.text(r))
-      .then((data) => {
-        cache.set(url, data);
-        res.send(data);
-      });
-  }
+  res.json({ requestBody: "signin" });
 });
 
 module.exports = router;
