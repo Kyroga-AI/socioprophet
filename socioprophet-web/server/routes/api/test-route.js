@@ -5,58 +5,43 @@ const nodemailer = require("nodemailer");
 const fetch = require("node-fetch");
 const router = express.Router();
 
-const { SecretManagerServiceClient } = require("@google-cloud/secret-manager");
-const client = new SecretManagerServiceClient();
-
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
-});
-const name =
-  "projects/392608809931/secrets/adminSDK-service-credentials/versions/1";
-
 const cache = new NodeCache({ stdTTL: 600 });
 
 const url = "https://hnrss.org/newest";
 
 // change this to dotenv
+// const serviceAccount = require("./adminSDKToken.json");
 
-async function getSecret(name) {
-  const [version] = await client.accessSecretVersion({ name });
-  const secretValue = JSON.parse(version.payload.data.toString());
-
-  return secretValue;
-}
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+});
 
 router.get("/data", (req, res) => {
-  // getSecret(name).then((res) => {
-  //   console.log(res);
-
-  //   const email = req.body.email;
-  //   const actionCodeSettings = {
-  //     url: "http://localhost:8081/signup",
-  //     handleCodeInApp: true,
-  //   };
-
-  //   admin
-  //     .auth()
-  //     .generateSignInWithEmailLink(email, actionCodeSettings)
-  //     .then((link) => {
-  //       let transporter = nodemailer.createTransport({
-  //         service: "gmail",
-  //         auth: {
-  //           user: process.env.GMAIL_USERNAME,
-  //           pass: process.env.GMAIL_PASSWORD,
-  //           clientId: process.env.GMAIL_CLIENT_ID,
-  //           clientSecret: process.env.GMAIL_CLIENT_SECRET,
-  //           refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-  //         },
-  //       });
-  //       let mailOptions = {
-  //         from: "noreply@socioprophet.ai",
-  //         to: email,
-  //         subject: "SignIn Requested",
-  //         html: `
+  // const email = req.body.email;
+  // const actionCodeSettings = {
+  //   url: "http://localhost:8081/signup",
+  //   handleCodeInApp: true,
+  // };
+  // admin
+  //   .auth()
+  //   .generateSignInWithEmailLink(email, actionCodeSettings)
+  //   .then((link) => {
+  //     let transporter = nodemailer.createTransport({
+  //       service: "gmail",
+  //       auth: {
+  //         user: process.env.GMAIL_USERNAME,
+  //         pass: process.env.GMAIL_PASSWORD,
+  //         clientId: process.env.GMAIL_CLIENT_ID,
+  //         clientSecret: process.env.GMAIL_CLIENT_SECRET,
+  //         refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+  //       },
+  //     });
+  //     let mailOptions = {
+  //       from: "noreply@socioprophet.ai",
+  //       to: email,
+  //       subject: "SignIn Requested",
+  //       html: `
   //         <h1>SocioProphet&#174;</h1>
   //         <p>Hello,</p>
   //         <p>We received a request from this email to sign in to SocioProphet.</p>
@@ -68,22 +53,25 @@ router.get("/data", (req, res) => {
   //         <p>Thanks!</p>
   //         <p>The SocioProphet Team</p>
   //       `,
-  //       };
-
-  //       transporter.sendMail(mailOptions, function (err, data) {
-  //         if (err) {
-  //           console.log("Error " + err);
-  //         } else {
-  //           console.log("Email sent successfully");
-  //         }
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       console.error("An error happened: " + err);
+  //     };
+  //     transporter.sendMail(mailOptions, function (err, data) {
+  //       if (err) {
+  //         console.log("Error " + err);
+  //       } else {
+  //         console.log("Email sent successfully");
+  //       }
   //     });
-  // });
-  res.send(process.env.GMAIL_USERNAME);
-  // console.log(secret);
+  //   })
+  //   .catch((err) => {
+  //     console.error("An error happened: " + err);
+  //   });
+  res.json({
+    "gmail-username": process.env.GMAIL_USERNAME,
+    "gmail-password": process.env.GMAIL_PASSWORD,
+    "gmail-client-id": process.env.GMAIL_CLIENT_ID,
+    "gmail-client-secret": process.env.GMAIL_CLIENT_SECRET,
+    "gmail-refresh-token": process.env.GMAIL_REFRESH_TOKEN,
+  });
 });
 
 router.get("/rss", (req, res) => {
