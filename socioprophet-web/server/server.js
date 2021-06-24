@@ -2,13 +2,10 @@ const express = require("express");
 require("dotenv").config({ path: "../.env" });
 // middleware imports
 const cookieParser = require("cookie-parser");
-
 const compression = require("compression");
 const helmet = require("helmet");
 const cors = require("cors");
-const passport = require("passport");
 const cookieSession = require("cookie-session");
-require("./config/passport");
 
 const rssRouter = require("./routes/api/rss-route");
 const emailRouter = require("./routes/api/email-route");
@@ -27,10 +24,6 @@ app.use(
     keys: ["key1", "key2"],
   })
 );
-
-// Initialise...
-app.use(passport.initialize());
-app.use(passport.session());
 
 // add middleware
 app.use(cors());
