@@ -20,7 +20,7 @@ const EmailSubmission = () => {
     const data = { email: email };
 
     // send post request with fetch
-    const response = await fetch('/api/test/data', {
+    const response = await fetch('/api/auth/email', {
       method: 'POST',
       mode: 'cors',
       headers: {

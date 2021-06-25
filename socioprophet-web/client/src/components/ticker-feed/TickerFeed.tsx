@@ -20,7 +20,7 @@ const TickerFeed = () => {
       let mounted: boolean = true;
 
       const getRss = async () => {
-        await fetch('/api/test/rss')
+        await fetch('/api/feed/rss')
           .then((res) => res.text())
           .then((data) => {
             const xmlDoc = new DOMParser().parseFromString(data, 'text/xml');
