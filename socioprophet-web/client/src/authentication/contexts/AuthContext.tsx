@@ -193,6 +193,10 @@ export const AuthProvider = ({ children }: Props) => {
       .getRedirectResult()
       .then((result) => {
         if (result.credential) {
+          if (result.additionalUserInfo.isNewUser) {
+            addUser(currentUser.email);
+          }
+
           history.push('/alpha');
         }
       })
