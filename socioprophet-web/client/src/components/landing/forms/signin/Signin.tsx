@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useAuth } from '../../../../authentication/contexts/AuthContext';
 
 import './scss/signin.scss';
 
@@ -8,11 +9,31 @@ interface Props {
 }
 
 const Signin = ({ onPress }: Props) => {
+  const { googleSignIn, getSigninResult } = useAuth();
+
   const history = useHistory();
   const googleSignin = async () => {
+    try {
+      await googleSignIn();
+    } catch (err) {
+      console.log('There was an error signing in with Google: ' + err);
+    }
     // send to survey route
-    history.push(`/get-started?email_address=googleSignin&via=site_signup`);
+    // history.push(`/get-started?email_address=googleSignin&via=site_signup`);
   };
+
+  // useEffect(() => {
+  //   const getGoogleSigninResult = async () => {
+  //     try {
+  //       await getSigninResult();
+  //     } catch (err) {
+  //       console.log(`Problem getting signin result: ${err}`);
+  //     }
+  //   };
+  //   if (currentUser) {
+  //     getGoogleSigninResult();
+  //   }
+  // }, []);
 
   return (
     <div>

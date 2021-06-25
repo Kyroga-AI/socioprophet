@@ -4,9 +4,8 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Landing from './components/landing/Landing';
 import EmailSubmission from './components/landing/forms/email-submission/EmailSubmission';
 import Survey from './components/registration/survey/Survey';
-import Registration from './components/registration/Registration';
-import Account from './components/registration/Account';
-import PasswordReset from './components/dashboard/profile/PasswordReset';
+import EmailAuth from './components/registration/EmailAuth';
+
 import Alpha from './components/dashboard/Alpha';
 import NotFound from './components/not-found/NotFound';
 import Terms from './components/legal/Terms';
@@ -15,6 +14,8 @@ import Privacy from './components/legal/Privacy';
 import PrivateRoute from './components/private-route/PrivateRoute';
 import { AuthProvider } from './authentication/contexts/AuthContext';
 import { ThemeProvider } from './components/dashboard/profile/ThemeContext';
+// import Account from './components/registration/Account';
+// import PasswordReset from './components/dashboard/profile/PasswordReset';
 // import UInterface from "./components/original-carbon-dashboard/UInterface";,
 // import PopoutTerminal from "./components/original-carbon-dashboard/interface_components/dashboard_components/PopoutTerminal";
 
@@ -44,12 +45,12 @@ const App = () => {
               <Route exact path="/submit" component={EmailSubmission} />
               <Route path="/terms-of-use" component={Terms} />
               <Route path="/privacy-policy" component={Privacy} />
+              <Route path="/signup" component={EmailAuth} />
               <PrivateRoute path="/get-started" component={Survey} />
-              <Route path="/signup" component={Registration} />
-              <Route path="/account" component={Account} />
-              <Route path="/password-reset" component={PasswordReset} />
               <PrivateRoute exact path="/alpha" component={Alpha} />
               <Route component={NotFound} />
+              {/* <Route path="/account" component={Account} /> */}
+              {/* <Route path="/password-reset" component={PasswordReset} /> */}
               {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
               {/* <PrivateRoute path="/terminal" component={PopoutTerminal} /> */}
             </Switch>

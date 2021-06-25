@@ -3,21 +3,29 @@ const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
 const router = express.Router();
 
+// initialise firebase admin sdk
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 
+// post request with 'email' data as req body
 router.post("/email", (req, res) => {
+  // extract user email fromr request body
   const email = req.body.email;
+
+  // set settings for generating link
   const actionCodeSettings = {
     url: "https://socioprophet.com/signup",
     handleCodeInApp: true,
   };
+
+  // use the firebase admin sdk to generate an authentication link
   admin
     .auth()
     .generateSignInWithEmailLink(email, actionCodeSettings)
     .then((link) => {
+      // create a transporter object for nodemailer smtp with gmail as the service provider
       let transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -28,6 +36,8 @@ router.post("/email", (req, res) => {
           refreshToken: process.env.GMAIL_REFRESH_TOKEN,
         },
       });
+
+      // constuct email object
       let mailOptions = {
         from: "noreply@socioprophet.ai",
         to: email,
@@ -45,6 +55,8 @@ router.post("/email", (req, res) => {
           <p>The SocioProphet Team</p>
         `,
       };
+
+      // send email object using transporter object
       transporter.sendMail(mailOptions, function (err, data) {
         if (err) {
           console.log("Error " + err);
@@ -54,6 +66,7 @@ router.post("/email", (req, res) => {
       });
     })
     .catch((err) => {
+      // log errors
       console.error("An error happened: " + err);
     });
 

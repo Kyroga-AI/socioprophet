@@ -51,7 +51,7 @@ const LoginForm = () => {
 
   // handles email and password login submission
   const handleLogin = async () => {
-    if (emailRef.current && passwordRef.current) {
+    if (emailRef.current) {
       if (!validateEmail(emailRef.current.value)) {
         return dispatch({ type: 'MISSING_EMAIL', payload: true });
       }
@@ -60,31 +60,34 @@ const LoginForm = () => {
       dispatch({ type: 'MISSING_EMAIL', payload: false });
 
       // check if a password was entered
-      if (passwordRef.current.value === '') {
-        return dispatch({ type: 'MISSING_PASSWORD', payload: true });
-      }
+      // if (passwordRef.current.value === '') {
+      //   return dispatch({ type: 'MISSING_PASSWORD', payload: true });
+      // }
 
       // set loading back to false and enable button again
-      dispatch({ type: 'MISSING_PASSWORD', payload: false });
+      // dispatch({ type: 'MISSING_PASSWORD', payload: false });
 
-      try {
-        // disable button while processing asynchronous calls
-        dispatch({ type: 'SET_LOADING', payload: true });
-        // login in user with email and password
-        await login(emailRef.current.value, passwordRef.current.value);
-      } catch (err) {
-        if (err.code === 'auth/wrong-password') {
-          // dispatch error for wrong password
-          return dispatch({ type: 'INCORRECT_PASSWORD' });
-        } else {
-          // another error occured (should be handling all Firebase errors here)
-          return dispatch({ type: 'ERROR_PASSWORD' });
-        }
-      }
+      // try {
+      //   // disable button while processing asynchronous calls
+      //   dispatch({ type: 'SET_LOADING', payload: true });
+      //   // login in user with email and password
+      //   await login(emailRef.current.value, passwordRef.current.value);
+      // } catch (err) {
+      //   if (err.code === 'auth/wrong-password') {
+      //     // dispatch error for wrong password
+      //     return dispatch({ type: 'INCORRECT_PASSWORD' });
+      //   } else {
+      //     // another error occured (should be handling all Firebase errors here)
+      //     return dispatch({ type: 'ERROR_PASSWORD' });
+      //   }
+      // }
       // enable button again
       dispatch({ type: 'SET_LOADING', payload: false });
       // send user to alpha dashboard
-      history.push('/alpha');
+
+      const emailQuery = encodeURIComponent(emailRef.current.value);
+
+      history.push(`/submit?email_address=${emailQuery}`);
     }
   };
 
@@ -115,7 +118,7 @@ const LoginForm = () => {
             <p className="loginForm__container__field__error">{state.emailError}</p>
           )}
 
-          <input
+          {/* <input
             // style={{ marginTop: '2rem' }}
             className={`inputText inputText--sm ${computedClassNamePasswordError}`}
             name="password"
@@ -134,7 +137,7 @@ const LoginForm = () => {
             <Link className="loginForm__container__field__reset__link" to="/password-reset">
               Forgot Password?
             </Link>
-          </div>
+          </div> */}
 
           <div className="loginForm__container__field__btn">
             <div className="button button--sm" onClick={handleLogin}>

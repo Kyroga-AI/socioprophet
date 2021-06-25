@@ -5,6 +5,7 @@ const router = express.Router();
 
 const cache = new NodeCache({ stdTTL: 600 });
 
+// hackernews endpoint
 const url = "https://hnrss.org/newest";
 
 router.get("/rss", (req, res) => {
