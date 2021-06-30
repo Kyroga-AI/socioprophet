@@ -8,7 +8,11 @@ const SurveyEmbed = ({ id }: Props) => {
   const getSrc = () => {
     const surveyId = `id=${id}`;
 
-    return `https://form.typeform.com/to/Uo505jQQ?typeform-medium=embed-snippet#${surveyId}`;
+    if (process.env.NODE_ENV === 'development') {
+      return `https://form.typeform.com/to/Pm2Pmwsd?typeform-medium=embed-snippet#${surveyId}`;
+    } else {
+      return `https://form.typeform.com/to/Uo505jQQ?typeform-medium=embed-snippet#${surveyId}`;
+    }
   };
 
   return (

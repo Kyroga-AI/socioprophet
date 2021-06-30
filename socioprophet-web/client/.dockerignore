@@ -8,6 +8,7 @@ node_modules
 .gitignore
 
 # ignore build directory
-build
+build/
 
-# ignore testing here...
+# ignore .env files
+.env

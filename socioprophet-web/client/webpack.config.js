@@ -1,65 +1,70 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
-module.exports = {
-  entry: "./src/index.tsx",
-  output: {
-    path: path.join(__dirname, "/build"),
-    filename: "bundle.js",
-  },
-  resolve: {
-    extensions: [".ts", ".tsx", ".js", ".jsx"],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx|ts|tsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        },
-      },
-      {
-        test: /\.(s*)css$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
-      },
-      {
-        test: /\.(jpg|gif|ico|jpeg|png)$/i,
-        use: ["file-loader"],
-      },
-      {
-        test: /\.(mov|mp4)$/,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              name: "[name].[ext]",
-            },
-          },
-        ],
-      },
-    ],
-  },
+let APP_DIR = path.resolve(__dirname, './src');
+let BUILD_DIR = path.join(__dirname, '/build');
 
-  devServer: {
-    host: "0.0.0.0",
-    port: 8081,
-    historyApiFallback: true,
-    allowedHosts: [
-      "localhost.socioprophet.com",
-      "socioprophet.com",
-      "www.socioprophet.com",
-    ],
-    proxy: {
-      "/api": "http://localhost:5001",
+const webpackConfig = () => {
+  return {
+    entry: APP_DIR + '/index.tsx',
+    output: {
+      path: BUILD_DIR,
+      filename: 'bundle.js',
     },
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "./public/index.html",
-      favicon: "./public/favicon.ico",
-    }),
-    new CleanWebpackPlugin(),
-  ],
+    resolve: {
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(js|jsx|ts|tsx)$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+          },
+        },
+        {
+          test: /\.(s*)css$/,
+          use: ['style-loader', 'css-loader', 'sass-loader'],
+        },
+        {
+          test: /\.(jpg|gif|ico|jpeg|png)$/i,
+          use: ['file-loader'],
+        },
+        {
+          test: /\.(mov|mp4)$/,
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: '[name].[ext]',
+              },
+            },
+          ],
+        },
+      ],
+    },
+
+    devServer: {
+      host: '0.0.0.0',
+      port: 8081,
+      historyApiFallback: true,
+      allowedHosts: ['localhost.socioprophet.com', 'socioprophet.com', 'www.socioprophet.com'],
+      proxy: {
+        '/api': 'http://localhost:5001',
+      },
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: './public/index.html',
+        favicon: './public/favicon.ico',
+      }),
+      new CleanWebpackPlugin(),
+      new Dotenv(),
+    ],
+  };
 };
+
+module.exports = webpackConfig;

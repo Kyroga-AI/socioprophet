@@ -146,6 +146,7 @@ const Landing = () => {
   };
 
   useEffect(() => {
+    window.localStorage.clear();
     const getGoogleSigninResult = async () => {
       try {
         await getSigninResult();

@@ -7,7 +7,5 @@ node_modules/
 # ignore build folder in production
 build/
 
-# ignore .env files
+# ignore .env files (push .env.sample)
 .env
-
-TODO.txt

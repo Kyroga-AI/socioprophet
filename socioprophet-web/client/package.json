@@ -35,7 +35,7 @@
   "private": true,
   "main": "./src/index.tsx",
   "scripts": {
-    "start": "webpack-dev-server --mode development --hot",
+    "start": "webpack-dev-server --mode development --hot ",
     "build": "webpack --mode production",
     "launch": "webpack-dev-server --open",
     "test": "jest ./src"
@@ -50,6 +50,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/uuid": "^8.3.0",
     "css-loader": "^3.2.0",
+    "dotenv": "^10.0.0",
     "file-loader": "^4.2.0",
     "firebase": "^8.1.2",
     "react": "^16.9.0",
@@ -74,6 +75,7 @@
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.0.0",
     "clean-webpack-plugin": "^3.0.0",
+    "dotenv-webpack": "^7.0.3",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.5",
     "eslint": "^7.24.0",

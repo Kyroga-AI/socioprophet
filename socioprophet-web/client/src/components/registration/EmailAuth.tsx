@@ -4,12 +4,8 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../../authentication/contexts/AuthContext';
 
 const EmailAuth = () => {
-  // states
-
   // custom hooks
   const { signinUser } = useAuth();
-
-  // // set the user email address in state
 
   const register = async () => {
     try {

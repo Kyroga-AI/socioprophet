@@ -51,11 +51,16 @@ const Alpha = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get('id');
 
-    const emailQuery = encodeURIComponent(email);
-    if (emailQuery === window.localStorage.getItem('id')) {
-      updateSurveyCompleted(currentUser.email);
+    // for development purposes
+    if (email === 'test@gmail.com') {
+      return;
     } else {
-      isSurveyCompleted();
+      const emailQuery = encodeURIComponent(email);
+      if (emailQuery === window.localStorage.getItem('id')) {
+        updateSurveyCompleted(currentUser.email);
+      } else {
+        isSurveyCompleted();
+      }
     }
   }, []);
 
