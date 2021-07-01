@@ -6,30 +6,30 @@ import SurveyEmbed from './SurveyEmbed';
 import './scss/survey.scss';
 
 const Survey = () => {
-  const [surveyEmail, setSurveyEmail] = useState<string | null>('');
+  const [surveyId, setSurveyId] = useState<string | null>('');
 
   const history = useHistory();
 
   // gets user email address and if one does not exist in url then redirects back to landing page
-  const getEmailAddress = async () => {
+  const getId = async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const emailAddress = urlParams.get('email_address');
+    const id = urlParams.get('id');
 
-    if (emailAddress === null) {
+    if (id === null) {
       history.push('/');
     }
 
-    setSurveyEmail(emailAddress);
+    setSurveyId(id);
   };
 
   // on render, gets the user email address from url
   useEffect(() => {
-    getEmailAddress();
+    getId();
   }, []);
 
   return (
     <div className="survey">
-      <SurveyEmbed id={surveyEmail} />
+      <SurveyEmbed id={surveyId} />
     </div>
   );
 };

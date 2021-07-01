@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }: Props) => {
     if (auth.isSignInWithEmailLink(window.location.href)) {
       // check email in link matches local storage (ensure same device sign in)
       let email = window.localStorage.getItem('signin_email');
-      const emailQuery = encodeURIComponent(email);
       // get user to re-enter email if different device
       if (!email) {
         email = window.prompt('Please provide your email for confirmation');
@@ -56,10 +55,10 @@ export const AuthProvider = ({ children }: Props) => {
           addUser(email);
           // user won't have completed survey at this point, but this function will
           // direct them accordingly
-          checkSurveyCompletion(email, emailQuery, false);
+          checkSurveyCompletion(email, false);
         } else {
           // check if existing user has completed the survey
-          checkSurveyCompletion(email, emailQuery, false);
+          checkSurveyCompletion(email, false);
         }
       });
     }
@@ -73,11 +72,7 @@ export const AuthProvider = ({ children }: Props) => {
    *  checks if currently authenticated user has completed the survey or not
    *
    */
-  const checkSurveyCompletion = async (
-    email: string,
-    emailQuery: string,
-    fromDashboard: boolean,
-  ) => {
+  const checkSurveyCompletion = async (email: string, fromDashboard: boolean) => {
     // create doc reference from firestore collection
     const userRef = db.collection('users');
     const snapshot = await userRef.where('emailAddress', '==', email).get();
@@ -88,8 +83,9 @@ export const AuthProvider = ({ children }: Props) => {
       // if user has not completed survey -> set email to local storage for an id check
       // send user to protected survey route
       if (!doc.data().survey) {
-        window.localStorage.setItem('id', emailQuery);
-        window.location.href = `/get-started?email_address=${emailQuery}&via=site_signup`;
+        let r = Math.random().toString(36).substring(7);
+        window.localStorage.setItem('id', r);
+        window.location.href = `/get-started?id=${r}&via=site_signup`;
       } else {
         // in this case, user has completed survey, remove email from local storage
         window.localStorage.removeItem('id');

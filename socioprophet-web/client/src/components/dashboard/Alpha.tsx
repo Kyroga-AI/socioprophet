@@ -40,8 +40,7 @@ const Alpha = () => {
 
   const isSurveyCompleted = async () => {
     try {
-      const emailQuery = encodeURIComponent(currentUser.email);
-      await checkSurveyCompletion(currentUser.email, emailQuery, true);
+      await checkSurveyCompletion(currentUser.email, true);
     } catch (err) {
       console.log(err);
     }
@@ -49,14 +48,13 @@ const Alpha = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const email = urlParams.get('id');
+    const id = urlParams.get('id');
 
     // for development purposes
-    if (email === 'test@gmail.com') {
+    if (id === '1') {
       return;
     } else {
-      const emailQuery = encodeURIComponent(email);
-      if (emailQuery === window.localStorage.getItem('id')) {
+      if (id === window.localStorage.getItem('id')) {
         updateSurveyCompleted(currentUser.email);
       } else {
         isSurveyCompleted();
