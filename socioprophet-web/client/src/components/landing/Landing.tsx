@@ -20,6 +20,8 @@ import { emailReducer } from '../../reducers/emailReducer';
 // styles
 import './scss/landing.scss';
 
+import { FIREBASE_DATABASE_URL } from '../../../variables/environment';
+
 // state for reducer
 
 const emailState = {

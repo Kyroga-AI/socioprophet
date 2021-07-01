@@ -13,16 +13,33 @@ import {
   FIREBASE_MEASUREMENT_ID,
 } from '../../../variables/environment';
 
-const app = firebase.initializeApp({
-  apiKey: FIREBASE_API_KEY,
-  authDomain: FIREBASE_AUTH_DOMAIN,
-  databaseURL: FIREBASE_DATABASE_URL,
-  projectId: FIREBASE_PROJECT_ID,
-  storageBucket: FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: FIREBASE_MESSAGE_SENDER_ID,
-  appId: FIREBASE_APP_ID,
-  measurementId: FIREBASE_MEASUREMENT_ID,
-});
+let firebaseCredentials;
+if (process.env.NODE_ENV === 'development') {
+  firebaseCredentials = {
+    apiKey: FIREBASE_API_KEY,
+    authDomain: FIREBASE_AUTH_DOMAIN,
+    databaseURL: FIREBASE_DATABASE_URL,
+    projectId: FIREBASE_PROJECT_ID,
+    storageBucket: FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: FIREBASE_MESSAGE_SENDER_ID,
+    appId: FIREBASE_APP_ID,
+    measurementId: FIREBASE_MEASUREMENT_ID,
+  };
+}
+if (process.env.NODE_ENV === 'production') {
+  firebaseCredentials = {
+    databaseURL: 'https://socioprophet-web.firebaseio.com',
+    apiKey: 'AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc',
+    authDomain: 'auth.socioprophet.com',
+    projectId: 'socioprophet-web',
+    storageBucket: 'socioprophet-web.appspot.com',
+    messagingSenderId: '392608809931',
+    appId: '1:392608809931:web:2605ec0bc89fa9fa662c4e',
+    measurementId: 'G-3MMLTVVF2S',
+  };
+}
+
+const app = firebase.initializeApp(firebaseCredentials);
 
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
 googleProvider.addScope('https://www.googleapis.com/auth/admin.directory.group');
