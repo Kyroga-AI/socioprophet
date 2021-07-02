@@ -1,5 +1,5 @@
-import React, { useReducer, useRef } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState, useReducer, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../../../authentication/contexts/AuthContext';
 
 // email validator
@@ -20,23 +20,19 @@ const loginState = {
 const LoginForm = () => {
   // states
   const [state, dispatch] = useReducer(loginReducer, loginState);
+  const [emailExists, setEmailExists] = useState<boolean>(true);
 
   // refs
   const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
+
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { login } = useAuth();
-  const { googleSignIn } = useAuth();
+
+  const { googleSignIn, githubSignIn } = useAuth();
 
   // computed css classes for invalid email error message
   const computedClassName = state.emailError ? 'loginForm__container__field__input--error' : '';
-
-  // computed css classes for invalid password error message
-  const computedClassNamePasswordError = state.passwordError
-    ? 'loginForm__container__field__input--error'
-    : '';
 
   // signin with Google
   const handleSignIn = async () => {
@@ -49,6 +45,14 @@ const LoginForm = () => {
     dispatch({ type: 'SET_LOADING', payload: false });
   };
 
+  const githubSignin = async () => {
+    try {
+      await githubSignIn();
+    } catch (err) {
+      console.log('There was an error signin in with GitHub:  ' + err);
+    }
+  };
+
   // handles email and password login submission
   const handleLogin = async () => {
     if (emailRef.current) {
@@ -59,38 +63,36 @@ const LoginForm = () => {
       // if email check passes, reset any previously dispatched error
       dispatch({ type: 'MISSING_EMAIL', payload: false });
 
-      // check if a password was entered
-      // if (passwordRef.current.value === '') {
-      //   return dispatch({ type: 'MISSING_PASSWORD', payload: true });
-      // }
-
-      // set loading back to false and enable button again
-      // dispatch({ type: 'MISSING_PASSWORD', payload: false });
-
-      // try {
-      //   // disable button while processing asynchronous calls
-      //   dispatch({ type: 'SET_LOADING', payload: true });
-      //   // login in user with email and password
-      //   await login(emailRef.current.value, passwordRef.current.value);
-      // } catch (err) {
-      //   if (err.code === 'auth/wrong-password') {
-      //     // dispatch error for wrong password
-      //     return dispatch({ type: 'INCORRECT_PASSWORD' });
-      //   } else {
-      //     // another error occured (should be handling all Firebase errors here)
-      //     return dispatch({ type: 'ERROR_PASSWORD' });
-      //   }
-      // }
       // enable button again
       dispatch({ type: 'SET_LOADING', payload: false });
       // send user to alpha dashboard
 
-      const emailQuery = encodeURIComponent(emailRef.current.value);
-
-      history.push(`/submit?email_address=${emailQuery}`);
+      checkIfUserExists().then((res) => {
+        if (res.user) {
+          const emailQuery = encodeURIComponent(emailRef.current.value);
+          history.push(`/submit?email_address=${emailQuery}`);
+        } else {
+          setEmailExists(false);
+        }
+      });
     }
   };
 
+  const checkIfUserExists = async () => {
+    const data = { email: emailRef.current.value };
+
+    // send post request with fetch
+    const response = await fetch('/api/auth/user', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    return response.json();
+  };
   // when user presses 'enter' for email submission
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -117,27 +119,11 @@ const LoginForm = () => {
           {state.emailError && (
             <p className="loginForm__container__field__error">{state.emailError}</p>
           )}
-
-          {/* <input
-            // style={{ marginTop: '2rem' }}
-            className={`inputText inputText--sm ${computedClassNamePasswordError}`}
-            name="password"
-            type="password"
-            spellCheck="false"
-            ref={passwordRef}
-            required
-            onKeyDown={handleKeyPress}
-            placeholder="Password"
-          />
-          {state.passwordError && (
-            <p className="loginForm__container__field__error">{state.passwordError}</p>
+          {!emailExists && !state.emailError && (
+            <p className="loginForm__container__field__error">
+              Sorry, we couldn't find an account with this email address.
+            </p>
           )}
-
-          <div className="loginForm__container__field__reset">
-            <Link className="loginForm__container__field__reset__link" to="/password-reset">
-              Forgot Password?
-            </Link>
-          </div> */}
 
           <div className="loginForm__container__field__btn">
             <div className="button button--sm" onClick={handleLogin}>
@@ -175,6 +161,18 @@ const LoginForm = () => {
               </svg>
               <span className="loginForm__container__field__btn__googleSign__text">
                 Sign in with Google
+              </span>
+            </div>
+            <div className="loginForm__container__field__btn__googleSignin" onClick={githubSignin}>
+              <i
+                style={{
+                  marginTop: '8px',
+                  marginLeft: '14px',
+                }}
+                className="fa fa-github "
+              ></i>
+              <span className="loginForm__container__field__btn__googleSign__text">
+                Sign in with GitHub
               </span>
             </div>
           </div>

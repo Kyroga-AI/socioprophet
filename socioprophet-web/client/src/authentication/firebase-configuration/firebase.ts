@@ -45,6 +45,7 @@ export const googleProvider = new firebase.auth.GoogleAuthProvider();
 googleProvider.addScope('https://www.googleapis.com/auth/admin.directory.group');
 googleProvider.addScope('https://www.googleapis.com/auth/admin.directory.group.member');
 export const emailProvider = new firebase.auth.EmailAuthProvider();
+export const githubProvider = new firebase.auth.GithubAuthProvider();
 export const auth = app.auth();
 export const db = app.firestore();
 export default app;

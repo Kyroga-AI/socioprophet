@@ -73,4 +73,20 @@ router.post("/email", (req, res) => {
   res.json({ requestBody: "signin" });
 });
 
+router.post("/user", (req, res) => {
+  // extract email from post request body
+  const email = req.body.email;
+  // use firebase admin SDK to search for user by email address
+  admin
+    .auth()
+    .getUserByEmail(email)
+    .then((userRecord) => {
+      // See the UserRecord reference doc for the contents of userRecord.
+      res.json({ user: true });
+    })
+    .catch((error) => {
+      res.json({ user: false });
+    });
+});
+
 module.exports = router;

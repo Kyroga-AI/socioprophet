@@ -52,7 +52,7 @@ const Alpha = () => {
 
     // for development purposes
     if (id === '1') {
-      return;
+      updateSurveyCompleted(currentUser.email);
     } else {
       if (id === window.localStorage.getItem('id')) {
         updateSurveyCompleted(currentUser.email);

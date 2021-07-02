@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import firebase from 'firebase/app'; // for emailProvider static object
-import { auth, db, googleProvider } from '../firebase-configuration/firebase';
+import { auth, db, googleProvider, githubProvider } from '../firebase-configuration/firebase';
 
 interface Props {
   children: React.ReactNode;
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: Props) => {
         // check for a new user sign up
         if (result.additionalUserInfo.isNewUser) {
           // add user to firestore
-          addUser(email);
+          addUser(email, 'email');
           // user won't have completed survey at this point, but this function will
           // direct them accordingly
           checkSurveyCompletion(email, false);
@@ -137,11 +137,12 @@ export const AuthProvider = ({ children }: Props) => {
    * adds new firebase user to Firestore db under 'users' collection with 'emailAddress: email' field
    *
    */
-  const addUser = async (email: string): Promise<void> => {
+  const addUser = async (email: string, method: string): Promise<void> => {
     const collectionName = 'users';
     const data = {
       emailAddress: email,
       survey: false,
+      method: method,
     };
 
     await db.collection(collectionName).add(data);
@@ -184,16 +185,23 @@ export const AuthProvider = ({ children }: Props) => {
     // );
   };
 
-  const getSigninResult = (): void => {
+  const githubSignIn = (): Promise<void> => {
+    return auth
+      .signInWithRedirect(githubProvider)
+      .catch((err) => console.log(`There was an error signing in: ${err}`));
+  };
+
+  const getSigninResult = async (): Promise<void> => {
     auth
       .getRedirectResult()
       .then((result) => {
         if (result.credential) {
           if (result.additionalUserInfo.isNewUser) {
-            addUser(currentUser.email);
+            addUser(currentUser.email, 'SSO');
+            checkSurveyCompletion(currentUser.email, false);
+          } else {
+            checkSurveyCompletion(currentUser.email, false);
           }
-
-          history.push('/alpha');
         }
       })
       .catch((err) => {
@@ -349,6 +357,7 @@ export const AuthProvider = ({ children }: Props) => {
     logout,
     googleSignIn,
     getSigninResult,
+    githubSignIn,
     resetPassword,
     verifyResetCode,
     emailVerification,

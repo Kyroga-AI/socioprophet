@@ -209,7 +209,8 @@ const Profile = () => {
           </div>
         </div>
         <div className="profile__container__user">
-          {currentUser.emailVerified ? (
+          <span style={{ color: '#777' }}>Email:</span> {currentUser.email}
+          {/* {currentUser.emailVerified ? (
             <p>
               <span style={{ color: '#777' }}>Email:</span> {currentUser.email}
               <span className="email-verified">Verified</span>
@@ -230,8 +231,8 @@ const Profile = () => {
                 <p className="verification-link--error">{verification.message}</p>
               )}
             </>
-          )}
-          <div className="profile__container__user__password">
+          )} */}
+          {/* <div className="profile__container__user__password">
             <p
               className="profile__container__user__password__btn"
               onClick={() => {
@@ -292,7 +293,7 @@ const Profile = () => {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
         <div className={`profile__container__footer ${themeClass}`}>
           <div className="profile__container__footer__btn logout" onClick={handleLogout}>

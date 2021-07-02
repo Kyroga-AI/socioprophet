@@ -9,13 +9,21 @@ interface Props {
 }
 
 const Signin = ({ onPress }: Props) => {
-  const { googleSignIn } = useAuth();
+  const { googleSignIn, githubSignIn } = useAuth();
 
   const googleSignin = async () => {
     try {
       await googleSignIn();
     } catch (err) {
       console.log('There was an error signing in with Google: ' + err);
+    }
+  };
+
+  const githubSignin = async () => {
+    try {
+      await githubSignIn();
+    } catch (err) {
+      console.log('There was an error signin in with GitHub:  ' + err);
     }
   };
 
@@ -63,6 +71,16 @@ const Signin = ({ onPress }: Props) => {
             </g>
           </svg>
           <span className="signin__text">Sign in with Google</span>
+        </div>
+        <div className="signin__btn" onClick={githubSignin}>
+          <i
+            style={{
+              marginTop: '8px',
+              marginLeft: '14px',
+            }}
+            className="fa fa-github "
+          ></i>
+          <span className="signin__text">Sign in with GitHub</span>
         </div>
       </div>
     </div>

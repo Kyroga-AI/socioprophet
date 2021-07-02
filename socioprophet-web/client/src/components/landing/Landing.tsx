@@ -32,11 +32,12 @@ const emailState = {
 const Landing = () => {
   // states
   const [state, dispatch] = useReducer(emailReducer, emailState);
-  const [isExpanded, setExpanded] = useState(false);
-  const [login, setLogin] = useState(false);
+  const [isExpanded, setExpanded] = useState<boolean>(false);
+  const [login, setLogin] = useState<boolean>(false);
   const [logoutError, setLogoutError] = useState('');
-  const [signin, setSignin] = useState(false);
-  const [tooltip, setTooltip] = useState(false);
+  const [signin, setSignin] = useState<boolean>(false);
+  const [tooltip, setTooltip] = useState<boolean>(false);
+  const [emailExists, setEmailExists] = useState<boolean>(false);
 
   // refs
   const emailRefOne = useRef<HTMLInputElement>(null);
@@ -114,19 +115,39 @@ const Landing = () => {
       // if email check passes, reset any previously dispatched error
       dispatch({ type: 'EMAIL_ERROR', payload: false });
 
-      // create email query string to pass to survey url
-      const emailQuery = encodeURIComponent(emailRef.current.value);
-
       // set loading back to false and enable button again
       dispatch({ type: 'SET_LOADING', payload: false });
 
-      // using custom useAuth hook to set the user email in global context
-      setEmail(emailRef.current.value);
+      checkIfUserExists().then((res) => {
+        if (res.user) {
+          setEmailExists(true);
+        } else {
+          const emailQuery = encodeURIComponent(emailRef.current.value);
+          // using custom useAuth hook to set the user email in global context
+          setEmail(emailRef.current.value);
 
-      // send to survey route
-      // history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
-      history.push(`/submit?email_address=${emailQuery}`);
+          // send to survey route
+          // history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
+          history.push(`/submit?email_address=${emailQuery}`);
+        }
+      });
     }
+  };
+
+  const checkIfUserExists = async () => {
+    const data = { email: emailRef.current.value };
+
+    // send post request with fetch
+    const response = await fetch('/api/auth/user', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    return response.json();
   };
 
   // when user presses 'enter' for email submition
@@ -209,6 +230,11 @@ const Landing = () => {
                 <div className="landing__container__main__email__field">
                   {state.error && (
                     <p className="landing__container__main__email__field__error">{state.error}</p>
+                  )}
+                  {emailExists && (
+                    <p className="landing__container__main__email__field__error">
+                      An account with this email exists.
+                    </p>
                   )}
                   <input
                     style={{ position: 'absolute', opacity: '0' }}
