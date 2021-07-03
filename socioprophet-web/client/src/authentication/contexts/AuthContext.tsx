@@ -1,24 +1,27 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import firebase from 'firebase/app'; // for emailProvider static object
-import { auth, db, googleProvider, githubProvider } from '../firebase-configuration/firebase';
+import { auth, db, googleProvider, githubProvider } from '../firebase-configuration/firebase'; // firebase and sso providers
 
 interface Props {
   children: React.ReactNode;
 }
+
+// define the context
 const AuthContext = React.createContext<any>(null);
 
+// export context as a custom hook
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
+// export hook as a global context provider to manage authentication state
 export const AuthProvider = ({ children }: Props) => {
-  // states
+  // current user (firebase.User)
   const [currentUser, setCurrentUser] = useState<firebase.User | null>(null);
+  // set loading state for async operations
   const [loading, setLoading] = useState<boolean>(true);
+  // store email state (here if it needs to be used (can be instead of using localStorage))
   const [emailAddress, setEmailAddress] = useState<string>('');
-  // router hook
-  const history = useHistory();
 
   /**
    *
@@ -35,14 +38,14 @@ export const AuthProvider = ({ children }: Props) => {
    *  signs in user with email link authentication -> then call checkSurveyCompletion function
    *
    */
-  const signinUser = () => {
+  const signinUser = (): void => {
     // check for url details from emailed link
     if (auth.isSignInWithEmailLink(window.location.href)) {
       // check email in link matches local storage (ensure same device sign in)
       let email = window.localStorage.getItem('signin_email');
       // get user to re-enter email if different device
       if (!email) {
-        email = window.prompt('Please provide your email for confirmation');
+        email = window.prompt('Please provide your email for confirmation.');
       }
 
       // use link code to authenticate user
@@ -72,7 +75,7 @@ export const AuthProvider = ({ children }: Props) => {
    *  checks if currently authenticated user has completed the survey or not
    *
    */
-  const checkSurveyCompletion = async (email: string, fromDashboard: boolean) => {
+  const checkSurveyCompletion = async (email: string, fromDashboard: boolean): Promise<void> => {
     // create doc reference from firestore collection
     const userRef = db.collection('users');
     const snapshot = await userRef.where('emailAddress', '==', email).get();
@@ -83,6 +86,7 @@ export const AuthProvider = ({ children }: Props) => {
       // if user has not completed survey -> set email to local storage for an id check
       // send user to protected survey route
       if (!doc.data().survey) {
+        // set a random id value to match in localStoarge to redirect query param from Typeform, to determine if a user just completed the survey
         let r = Math.random().toString(36).substring(7);
         window.localStorage.setItem('id', r);
         window.location.href = `/get-started?id=${r}&via=site_signup`;
@@ -102,7 +106,7 @@ export const AuthProvider = ({ children }: Props) => {
    *  updates the survey field in user document to 'true'
    *
    */
-  const updateSurveyCompleted = async (email: string) => {
+  const updateSurveyCompleted = async (email: string): Promise<void> => {
     const userRef = db.collection('users');
 
     const snapshot = await userRef.where('emailAddress', '==', email).get();
@@ -114,6 +118,7 @@ export const AuthProvider = ({ children }: Props) => {
       doc.ref.update({ survey: true });
     });
   };
+
   /**
    *
    * @param {string} email
@@ -168,40 +173,34 @@ export const AuthProvider = ({ children }: Props) => {
     return auth
       .signInWithRedirect(googleProvider)
       .catch((err) => console.log(`There was an error signing in: ${err}`));
-
-    // const googleAuth = gapi.auth2.getAuthInstance();
-    // const googleUser = await googleAuth.signIn();
-    // const profile = googleAuth.currentUser.get().getBasicProfile();
-    // const token = googleUser.getAuthResponse().id_token;
-    // const credential = firebase.auth.GoogleAuthProvider.credential(token);
-    // await auth.signInWithCredential(credential);
-    // await gapi.client.directory.members.insert(
-    //   {
-    //     groupKey: "free-tier-users@socioprophet.ai",
-    //   },
-    //   {
-    //     email: profile.getEmail(),
-    //   }
-    // );
   };
 
+  /**
+   *
+   * signs in a user using GitHub Signin with Redirect
+   *
+   */
   const githubSignIn = (): Promise<void> => {
     return auth
       .signInWithRedirect(githubProvider)
       .catch((err) => console.log(`There was an error signing in: ${err}`));
   };
 
+  /**
+   *
+   * gets the signin result of an SSO signin provider -> adds new user as defined by the resut to the database
+   *
+   */
   const getSigninResult = async (): Promise<void> => {
     auth
       .getRedirectResult()
       .then((result) => {
         if (result.credential) {
+          // check if signin is a new user and add to db
           if (result.additionalUserInfo.isNewUser) {
             addUser(currentUser.email, 'SSO');
-            checkSurveyCompletion(currentUser.email, false);
-          } else {
-            checkSurveyCompletion(currentUser.email, false);
           }
+          checkSurveyCompletion(currentUser.email, false);
         }
       })
       .catch((err) => {
@@ -220,17 +219,19 @@ export const AuthProvider = ({ children }: Props) => {
 
   /**
    *
+   * @param {firebase.User} user
    * sends a verification link to user for email address verification
    *
    */
-  const emailVerification = (user?: firebase.User): Promise<void> | undefined => {
+  const emailVerification = (user?: firebase.User): Promise<void> | undefined | void => {
     if (user) {
       return user.sendEmailVerification();
-    } else if (currentUser) {
-      return currentUser.sendEmailVerification();
     }
-
-    return;
+    if (currentUser) {
+      return currentUser.sendEmailVerification();
+    } else {
+      return;
+    }
   };
 
   /**
@@ -239,7 +240,7 @@ export const AuthProvider = ({ children }: Props) => {
    * verifies user's email address by applying the oobCode in the verification link
    *
    */
-  const applyVerificationCode = (actionCode: string) => {
+  const applyVerificationCode = (actionCode: string): Promise<void> => {
     return auth.applyActionCode(actionCode);
   };
 
@@ -249,7 +250,7 @@ export const AuthProvider = ({ children }: Props) => {
    * sends a reset password email to given user email address
    *
    */
-  const resetPassword = (email: string) => {
+  const resetPassword = (email: string): Promise<void> => {
     return auth.sendPasswordResetEmail(email);
   };
 
@@ -277,7 +278,7 @@ export const AuthProvider = ({ children }: Props) => {
    * updates stored firebase email for user - 'email' param is the new email address
    *
    */
-  const updateEmail = (email: string): Promise<void> | undefined => {
+  const updateEmail = (email: string): Promise<void> | void => {
     if (currentUser) {
       return currentUser.updateEmail(email);
     }
@@ -290,25 +291,12 @@ export const AuthProvider = ({ children }: Props) => {
    * uses Email Auth Provider to re-authenticate the current user for security sensitive operations (eg, password update, account deletion)
    *
    */
-  const reAuth = (password: string): Promise<firebase.auth.UserCredential> | undefined => {
+  const reAuth = (password: string): Promise<firebase.auth.UserCredential> | void => {
     if (currentUser) {
       if (currentUser.email) {
         const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, password);
         return currentUser.reauthenticateWithCredential(credential);
       }
-    }
-    return;
-  };
-
-  /**
-   *
-   * @param {string} password
-   * updates the password of the current authenticated user
-   *
-   */
-  const updatePassword = (password: string): Promise<void> | undefined => {
-    if (currentUser) {
-      return currentUser.updatePassword(password);
     }
     return;
   };
@@ -363,7 +351,6 @@ export const AuthProvider = ({ children }: Props) => {
     emailVerification,
     applyVerificationCode,
     updateEmail,
-    updatePassword,
     reAuth,
     deleteUser,
   };
