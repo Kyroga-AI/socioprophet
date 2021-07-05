@@ -166,14 +166,6 @@ const Landing = () => {
   };
 
   useEffect(() => {
-    console.log(window.location.href);
-
-    if (window.location.href !== 'http://localhost:8081/') {
-      if (window.location.href === 'https://socioprophet.com/') {
-        window.location.href = 'https://www.socioprophet.com';
-      }
-    }
-
     const getGoogleSigninResult = async () => {
       try {
         await getSigninResult();

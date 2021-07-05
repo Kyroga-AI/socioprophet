@@ -56,6 +56,13 @@
       ga('send', 'pageview');
     </script>
     <script async src='https://www.google-analytics.com/analytics.js'></script>    
+    <script type='text/javascript'>
+      if (window.location.href !== 'http://localhost:8081/') {
+        if (window.location.href === 'https://socioprophet.com/') {
+          window.location.href = 'https://www.socioprophet.com';
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root">
