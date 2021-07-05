@@ -48,7 +48,7 @@ const EmailSubmission = () => {
     <div className="submit">
       <h1 className="submit__heading">Please check your inbox.</h1>
       <p className="submit__instructions">
-        We've just sent a link to {getEmailParam()}. Use the link to complete your account set up!
+        We've just sent a link to {getEmailParam()}. Use the link to sign in!
       </p>
       <div className="submit__btn">
         <div className="button button--lg" onClick={() => (window.location.href = '/')}>

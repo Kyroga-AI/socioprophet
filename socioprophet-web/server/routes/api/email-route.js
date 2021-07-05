@@ -16,7 +16,7 @@ router.post("/email", (req, res) => {
 
   // set settings for generating link
   const actionCodeSettings = {
-    url: "https://socioprophet.com/signup",
+    url: "https://www.socioprophet.com/signup",
     handleCodeInApp: true,
   };
 
