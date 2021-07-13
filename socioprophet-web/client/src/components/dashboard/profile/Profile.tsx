@@ -194,7 +194,7 @@ const Profile = () => {
           <p className="profile__container__header__creationTime">
             Created {currentUser.metadata.creationTime}
           </p>
-          <span style={{ fontSize: '12px', marginTop: '0' }}>Theme</span>
+          <span style={{ fontSize: '12px', marginTop: '0' }}>Theme (Dark or Light)</span>
           {/* <button
             className={`${themeClass} profile__container__header__toggle`}
             onClick={toggleTheme}
