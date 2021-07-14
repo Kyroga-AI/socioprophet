@@ -219,7 +219,7 @@ const Landing = () => {
             <img src={logo} width="450px" height="77px" alt="socioprophet logo" />
           </div>
           <p className="landing__container__main__subtitle">
-            <strong>Open Collaborative Socio-Dat-Alytics. For geeks, by geeks.</strong>
+            <strong>Human and machine symbiosis via a secure and trusted community.</strong>
           </p>
           {currentUser === null && (
             <>
