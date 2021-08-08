@@ -14,10 +14,6 @@ import Privacy from './components/legal/Privacy';
 import PrivateRoute from './components/private-route/PrivateRoute';
 import { AuthProvider } from './authentication/contexts/AuthContext';
 import { ThemeProvider } from './components/dashboard/profile/ThemeContext';
-// import Account from './components/registration/Account';
-// import PasswordReset from './components/dashboard/profile/PasswordReset';
-// import UInterface from "./components/original-carbon-dashboard/UInterface";,
-// import PopoutTerminal from "./components/original-carbon-dashboard/interface_components/dashboard_components/PopoutTerminal";
 
 import './App.scss';
 import './components/global-styles/button.scss';
