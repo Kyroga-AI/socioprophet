@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
-import firebase from 'firebase/app'; // for emailProvider static object
-import { auth, db, googleProvider, githubProvider } from '../firebase-configuration/firebase'; // firebase and sso providers
-
+// import firebase from 'firebase/app'; // for emailProvider static object
+// import { auth, db, googleProvider, githubProvider } from '../firebase-configuration/firebase'; // firebase and sso providers
+import { supabase } from '../supabase-config/supabase';
 interface Props {
   children: React.ReactNode;
 }
@@ -16,8 +16,8 @@ export const useAuth = () => {
 
 // export hook as a global context provider to manage authentication state
 export const AuthProvider = ({ children }: Props) => {
-  // current user (firebase.User)
-  const [currentUser, setCurrentUser] = useState<firebase.User | null>(null);
+  // authenticated session
+  const [supabaseSession, setSupabaseSession] = useState(null);
   // set loading state for async operations
   const [loading, setLoading] = useState<boolean>(true);
   // store email state (here if it needs to be used (can be instead of using localStorage))
@@ -38,33 +38,66 @@ export const AuthProvider = ({ children }: Props) => {
    *  signs in user with email link authentication -> then call checkSurveyCompletion function
    *
    */
-  const signinUser = (): void => {
-    // check for url details from emailed link
-    if (auth.isSignInWithEmailLink(window.location.href)) {
-      // check email in link matches local storage (ensure same device sign in)
-      let email = window.localStorage.getItem('signin_email');
-      // get user to re-enter email if different device
-      if (!email) {
-        email = window.prompt('Please provide your email for confirmation.');
-      }
+  const signinUser = async (email: string) => {
+    // // check for url details from emailed link
+    // if (auth.isSignInWithEmailLink(window.location.href)) {
+    //   // check email in link matches local storage (ensure same device sign in)
+    //   let email = window.localStorage.getItem('signin_email');
+    //   // get user to re-enter email if different device
+    //   if (!email) {
+    //     email = window.prompt('Please provide your email for confirmation.');
+    //   }
+    //   // use link code to authenticate user
+    //   auth.signInWithEmailLink(email, window.location.href).then((result) => {
+    //     window.localStorage.removeItem('signin_email');
+    //     // check for a new user sign up
+    //     if (result.additionalUserInfo.isNewUser) {
+    //       // add user to firestore
+    //       addUser(email, 'email');
+    //       // user won't have completed survey at this point, but this function will
+    //       // direct them accordingly
+    //       checkSurveyCompletion(email, false);
+    //     } else {
+    //       // check if existing user has completed the survey
+    //       checkSurveyCompletion(email, false);
+    //     }
+    //   });
+    // }
+    // TESTING WITH SUPABASE INSTEAD OF FIREBASE...
+    console.log(email);
 
-      // use link code to authenticate user
-      auth.signInWithEmailLink(email, window.location.href).then((result) => {
-        window.localStorage.removeItem('signin_email');
+    // const { user, session, error } = await supabase.auth.signIn({ email: email });
+    // if (error) {
+    //   alert(error);
+    // } else {
+    //   alert('Check your email for the login link!');
+    //   console.log('email sent');
+    // }
 
-        // check for a new user sign up
-        if (result.additionalUserInfo.isNewUser) {
-          // add user to firestore
-          addUser(email, 'email');
-          // user won't have completed survey at this point, but this function will
-          // direct them accordingly
-          checkSurveyCompletion(email, false);
-        } else {
-          // check if existing user has completed the survey
-          checkSurveyCompletion(email, false);
-        }
-      });
+    const { data, error } = await supabase
+      .from('Users')
+      .insert([{ id: 'f7c52a33-a8f4-44a9-8bb4-dc1e1c54f181', name: email }]);
+  };
+
+  const doesUserExist = async (email: string) => {
+    console.log('Email Address in Context: ' + email);
+
+    const { data, error } = await supabase.from('Users').select('email').eq('email', email);
+
+    console.log(data);
+
+    if (error) {
+      console.log('There was a problem checking for this user.');
+      return error;
     }
+
+    if (data.length === 0) {
+      console.log('in here');
+
+      return false;
+    }
+
+    return true;
   };
 
   /**
@@ -122,23 +155,6 @@ export const AuthProvider = ({ children }: Props) => {
   /**
    *
    * @param {string} email
-   * @param {string} password
-   * creates a firebase user with email and password - simultaneous authentication occurs
-   *
-   */
-  const signup = (
-    email: string,
-    password: string,
-  ): Promise<firebase.auth.UserCredential | void> => {
-    return auth.createUserWithEmailAndPassword(email, password).then((result) => {
-      console.log(result);
-      emailVerification(result.user);
-    });
-  };
-
-  /**
-   *
-   * @param {string} email
    * adds new firebase user to Firestore db under 'users' collection with 'emailAddress: email' field
    *
    */
@@ -151,17 +167,6 @@ export const AuthProvider = ({ children }: Props) => {
     };
 
     await db.collection(collectionName).add(data);
-  };
-
-  /**
-   *
-   * @param {string} email
-   * @param {string} password
-   * signs in a firebase user with email and password (authentication)
-   *
-   */
-  const login = (email: string, password: string): Promise<firebase.auth.UserCredential> => {
-    return auth.signInWithEmailAndPassword(email, password);
   };
 
   /**
@@ -213,92 +218,9 @@ export const AuthProvider = ({ children }: Props) => {
    * signs out a authenticated firebase user
    *
    */
-  const logout = (): Promise<void> => {
-    return auth.signOut();
-  };
-
-  /**
-   *
-   * @param {firebase.User} user
-   * sends a verification link to user for email address verification
-   *
-   */
-  const emailVerification = (user?: firebase.User): Promise<void> | undefined | void => {
-    if (user) {
-      return user.sendEmailVerification();
-    }
-    if (currentUser) {
-      return currentUser.sendEmailVerification();
-    } else {
-      return;
-    }
-  };
-
-  /**
-   *
-   * @param {string} actionCode
-   * verifies user's email address by applying the oobCode in the verification link
-   *
-   */
-  const applyVerificationCode = (actionCode: string): Promise<void> => {
-    return auth.applyActionCode(actionCode);
-  };
-
-  /**
-   *
-   * @param {string} email
-   * sends a reset password email to given user email address
-   *
-   */
-  const resetPassword = (email: string): Promise<void> => {
-    return auth.sendPasswordResetEmail(email);
-  };
-
-  /**
-   *
-   * @param {string} actionCode
-   * @param {string} newPassword
-   * verifies that the reset password code is valid and then updates new password with 'newPassword' param
-   *
-   */
-  const verifyResetCode = (actionCode: string, newPassword: string) => {
-    auth
-      .verifyPasswordResetCode(actionCode)
-      .then(() => {
-        auth.confirmPasswordReset(actionCode, newPassword);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  /**
-   *
-   * @param {string} email
-   * updates stored firebase email for user - 'email' param is the new email address
-   *
-   */
-  const updateEmail = (email: string): Promise<void> | void => {
-    if (currentUser) {
-      return currentUser.updateEmail(email);
-    }
-    return;
-  };
-
-  /**
-   *
-   * @param {string} password
-   * uses Email Auth Provider to re-authenticate the current user for security sensitive operations (eg, password update, account deletion)
-   *
-   */
-  const reAuth = (password: string): Promise<firebase.auth.UserCredential> | void => {
-    if (currentUser) {
-      if (currentUser.email) {
-        const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, password);
-        return currentUser.reauthenticateWithCredential(credential);
-      }
-    }
-    return;
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    console.log(error);
   };
 
   /**
@@ -324,34 +246,37 @@ export const AuthProvider = ({ children }: Props) => {
     }
   };
 
+  // FIREBASE USEEFFECT
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged((user) => {
+  //     setCurrentUser(user);
+  //     setLoading(false);
+  //   });
+  //   return unsubscribe;
+  // }, []);
+
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
-      setLoading(false);
+    setLoading(false);
+
+    setSupabaseSession(supabase.auth.session());
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSupabaseSession(session);
     });
-    return unsubscribe;
   }, []);
 
   const value = {
     emailAddress,
-    currentUser,
+    supabaseSession,
     signinUser,
     setEmail,
-    signup,
+    doesUserExist,
     checkSurveyCompletion,
     updateSurveyCompleted,
     addUser,
-    login,
     logout,
     googleSignIn,
     getSigninResult,
     githubSignIn,
-    resetPassword,
-    verifyResetCode,
-    emailVerification,
-    applyVerificationCode,
-    updateEmail,
-    reAuth,
     deleteUser,
   };
 

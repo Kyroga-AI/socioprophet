@@ -42,7 +42,15 @@ const Landing = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { currentUser, setEmail, emailAddress, getSigninResult, logout } = useAuth();
+  const {
+    supabaseUser,
+    supabaseSession,
+    setEmail,
+    signinUser,
+    emailAddress,
+    doesUserExist,
+    logout,
+  } = useAuth();
 
   const { theme, componentMounted } = useDarkMode();
 
@@ -94,9 +102,8 @@ const Landing = () => {
     }
   };
 
-  // handles the email submission and sends user to survey
-  const handleEmail = async () => {
-    // check hidden input field
+  // SUPABASE ROUTE...
+  const supabaseEmailSignIn = async () => {
     if (emailRefOne.current.value != '') {
       return;
     }
@@ -115,20 +122,35 @@ const Landing = () => {
       // set loading back to false and enable button again
       dispatch({ type: 'SET_LOADING', payload: false });
 
-      checkIfUserExists().then((res) => {
-        if (res.user) {
-          setEmailExists(true);
-        } else {
-          const emailQuery = encodeURIComponent(emailRef.current.value);
-          // using custom useAuth hook to set the user email in global context
-          setEmail(emailRef.current.value);
+      let alreadyUser = await doesUserExist(emailRef.current.value);
 
-          // send to survey route
-          // history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
-          history.push(`/submit?email_address=${emailQuery}`);
-        }
-      });
+      console.log(alreadyUser);
+
+      if (alreadyUser) {
+        setEmailExists(true);
+        return;
+      }
+
+      setEmailExists(false);
+      // checkIfUserExists().then((res) => {
+      //   if (res.user) {
+      //     setEmailExists(true);
+      //   } else {
+      //     const emailQuery = encodeURIComponent(emailRef.current.value);
+      //     // using custom useAuth hook to set the user email in global context
+      //     setEmail(emailRef.current.value);
+
+      //     // send to survey route
+      //     // history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
+      //     history.push(`/submit?email_address=${emailQuery}`);
+      //   }
+      // });
     }
+    // try {
+    //   await signinUser(emailRef.current.value);
+    // } catch (err) {
+    //   console.log(err);
+    // }
   };
 
   const checkIfUserExists = async () => {
@@ -147,10 +169,47 @@ const Landing = () => {
     return response.json();
   };
 
+  // handles the email submission and sends user to survey
+  // const handleEmail = async () => {
+  //   // check hidden input field
+  //   if (emailRefOne.current.value != '') {
+  //     return;
+  //   }
+  //   if (emailRef.current) {
+  //     // set loading to disable 'begin' button
+  //     dispatch({ type: 'SET_LOADING', payload: true });
+
+  //     // check for valid email and dispatch error accordingly
+  //     if (!validateEmail(emailRef.current.value)) {
+  //       return dispatch({ type: 'EMAIL_ERROR', payload: true });
+  //     }
+
+  //     // if email check passes, reset any previously dispatched error
+  //     dispatch({ type: 'EMAIL_ERROR', payload: false });
+
+  //     // set loading back to false and enable button again
+  //     dispatch({ type: 'SET_LOADING', payload: false });
+
+  //     checkIfUserExists().then((res) => {
+  //       if (res.user) {
+  //         setEmailExists(true);
+  //       } else {
+  //         const emailQuery = encodeURIComponent(emailRef.current.value);
+  //         // using custom useAuth hook to set the user email in global context
+  //         setEmail(emailRef.current.value);
+
+  //         // send to survey route
+  //         // history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
+  //         history.push(`/submit?email_address=${emailQuery}`);
+  //       }
+  //     });
+  //   }
+  // };
+
   // when user presses 'enter' for email submition
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      handleEmail();
+      supabaseEmailSignIn();
     } else {
       return;
     }
@@ -166,21 +225,31 @@ const Landing = () => {
   };
 
   useEffect(() => {
-    const getGoogleSigninResult = async () => {
-      try {
-        await getSigninResult();
-      } catch (err) {
-        console.log(`Problem getting signin result: ${err}`);
-      }
-    };
-    if (currentUser) {
-      getGoogleSigninResult();
+    // const getGoogleSigninResult = async () => {
+    //   try {
+    //     await getSigninResult();
+    //   } catch (err) {
+    //     console.log(`Problem getting signin result: ${err}`);
+    //   }
+    // };
+    // if (currentUser) {
+    //   getGoogleSigninResult();
+    // }
+    // console.log(currentUser);
+    // window.location.reload();
+    if (localStorage.getItem('supabase.auth.token')) {
+      console.log('SESSION');
+      console.log(supabaseSession);
+      console.log('USER');
+      console.log(supabaseSession.user);
+
+      // window.location.href = 'http://localhost:8081/alpha';
     }
   }, []);
   return (
     <div className="landing">
       <Header>
-        {currentUser !== null ? (
+        {supabaseSession !== null ? (
           <>
             <div className={`landing__header__login ${themeClass}`}>
               <p className="landing__header__login__avatar" onClick={() => history.push('/alpha')}>
@@ -221,7 +290,7 @@ const Landing = () => {
           <p className="landing__container__main__subtitle">
             <strong>Human and machine symbiosis via a secure and trusted community.</strong>
           </p>
-          {currentUser === null && (
+          {supabaseSession === null && (
             <>
               <div className="landing__container__main__email">
                 <div className="landing__container__main__email__field">
@@ -255,7 +324,7 @@ const Landing = () => {
                 </div>
                 <div className="btn__container">
                   <div className="tooltip">
-                    <div className="button button--lg" onClick={handleEmail}>
+                    <div className="button button--lg" onClick={supabaseEmailSignIn}>
                       REGISTER
                     </div>
                     <div className="tooltip--mobile">

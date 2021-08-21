@@ -3,12 +3,12 @@ import { Route, Redirect } from 'react-router-dom';
 import { useAuth } from '../../authentication/contexts/AuthContext';
 
 const PrivateRoute = ({ component: Component, ...rest }: any) => {
-  const { currentUser } = useAuth();
+  const { supabaseSession } = useAuth();
 
   return (
     <Route
       {...rest}
-      render={(props) => (currentUser ? <Component {...props} /> : <Redirect to={'/'} />)}
+      render={(props) => (supabaseSession ? <Component {...props} /> : <Redirect to={'/'} />)}
     />
   );
 };

@@ -3,7 +3,7 @@ import { useAuth } from '../../../authentication/contexts/AuthContext';
 import { useDarkMode } from './ThemeContext';
 // reducer
 import { updateReducer } from '../../../reducers/updateReducer';
-
+import { supabase } from '../../../authentication/supabase-config/supabase';
 // styles
 import './scss/profile.scss';
 
@@ -192,7 +192,7 @@ const Profile = () => {
         <div className="profile__container__header">
           <p className="profile__container__header__heading">My Account</p>
           <p className="profile__container__header__creationTime">
-            Created {currentUser.metadata.creationTime}
+            {/* Created {currentUser.metadata.creationTime} */}
           </p>
           <span style={{ fontSize: '12px', marginTop: '0' }}>Theme (Dark or Light)</span>
           {/* <button
@@ -209,7 +209,7 @@ const Profile = () => {
           </div>
         </div>
         <div className="profile__container__user">
-          <span style={{ color: '#777' }}>Email:</span> {currentUser.email}
+          {/* <span style={{ color: '#777' }}>Email:</span> {currentUser.email} */}
           {/* {currentUser.emailVerified ? (
             <p>
               <span style={{ color: '#777' }}>Email:</span> {currentUser.email}

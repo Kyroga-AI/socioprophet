@@ -46,21 +46,21 @@ const Alpha = () => {
     }
   };
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
+  // useEffect(() => {
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   const id = urlParams.get('id');
 
-    // for development purposes
-    if (id === '1') {
-      updateSurveyCompleted(currentUser.email);
-    } else {
-      if (id === window.localStorage.getItem('id')) {
-        updateSurveyCompleted(currentUser.email);
-      } else {
-        isSurveyCompleted();
-      }
-    }
-  }, []);
+  //   // for development purposes
+  //   if (id === '1') {
+  //     updateSurveyCompleted(currentUser.email);
+  //   } else {
+  //     if (id === window.localStorage.getItem('id')) {
+  //       updateSurveyCompleted(currentUser.email);
+  //     } else {
+  //       isSurveyCompleted();
+  //     }
+  //   }
+  // }, []);
 
   return (
     <div className="alpha">
