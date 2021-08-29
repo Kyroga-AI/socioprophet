@@ -19,7 +19,7 @@ const Alpha = () => {
   // other hooks
   const { theme, componentMounted } = useDarkMode();
 
-  const { currentUser, checkSurveyCompletion, updateSurveyCompleted } = useAuth();
+  const { supabaseSession, doesUserExist, addNewUser } = useAuth();
   let themeClass = '';
 
   if (!componentMounted) {
@@ -38,29 +38,25 @@ const Alpha = () => {
     setExpanded(isExpanded === false ? true : false);
   };
 
-  const isSurveyCompleted = async () => {
+  const checkIfNewUser = async (email: string): Promise<void> => {
     try {
-      await checkSurveyCompletion(currentUser.email, true);
-    } catch (err) {
-      console.log(err);
+      let existingUser = await doesUserExist(email);
+
+      // prevent user from signup action if email already exists...
+      if (!existingUser) {
+        addNewUser(email);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  // useEffect(() => {
-  //   const urlParams = new URLSearchParams(window.location.search);
-  //   const id = urlParams.get('id');
+  useEffect(() => {
+    // check if user exists... in datatbase
+    const userEmail = supabaseSession.user.email;
 
-  //   // for development purposes
-  //   if (id === '1') {
-  //     updateSurveyCompleted(currentUser.email);
-  //   } else {
-  //     if (id === window.localStorage.getItem('id')) {
-  //       updateSurveyCompleted(currentUser.email);
-  //     } else {
-  //       isSurveyCompleted();
-  //     }
-  //   }
-  // }, []);
+    checkIfNewUser(userEmail);
+  }, []);
 
   return (
     <div className="alpha">

@@ -26,7 +26,7 @@ const emailState = {
   error: '',
 };
 
-const Landing = () => {
+const Landing: React.FC = () => {
   // states
   const [state, dispatch] = useReducer(emailReducer, emailState);
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -42,15 +42,7 @@ const Landing = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const {
-    supabaseUser,
-    supabaseSession,
-    setEmail,
-    signinUser,
-    emailAddress,
-    doesUserExist,
-    logout,
-  } = useAuth();
+  const { supabaseSession, doesUserExist, logout } = useAuth();
 
   const { theme, componentMounted } = useDarkMode();
 
@@ -122,89 +114,28 @@ const Landing = () => {
       // set loading back to false and enable button again
       dispatch({ type: 'SET_LOADING', payload: false });
 
-      let alreadyUser = await doesUserExist(emailRef.current.value);
+      // check if user exists... in datatbase
+      try {
+        let existingUser = await doesUserExist(emailRef.current.value);
 
-      console.log(alreadyUser);
+        // prevent user from signup action if email already exists...
+        if (existingUser) {
+          setEmailExists(true);
+          return;
+        }
 
-      if (alreadyUser) {
-        setEmailExists(true);
-        return;
+        setEmailExists(false);
+
+        const emailQuery = encodeURIComponent(emailRef.current.value);
+
+        history.push(`/submit?email_address=${emailQuery}`);
+
+        // catch errors
+      } catch (error) {
+        console.log(error);
       }
-
-      setEmailExists(false);
-      // checkIfUserExists().then((res) => {
-      //   if (res.user) {
-      //     setEmailExists(true);
-      //   } else {
-      //     const emailQuery = encodeURIComponent(emailRef.current.value);
-      //     // using custom useAuth hook to set the user email in global context
-      //     setEmail(emailRef.current.value);
-
-      //     // send to survey route
-      //     // history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
-      //     history.push(`/submit?email_address=${emailQuery}`);
-      //   }
-      // });
     }
-    // try {
-    //   await signinUser(emailRef.current.value);
-    // } catch (err) {
-    //   console.log(err);
-    // }
   };
-
-  const checkIfUserExists = async () => {
-    const data = { email: emailRef.current.value };
-
-    // send post request with fetch
-    const response = await fetch('/api/auth/user', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    return response.json();
-  };
-
-  // handles the email submission and sends user to survey
-  // const handleEmail = async () => {
-  //   // check hidden input field
-  //   if (emailRefOne.current.value != '') {
-  //     return;
-  //   }
-  //   if (emailRef.current) {
-  //     // set loading to disable 'begin' button
-  //     dispatch({ type: 'SET_LOADING', payload: true });
-
-  //     // check for valid email and dispatch error accordingly
-  //     if (!validateEmail(emailRef.current.value)) {
-  //       return dispatch({ type: 'EMAIL_ERROR', payload: true });
-  //     }
-
-  //     // if email check passes, reset any previously dispatched error
-  //     dispatch({ type: 'EMAIL_ERROR', payload: false });
-
-  //     // set loading back to false and enable button again
-  //     dispatch({ type: 'SET_LOADING', payload: false });
-
-  //     checkIfUserExists().then((res) => {
-  //       if (res.user) {
-  //         setEmailExists(true);
-  //       } else {
-  //         const emailQuery = encodeURIComponent(emailRef.current.value);
-  //         // using custom useAuth hook to set the user email in global context
-  //         setEmail(emailRef.current.value);
-
-  //         // send to survey route
-  //         // history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
-  //         history.push(`/submit?email_address=${emailQuery}`);
-  //       }
-  //     });
-  //   }
-  // };
 
   // when user presses 'enter' for email submition
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -225,27 +156,10 @@ const Landing = () => {
   };
 
   useEffect(() => {
-    // const getGoogleSigninResult = async () => {
-    //   try {
-    //     await getSigninResult();
-    //   } catch (err) {
-    //     console.log(`Problem getting signin result: ${err}`);
-    //   }
-    // };
-    // if (currentUser) {
-    //   getGoogleSigninResult();
-    // }
-    // console.log(currentUser);
-    // window.location.reload();
     if (localStorage.getItem('supabase.auth.token')) {
-      console.log('SESSION');
-      console.log(supabaseSession);
-      console.log('USER');
-      console.log(supabaseSession.user);
-
-      // window.location.href = 'http://localhost:8081/alpha';
+      window.location.href = 'http://localhost:8081/alpha';
     }
-  }, []);
+  });
   return (
     <div className="landing">
       <Header>
@@ -315,8 +229,6 @@ const Landing = () => {
                     type="email"
                     spellCheck="false"
                     ref={emailRef}
-                    value={emailAddress || ''}
-                    onChange={(e) => setEmail(e.target.value)}
                     required
                     onKeyDown={handleKeyPress}
                     placeholder="ENTER EMAIL"

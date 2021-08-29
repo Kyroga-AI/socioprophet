@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 // import firebase from 'firebase/app'; // for emailProvider static object
 // import { auth, db, googleProvider, githubProvider } from '../firebase-configuration/firebase'; // firebase and sso providers
 import { supabase } from '../supabase-config/supabase';
+import { v4 as uuidv4 } from 'uuid';
 interface Props {
   children: React.ReactNode;
 }
@@ -20,136 +21,68 @@ export const AuthProvider = ({ children }: Props) => {
   const [supabaseSession, setSupabaseSession] = useState(null);
   // set loading state for async operations
   const [loading, setLoading] = useState<boolean>(true);
-  // store email state (here if it needs to be used (can be instead of using localStorage))
-  const [emailAddress, setEmailAddress] = useState<string>('');
 
   /**
    *
-   * @param {string} email
-   * captured email address stored in case user 'returns' to landing from survey component
+   * checks if user already exists via database lookup
    *
+   * @param email
    */
-  const setEmail = (email: string): void => {
-    setEmailAddress(email);
-  };
+  const doesUserExist = async (email: string): Promise<boolean> => {
+    const { data } = await supabase
+      .from('socioprophet-users')
+      .select('email_hash')
+      .eq('email_hash', email);
 
-  /**
-   *
-   *  signs in user with email link authentication -> then call checkSurveyCompletion function
-   *
-   */
-  const signinUser = async (email: string) => {
-    // // check for url details from emailed link
-    // if (auth.isSignInWithEmailLink(window.location.href)) {
-    //   // check email in link matches local storage (ensure same device sign in)
-    //   let email = window.localStorage.getItem('signin_email');
-    //   // get user to re-enter email if different device
-    //   if (!email) {
-    //     email = window.prompt('Please provide your email for confirmation.');
-    //   }
-    //   // use link code to authenticate user
-    //   auth.signInWithEmailLink(email, window.location.href).then((result) => {
-    //     window.localStorage.removeItem('signin_email');
-    //     // check for a new user sign up
-    //     if (result.additionalUserInfo.isNewUser) {
-    //       // add user to firestore
-    //       addUser(email, 'email');
-    //       // user won't have completed survey at this point, but this function will
-    //       // direct them accordingly
-    //       checkSurveyCompletion(email, false);
-    //     } else {
-    //       // check if existing user has completed the survey
-    //       checkSurveyCompletion(email, false);
-    //     }
-    //   });
-    // }
-    // TESTING WITH SUPABASE INSTEAD OF FIREBASE...
-    console.log(email);
-
-    // const { user, session, error } = await supabase.auth.signIn({ email: email });
-    // if (error) {
-    //   alert(error);
-    // } else {
-    //   alert('Check your email for the login link!');
-    //   console.log('email sent');
-    // }
-
-    const { data, error } = await supabase
-      .from('Users')
-      .insert([{ id: 'f7c52a33-a8f4-44a9-8bb4-dc1e1c54f181', name: email }]);
-  };
-
-  const doesUserExist = async (email: string) => {
-    console.log('Email Address in Context: ' + email);
-
-    const { data, error } = await supabase.from('Users').select('email').eq('email', email);
-
-    console.log(data);
-
-    if (error) {
-      console.log('There was a problem checking for this user.');
-      return error;
-    }
-
+    // data.length will be zero if no matching user is found...
     if (data.length === 0) {
-      console.log('in here');
-
       return false;
     }
 
+    // else a matching user is found and we return 'true'...
     return true;
   };
 
   /**
    *
-   *  @param {string} email
-   *  @param {string} emailQuery
-   *  @param {boolean} fromDashboard
-   *  checks if currently authenticated user has completed the survey or not
-   *
+   * @param email
+   * adds new user to supabase managed PostgreSQL database
    */
-  const checkSurveyCompletion = async (email: string, fromDashboard: boolean): Promise<void> => {
-    // create doc reference from firestore collection
-    const userRef = db.collection('users');
-    const snapshot = await userRef.where('emailAddress', '==', email).get();
-    if (snapshot.empty) {
-      console.log('No matching documents found');
+  const addNewUser = async (email: string): Promise<void> => {
+    const newUserId = uuidv4();
+    const { error } = await supabase
+      .from('socioprophet-users')
+      .insert([{ user_id: newUserId, email_hash: email }]);
+
+    if (error) {
+      console.log(error);
+      return;
     }
-    snapshot.forEach((doc) => {
-      // if user has not completed survey -> set email to local storage for an id check
-      // send user to protected survey route
-      if (!doc.data().survey) {
-        // set a random id value to match in localStoarge to redirect query param from Typeform, to determine if a user just completed the survey
-        let r = Math.random().toString(36).substring(7);
-        window.localStorage.setItem('id', r);
-        window.location.href = `/get-started?id=${r}&via=site_signup`;
-      } else {
-        // in this case, user has completed survey, remove email from local storage
-        window.localStorage.removeItem('id');
-        if (!fromDashboard) {
-          window.location.href = '/alpha';
-        }
-      }
-    });
+    // since we added a new user, the survey has not been completed yet...
+    sendToSurvey();
   };
 
   /**
    *
-   *  @param {string} email
-   *  updates the survey field in user document to 'true'
-   *
+   * @param email
+   * sends user to survey route
    */
-  const updateSurveyCompleted = async (email: string): Promise<void> => {
-    const userRef = db.collection('users');
+  const sendToSurvey = (): void => {
+    let r = uuidv4();
+    window.localStorage.setItem('id', r);
+    window.location.href = `/get-started?id=${r}&via=site_signup`;
+  };
 
-    const snapshot = await userRef.where('emailAddress', '==', email).get();
-    if (snapshot.empty) {
-      console.log('No matching documents found');
+  /**
+   *
+   * @param email
+   * send email with link authentication for requested signins
+   */
+  const sendEmailAuthentication = async (email: string): Promise<void> => {
+    const { error } = await supabase.auth.signIn({ email: email });
+    if (error) {
+      console.log(error);
     }
-    // update survey completion to true
-    snapshot.forEach((doc) => {
-      doc.ref.update({ survey: true });
-    });
   };
 
   /**
@@ -246,15 +179,6 @@ export const AuthProvider = ({ children }: Props) => {
     }
   };
 
-  // FIREBASE USEEFFECT
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     setCurrentUser(user);
-  //     setLoading(false);
-  //   });
-  //   return unsubscribe;
-  // }, []);
-
   useEffect(() => {
     setLoading(false);
 
@@ -265,13 +189,10 @@ export const AuthProvider = ({ children }: Props) => {
   }, []);
 
   const value = {
-    emailAddress,
     supabaseSession,
-    signinUser,
-    setEmail,
     doesUserExist,
-    checkSurveyCompletion,
-    updateSurveyCompleted,
+    addNewUser,
+    sendEmailAuthentication,
     addUser,
     logout,
     googleSignIn,
