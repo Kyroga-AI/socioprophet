@@ -157,7 +157,7 @@ const Landing: React.FC = () => {
 
   useEffect(() => {
     if (localStorage.getItem('supabase.auth.token')) {
-      window.location.href = 'http://localhost:8081/alpha';
+      window.location.href = 'https://www.socioprophet.com/alpha';
     }
   });
   return (
