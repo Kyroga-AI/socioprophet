@@ -133,35 +133,13 @@ export const AuthProvider = ({ children }: Props) => {
    *
    */
   const deleteUser = async (id: string): Promise<void> => {
-    const { error } = await supabase.from<User>('socioprophet_users').delete().eq('user_id', id);
+    console.log(id);
+
+    const { error } = await supabase.from('socioprophet_users').delete().eq('user_id', id);
     if (error) {
       console.log(error);
     }
   };
-
-  /**
-   *
-   * deletes the current user from the Firestore db and then from Firebase Authentication
-   */
-  // WILL CHANGE THIS TO REMOVE USER FROM DB AND HAVE ANOTHER FUNCTION FOR DELETE FROM AUTH...
-  // const deleteUser = (): void => {
-  //   if (currentUser) {
-  //     const userRef = db.collection('users').where('emailAddress', '==', currentUser.email);
-
-  //     userRef.get().then((userQuerySnapshot) => {
-  //       userQuerySnapshot.forEach((doc) => {
-  //         doc.ref
-  //           .delete()
-  //           .then(() => {
-  //             currentUser.delete();
-  //           })
-  //           .catch((err) => {
-  //             console.error(`Error deleting document: ${err}`);
-  //           });
-  //       });
-  //     });
-  //   }
-  // };
 
   useEffect(() => {
     setLoading(false);
