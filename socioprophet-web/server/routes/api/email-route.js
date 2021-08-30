@@ -3,6 +3,14 @@ const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
 const router = express.Router();
 
+// supabase...
+const { createClient } = require("@supabase/supabase-js");
+
+const supabase = createClient(
+  "https://qvxokradfbdvxjlgtues.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyOTk1NjgxNSwiZXhwIjoxOTQ1NTMyODE1fQ.Lcygr9azVIGV2wgSjLXbQNukrw89Gg4sTNEsxz3HfYA"
+);
+
 // initialise firebase admin sdk
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
@@ -74,19 +82,15 @@ router.post("/email", (req, res) => {
 });
 
 router.post("/user", (req, res) => {
-  // extract email from post request body
-  const email = req.body.email;
-  // use firebase admin SDK to search for user by email address
-  admin
-    .auth()
-    .getUserByEmail(email)
-    .then((userRecord) => {
-      // See the UserRecord reference doc for the contents of userRecord.
-      res.json({ user: true });
-    })
-    .catch((error) => {
-      res.json({ user: false });
-    });
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const userId = req.body.user_id;
+
+  const { error } = supabase.auth.api.deleteUser(userId, serviceRoleKey);
+  if (error) {
+    console.log(error);
+  } else {
+    res.status(200).send({ msg: "success" });
+  }
 });
 
 module.exports = router;

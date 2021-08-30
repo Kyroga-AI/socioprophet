@@ -3,7 +3,7 @@ import { useAuth } from '../../../authentication/contexts/AuthContext';
 import { useDarkMode } from './ThemeContext';
 // reducer
 import { updateReducer } from '../../../reducers/updateReducer';
-import { supabase } from '../../../authentication/supabase-config/supabase';
+
 // styles
 import './scss/profile.scss';
 
@@ -12,29 +12,21 @@ const updateState = {
   oldPassword: '',
   newPassword: '',
   confirmPassword: '',
-  confirmDeletePassword: '',
+  confirmDelete: '',
 };
 
 const Profile = () => {
   // states
   const [state, dispatch] = useReducer(updateReducer, updateState);
-  const [verification, setVerification] = useState({
-    isError: false,
-    message: '',
-    sending: false,
-  });
-  const [changePassword, setChangePassword] = useState(false);
-  const [passwordUpdated, setPasswordUpdated] = useState(false);
-  const [renderDeleteConfirmation, setRenderDeleteConfirmation] = useState(false);
+
+  const [renderDeleteConfirmation, setRenderDeleteConfirmation] = useState<boolean>(false);
   const [logoutError, setLogoutError] = useState('');
+  const [deletion, setDeletion] = useState<string>('');
 
   // refs
-  const oldPasswordRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const passwordConfirmRef = useRef<HTMLInputElement>(null);
-  const passwordConfirmDeleteRef = useRef<HTMLInputElement>(null);
+  const confirmDeleteRef = useRef<HTMLInputElement>(null);
 
-  const { currentUser, emailVerification, reAuth, updatePassword, logout, deleteUser } = useAuth();
+  const { supabaseSession, logout, deleteUser } = useAuth();
 
   const { theme, toggleTheme, componentMounted } = useDarkMode();
 
@@ -49,94 +41,9 @@ const Profile = () => {
     themeClass = 'darkTheme';
   }
 
-  // computed css classes based on errors
-  const computedClassNameOldPasswordError = state.oldPassword
+  const computedClassNameConfirmDeleteError = state.confirmDelete
     ? 'profile__container__password__field__input--error'
     : '';
-
-  const computedClassNamePasswordError = state.newPassword
-    ? 'profile__container__password__field__input--error'
-    : '';
-
-  const computedClassNamePasswordConfirmError = state.confirmPassword
-    ? 'profile__container__password__field__input--error'
-    : '';
-
-  const computedClassNamePasswordConfirmDeleteError = state.confirmDeletePassword
-    ? 'profile__container__password__field__input--error'
-    : '';
-
-  const sendVerificationLink = async () => {
-    try {
-      setVerification({
-        isError: false,
-        message: `Verification link is being sent to ${currentUser.email}!`,
-        sending: true,
-      });
-      await emailVerification();
-    } catch (err) {
-      console.log(err);
-
-      setVerification({
-        isError: true,
-        message: 'There was a problem sending the verification link, please wait and try again.',
-        sending: false,
-      });
-    }
-  };
-
-  // handles changing the user password
-  const handleChangePassword = async () => {
-    if (oldPasswordRef.current && passwordRef.current && passwordConfirmRef.current) {
-      // check if a password was entered
-      if (oldPasswordRef.current.value === '') {
-        return dispatch({ type: 'MISSING_OLD_PASSWORD', payload: true });
-      }
-
-      // check password created is at least six characters long
-      if (passwordRef.current.value.length < 6) {
-        return dispatch({ type: 'INVALID_NEW_PASSWORD' });
-      }
-
-      // check if password and password confirmation are the same
-      if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-        return dispatch({ type: 'NO_MATCH' });
-      }
-
-      try {
-        // set loading to disable 'begin' button
-        dispatch({ type: 'SET_LOADING', payload: true });
-        // reauthenticte the user before performing update password action
-        await reAuth(oldPasswordRef.current.value);
-        // update user password with new password reference
-        await updatePassword(passwordRef.current.value);
-      } catch (err) {
-        if (err.code === 'auth/wrong-password') {
-          // dispatch error for wrong password
-          return dispatch({ type: 'INCORRECT_PASSWORD' });
-        } else {
-          // another error occured (should be handling all Firebase errors here)
-          return dispatch({ type: 'ERROR_PASSWORD' });
-        }
-      }
-      // set loading back to false and enable button again
-      dispatch({ type: 'SET_LOADING', payload: false });
-      setChangePassword(changePassword === false ? true : false);
-      setPasswordUpdated(true);
-      setTimeout(() => {
-        setPasswordUpdated(false);
-      }, 2000);
-    }
-  };
-
-  // when user presses 'enter' for delete submission
-  const handleKeyPressChangePassword = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
-      handleChangePassword();
-    } else {
-      return;
-    }
-  };
 
   // handles the user logout action
   const handleLogout = async () => {
@@ -148,41 +55,58 @@ const Profile = () => {
   };
 
   const handleDelete = async () => {
-    if (passwordConfirmDeleteRef.current) {
-      if (passwordConfirmDeleteRef.current.value === '') {
-        // check if a password was entered
-        if (passwordConfirmDeleteRef.current.value === '') {
-          return dispatch({ type: 'MISSING_MODAL_PASSWORD', payload: true });
-        }
-      }
-      try {
-        // set loading to disable 'begin' button
-        dispatch({ type: 'SET_LOADING', payload: true });
-        // reauthenticte the user before performing delete user action
-        await reAuth(passwordConfirmDeleteRef.current.value);
-        // delete current user
-        await deleteUser();
-      } catch (err) {
-        if (err.code === 'auth/wrong-password') {
-          // dispatch error for wrong password
-          console.log(err);
-          return dispatch({ type: 'INCORRECT_MODAL_PASSWORD' });
-        } else {
-          // another error occured (should be handling all Firebase errors here)
-          return dispatch({ type: 'INCORRECT_MODAL_PASSWORD' });
-        }
-      }
-      // set loading back to false and enable button again
-      dispatch({ type: 'SET_LOADING', payload: false });
+    try {
+      await deleteUser(supabaseSession.user.id);
+    } catch (error) {
+      console.log(error + 'failed to remove user from users');
     }
+  };
+
+  const validateConfirmation = (): boolean => {
+    if (confirmDeleteRef.current) {
+      if (confirmDeleteRef.current.value === '' || confirmDeleteRef.current.value !== 'delete') {
+        return false;
+      }
+      return true;
+    }
+
+    return false;
   };
 
   // when user presses 'enter' for delete submission
   const handleKeyPressDelete = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      handleDelete();
+      handleAccountDeletion();
     } else {
       return;
+    }
+  };
+
+  const handleAccountDeletion = async () => {
+    let confirm = validateConfirmation();
+
+    if (!confirm) {
+      return dispatch({ type: 'MISSING_MODAL_PASSWORD', payload: true });
+    }
+
+    setDeletion('deleting account...');
+
+    handleDelete();
+
+    const data = { user_id: supabaseSession.user.id };
+
+    const response = await fetch('/api/auth/user', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (response.status === 200) {
+      handleLogout();
+    } else {
+      alert('Account could not be deleted, please try again in a few minutes.');
     }
   };
 
@@ -191,9 +115,9 @@ const Profile = () => {
       <div className="profile__container">
         <div className="profile__container__header">
           <p className="profile__container__header__heading">My Account</p>
-          <p className="profile__container__header__creationTime">
-            {/* Created {currentUser.metadata.creationTime} */}
-          </p>
+          {/* <p className="profile__container__header__creationTime">
+           
+          </p> */}
           <span style={{ fontSize: '12px', marginTop: '0' }}>Theme (Dark or Light)</span>
           {/* <button
             className={`${themeClass} profile__container__header__toggle`}
@@ -209,91 +133,7 @@ const Profile = () => {
           </div>
         </div>
         <div className="profile__container__user">
-          {/* <span style={{ color: '#777' }}>Email:</span> {currentUser.email} */}
-          {/* {currentUser.emailVerified ? (
-            <p>
-              <span style={{ color: '#777' }}>Email:</span> {currentUser.email}
-              <span className="email-verified">Verified</span>
-            </p>
-          ) : (
-            <>
-              <p>
-                Email: {currentUser.email}
-                <span className="email-not-verified">Not Verified</span>
-              </p>
-              <p className="verification-link" onClick={sendVerificationLink}>
-                Verify Email Address
-              </p>
-              {verification.sending && (
-                <p className="update-notification">{verification.message}</p>
-              )}
-              {verification.isError && (
-                <p className="verification-link--error">{verification.message}</p>
-              )}
-            </>
-          )} */}
-          {/* <div className="profile__container__user__password">
-            <p
-              className="profile__container__user__password__btn"
-              onClick={() => {
-                setChangePassword(changePassword === false ? true : false);
-              }}
-            >
-              Change Password
-            </p>
-            {passwordUpdated && <p className="update-notification">Password has been changed!</p>}
-            {changePassword && (
-              <div className={`profile__container__user__password__field ${themeClass}`}>
-                <input
-                  className={`inputText inputText--sm ${computedClassNameOldPasswordError} ${themeClass}`}
-                  name="old-password"
-                  type="password"
-                  spellCheck="false"
-                  ref={oldPasswordRef}
-                  required
-                  placeholder="Old Password"
-                />
-                {state.oldPassword && (
-                  <p className="profile__container__password__field__error">{state.oldPassword}</p>
-                )}
-                <input
-                  className={`inputText inputText--sm ${computedClassNamePasswordError}`}
-                  style={{ marginTop: '20px' }}
-                  name="password"
-                  type="password"
-                  spellCheck="false"
-                  ref={passwordRef}
-                  required
-                  placeholder="New Password"
-                />
-                {state.newPassword && (
-                  <p className="profile__container__password__field__error">{state.newPassword}</p>
-                )}
-                <input
-                  className={`inputText inputText--sm ${computedClassNamePasswordConfirmError}`}
-                  name="password-confirmation"
-                  type="password"
-                  spellCheck="false"
-                  ref={passwordConfirmRef}
-                  required
-                  onKeyDown={handleKeyPressChangePassword}
-                  placeholder="Confirm New Password"
-                />
-                {state.confirmPassword && (
-                  <p className="profile__container__password__field__error">
-                    {state.confirmPassword}
-                  </p>
-                )}
-                <div
-                  style={{ marginTop: '20px' }}
-                  className="button button--sm"
-                  onClick={handleChangePassword}
-                >
-                  Update
-                </div>
-              </div>
-            )}
-          </div> */}
+          <span style={{ color: '#777' }}>Email:</span> {supabaseSession.user.email}
         </div>
         <div className={`profile__container__footer ${themeClass}`}>
           <div className="profile__container__footer__btn logout" onClick={handleLogout}>
@@ -312,22 +152,25 @@ const Profile = () => {
             <>
               <div className="profile__container__footer__confirm">
                 <input
-                  className={`inputText inputText--sm ${computedClassNamePasswordConfirmDeleteError}`}
-                  name="password-delete-confirm"
-                  type="password"
+                  className={`inputText inputText--sm ${computedClassNameConfirmDeleteError}`}
+                  name="confirmation"
+                  type="text"
+                  ref={confirmDeleteRef}
                   spellCheck="false"
-                  ref={passwordConfirmDeleteRef}
                   required
                   onKeyDown={handleKeyPressDelete}
-                  placeholder="Enter Password"
+                  placeholder="Type 'delete'"
                 />
 
-                <div className="button button--sm" onClick={handleDelete}>
+                <div className="button button--sm" onClick={handleAccountDeletion}>
                   Confirm Delete
                 </div>
               </div>
-              {state.confirmDeletePassword && (
-                <p className="logout-error">{state.confirmDeletePassword}</p>
+              {state.confirmDelete && <p className="logout-error">{state.confirmDelete}</p>}
+              {deletion && (
+                <p style={{ color: '#3e593a', fontSize: '20px' }} className="logout-error">
+                  {deletion}
+                </p>
               )}
             </>
           )}

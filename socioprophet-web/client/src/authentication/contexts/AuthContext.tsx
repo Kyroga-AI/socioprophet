@@ -1,11 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
-// import firebase from 'firebase/app'; // for emailProvider static object
-// import { auth, db, googleProvider, githubProvider } from '../firebase-configuration/firebase'; // firebase and sso providers
 import { supabase } from '../supabase-config/supabase';
 import { v4 as uuidv4 } from 'uuid';
+
 interface Props {
   children: React.ReactNode;
 }
+
+type User = {
+  user_id: string;
+  email_hash: string;
+};
 
 // define the context
 const AuthContext = React.createContext<any>(null);
@@ -30,7 +34,7 @@ export const AuthProvider = ({ children }: Props) => {
    */
   const doesUserExist = async (email: string): Promise<boolean> => {
     const { data } = await supabase
-      .from('socioprophet-users')
+      .from<User>('socioprophet_users')
       .select('email_hash')
       .eq('email_hash', email);
 
@@ -49,10 +53,9 @@ export const AuthProvider = ({ children }: Props) => {
    * adds new user to supabase managed PostgreSQL database
    */
   const addNewUser = async (email: string): Promise<void> => {
-    const newUserId = uuidv4();
     const { error } = await supabase
-      .from('socioprophet-users')
-      .insert([{ user_id: newUserId, email_hash: email }]);
+      .from<User>('socioprophet_users')
+      .insert([{ user_id: supabaseSession.user.id, email_hash: email }]);
 
     if (error) {
       console.log(error);
@@ -69,7 +72,6 @@ export const AuthProvider = ({ children }: Props) => {
    */
   const sendToSurvey = (): void => {
     let r = uuidv4();
-    window.localStorage.setItem('id', r);
     window.location.href = `/get-started?id=${r}&via=site_signup`;
   };
 
@@ -87,30 +89,16 @@ export const AuthProvider = ({ children }: Props) => {
 
   /**
    *
-   * @param {string} email
-   * adds new firebase user to Firestore db under 'users' collection with 'emailAddress: email' field
-   *
-   */
-  const addUser = async (email: string, method: string): Promise<void> => {
-    const collectionName = 'users';
-    const data = {
-      emailAddress: email,
-      survey: false,
-      method: method,
-    };
-
-    await db.collection(collectionName).add(data);
-  };
-
-  /**
-   *
    * signs in a user using Google Signin with Redirect
    *
    */
   const googleSignIn = async (): Promise<void> => {
-    return auth
-      .signInWithRedirect(googleProvider)
-      .catch((err) => console.log(`There was an error signing in: ${err}`));
+    let { error } = await supabase.auth.signIn({
+      provider: 'google',
+    });
+    if (error) {
+      console.log(error);
+    }
   };
 
   /**
@@ -118,32 +106,13 @@ export const AuthProvider = ({ children }: Props) => {
    * signs in a user using GitHub Signin with Redirect
    *
    */
-  const githubSignIn = (): Promise<void> => {
-    return auth
-      .signInWithRedirect(githubProvider)
-      .catch((err) => console.log(`There was an error signing in: ${err}`));
-  };
-
-  /**
-   *
-   * gets the signin result of an SSO signin provider -> adds new user as defined by the resut to the database
-   *
-   */
-  const getSigninResult = async (): Promise<void> => {
-    auth
-      .getRedirectResult()
-      .then((result) => {
-        if (result.credential) {
-          // check if signin is a new user and add to db
-          if (result.additionalUserInfo.isNewUser) {
-            addUser(currentUser.email, 'SSO');
-          }
-          checkSurveyCompletion(currentUser.email, false);
-        }
-      })
-      .catch((err) => {
-        return err;
-      });
+  const githubSignIn = async (): Promise<void> => {
+    let { error } = await supabase.auth.signIn({
+      provider: 'github',
+    });
+    if (error) {
+      console.log(error);
+    }
   };
 
   /**
@@ -151,33 +120,48 @@ export const AuthProvider = ({ children }: Props) => {
    * signs out a authenticated firebase user
    *
    */
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     const { error } = await supabase.auth.signOut();
-    console.log(error);
+    if (error) {
+      console.log(error);
+    }
+  };
+
+  /**
+   *
+   * deletes a user from socioprophet_users database
+   *
+   */
+  const deleteUser = async (id: string): Promise<void> => {
+    const { error } = await supabase.from<User>('socioprophet_users').delete().eq('user_id', id);
+    if (error) {
+      console.log(error);
+    }
   };
 
   /**
    *
    * deletes the current user from the Firestore db and then from Firebase Authentication
    */
-  const deleteUser = (): void => {
-    if (currentUser) {
-      const userRef = db.collection('users').where('emailAddress', '==', currentUser.email);
+  // WILL CHANGE THIS TO REMOVE USER FROM DB AND HAVE ANOTHER FUNCTION FOR DELETE FROM AUTH...
+  // const deleteUser = (): void => {
+  //   if (currentUser) {
+  //     const userRef = db.collection('users').where('emailAddress', '==', currentUser.email);
 
-      userRef.get().then((userQuerySnapshot) => {
-        userQuerySnapshot.forEach((doc) => {
-          doc.ref
-            .delete()
-            .then(() => {
-              currentUser.delete();
-            })
-            .catch((err) => {
-              console.error(`Error deleting document: ${err}`);
-            });
-        });
-      });
-    }
-  };
+  //     userRef.get().then((userQuerySnapshot) => {
+  //       userQuerySnapshot.forEach((doc) => {
+  //         doc.ref
+  //           .delete()
+  //           .then(() => {
+  //             currentUser.delete();
+  //           })
+  //           .catch((err) => {
+  //             console.error(`Error deleting document: ${err}`);
+  //           });
+  //       });
+  //     });
+  //   }
+  // };
 
   useEffect(() => {
     setLoading(false);
@@ -193,11 +177,9 @@ export const AuthProvider = ({ children }: Props) => {
     doesUserExist,
     addNewUser,
     sendEmailAuthentication,
-    addUser,
-    logout,
     googleSignIn,
-    getSigninResult,
     githubSignIn,
+    logout,
     deleteUser,
   };
 
