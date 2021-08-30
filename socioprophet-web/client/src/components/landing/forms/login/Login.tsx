@@ -29,7 +29,7 @@ const LoginForm = () => {
   const history = useHistory();
   // custom hooks
 
-  const { googleSignIn, githubSignIn } = useAuth();
+  const { doesUserExist, googleSignIn, githubSignIn } = useAuth();
 
   // computed css classes for invalid email error message
   const computedClassName = state.emailError ? 'loginForm__container__field__input--error' : '';
@@ -67,32 +67,26 @@ const LoginForm = () => {
       dispatch({ type: 'SET_LOADING', payload: false });
       // send user to alpha dashboard
 
-      checkIfUserExists().then((res) => {
-        if (res.user) {
+      try {
+        let existingUser = await doesUserExist(emailRef.current.value);
+
+        // prevent user from signup action if email already exists...
+        if (existingUser) {
+          setEmailExists(true);
           const emailQuery = encodeURIComponent(emailRef.current.value);
           history.push(`/submit?email_address=${emailQuery}`);
-        } else {
-          setEmailExists(false);
+          return;
         }
-      });
+
+        setEmailExists(false);
+
+        // catch errors
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
-  const checkIfUserExists = async () => {
-    const data = { email: emailRef.current.value };
-
-    // send post request with fetch
-    const response = await fetch('/api/auth/user', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    return response.json();
-  };
   // when user presses 'enter' for email submission
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {

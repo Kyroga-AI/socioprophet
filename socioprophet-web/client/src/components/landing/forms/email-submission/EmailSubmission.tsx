@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+// auth context
+import { useAuth } from '../../../../authentication/contexts/AuthContext';
 
 import './scss/emailSubmission.scss';
 
 const EmailSubmission = () => {
   // router hook
   const history = useHistory();
+  // custom auth hook
+  const { sendEmailAuthentication } = useAuth();
 
   // check for email query parameter then posts email address to server
   const sendEmail = async () => {
@@ -16,22 +20,11 @@ const EmailSubmission = () => {
       history.push('/');
     }
 
-    // set json data
-    const data = { email: email };
-
-    // send post request with fetch
-    const response = await fetch('/api/auth/email', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    window.localStorage.setItem('signin_email', email);
-
-    return response.json();
+    try {
+      sendEmailAuthentication(email);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getEmailParam = () => {

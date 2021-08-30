@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Landing from './components/landing/Landing';
 import EmailSubmission from './components/landing/forms/email-submission/EmailSubmission';
 import Survey from './components/registration/survey/Survey';
-import EmailAuth from './components/registration/EmailAuth';
 
 import Alpha from './components/dashboard/Alpha';
 import NotFound from './components/not-found/NotFound';
@@ -20,17 +19,6 @@ import './components/global-styles/button.scss';
 import './components/global-styles/inputText.scss';
 
 const App = () => {
-  // useEffect(() => {}, []);
-  // window.onGoogleScriptLoad = () => {
-  //   gapi.load('client', () => {
-  //     gapi.client.init({
-  //       apiKey: 'AIzaSyDeZueSUiuOAgQuDOBAF5QWvFce_fjkMMc',
-  //       clientId: '392608809931-uktf79hjt5o91r2fmvvm8fnfe4grfipv.apps.googleusercontent.com',
-  //       discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/admin/directory_v1/rest'],
-  //       scope: 'https://www.googleapis.com/auth/admin.directory.group.member',
-  //     });
-  //   });
-  // };
   return (
     <BrowserRouter>
       <ThemeProvider>
@@ -41,7 +29,6 @@ const App = () => {
               <Route exact path="/submit" component={EmailSubmission} />
               <Route path="/terms-of-use" component={Terms} />
               <Route path="/privacy-policy" component={Privacy} />
-              <Route path="/signup" component={EmailAuth} />
               <PrivateRoute path="/get-started" component={Survey} />
               <PrivateRoute exact path="/alpha" component={Alpha} />
               <Route component={NotFound} />

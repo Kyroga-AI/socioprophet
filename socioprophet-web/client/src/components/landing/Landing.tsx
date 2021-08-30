@@ -26,7 +26,7 @@ const emailState = {
   error: '',
 };
 
-const Landing = () => {
+const Landing: React.FC = () => {
   // states
   const [state, dispatch] = useReducer(emailReducer, emailState);
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -42,7 +42,7 @@ const Landing = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { currentUser, setEmail, emailAddress, getSigninResult, logout } = useAuth();
+  const { supabaseSession, doesUserExist, logout } = useAuth();
 
   const { theme, componentMounted } = useDarkMode();
 
@@ -94,9 +94,8 @@ const Landing = () => {
     }
   };
 
-  // handles the email submission and sends user to survey
-  const handleEmail = async () => {
-    // check hidden input field
+  // SUPABASE ROUTE...
+  const supabaseEmailSignIn = async () => {
     if (emailRefOne.current.value != '') {
       return;
     }
@@ -115,42 +114,33 @@ const Landing = () => {
       // set loading back to false and enable button again
       dispatch({ type: 'SET_LOADING', payload: false });
 
-      checkIfUserExists().then((res) => {
-        if (res.user) {
+      // check if user exists... in datatbase
+      try {
+        let existingUser = await doesUserExist(emailRef.current.value);
+
+        // prevent user from signup action if email already exists...
+        if (existingUser) {
           setEmailExists(true);
-        } else {
-          const emailQuery = encodeURIComponent(emailRef.current.value);
-          // using custom useAuth hook to set the user email in global context
-          setEmail(emailRef.current.value);
-
-          // send to survey route
-          // history.push(`/get-started?email_address=${emailQuery}&via=site_signup`);
-          history.push(`/submit?email_address=${emailQuery}`);
+          return;
         }
-      });
+
+        setEmailExists(false);
+
+        const emailQuery = encodeURIComponent(emailRef.current.value);
+
+        history.push(`/submit?email_address=${emailQuery}`);
+
+        // catch errors
+      } catch (error) {
+        console.log(error);
+      }
     }
-  };
-
-  const checkIfUserExists = async () => {
-    const data = { email: emailRef.current.value };
-
-    // send post request with fetch
-    const response = await fetch('/api/auth/user', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    return response.json();
   };
 
   // when user presses 'enter' for email submition
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      handleEmail();
+      supabaseEmailSignIn();
     } else {
       return;
     }
@@ -166,21 +156,14 @@ const Landing = () => {
   };
 
   useEffect(() => {
-    const getGoogleSigninResult = async () => {
-      try {
-        await getSigninResult();
-      } catch (err) {
-        console.log(`Problem getting signin result: ${err}`);
-      }
-    };
-    if (currentUser) {
-      getGoogleSigninResult();
+    if (localStorage.getItem('supabase.auth.token')) {
+      window.location.href = 'http://localhost:8081/alpha';
     }
-  }, []);
+  });
   return (
     <div className="landing">
       <Header>
-        {currentUser !== null ? (
+        {supabaseSession !== null ? (
           <>
             <div className={`landing__header__login ${themeClass}`}>
               <p className="landing__header__login__avatar" onClick={() => history.push('/alpha')}>
@@ -221,7 +204,7 @@ const Landing = () => {
           <p className="landing__container__main__subtitle">
             <strong>Human and machine symbiosis via a secure and trusted community.</strong>
           </p>
-          {currentUser === null && (
+          {supabaseSession === null && (
             <>
               <div className="landing__container__main__email">
                 <div className="landing__container__main__email__field">
@@ -246,8 +229,6 @@ const Landing = () => {
                     type="email"
                     spellCheck="false"
                     ref={emailRef}
-                    value={emailAddress || ''}
-                    onChange={(e) => setEmail(e.target.value)}
                     required
                     onKeyDown={handleKeyPress}
                     placeholder="ENTER EMAIL"
@@ -255,7 +236,7 @@ const Landing = () => {
                 </div>
                 <div className="btn__container">
                   <div className="tooltip">
-                    <div className="button button--lg" onClick={handleEmail}>
+                    <div className="button button--lg" onClick={supabaseEmailSignIn}>
                       REGISTER
                     </div>
                     <div className="tooltip--mobile">
