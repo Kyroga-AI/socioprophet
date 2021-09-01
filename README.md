@@ -110,7 +110,7 @@ The following hardware is required for running the system locally under Minikube
 	2. set-up git  and download the repository.
 	3. Replace step 4 git clone command with 
 	```bash
-	git clone git@github.ibm.com:cognitive-data-platform/datahub.git
+	git clone git@github<repo>.git
 	```
 
 1. Install hyperkit, a mini virtual machine environment.
