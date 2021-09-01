@@ -2,29 +2,30 @@ import React, { useState, useRef, useReducer } from 'react';
 import { useAuth } from '../../../authentication/contexts/AuthContext';
 import { useDarkMode } from './ThemeContext';
 // reducer
-import { updateReducer } from '../../../reducers/updateReducer';
+import { authReducer } from '../../../reducers/authReducer';
 
 // styles
 import './scss/profile.scss';
 
-const updateState = {
+type State = {
+  loading: boolean;
+  confirmation: string;
+};
+const authState: State = {
   loading: false,
-  oldPassword: '',
-  newPassword: '',
-  confirmPassword: '',
-  confirmDelete: '',
+  confirmation: '',
 };
 
 const Profile = () => {
   // states
-  const [state, dispatch] = useReducer(updateReducer, updateState);
+  const [state, dispatch] = useReducer(authReducer, authState);
 
   const [renderDeleteConfirmation, setRenderDeleteConfirmation] = useState<boolean>(false);
   const [logoutError, setLogoutError] = useState('');
   const [deletion, setDeletion] = useState<string>('');
 
   // refs
-  const confirmDeleteRef = useRef<HTMLInputElement>(null);
+  const confirmationRef = useRef<HTMLInputElement>(null);
 
   const { supabaseSession, logout, deleteUser } = useAuth();
 
@@ -41,7 +42,7 @@ const Profile = () => {
     themeClass = 'darkTheme';
   }
 
-  const computedClassNameConfirmDeleteError = state.confirmDelete
+  const computedClassNameConfirmationError = state.confirmation
     ? 'profile__container__password__field__input--error'
     : '';
 
@@ -63,8 +64,8 @@ const Profile = () => {
   };
 
   const validateConfirmation = (): boolean => {
-    if (confirmDeleteRef.current) {
-      if (confirmDeleteRef.current.value === '' || confirmDeleteRef.current.value !== 'delete') {
+    if (confirmationRef.current) {
+      if (confirmationRef.current.value === '' || confirmationRef.current.value !== 'delete') {
         return false;
       }
       return true;
@@ -86,7 +87,7 @@ const Profile = () => {
     let confirm = validateConfirmation();
 
     if (!confirm) {
-      return dispatch({ type: 'MISSING_MODAL_PASSWORD', payload: true });
+      return dispatch({ type: 'INVALID_CONFIRMATION', payload: "Please type 'delete' to confirm" });
     }
 
     setDeletion('deleting account...');
@@ -152,10 +153,10 @@ const Profile = () => {
             <>
               <div className="profile__container__footer__confirm">
                 <input
-                  className={`inputText inputText--sm ${computedClassNameConfirmDeleteError}`}
+                  className={`inputText inputText--sm ${computedClassNameConfirmationError}`}
                   name="confirmation"
                   type="text"
-                  ref={confirmDeleteRef}
+                  ref={confirmationRef}
                   spellCheck="false"
                   required
                   onKeyDown={handleKeyPressDelete}
@@ -166,7 +167,7 @@ const Profile = () => {
                   Confirm Delete
                 </div>
               </div>
-              {state.confirmDelete && <p className="logout-error">{state.confirmDelete}</p>}
+              {state.confirmation && <p className="logout-error">{state.confirmation}</p>}
               {deletion && (
                 <p style={{ color: '#3e593a', fontSize: '20px' }} className="logout-error">
                   {deletion}

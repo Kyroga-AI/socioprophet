@@ -5,22 +5,26 @@ import { useAuth } from '../../../../authentication/contexts/AuthContext';
 // email validator
 import { validateEmail } from '../../validate-email/validateEmail';
 // reducer
-import { loginReducer } from '../../../../reducers/loginReducer';
+import { authReducer } from '../../../../reducers/authReducer';
+
 // styles
 import './scss/login.scss';
 import '../signin/scss/signin.scss';
 
+// type for reducer state
+type State = {
+  loading: boolean;
+  error: '';
+};
 // state for reducer
-const loginState = {
+const authState: State = {
   loading: false,
-  emailError: '',
-  passwordError: '',
+  error: '',
 };
 
 const LoginForm = () => {
   // states
-  const [state, dispatch] = useReducer(loginReducer, loginState);
-  const [emailExists, setEmailExists] = useState<boolean>(true);
+  const [state, dispatch] = useReducer(authReducer, authState);
 
   // refs
   const emailRef = useRef<HTMLInputElement>(null);
@@ -29,20 +33,20 @@ const LoginForm = () => {
   const history = useHistory();
   // custom hooks
 
-  const { doesUserExist, googleSignIn, githubSignIn } = useAuth();
+  const { googleSignIn, githubSignIn } = useAuth();
 
   // computed css classes for invalid email error message
-  const computedClassName = state.emailError ? 'loginForm__container__field__input--error' : '';
+  const computedClassName = state.error ? 'loginForm__container__field__input--error' : '';
 
   // signin with Google
   const handleSignIn = async () => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_LOADING' });
       await googleSignIn();
     } catch (err) {
       console.trace(err);
     }
-    dispatch({ type: 'SET_LOADING', payload: false });
+    dispatch({ type: 'SET_LOADING' });
   };
 
   const githubSignin = async () => {
@@ -57,33 +61,18 @@ const LoginForm = () => {
   const handleLogin = async () => {
     if (emailRef.current) {
       if (!validateEmail(emailRef.current.value)) {
-        return dispatch({ type: 'MISSING_EMAIL', payload: true });
+        return dispatch({ type: 'EMAIL_ERROR', payload: 'You must enter your email!' });
       }
 
       // if email check passes, reset any previously dispatched error
-      dispatch({ type: 'MISSING_EMAIL', payload: false });
+      dispatch({ type: 'EMAIL_ERROR', payload: '' });
 
       // enable button again
-      dispatch({ type: 'SET_LOADING', payload: false });
+      dispatch({ type: 'SET_LOADING' });
       // send user to alpha dashboard
 
-      try {
-        let existingUser = await doesUserExist(emailRef.current.value);
-
-        // prevent user from signup action if email already exists...
-        if (existingUser) {
-          setEmailExists(true);
-          const emailQuery = encodeURIComponent(emailRef.current.value);
-          history.push(`/submit?email_address=${emailQuery}`);
-          return;
-        }
-
-        setEmailExists(false);
-
-        // catch errors
-      } catch (error) {
-        console.log(error);
-      }
+      const emailQuery = encodeURIComponent(emailRef.current.value);
+      history.push(`/submit?email_address=${emailQuery}`);
     }
   };
 
@@ -110,15 +99,7 @@ const LoginForm = () => {
             onKeyDown={handleKeyPress}
             placeholder="Email Address"
           />
-          {state.emailError && (
-            <p className="loginForm__container__field__error">{state.emailError}</p>
-          )}
-          {!emailExists && !state.emailError && (
-            <p className="loginForm__container__field__error">
-              Sorry, we couldn't find an account with this email address.
-            </p>
-          )}
-
+          {state.error && <p className="loginForm__container__field__error">{state.error}</p>}
           <div className="loginForm__container__field__btn">
             <div className="button button--sm" onClick={handleLogin}>
               LOGIN

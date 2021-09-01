@@ -40,7 +40,7 @@ const Alpha = () => {
 
   const checkIfNewUser = async (email: string): Promise<void> => {
     try {
-      let existingUser = await doesUserExist(email);
+      let existingUser = await doesUserExist();
 
       // prevent user from signup action if email already exists...
       if (!existingUser) {

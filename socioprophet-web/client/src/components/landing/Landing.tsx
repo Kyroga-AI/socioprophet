@@ -1,40 +1,48 @@
 import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
+// UI COMPONENTS
 import Header from '../header/Header';
+import Footer from '../footer/Footer';
 import TickerFeed from '../ticker-feed/TickerFeed';
 import ScrollSection from './ScrollSection';
-
-import Footer from '../footer/Footer';
-
+// UI AUTH COMPONENTS
 import Login from './forms/login/Login';
 import Signin from './forms/signin/Signin';
+// CUSTOM HOOKS
 import { useAuth } from '../../authentication/contexts/AuthContext';
 import { useDarkMode } from '../dashboard/profile/ThemeContext';
-// main SocioProphet logo image
-import logo from '../../../public/images/mothership-logo.png';
-
-// email validator
+// HELPER FUNCTIONS
 import { validateEmail } from './validate-email/validateEmail';
-// reducer
-import { emailReducer } from '../../reducers/emailReducer';
-// styles
+// STATE REDUCER
+import { authReducer } from '../../reducers/authReducer';
+// IMAGES AND STYLES
+import logo from '../../../public/images/mothership-logo.png';
 import './scss/landing.scss';
 
+// type for reducer state
+type State = {
+  loading: boolean;
+  error: string;
+};
+
 // state for reducer
-const emailState = {
+const authState: State = {
   loading: false,
   error: '',
 };
 
-const Landing: React.FC = () => {
+const PRODUCTION_URL: string = 'https://www.socioprophet.com';
+const LOCAL_HOST: string = 'http://localhost';
+const PORT: string = '8081';
+
+const Landing: React.FC = (): JSX.Element => {
   // states
-  const [state, dispatch] = useReducer(emailReducer, emailState);
+  const [state, dispatch] = useReducer(authReducer, authState);
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [login, setLogin] = useState<boolean>(false);
-  const [logoutError, setLogoutError] = useState('');
+  const [logoutError, setLogoutError] = useState<string>('');
   const [signin, setSignin] = useState<boolean>(false);
   const [tooltip, setTooltip] = useState<boolean>(false);
-  const [emailExists, setEmailExists] = useState<boolean>(false);
 
   // refs
   const emailRefOne = useRef<HTMLInputElement>(null);
@@ -42,11 +50,11 @@ const Landing: React.FC = () => {
   // other hooks
   const history = useHistory();
   // custom hooks
-  const { supabaseSession, doesUserExist, logout } = useAuth();
+  const { supabaseSession, logout } = useAuth();
 
   const { theme, componentMounted } = useDarkMode();
 
-  let themeClass = '';
+  let themeClass: string = '';
 
   if (!componentMounted) {
     return <div />;
@@ -66,7 +74,7 @@ const Landing: React.FC = () => {
 
   const toggleTooltip = tooltip ? 'tooltip tooltip--toggled' : '';
   // toggles the side login panel
-  const loginToggle = () => {
+  const loginToggle = (): void => {
     setExpanded(isExpanded === false ? true : false);
     if (signin || isExpanded) {
       setSignin(false);
@@ -77,7 +85,7 @@ const Landing: React.FC = () => {
   };
 
   // toggles the side login panel
-  const signinToggle = () => {
+  const signinToggle = (): void => {
     setExpanded(isExpanded === false ? true : false);
     if (login && isExpanded) {
       setSignin(false);
@@ -95,45 +103,28 @@ const Landing: React.FC = () => {
   };
 
   // SUPABASE ROUTE...
-  const supabaseEmailSignIn = async () => {
+  const supabaseEmailSignIn = async (): Promise<void> => {
     if (emailRefOne.current.value != '') {
       return;
     }
     if (emailRef.current) {
       // set loading to disable 'begin' button
-      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_LOADING' });
 
       // check for valid email and dispatch error accordingly
       if (!validateEmail(emailRef.current.value)) {
-        return dispatch({ type: 'EMAIL_ERROR', payload: true });
+        return dispatch({ type: 'EMAIL_ERROR', payload: 'PLEASE ENTER A VALID EMAIL' });
       }
 
       // if email check passes, reset any previously dispatched error
-      dispatch({ type: 'EMAIL_ERROR', payload: false });
+      dispatch({ type: 'EMAIL_ERROR', payload: '' });
 
       // set loading back to false and enable button again
-      dispatch({ type: 'SET_LOADING', payload: false });
+      dispatch({ type: 'SET_LOADING' });
 
-      // check if user exists... in datatbase
-      try {
-        let existingUser = await doesUserExist(emailRef.current.value);
+      const emailQuery = encodeURIComponent(emailRef.current.value);
 
-        // prevent user from signup action if email already exists...
-        if (existingUser) {
-          setEmailExists(true);
-          return;
-        }
-
-        setEmailExists(false);
-
-        const emailQuery = encodeURIComponent(emailRef.current.value);
-
-        history.push(`/submit?email_address=${emailQuery}`);
-
-        // catch errors
-      } catch (error) {
-        console.log(error);
-      }
+      history.push(`/submit?email_address=${emailQuery}`);
     }
   };
 
@@ -147,7 +138,7 @@ const Landing: React.FC = () => {
   };
 
   // handles the user logout action
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     try {
       await logout();
     } catch {
@@ -155,10 +146,17 @@ const Landing: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  const checkForAuthToken = (): void => {
     if (localStorage.getItem('supabase.auth.token')) {
-      window.location.href = 'https://www.socioprophet.com/alpha';
+      if (process.env.NODE_ENV === 'production') {
+        window.location.href = `${PRODUCTION_URL}/alpha`;
+      } else {
+        window.location.href = `${LOCAL_HOST}:${PORT}/alpha`;
+      }
     }
+  };
+  useEffect(() => {
+    checkForAuthToken();
   });
   return (
     <div className="landing">
@@ -211,11 +209,7 @@ const Landing: React.FC = () => {
                   {state.error && (
                     <p className="landing__container__main__email__field__error">{state.error}</p>
                   )}
-                  {emailExists && (
-                    <p className="landing__container__main__email__field__error">
-                      An account with this email exists.
-                    </p>
-                  )}
+
                   <input
                     style={{ position: 'absolute', opacity: '0' }}
                     name="email"
