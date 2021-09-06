@@ -19,6 +19,9 @@ import { authReducer } from '../../reducers/authReducer';
 import logo from '../../../public/images/mothership-logo.png';
 import './scss/landing.scss';
 
+// storybook button...
+// import { Button } from '../storybook/src/button';
+
 // type for reducer state
 type State = {
   loading: boolean;
@@ -199,6 +202,7 @@ const Landing: React.FC = (): JSX.Element => {
           <div className="landing__container__main__logo">
             <img src={logo} width="450px" height="77px" alt="socioprophet logo" />
           </div>
+
           <p className="landing__container__main__subtitle">
             <strong>Human and machine symbiosis via a secure and trusted community.</strong>
           </p>
@@ -233,6 +237,7 @@ const Landing: React.FC = (): JSX.Element => {
                     <div className="button button--lg" onClick={supabaseEmailSignIn}>
                       REGISTER
                     </div>
+
                     <div className="tooltip--mobile">
                       <span className={`tooltiptext ${toggleTooltip}`}>
                         Sign up for the Alpha Release of SocioProphet!

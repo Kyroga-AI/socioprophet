@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useRef } from 'react';
+import React, { useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../../../authentication/contexts/AuthContext';
 
@@ -105,6 +105,7 @@ const LoginForm = () => {
               LOGIN
             </div>
           </div>
+          {/* <Button name='LOGIN' size='sm' onClick={handleLogin} /> */}
           <div className="loginForm__container__field__signin">
             <div className="loginForm__container__field__btn__googleSignin" onClick={handleSignIn}>
               <svg
