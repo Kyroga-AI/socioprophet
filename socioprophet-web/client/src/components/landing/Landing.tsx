@@ -3,10 +3,10 @@ import { useHistory } from 'react-router-dom';
 // UI COMPONENTS
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
-import TickerFeed from '../ticker-feed/TickerFeed';
+import TickerFeed from '../ticker-feed';
 import ScrollSection from './ScrollSection';
 // UI AUTH COMPONENTS
-import Login from './forms/login/Login';
+import Login from './forms/login';
 import Signin from './forms/signin/Signin';
 // CUSTOM HOOKS
 import { useAuth } from '../../authentication/contexts/AuthContext';

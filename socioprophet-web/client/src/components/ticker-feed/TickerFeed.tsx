@@ -13,17 +13,17 @@ interface IFeed {
 
 const TickerFeed = () => {
   // RSS Component
-  const GetRssFeedData = () => {
+  const GetRssFeedData = (): JSX.Element => {
     const [feed, setFeed] = useState<IFeed[]>();
     useEffect(() => {
       // used to only call set state if component is still mounted
       let mounted: boolean = true;
 
-      const getRss = async () => {
+      const getRss = async (): Promise<void> => {
         await fetch('/api/feed/rss')
           .then((res) => res.text())
           .then((data) => {
-            const xmlDoc = new DOMParser().parseFromString(data, 'text/xml');
+            const xmlDoc: Document = new DOMParser().parseFromString(data, 'text/xml');
             const items: IFeed[] = Array.from(xmlDoc.querySelectorAll('item')).map((item) => ({
               // @ts-ignore: Object is possibly 'null'.
               title: item.querySelector('title').textContent,

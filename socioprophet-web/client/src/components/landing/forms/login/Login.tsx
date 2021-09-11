@@ -22,7 +22,7 @@ const authState: State = {
   error: '',
 };
 
-const LoginForm = () => {
+const Login = () => {
   // states
   const [state, dispatch] = useReducer(authReducer, authState);
 
@@ -101,7 +101,7 @@ const LoginForm = () => {
           />
           {state.error && <p className="loginForm__container__field__error">{state.error}</p>}
           <div className="loginForm__container__field__btn">
-            <div className="button button--sm" onClick={handleLogin}>
+            <div data-testid="login-btn" className="button button--sm" onClick={handleLogin}>
               LOGIN
             </div>
           </div>
@@ -158,4 +158,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default Login;
