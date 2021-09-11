@@ -3,7 +3,7 @@ import Switcher from '../header/switcher/Switcher';
 import './scss/header.scss';
 import fish from '../../../public/images/fishCropFinal.gif';
 // import menu from '../../../public/images/menu-icon.png';
-import { useDarkMode } from '../dashboard/profile/ThemeContext';
+import { useDarkMode } from '../../theme/ThemeContext';
 
 interface Props {
   children?: React.ReactNode;
@@ -11,7 +11,7 @@ interface Props {
   onPress?: React.MouseEventHandler;
 }
 
-const Header = ({ children, dashboard, onPress }: Props) => {
+const Header = ({ children, dashboard }: Props) => {
   const [switcherExpanded, setSwitcherExpanded] = useState(false);
   const { theme, componentMounted } = useDarkMode();
 

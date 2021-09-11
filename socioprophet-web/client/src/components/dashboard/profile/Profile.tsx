@@ -1,6 +1,6 @@
 import React, { useState, useRef, useReducer } from 'react';
 import { useAuth } from '../../../authentication/contexts/AuthContext';
-import { useDarkMode } from './ThemeContext';
+import { useDarkMode } from '../../../theme/ThemeContext';
 // reducer
 import { authReducer } from '../../../reducers/authReducer';
 

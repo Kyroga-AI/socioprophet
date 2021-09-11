@@ -12,7 +12,7 @@ import Privacy from './components/legal/Privacy';
 
 import PrivateRoute from './components/private-route/PrivateRoute';
 import { AuthProvider } from './authentication/contexts/AuthContext';
-import { ThemeProvider } from './components/dashboard/profile/ThemeContext';
+import { ThemeProvider } from './theme/ThemeContext';
 
 import './App.scss';
 import './components/global-styles/button.scss';

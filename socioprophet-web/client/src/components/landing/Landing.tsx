@@ -10,7 +10,7 @@ import Login from './forms/login';
 import Signin from './forms/signin/Signin';
 // CUSTOM HOOKS
 import { useAuth } from '../../authentication/contexts/AuthContext';
-import { useDarkMode } from '../dashboard/profile/ThemeContext';
+import { useDarkMode } from '../../theme/ThemeContext';
 // HELPER FUNCTIONS
 import { validateEmail } from './validate-email/validateEmail';
 // STATE REDUCER
@@ -159,7 +159,7 @@ const Landing: React.FC = (): JSX.Element => {
     }
   };
   useEffect(() => {
-    checkForAuthToken();
+    // checkForAuthToken();
   });
   return (
     <div className="landing">

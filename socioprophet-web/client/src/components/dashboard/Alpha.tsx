@@ -5,7 +5,7 @@ import TickerFeed from '../ticker-feed';
 import Profile from './profile/Profile';
 import Footer from '../footer/Footer';
 
-import { useDarkMode } from './profile/ThemeContext';
+import { useDarkMode } from '../../theme/ThemeContext';
 
 // main SocioProphet logo image
 import logo from '../../../public/images/mothership-logo.png';
