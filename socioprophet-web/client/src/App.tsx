@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Landing from './components/landing/Landing';
 import EmailSubmission from './components/landing/forms/email-submission/EmailSubmission';
-import Survey from './components/registration/survey/Survey';
+import Survey from './components/survey/Survey';
 
 import Alpha from './components/dashboard/Alpha';
 import NotFound from './components/not-found/NotFound';

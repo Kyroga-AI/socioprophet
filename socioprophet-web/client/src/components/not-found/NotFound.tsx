@@ -3,7 +3,7 @@ import Header from '../header/Header';
 
 import './scss/notFound.scss';
 
-const NotFound = () => {
+const NotFound = (): JSX.Element => {
   return (
     <div className="notFound">
       <Header />

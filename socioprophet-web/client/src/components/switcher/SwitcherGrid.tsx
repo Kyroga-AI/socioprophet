@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SwitcherGrid = ({ children }: any) => {
+const SwitcherGrid = ({ children }: any): JSX.Element => {
   return <div className="grid">{children}</div>;
 };
 

@@ -110,38 +110,9 @@
         }
       }
 
-      // @media (max-width: 540px) {
-      //   .float {
-      //     display: none;
-      //   }
-      // }
-
       .header__links__list {
         display: flex;
         float: right;
-      }
-    }
-
-    .header__switcher {
-      position: fixed;
-      top: $nav-height;
-      width: 300px;
-      z-index: 8000;
-      height: 0;
-      overflow: scroll;
-      left: calc(100% - 400px);
-      border-bottom-left-radius: 30px;
-      border-bottom-right-radius: 30px;
-      background-color: $primary-background-color;
-    }
-
-    .header__switcher--expanded {
-      height: 200px;
-    }
-
-    @media (max-width: 584px) {
-      .header__switcher {
-        display: none;
       }
     }
   }

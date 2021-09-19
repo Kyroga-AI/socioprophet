@@ -4,7 +4,7 @@ interface Props {
   link: string;
   iconClass: string;
 }
-const SwitcherCell: React.FC<Props> = ({ iconClass, link }: Props): JSX.Element => {
+const SwitcherCell: React.FC<Props> = ({ link, iconClass }: Props): JSX.Element => {
   return (
     <div className="cell">
       <a className="social" href={link} target="_blank">
