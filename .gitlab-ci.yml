@@ -43,12 +43,12 @@ docker_image:
 
     - echo $IMAGE_NAME_CLIENT
 
-    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate ."
-    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate
+    # - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate ."
+    # - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:release-candidate
 
     # - echo $IMAGE_NAME_SERVER
-    # - "cd ../server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
-    # - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate
+    - "cd ./server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
+    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate
 
     # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
