@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import './scss/scrollSection.scss';
-
 interface Props {
   props: React.ReactNode;
   children: React.ReactNode;
 }
 
-const FadeInSection = (props: Props) => {
-  const [isVisible, setVisible] = React.useState(false);
+const FadeInSection = (props: Props): JSX.Element => {
+  const [isVisible, setVisible] = React.useState<boolean>(false);
   const domRef = React.useRef<any>();
 
   useEffect(() => {

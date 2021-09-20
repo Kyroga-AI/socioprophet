@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { useAuth } from '../../authentication/contexts/AuthContext';
 
-const PrivateRoute = ({ component: Component, ...rest }: any) => {
+const PrivateRoute = ({ component: Component, ...rest }: any): JSX.Element => {
   const { supabaseSession } = useAuth();
 
   return (

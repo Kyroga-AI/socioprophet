@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 // styles
 import './scss/terms.scss';
 
-const Terms = () => {
+const Terms = (): JSX.Element => {
   return (
     <div className="terms">
       <h1 className="terms__main">SocioProphet, Inc. Terms of Use</h1>

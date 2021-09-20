@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 // styles
 import './scss/terms.scss';
 
-const Privacy = () => {
+const Privacy = (): JSX.Element => {
   return (
     <div className="terms">
       <h1 className="terms__main">SocioProphet, Inc. Privacy Policy</h1>

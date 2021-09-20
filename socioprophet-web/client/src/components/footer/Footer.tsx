@@ -1,107 +1,62 @@
 import React from 'react';
-
-import { useDarkMode } from '../dashboard/profile/ThemeContext';
+// custom hook
+import { getTheme } from '../../theme/utils/theme';
+// UI Components
+import FooterContainer from './FooterContainer';
+import FooterLink from './FooterLink';
 
 // styles
 import './scss/footer.scss';
 
-const Footer = () => {
-  const { theme, componentMounted } = useDarkMode();
-
-  let themeClass = '';
-
-  if (!componentMounted) {
-    return <div />;
-  }
-  if (theme === 'light') {
-    themeClass = 'lightTheme';
-  } else {
-    themeClass = 'darkTheme';
-  }
+const Footer = (): JSX.Element => {
+  let themeClass: string = getTheme();
 
   return (
-    <>
-      <div className="footer__responsive">
-        <a className="footer__responsive__link" href="mailto:socioprophet@gmail.com" target="_top">
-          <strong>Contact</strong>
-        </a>
-        <a className="footer__responsive__link" href="https://socioprophet.com/privacy-policy">
-          <strong>Privacy</strong>
-        </a>
-        <a className="footer__responsive__link" href="https://socioprophet.com/terms-of-use">
-          <strong>Terms of Use</strong>
-        </a>
-        <a
-          className="footer__responsive__link"
-          href="https://gitter.im/socioprophet/"
+    <footer className={`footer ${themeClass}`}>
+      <FooterContainer className="footer__social">
+        <FooterLink
+          iconClass="fa fa-twitter-square"
+          link="https://twitter.com/socioprophet"
           target="_blank"
-          rel="noopener"
-        >
-          <strong>Support</strong>
-        </a>
-      </div>
-      {/* Footer Block */}
-      <footer className={`footer ${themeClass}`}>
-        <div className="footer__social">
-          <a
-            className={`footer__social__btn ${themeClass}`}
-            href="https://twitter.com/socioprophet"
-            target="_blank"
-            rel="noopener"
-          >
-            <i className="fa fa-twitter-square" aria-hidden="true"></i>
-          </a>
-          <a
-            className={`footer__social__btn ${themeClass}`}
-            href="https://medium.com/@socioprophet"
-            target="_blank"
-            rel="noopener"
-          >
-            <i className="fa fa-medium" aria-hidden="true"></i>
-          </a>
-          <a
-            className={`footer__social__btn ${themeClass}`}
-            href="https://gitlab.com/socioprophet"
-            target="_blank"
-            rel="noopener"
-          >
-            <i className="fa fa-gitlab" aria-hidden="true"></i>
-          </a>
-        </div>
-        <div className="footer__references">
-          <a
-            className={`footer__references__link ${themeClass}`}
-            href="mailto:michael@socioprophet.ai"
-            target="_top"
-          >
-            <strong>Contact</strong>
-          </a>
-          <a
-            className={`footer__references__link ${themeClass}`}
-            href="https://socioprophet.com/privacy-policy"
-          >
-            <strong>Privacy</strong>
-          </a>
-          <a
-            className={`footer__references__link ${themeClass}`}
-            href="https://socioprophet.com/terms-of-use"
-          >
-            <strong>Terms of Use</strong>
-          </a>
-          <a
-            className={`footer__references__link ${themeClass}`}
-            href="https://gitter.im/socioprophet/"
-            target="_blank"
-            rel="noopener"
-          >
-            <strong>Support</strong>
-          </a>
-        </div>
-        <a className={`footer__copyright ${themeClass}`} href="#" target="_blank">
-          &copy; {new Date().getFullYear()} SocioProphet
-        </a>
-      </footer>
-    </>
+        />
+        <FooterLink
+          iconClass="fa fa-medium"
+          link="https://medium.com/@socioprophet"
+          target="_blank"
+        />
+        <FooterLink
+          iconClass="fa fa-gitlab"
+          link="https://gitlab.com/socioprophet"
+          target="_blank"
+        />
+        <FooterLink
+          className={`mobile-view ${themeClass}`}
+          iconClass="fa fa-user-secret"
+          link="https://socioprophet.com/privacy-policy"
+        />
+        <FooterLink
+          className={`mobile-view ${themeClass}`}
+          iconClass="fa fa-file-text-o"
+          link="https://socioprophet.com/terms-of-use"
+        />
+        <FooterLink
+          className={`mobile-view ${themeClass}`}
+          iconClass="fa fa-question"
+          link="mailto:michael@socioprophet.ai"
+          target="_top"
+        />
+      </FooterContainer>
+      <FooterContainer className="footer__references">
+        <FooterLink link="mailto:michael@socioprophet.ai" target="_top" label="Contact" />
+        <FooterLink link="https://socioprophet.com/privacy-policy" label="Privacy" />
+        <FooterLink link="https://socioprophet.com/terms-of-use" label="Terms of Use" />
+        <FooterLink link="https://gitter.im/socioprophet/" target="_blank" label="Support" />
+      </FooterContainer>
+
+      <a className={`footer__copyright ${themeClass}`} href="#" target="_blank">
+        &copy; {new Date().getFullYear()} SocioProphet
+      </a>
+    </footer>
   );
 };
 

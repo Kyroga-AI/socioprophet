@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import ComingSoon from './components/coming-soon/ComingSoon';
 import Landing from './components/landing/Landing';
 import EmailSubmission from './components/landing/forms/email-submission/EmailSubmission';
-import Survey from './components/registration/survey/Survey';
+import Survey from './components/survey/Survey';
 
 import Alpha from './components/dashboard/Alpha';
 import NotFound from './components/not-found/NotFound';
@@ -13,7 +13,7 @@ import Privacy from './components/legal/Privacy';
 
 import PrivateRoute from './components/private-route/PrivateRoute';
 import { AuthProvider } from './authentication/contexts/AuthContext';
-import { ThemeProvider } from './components/dashboard/profile/ThemeContext';
+import { ThemeProvider } from './theme/ThemeContext';
 
 import './App.scss';
 import './components/global-styles/button.scss';

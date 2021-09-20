@@ -5,13 +5,13 @@ import SurveyEmbed from './SurveyEmbed';
 // styles
 import './scss/survey.scss';
 
-const Survey = () => {
+const Survey = (): JSX.Element => {
   const [surveyId, setSurveyId] = useState<string | null>('');
 
   const history = useHistory();
 
   // gets user email address and if one does not exist in url then redirects back to landing page
-  const getId = async () => {
+  const getId = async (): Promise<void> => {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 
@@ -33,5 +33,4 @@ const Survey = () => {
     </div>
   );
 };
-
 export default Survey;
