@@ -161,8 +161,8 @@ const Landing: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     if (supabaseSession) {
-      console.log(supabaseSession.user);
-      // history.push('/alpha');
+      // console.log(supabaseSession.user);
+      history.push('/alpha');
     }
   });
   return (
