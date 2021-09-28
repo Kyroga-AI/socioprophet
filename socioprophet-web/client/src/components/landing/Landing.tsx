@@ -34,9 +34,9 @@ const authState: State = {
   error: '',
 };
 
-const PRODUCTION_URL: string = 'https://www.socioprophet.com';
-const LOCAL_HOST: string = 'http://localhost';
-const PORT: string = '8081';
+// const PRODUCTION_URL: string = 'https://www.socioprophet.com';
+// const LOCAL_HOST: string = 'http://localhost';
+// const PORT: string = '8081';
 
 const Landing: React.FC = (): JSX.Element => {
   // states
@@ -149,17 +149,21 @@ const Landing: React.FC = (): JSX.Element => {
     }
   };
 
-  const checkForAuthToken = (): void => {
-    if (localStorage.getItem('supabase.auth.token')) {
-      if (process.env.NODE_ENV === 'production') {
-        window.location.href = `${PRODUCTION_URL}/alpha`;
-      } else {
-        window.location.href = `${LOCAL_HOST}:${PORT}/alpha`;
-      }
-    }
-  };
+  // const checkForAuthToken = (): void => {
+  //   if (localStorage.getItem('supabase.auth.token')) {
+  //     if (process.env.NODE_ENV === 'production') {
+  //       window.location.href = `${PRODUCTION_URL}/alpha`;
+  //     } else {
+  //       window.location.href = `${LOCAL_HOST}:${PORT}/alpha`;
+  //     }
+  //   }
+  // };
+
   useEffect(() => {
-    // checkForAuthToken();
+    if (supabaseSession) {
+      console.log(supabaseSession.user);
+      // history.push('/alpha');
+    }
   });
   return (
     <div className="landing">
