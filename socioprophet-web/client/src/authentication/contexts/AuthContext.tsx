@@ -114,12 +114,13 @@ export const AuthProvider = ({ children }: Props) => {
    *
    */
   const googleSignIn = async (): Promise<void> => {
-    let { error } = await supabase.auth.signIn({
-      provider: 'google',
-    });
-    if (error) {
-      console.log(error);
-    }
+    // let { error } = await supabase.auth.signIn({
+    //   provider: 'google',
+    // });
+    // if (error) {
+    //   console.log(error);
+    // }
+    await supabase.from('countries').select().then(console.log);
   };
 
   /**
