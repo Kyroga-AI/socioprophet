@@ -8,8 +8,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'http://137.184.132.251:5432';
+const supabaseUrl = 'http://137.184.132.251:8000';
 const supabaseKey =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoiYW5vbiJ9.Mwpb4Yz-oGwYZVLB3GMvBXm81E9xh3LOrlDfBlTregA';
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoiYW5vbiJ9.sUHErUOiKZ3nHQIxy-7jND6B80Uzf9G4NtMLmL6HXPQ';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);

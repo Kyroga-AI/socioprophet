@@ -114,13 +114,21 @@ export const AuthProvider = ({ children }: Props) => {
    *
    */
   const googleSignIn = async (): Promise<void> => {
-    // let { error } = await supabase.auth.signIn({
-    //   provider: 'google',
+    let { error } = await supabase.auth.signIn({
+      provider: 'google',
+    });
+    if (error) {
+      console.log(error);
+    }
+    // await supabase.from('users').select().then(console.log);
+    // const response = await fetch('/api/auth/user', {
+    //   method: 'POST',
+    //   mode: 'cors',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
     // });
-    // if (error) {
-    //   console.log(error);
-    // }
-    await supabase.from('countries').select().then(console.log);
+    // console.log(response);
   };
 
   /**
