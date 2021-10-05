@@ -5,22 +5,18 @@ const router = express.Router();
 const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
-  "http://137.184.132.251:8000",
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoiYW5vbiJ9.Mwpb4Yz-oGwYZVLB3GMvBXm81E9xh3LOrlDfBlTregA"
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_PUBLIC_ANON_KEY
 );
 
 router.post("/user", (req, res) => {
-  // const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  // const userId = req.body.user_id;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const userId = req.body.user_id;
 
-  // const { error } = supabase.auth.api.deleteUser(userId, serviceRoleKey);
-  // if (error) {
-  //   console.log(error);
-  // } else {
-  //   res.status(200).send({ msg: "success" });
-  // }
-  const { error } = supabase.from("users").select().then(console.log);
-  if (!error) {
+  const { error } = supabase.auth.api.deleteUser(userId, serviceRoleKey);
+  if (error) {
+    console.log(error);
+  } else {
     res.status(200).send({ msg: "success" });
   }
 });
