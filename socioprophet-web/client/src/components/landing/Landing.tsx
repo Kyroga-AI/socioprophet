@@ -208,7 +208,7 @@ const Landing: React.FC = (): JSX.Element => {
           </div>
 
           <p className="landing__container__main__subtitle">
-            <strong>Human and machine symbiosis via a secure and trusted community.</strong>
+            <strong>Open Collaborative Socio-Dat-Analytics &bull; Global Shared Knowledge</strong>
           </p>
           {supabaseSession === null && (
             <>
