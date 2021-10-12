@@ -44,7 +44,8 @@ const Login = () => {
       dispatch({ type: 'SET_LOADING' });
       await googleSignIn();
     } catch (err) {
-      console.trace(err);
+      alert('There was a problem signing in with Google, please try again in a minute!');
+      console.error(err);
     }
     dispatch({ type: 'SET_LOADING' });
   };
@@ -53,7 +54,8 @@ const Login = () => {
     try {
       await githubSignIn();
     } catch (err) {
-      console.log('There was an error signin in with GitHub:  ' + err);
+      alert('There was a problem signing in with GitHub, please try again in a minute!');
+      console.error(err);
     }
   };
 

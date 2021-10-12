@@ -56,28 +56,25 @@ export const AuthProvider = ({ children }: Props) => {
   const addNewUser = async (email: string): Promise<void> => {
     // do the email hashing here...
 
-    let saltRounds: number = 10;
+    // let saltRounds: number = 10;
 
-    bcrypt.genSalt(saltRounds, (err, salt) => {
-      if (err) {
-        console.log(`There was an error salting: ${err}`);
-      }
+    // bcrypt.genSalt(saltRounds, (err, salt) => {
+    //   if (err) {
+    //     console.log(`There was an error salting: ${err}`);
+    //   }
 
-      bcrypt.hash(email, salt, (err, hash) => {
-        if (err) {
-          console.log(`There wasn an error hashing: ${err}`);
-        }
-        // STORE PASSWORD HERE...
+    //   bcrypt.hash(email, salt, (err, hash) => {
+    //     if (err) {
+    //       console.log(`There wasn an error hashing: ${err}`);
+    //     }
+    // STORE PASSWORD HERE...
 
-        insertHash(hash);
-      });
-    });
-  };
-
-  const insertHash = async (hash: string): Promise<void> => {
+    //     insertHash(hash);
+    //   });
+    // });
     const { error } = await supabase
       .from<User>('socioprophet_users')
-      .insert([{ user_id: supabaseSession.user.id, email_hash: hash }]);
+      .insert([{ user_id: supabaseSession.user.id, email_hash: email }]);
 
     if (error) {
       console.log(error);
@@ -86,6 +83,19 @@ export const AuthProvider = ({ children }: Props) => {
     // since we added a new user, the survey has not been completed yet...
     sendToSurvey();
   };
+
+  // const insertHash = async (hash: string): Promise<void> => {
+  //   const { error } = await supabase
+  //     .from<User>('socioprophet_users')
+  //     .insert([{ user_id: supabaseSession.user.id, email_hash: hash }]);
+
+  //   if (error) {
+  //     console.log(error);
+  //     return;
+  //   }
+  //   // since we added a new user, the survey has not been completed yet...
+  //   sendToSurvey();
+  // };
   /**
    *
    * @param email
@@ -104,6 +114,7 @@ export const AuthProvider = ({ children }: Props) => {
   const sendEmailAuthentication = async (email: string): Promise<void> => {
     const { error } = await supabase.auth.signIn({ email: email });
     if (error) {
+      alert('There was a problem trying to send your email, please try again in a minute!');
       console.log(error);
     }
   };

@@ -15,7 +15,8 @@ const Signin = ({ onPress }: Props) => {
     try {
       await googleSignIn();
     } catch (err) {
-      console.log('There was an error signing in with Google: ' + err);
+      alert('There was a problem signing in with Google, please try again in a minute!');
+      console.error(err);
     }
   };
 
@@ -23,7 +24,8 @@ const Signin = ({ onPress }: Props) => {
     try {
       await githubSignIn();
     } catch (err) {
-      console.log('There was an error signin in with GitHub:  ' + err);
+      alert('There was a problem signing in with GitHub, please try again in a minute!');
+      console.error(err);
     }
   };
 
