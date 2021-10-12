@@ -103,7 +103,7 @@ spec:
         app: sp-client-deployment
     spec:
       containers:
-        - image: gcr.io/socioprophet-web/sp-client:1.0.4
+        - image: gcr.io/socioprophet-web/sp-client:1.0.5
           imagePullPolicy: IfNotPresent
           name: sp-client-1
           resources: {}
