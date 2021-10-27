@@ -78,6 +78,14 @@
     height: 100%;
     color: #fff;
     text-align: center;
+    overflow: scroll;
+  }
+
+  .alpha__container__dnd {
+    position: relative;
+    margin-top: 100px;
+    width: auto;
+    border: 1px solid green;
   }
 
   .alpha__container__logo {

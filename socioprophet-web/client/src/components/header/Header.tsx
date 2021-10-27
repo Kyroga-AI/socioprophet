@@ -44,7 +44,7 @@ const Header = ({ children, dashboard = false }: Props): JSX.Element => {
               </a>
             </div>
 
-            <Switcher theme={theme} />
+            {/* <Switcher theme={theme} /> */}
           </div>
         </div>
       </HeaderContainer>

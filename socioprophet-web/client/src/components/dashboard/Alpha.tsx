@@ -4,6 +4,7 @@ import Header from '../header/Header';
 import TickerFeed from '../ticker-feed';
 import Profile from './profile/Profile';
 import Footer from '../footer/Footer';
+import { Dnd } from '../storybook/src/dnd';
 
 import { useDarkMode } from '../../theme/ThemeContext';
 
@@ -77,12 +78,15 @@ const Alpha = () => {
       </Header>
       <TickerFeed />
       <div className="alpha__container">
-        <div className="alpha__container__logo">
+        {/* <div className="alpha__container__logo">
           <img src={logo} width="450px" height="77px" />
         </div>
         <p className="alpha__container__subtitle">
           <strong>Profile Coming Soon. </strong>
-        </p>
+        </p> */}
+        <div className="alpha__container__dnd">
+          <Dnd />
+        </div>
       </div>
 
       <Footer />
