@@ -43,8 +43,8 @@ docker_image:
 
     - echo $IMAGE_NAME_CLIENT
 
-    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:1.0.6 ."
-    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:1.0.6
+    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:1.0.7 ."
+    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:1.0.7
 
     # - echo $IMAGE_NAME_SERVER
     # - "cd ../server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
