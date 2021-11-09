@@ -18,7 +18,7 @@ interface Props {
   index: any;
   heightClass: 'top' | 'bottom';
 }
-const Task: React.FC<Props> = ({ task, index, heightClass }: Props): JSX.Element => {
+const Task = ({ task, index, heightClass }: Props): JSX.Element => {
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided) => (

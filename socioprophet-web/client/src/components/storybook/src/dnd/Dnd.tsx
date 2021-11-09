@@ -17,7 +17,7 @@ const InnerList = React.memo(
   },
 );
 
-export const Dnd = () => {
+export const Dnd = (): JSX.Element => {
   const [data, setData] = useState(initialData);
   const [isFull, setIsFull] = useState(true);
 

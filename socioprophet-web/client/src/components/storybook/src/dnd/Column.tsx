@@ -20,7 +20,7 @@ const InnerList = React.memo(({ tasks, position }: InnerListProps) => {
   ));
 });
 
-const Column: React.FC<ColumnProps> = ({ column, tasks, top }: ColumnProps): JSX.Element => {
+const Column = ({ column, tasks, top }: ColumnProps): JSX.Element => {
   return (
     <Fragment>
       {top ? (
