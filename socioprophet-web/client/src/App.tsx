@@ -34,7 +34,8 @@ const App = () => {
               <PrivateRoute path="/get-started" component={Survey} />
               <PrivateRoute exact path="/alpha" component={Alpha} />
               <Route component={NotFound} />
-
+              {/* <Route path="/account" component={Account} />
+              {/* <Route path="/password-reset" component={PasswordReset} /> */}
               {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
               {/* <PrivateRoute path="/terminal" component={PopoutTerminal} />  */}
             </Switch>
