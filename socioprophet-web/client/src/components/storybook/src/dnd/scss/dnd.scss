@@ -7,11 +7,9 @@
   margin-left: 10%;
   height: auto;
   position: absolute;
-  border: 1px solid red;
 }
 
 .container__innerList {
-  border: 1px solid blue;
   grid-column: auto / span 1;
 }
 
@@ -44,7 +42,6 @@
 
 // Task.jsx Styles
 .task {
-  border: 1px solid #070708;
   border-radius: 2px;
   padding: 8px;
   margin-bottom: 8px;
