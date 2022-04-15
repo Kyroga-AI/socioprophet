@@ -1,5 +1,4 @@
 import React from 'react';
-import { getTheme } from '../../theme/utils/theme';
 
 interface Props {
   className?: string;
@@ -15,19 +14,14 @@ const FooterLink: React.FC<Props> = ({
   iconClass,
   label,
 }: Props): JSX.Element => {
-  let themeClass: string = getTheme();
   return (
     <React.Fragment>
       {iconClass ? (
-        <a className={`footer__social__btn ${className} ${themeClass}`} href={link} target={target}>
+        <a className={`footer__social__btn ${className}`} href={link} target={target}>
           <i className={iconClass} aria-hidden="true"></i>
         </a>
       ) : (
-        <a
-          className={`footer__references__link ${className} ${themeClass}`}
-          href={link}
-          target={target}
-        >
+        <a className={`footer__references__link ${className}`} href={link} target={target}>
           <strong>{label}</strong>
         </a>
       )}

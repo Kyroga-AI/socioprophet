@@ -155,7 +155,7 @@ const Landing: React.FC = (): JSX.Element => {
   return (
     <div className="landing">
       <Header>
-        {/* {supabaseSession !== null ? (
+        {supabaseSession !== null ? (
           <>
             <div className="landing__header__login">
               <p className="landing__header__login__avatar" onClick={() => history.push('/alpha')}>
@@ -169,6 +169,16 @@ const Landing: React.FC = (): JSX.Element => {
           </>
         ) : (
           <>
+            <div className="landing__header__login">
+              <a
+                className="landing__header__login"
+                href="https://socioprophet.blog"
+                target="_blank"
+                rel="noopener"
+              >
+                <span className="blog-label">Blog</span>
+              </a>
+            </div>
             <p className="landing__header__begin" onClick={signinToggle}>
               Register
             </p>
@@ -185,7 +195,7 @@ const Landing: React.FC = (): JSX.Element => {
           </div>
           {login && <Login />}
           {signin && <Signin onPress={signinToggle} />}
-        </div> */}
+        </div>
       </Header>
       <TickerFeed />
       <div className="landing__container">

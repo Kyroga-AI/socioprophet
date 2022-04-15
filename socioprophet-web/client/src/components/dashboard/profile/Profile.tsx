@@ -1,6 +1,6 @@
 import React, { useState, useRef, useReducer } from 'react';
 import { useAuth } from '../../../authentication/contexts/AuthContext';
-import { useDarkMode } from '../../../theme/ThemeContext';
+
 // reducer
 import { authReducer } from '../../../reducers/authReducer';
 
@@ -28,19 +28,6 @@ const Profile = () => {
   const confirmationRef = useRef<HTMLInputElement>(null);
 
   const { supabaseSession, logout, deleteUser } = useAuth();
-
-  const { theme, toggleTheme, componentMounted } = useDarkMode();
-
-  let themeClass = '';
-
-  if (!componentMounted) {
-    return <div />;
-  }
-  if (theme === 'light') {
-    themeClass = 'lightTheme';
-  } else {
-    themeClass = 'darkTheme';
-  }
 
   const computedClassNameConfirmationError = state.confirmation
     ? 'profile__container__password__field__input--error'
@@ -112,7 +99,7 @@ const Profile = () => {
   };
 
   return (
-    <div className={`profile ${themeClass}`}>
+    <div className="profile">
       <div className="profile__container">
         <div className="profile__container__header">
           <p className="profile__container__header__heading">My Account</p>
@@ -126,9 +113,9 @@ const Profile = () => {
           >
             hi
           </button> */}
-          <div className={`${themeClass} profile__container__header__toggle`}>
+          <div className="profile__container__header__toggle">
             <label className="switch">
-              <input type="checkbox" onClick={toggleTheme} />
+              <input type="checkbox" />
               <span className="slider round"></span>
             </label>
           </div>
@@ -136,7 +123,7 @@ const Profile = () => {
         <div className="profile__container__user">
           <span style={{ color: '#777' }}>Email:</span> {supabaseSession.user.email}
         </div>
-        <div className={`profile__container__footer ${themeClass}`}>
+        <div className="profile__container__footer">
           <div className="profile__container__footer__btn logout" onClick={handleLogout}>
             Sign out
           </div>

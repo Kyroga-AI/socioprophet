@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../authentication/contexts/AuthContext';
-import Header from '../header/Header';
+import { Header } from '../storybook/src/header';
 import TickerFeed from '../ticker-feed';
 import Profile from './profile/Profile';
 import Footer from '../footer/Footer';
 // import { Dnd } from '../storybook/src/dnd';
-
-import { useDarkMode } from '../../theme/ThemeContext';
 
 // main SocioProphet logo image
 import logo from '../../../public/images/mothership-logo.png';
@@ -18,19 +16,8 @@ const Alpha = () => {
   // states
   const [isExpanded, setExpanded] = useState(false);
   // other hooks
-  const { theme, componentMounted } = useDarkMode();
 
   const { supabaseSession, doesUserExist, addNewUser } = useAuth();
-  let themeClass = '';
-
-  if (!componentMounted) {
-    return <div />;
-  }
-  if (theme === 'light') {
-    themeClass = 'lightTheme';
-  } else {
-    themeClass = 'darkTheme';
-  }
 
   const togglePanelClassName = isExpanded ? 'alpha__header__panel--expanded' : '';
 
@@ -64,12 +51,12 @@ const Alpha = () => {
   return (
     <div className="alpha">
       <Header>
-        <div className={`alpha__header__login ${themeClass}`}>
+        <div className="alpha__header__login">
           <p className="alpha__header__login__avatar" onClick={loginToggle}>
             <i className="fa fa-user-circle" aria-hidden="true"></i>
           </p>
         </div>
-        <div className={`alpha__header__panel ${togglePanelClassName} ${themeClass}`}>
+        <div className={`alpha__header__panel ${togglePanelClassName}`}>
           <div className="alpha__login__close">
             <p className="alpha__login__close__btn" onClick={loginToggle}>
               &#10005;

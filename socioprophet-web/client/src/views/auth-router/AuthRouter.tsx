@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { useAuth } from '../../authentication/contexts/AuthContext';
 
-const PrivateRoute = ({ component: Component, ...rest }: any): JSX.Element => {
+const AuthRouter = ({ component: Component, ...rest }: any): JSX.Element => {
   const { supabaseSession } = useAuth();
 
   return (
@@ -13,4 +13,4 @@ const PrivateRoute = ({ component: Component, ...rest }: any): JSX.Element => {
   );
 };
 
-export default PrivateRoute;
+export default AuthRouter;

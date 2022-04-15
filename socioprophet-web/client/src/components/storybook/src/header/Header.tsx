@@ -1,9 +1,15 @@
+/**
+ *
+ *  File: Header.tsx (Storybook Component)
+ *  Author: William Jones
+ *  Desciption: Common Header Component
+ *
+ */
 import React from 'react';
 import './scss/header.scss';
 
 export interface HeaderProps {
   children?: React.ReactNode;
-  onPress?: React.MouseEventHandler;
 }
 
 export const Header = ({ children }: HeaderProps): JSX.Element => {
@@ -16,7 +22,9 @@ export const Header = ({ children }: HeaderProps): JSX.Element => {
           </a>
         </h1>
       </div>
-      {children}
+      <div className="header__links">
+        <div className="header__links__list">{children}</div>
+      </div>
     </nav>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 // custom hook
-import { getTheme } from '../../theme/utils/theme';
+
 // UI Components
 import FooterContainer from './FooterContainer';
 import FooterLink from './FooterLink';
@@ -9,10 +9,8 @@ import FooterLink from './FooterLink';
 import './scss/footer.scss';
 
 const Footer = (): JSX.Element => {
-  let themeClass: string = getTheme();
-
   return (
-    <footer className={`footer ${themeClass}`}>
+    <footer className="footer">
       <FooterContainer className="footer__social">
         <FooterLink
           iconClass="fa fa-twitter-square"
@@ -30,17 +28,17 @@ const Footer = (): JSX.Element => {
           target="_blank"
         />
         <FooterLink
-          className={`mobile-view ${themeClass}`}
+          className="mobile-view"
           iconClass="fa fa-user-secret"
           link="https://socioprophet.com/privacy-policy"
         />
         <FooterLink
-          className={`mobile-view ${themeClass}`}
+          className="mobile-view"
           iconClass="fa fa-file-text-o"
           link="https://socioprophet.com/terms-of-use"
         />
         <FooterLink
-          className={`mobile-view ${themeClass}`}
+          className="mobile-view"
           iconClass="fa fa-question"
           link="mailto:michael@socioprophet.ai"
           target="_top"
@@ -53,7 +51,7 @@ const Footer = (): JSX.Element => {
         <FooterLink link="https://gitter.im/socioprophet/" target="_blank" label="Support" />
       </FooterContainer>
 
-      <a className={`footer__copyright ${themeClass}`} href="#" target="_blank">
+      <a className="footer__copyright" href="#" target="_blank">
         &copy; {new Date().getFullYear()} SocioProphet
       </a>
     </footer>

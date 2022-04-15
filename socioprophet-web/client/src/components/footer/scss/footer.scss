@@ -9,6 +9,7 @@
   position: fixed;
   bottom: 0;
   z-index: 10000;
+  background-color: #070708;
 
   .footer__social {
     position: absolute;
@@ -17,11 +18,13 @@
     width: 30%;
     padding-left: 5%;
     overflow: visible;
+    
 
     .footer__social__btn {
       font-size: 14px;
       float: left;
       margin-left: 15%;
+      color: #fff;
     }
 
     .mobile-view {
@@ -39,13 +42,16 @@
     .footer__social {
       width: calc(100% - 160px);
       padding: 0;
+      
 
       .footer__social__btn {
         margin-left: 10%;
+        
       }
 
       .fa-medium {
         display: none;
+        
       }
       .fa-gitlab {
         display: none;
@@ -65,7 +71,7 @@
       padding: 0 25px;
       font-size: 14px;
       font-weight: 400;
-
+      color: #fff;
       text-decoration: none !important;
     }
   }
@@ -82,5 +88,6 @@
     width: 150px;
     font-size: 14px;
     text-decoration: none !important;
+    color: #fff;
   }
 }

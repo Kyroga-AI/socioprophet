@@ -21,6 +21,7 @@
     .alpha__header__login__avatar {
       font-size: 16px;
       cursor: pointer;
+      color: #fff;
     }
   }
 
@@ -28,7 +29,7 @@
     top: $nav-height;
     height: calc(100% - 40px);
     overflow: scroll;
-    // background-color: $primary-background-color;
+    background-color: $primary-background-color;
     border-left: $primary-background-color;
     border-right: $primary-background-color;
     transition-timing-function: cubic-bezier(0.2, 0, 1, 0.9);
