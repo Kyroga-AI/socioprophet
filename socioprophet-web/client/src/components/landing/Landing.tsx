@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 // UI COMPONENTS
-import Header from '../header/Header';
+import { Header } from '../storybook/src/header';
 import Footer from '../footer/Footer';
 import TickerFeed from '../ticker-feed';
 import ScrollSection from './ScrollSection';
@@ -10,7 +10,7 @@ import Login from './forms/login';
 import Signin from './forms/signin/Signin';
 // CUSTOM HOOKS
 import { useAuth } from '../../authentication/contexts/AuthContext';
-import { useDarkMode } from '../../theme/ThemeContext';
+
 // HELPER FUNCTIONS
 import { validateEmail } from './validate-email/validateEmail';
 // STATE REDUCER
@@ -54,19 +54,6 @@ const Landing: React.FC = (): JSX.Element => {
   const history = useHistory();
   // custom hooks
   const { supabaseSession, logout } = useAuth();
-
-  const { theme, componentMounted } = useDarkMode();
-
-  let themeClass: string = '';
-
-  if (!componentMounted) {
-    return <div />;
-  }
-  if (theme === 'light') {
-    themeClass = 'lightTheme';
-  } else {
-    themeClass = 'darkTheme';
-  }
 
   // computed css classes for invalid email error message
   const computedClassName = state.error
@@ -168,9 +155,9 @@ const Landing: React.FC = (): JSX.Element => {
   return (
     <div className="landing">
       <Header>
-        {supabaseSession !== null ? (
+        {/* {supabaseSession !== null ? (
           <>
-            <div className={`landing__header__login ${themeClass}`}>
+            <div className="landing__header__login">
               <p className="landing__header__login__avatar" onClick={() => history.push('/alpha')}>
                 <i className="fa fa-user-circle" aria-hidden="true"></i>
               </p>
@@ -190,7 +177,7 @@ const Landing: React.FC = (): JSX.Element => {
             </p>
           </>
         )}
-        <div className={`landing__header__panel ${togglePanelClassName} ${themeClass}`}>
+        <div className={`landing__header__panel ${togglePanelClassName}`}>
           <div className="landing__login__close">
             <p className="landing__login__close__btn" onClick={loginToggle}>
               &#10005;
@@ -198,7 +185,7 @@ const Landing: React.FC = (): JSX.Element => {
           </div>
           {login && <Login />}
           {signin && <Signin onPress={signinToggle} />}
-        </div>
+        </div> */}
       </Header>
       <TickerFeed />
       <div className="landing__container">

@@ -52,12 +52,14 @@ const Alpha = () => {
     }
   };
 
-  useEffect(() => {
-    // check if user exists... in datatbase
-    const userEmail = supabaseSession.user.email;
-
-    checkIfNewUser(userEmail);
-  }, []);
+  /**
+   *  useEffect originally checked for a new user and AuthContext (if true) would send user to survey route
+   *
+   */
+  // useEffect(() => {
+  //   const userEmail = supabaseSession.user.email;
+  //   checkIfNewUser(userEmail);
+  // }, []);
 
   return (
     <div className="alpha">

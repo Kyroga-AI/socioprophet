@@ -10,7 +10,7 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 /**
- *  view imports (latest version)
+ *  unauthenticated view imports (latest version)
  *
  */
 import Terms from './views/legal/Terms';
@@ -19,7 +19,6 @@ import NotFound from './views/not-found/NotFound';
 
 /***************************************************/
 
-// import ComingSoon from './components/coming-soon/ComingSoon';
 import Landing from './components/landing/Landing';
 import EmailSubmission from './components/landing/forms/email-submission/EmailSubmission';
 import Survey from './components/survey/Survey';
@@ -42,7 +41,7 @@ const App = () => {
           <div className="app">
             <Switch>
               <Route exact path="/" component={Landing} />
-              {/* <Route exact path="/" component={ComingSoon} /> */}
+
               <Route exact path="/submit" component={EmailSubmission} />
               <Route path="/terms-of-use" component={Terms} />
               <Route path="/privacy-policy" component={Privacy} />

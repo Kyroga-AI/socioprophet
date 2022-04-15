@@ -9,3 +9,5 @@ build/
 
 # ignore .env files (push .env.sample)
 .env
+
+storybook-static
