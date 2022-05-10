@@ -14,6 +14,12 @@
     align-items: center;
 }
 
+@media (max-width: 440px) {
+    .header__main {
+        display: none;
+    }
+}
+
 .header__main__title {
     font-size: 20px;
     padding-left: 25px;
@@ -32,3 +38,5 @@
     display: flex;
     float: right;
 }
+
+ 

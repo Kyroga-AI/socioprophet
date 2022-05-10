@@ -171,6 +171,17 @@ const Landing: React.FC = (): JSX.Element => {
           <>
             <div className="landing__header__login">
               <a
+                style={{ textDecoration: 'none' }}
+                className="landing__header__login"
+                href="https://chipper-churros-92080b.netlify.app/"
+                target="_blank"
+                rel="noopener"
+              >
+                <span style={{ fontSize: '16px', color: '#f4f4f4' }}>Docs</span>
+              </a>
+            </div>
+            <div className="landing__header__login">
+              <a
                 className="landing__header__login"
                 href="https://socioprophet.blog"
                 target="_blank"
