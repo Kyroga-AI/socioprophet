@@ -39,12 +39,12 @@ docker_image:
 
   script:
     - echo $GCP_PROJECT_ID
-    - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://gcr.io
+    - docker login -u _json_key -p "$GCLOUD_SERVICE_KEY" https://registry.k8s.io
 
     - echo $IMAGE_NAME_CLIENT
 
-    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:1.0.9 ."
-    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:1.0.9
+    - "cd ./socioprophet-web/client/ && docker build -t registry.k8s.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:2 ."
+    - docker push registry.k8s.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:2
 
     # - echo $IMAGE_NAME_SERVER
     # - "cd ../server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
