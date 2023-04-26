@@ -2,9 +2,6 @@
 image: node:latest
 
 # cache dependecies
-cache:
-  paths:
-    - ./socioprophet-web/client/node_modules/
 
 stages:
   # - build
