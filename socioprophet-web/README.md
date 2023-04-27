@@ -1,11 +1,10 @@
 ## SocioProphet-Web
 
-This folder contains the code for the socioprophet website. 
+This folder contains the code for the socioprophet website.
 
 ## SocioProphet-Web top-level directory layout
 
 This is the directory of the monorepo for the website / user interfact of the prophet-platform. The codebase and repo are both a work in progress.
-
 
 ```bash
     socioprophet-web            # Directory containing website platform code (back-end and front-end)
@@ -13,16 +12,16 @@ This is the directory of the monorepo for the website / user interfact of the pr
     │   ├── client                  #
     	    └── webpack.config.js   #
     │       └── pubilc              #
-    │        └──**/** 
+    │        └──**/**
     │       └── src                 #
-    │           └──**/** 	             
+    │           └──**/**
     │   ├── routes                  #
     │   ├── scripts                 #
     │   ├── server.js               #
-    │   ├── package.json            #             
+    │   ├── package.json            #
 ```
 
-## Build Setup 
+## Build Setup
 
 Some build setup documentation
 
@@ -30,7 +29,7 @@ Some build setup documentation
 
 SocioProphet-Web can be built and run using the Makefile within the project root directory. The commands executed by the Makefile are the same commands one would use to build a project and run the webserver--these commands are documented here:
 
-``` bash
+```bash
 .PHONY: build_web run_server run_client
 
 build_web:
@@ -45,7 +44,7 @@ run_client:
 
 To build the socioprophet-web repository, run the following commands in the root directory:
 
-``` bash
+```bash
 # install website dependencies
 make build_web
 
@@ -58,17 +57,17 @@ make run_client
 
 The 'make build_web' command documented above executes a shell script with the following:
 
-``` bash
+```bash
 #!/usr/bin/env bash
 
 #build prophet-web
-cd .. && yarn 
+cd .. && yarn
 cd client && yarn
 ```
 
 The 'make run_server' command documented above executes a shell script with the following:
 
-``` bash
+```bash
 #!/usr/bin/env bash
 
 #start-up socioprophet-web
@@ -77,18 +76,9 @@ cd .. && yarn run dev
 
 The 'make run_client' command documented above executes a shell script with the following:
 
-``` bash
+```bash
 #!/usr/bin/env bash
 
 #start-up socioprophet-web
 cd .. && cd client && yarn run start
-```
-
-As part of the process, the root Makefile calls 'start_mongod.sh'  which is a shell script with the following:
-
-``` bash
-#!/usr/bin/env bash
-
-#start mongod and run in packground
-mongod &
 ```
