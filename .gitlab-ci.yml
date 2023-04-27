@@ -1,7 +1,10 @@
 # image for build and test stages
-image: node:latest
+image: node:18-alpine
 
 # cache dependecies
+cache:
+  paths:
+    - ./socioprophet-web/client/node_modules/
 
 stages:
   # - build
@@ -40,12 +43,12 @@ docker_image:
 
     - echo $IMAGE_NAME_CLIENT
 
-    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:1.0.10 ."
-    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:1.0.10
+    - "cd ./socioprophet-web/client/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:2 ."
+    - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_CLIENT:2
 
     # - echo $IMAGE_NAME_SERVER
-    # - "cd ../server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate ."
-    # - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:release-candidate
+    # - "cd ../server/ && docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:2 ."
+    # - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME_SERVER:2
 
     # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 

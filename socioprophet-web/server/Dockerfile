@@ -1,7 +1,7 @@
 # Server Dockerfile
 
 # pull official base image
-FROM node:15.3.0-alpine3.10
+FROM node:18-alpine
 
 # set working directory
 WORKDIR /usr/src/app/sp-server
