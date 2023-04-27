@@ -1,3 +1,26 @@
+## SocioProphet-Web
+
+This folder contains the code for the socioprophet website.
+
+## SocioProphet-Web top-level directory layout
+
+This is the directory of the monorepo for the website / user interfact of the prophet-platform. The codebase and repo are both a work in progress.
+
+```bash
+    socioprophet-web            # Directory containing website platform code (back-end and front-end)
+    │   ├── README.md               #
+    │   ├── client                  #
+    	    └── webpack.config.js   #
+    │       └── pubilc              #
+    │        └──**/**
+    │       └── src                 #
+    │           └──**/**
+    │   ├── routes                  #
+    │   ├── scripts                 #
+    │   ├── server.js               #
+    │   ├── package.json            #
+```
+
 ## Build Setup
 
 Some build setup documentation
