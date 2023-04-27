@@ -12,7 +12,7 @@ COPY package.json .
 COPY yarn.lock .
 
 RUN apk add --no-cache --virtual .gyp \
-    python \
+    python3 \
     make \
     g++ \
     && yarn \
