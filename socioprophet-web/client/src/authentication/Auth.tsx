@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import app from './firebase-configuration/firebase';
-import firebase from 'firebase/app'; // for emailProvider static object
 import { supabase } from '../authentication/supabase-config/supabase';
 interface Props {
   children: React.ReactNode;
