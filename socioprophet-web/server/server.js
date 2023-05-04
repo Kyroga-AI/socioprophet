@@ -8,7 +8,6 @@ const cors = require("cors");
 const cookieSession = require("cookie-session");
 
 const rssRouter = require("./routes/api/rss-route");
-const emailRouter = require("./routes/api/email-route");
 
 // set up port
 const port = process.env.PORT || 5001;
@@ -34,7 +33,5 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/api/feed", rssRouter);
-app.use("/api/auth", emailRouter);
-// app.use("/api/user", emailRouter);
 
 app.listen(port, () => console.log(`Server up and running on port ${port} !`));

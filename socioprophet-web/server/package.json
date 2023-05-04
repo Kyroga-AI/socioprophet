@@ -59,7 +59,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "google-auth-library": "^6.1.4",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.22"
   },
   "proxy": "http://localhost:5001"
 }
