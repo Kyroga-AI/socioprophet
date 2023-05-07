@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 // UI COMPONENTS
-import { Header } from '../storybook/src/header';
+import { Header } from '../header';
 import Footer from '../footer/Footer';
 import TickerFeed from '../ticker-feed';
 import ScrollSection from './ScrollSection';
