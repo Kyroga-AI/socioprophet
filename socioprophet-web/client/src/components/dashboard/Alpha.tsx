@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../authentication/contexts/AuthContext';
-import { Header } from '../storybook/src/header';
+import { Header } from '../header';
 import TickerFeed from '../ticker-feed';
 import Profile from './profile/Profile';
 import Footer from '../footer/Footer';
