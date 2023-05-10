@@ -1,16 +1,15 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../../authentication/contexts/AuthContext';
 
-const AuthRouter = ({ component: Component, ...rest }: any): JSX.Element => {
+const AuthRouter = (props: any) => {
   const { supabaseSession } = useAuth();
 
-  return (
-    <Route
-      {...rest}
-      render={(props) => (supabaseSession ? <Component {...props} /> : <Redirect to={'/'} />)}
-    />
-  );
+  if (supabaseSession) {
+    return <Route {...props} />;
+  }
+
+  return <Navigate to={'/'} />;
 };
 
 export default AuthRouter;

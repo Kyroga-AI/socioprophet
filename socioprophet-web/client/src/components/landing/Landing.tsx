@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useReducer, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 // UI COMPONENTS
 import { Header } from '../header';
 import Footer from '../footer/Footer';
@@ -51,7 +51,7 @@ const Landing: React.FC = (): JSX.Element => {
   const emailRefOne = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   // other hooks
-  const history = useHistory();
+  const navigate = useNavigate();
   // custom hooks
   const { supabaseSession, logout } = useAuth();
 
@@ -114,7 +114,7 @@ const Landing: React.FC = (): JSX.Element => {
 
       const emailQuery = encodeURIComponent(emailRef.current.value);
 
-      history.push(`/submit?email_address=${emailQuery}`);
+      navigate(`/submit?email_address=${emailQuery}`);
     }
   };
 
@@ -149,7 +149,7 @@ const Landing: React.FC = (): JSX.Element => {
   useEffect(() => {
     if (supabaseSession) {
       // console.log(supabaseSession.user);
-      history.push('/alpha');
+      navigate('/alpha');
     }
   });
   return (
@@ -158,7 +158,7 @@ const Landing: React.FC = (): JSX.Element => {
         {supabaseSession !== null ? (
           <>
             <div className="landing__header__login">
-              <p className="landing__header__login__avatar" onClick={() => history.push('/alpha')}>
+              <p className="landing__header__login__avatar" onClick={() => navigate('/alpha')}>
                 <i className="fa fa-user-circle" aria-hidden="true"></i>
               </p>
             </div>

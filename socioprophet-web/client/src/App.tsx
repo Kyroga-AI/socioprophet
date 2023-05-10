@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 /**
  *  unauthenticated view imports (latest version)
@@ -34,26 +34,23 @@ import './components/global-styles/inputText.scss';
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <div className="app">
-          <Switch>
-            <Route exact path="/" component={Landing} />
-
-            <Route exact path="/submit" component={EmailSubmission} />
-            <Route path="/terms-of-use" component={Terms} />
-            <Route path="/privacy-policy" component={Privacy} />
-            <AuthRouter path="/get-started" component={Survey} />
-            <AuthRouter exact path="/alpha" component={Alpha} />
-            <Route component={NotFound} />
-            {/* <Route path="/account" component={Account} />
+    <AuthProvider>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/submit" element={<EmailSubmission />} />
+          <Route path="/terms-of-use" element={<Terms />} />
+          <Route path="/privacy-policy" element={<Privacy />} />
+          <AuthRouter path="/get-started" element={<Survey />} />
+          <AuthRouter exact path="/alpha" element={<Alpha />} />
+          <Route element={<NotFound />} />
+          {/* <Route path="/account" component={Account} />
               {/* <Route path="/password-reset" component={PasswordReset} /> */}
-            {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
-            {/* <PrivateRoute path="/terminal" component={PopoutTerminal} />  */}
-          </Switch>
-        </div>
-      </AuthProvider>
-    </BrowserRouter>
+          {/* <PrivateRoute path="/dashboard" component={UInterface} /> */}
+          {/* <PrivateRoute path="/terminal" component={PopoutTerminal} />  */}
+        </Routes>
+      </div>
+    </AuthProvider>
   );
 };
 export default App;

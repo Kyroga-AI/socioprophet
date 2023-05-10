@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 // auth context
 import { useAuth } from '../../../../authentication/contexts/AuthContext';
 
@@ -7,7 +7,7 @@ import './scss/emailSubmission.scss';
 
 const EmailSubmission = () => {
   // router hook
-  const history = useHistory();
+  const navigate = useNavigate();
   // custom auth hook
   const { sendEmailAuthentication } = useAuth();
 
@@ -17,7 +17,7 @@ const EmailSubmission = () => {
 
     // if no query param send back to landing page '/'
     if (email === null) {
-      history.push('/');
+      navigate('/');
     }
 
     try {

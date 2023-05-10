@@ -1,5 +1,5 @@
 import React, { useReducer, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../authentication/contexts/AuthContext';
 
 // email validator
@@ -30,7 +30,7 @@ const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
 
   // other hooks
-  const history = useHistory();
+  const navigate = useNavigate();
   // custom hooks
 
   const { googleSignIn, githubSignIn } = useAuth();
@@ -74,7 +74,7 @@ const Login = () => {
       // send user to alpha dashboard
 
       const emailQuery = encodeURIComponent(emailRef.current.value);
-      history.push(`/submit?email_address=${emailQuery}`);
+      navigate(`/submit?email_address=${emailQuery}`);
     }
   };
 
