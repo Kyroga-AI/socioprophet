@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SurveyEmbed from './SurveyEmbed';
 
 // styles
@@ -8,7 +8,7 @@ import './scss/survey.scss';
 const Survey = (): JSX.Element => {
   const [surveyId, setSurveyId] = useState<string | null>('');
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // gets user email address and if one does not exist in url then redirects back to landing page
   const getId = async (): Promise<void> => {
@@ -16,7 +16,7 @@ const Survey = (): JSX.Element => {
     const id = urlParams.get('id');
 
     if (id === null) {
-      history.push('/');
+      navigate('/');
     }
 
     setSurveyId(id);
