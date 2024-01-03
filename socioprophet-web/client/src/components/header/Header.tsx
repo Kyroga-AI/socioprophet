@@ -1,30 +1,20 @@
-/**
- *
- *  File: Header.tsx (Storybook Component)
- *  Author: William Jones
- *  Desciption: Common Header Component
- *
- */
 import React from 'react';
-import './scss/header.scss';
+import HeaderLink from '../headerLink/HeaderLink';
+import { StyledNav, StyledHeaderTitle, StyledTitleLink, StyledNavLinks } from './styles';
 
-export interface HeaderProps {
-  children?: React.ReactNode;
-}
-
-export const Header = ({ children }: HeaderProps): JSX.Element => {
+const Header = () => {
   return (
-    <nav className="header">
-      <div className="header__main">
-        <h1 className="header__main__title">
-          <a className="header__main__title__link" href="/">
-            SocioProphet
-          </a>
-        </h1>
-      </div>
-      <div className="header__links">
-        <div className="header__links__list">{children}</div>
-      </div>
-    </nav>
+    <StyledNav>
+      <StyledHeaderTitle>
+        <StyledTitleLink href="/">SocioProphet</StyledTitleLink>
+      </StyledHeaderTitle>
+      <StyledNavLinks>
+        <HeaderLink isExternal link="https://github.com/socioprophet" label="GitHub" />
+        <HeaderLink isExternal link="https://wiki.socioprophet.com" label="Wiki" />
+        <HeaderLink isExternal link="https://socioprophet.blog" label="Blog" />
+      </StyledNavLinks>
+    </StyledNav>
   );
 };
+
+export default Header;

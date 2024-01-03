@@ -1,24 +1,37 @@
 const express = require("express");
+const { JSDOM } = require("jsdom");
 const NodeCache = require("node-cache");
 const fetch = require("node-fetch");
 const router = express.Router();
 
 const cache = new NodeCache({ stdTTL: 600 });
 
-// hackernews endpoint
-const url = "https://hnrss.org/newest";
+const HN_URL = "https://hnrss.org/newest";
 
-router.get("/rss", (req, res) => {
-  const cachedData = cache.get(url);
+const fetchHackerNewsFeed = async (res) => {
+  const feedResponse = await fetch(HN_URL);
+  const feedData = await feedResponse.text();
+
+  const dom = new JSDOM(feedData, { contentType: "text/xml" });
+
+  const items = Array.from(dom.window.document.querySelectorAll("item")).map(
+    (item) => ({
+      title: item.querySelector("title").textContent,
+      link: item.querySelector("link").textContent,
+    })
+  );
+
+  cache.set(HN_URL, items);
+  res.send(items);
+};
+
+router.get("/rss", (_req, res) => {
+  const cachedData = cache.get(HN_URL);
+
   if (cachedData) {
     res.send(cachedData);
   } else {
-    fetch(url)
-      .then((r) => r.text(r))
-      .then((data) => {
-        cache.set(url, data);
-        res.send(data);
-      });
+    fetchHackerNewsFeed(res);
   }
 });
 
