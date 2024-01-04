@@ -1,5 +1,11 @@
-#This folder contains scripts for building, running, and managing the socioprophet-web asset.
+## Scripts for socioprophet-web
 
-install_web.sh is used to install the dependencies for the socioprophet-web asset
+The following should be executed from the root directory using the Makefile.
 
-run_client.sh and run_server.sh is used to start the development webpack server and NodeJS server for the socioprophet-web asset
+### install_web.sh
+
+`make install_web` to install dependencies for both client and server.
+
+### run_web.sh
+
+`make run_web` to run both the client and server folders together. The server (node) will run as a background process on port 5001 and the React app will be running on http://localhost:8081.
