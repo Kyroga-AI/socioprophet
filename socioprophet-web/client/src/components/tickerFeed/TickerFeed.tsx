@@ -8,7 +8,7 @@ const TickerFeed = () => {
   const [feed, setFeed] = useState<RssFeed>([]);
 
   useEffect(() => {
-    let mounted: boolean = true;
+    let mounted = true;
 
     const getRss = async (): Promise<void> => {
       const rssResponse = await fetch('/api/feed/rss');
