@@ -3,8 +3,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
-let APP_DIR = path.resolve(__dirname, './src');
-let BUILD_DIR = path.join(__dirname, '/build');
+const APP_DIR = path.resolve(__dirname, './src');
+const BUILD_DIR = path.join(__dirname, '/build');
 
 const webpackConfig = () => {
   return {
