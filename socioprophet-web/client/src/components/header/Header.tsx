@@ -1,6 +1,9 @@
 import React from 'react';
+import { URLS } from '../../constants/urls';
 import HeaderLink from '../headerLink/HeaderLink';
 import { StyledNav, StyledHeaderTitle, StyledTitleLink, StyledNavLinks } from './styles';
+
+const { GITHUB, WIKI, BLOG } = URLS;
 
 const Header = () => {
   return (
@@ -9,9 +12,9 @@ const Header = () => {
         <StyledTitleLink href="/">SocioProphet</StyledTitleLink>
       </StyledHeaderTitle>
       <StyledNavLinks>
-        <HeaderLink isExternal link="https://github.com/socioprophet" label="GitHub" />
-        <HeaderLink isExternal link="https://wiki.socioprophet.com" label="Wiki" />
-        <HeaderLink isExternal link="https://socioprophet.blog" label="Blog" />
+        <HeaderLink isExternal link={GITHUB} label="GitHub" />
+        <HeaderLink isExternal link={WIKI} label="Wiki" />
+        <HeaderLink isExternal link={BLOG} label="Blog" />
       </StyledNavLinks>
     </StyledNav>
   );

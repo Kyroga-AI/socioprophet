@@ -5,11 +5,14 @@ const helmet = require("helmet");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
 
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
 const rssRouter = require("./routes/api/rss-route");
 
-const port = process.env.PORT || 5001;
-
 const app = express();
+const port = process.env.PORT;
 
 app.use(
   cookieSession({
@@ -29,7 +32,7 @@ app.use(cookieParser());
 app.use("/api/feed", rssRouter);
 
 const server = app.listen(port, () =>
-  console.log(`Server up and running on port ${port} !`)
+  console.log(`Server up and running on port ${port}.`)
 );
 
 process.on("SIGINT", () => {
