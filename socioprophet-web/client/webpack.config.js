@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
 
 const APP_DIR = path.resolve(__dirname, './src');
 const BUILD_DIR = path.join(__dirname, '/build');
@@ -62,7 +61,6 @@ const webpackConfig = () => {
         favicon: './public/favicon.ico',
       }),
       new CleanWebpackPlugin(),
-      new Dotenv(),
     ],
   };
 };
