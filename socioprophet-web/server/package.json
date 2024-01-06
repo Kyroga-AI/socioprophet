@@ -34,33 +34,30 @@
   "license": "UNLICENSED",
   "private": true,
   "main": "server.js",
+  "nodemonConfig": {
+    "ext": "js",
+    "ignore": [
+      "package.json"
+    ]
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "author": "Will Jones",
   "dependencies": {
-    "@supabase/supabase-js": "^1.22.3",
-    "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
     "express": "^4.16.4",
-    "googleapis": "^67.0.0",
     "helmet": "^4.3.1",
     "jsdom": "^23.0.1",
     "node-cache": "^5.1.2",
-    "node-fetch": "^2.6.1",
-    "node-vault": "^0.9.21",
-    "nodemailer": "^6.6.1",
-    "request": "^2.88.2"
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
-    "google-auth-library": "^6.1.4",
-    "nodemon": "^2.0.22"
+    "nodemon": "^3.0.2"
   },
   "proxy": "http://localhost:5001"
 }
