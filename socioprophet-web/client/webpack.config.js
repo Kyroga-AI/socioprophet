@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+require('dotenv').config();
 
 const APP_DIR = path.resolve(__dirname, './src');
 const BUILD_DIR = path.join(__dirname, '/build');
@@ -48,11 +49,10 @@ const webpackConfig = () => {
 
     devServer: {
       host: '0.0.0.0',
-      port: 8081,
+      port: process.env.REACT_PORT,
       historyApiFallback: true,
-      allowedHosts: ['localhost.socioprophet.com', 'socioprophet.com', 'www.socioprophet.com'],
       proxy: {
-        '/api': 'http://localhost:5001',
+        '/api': `http://localhost:${process.env.NODE_PORT}`,
       },
     },
     plugins: [

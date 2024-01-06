@@ -7,7 +7,7 @@ node_modules/
 # ignore build folder in production
 build/
 
-# ignore .env files (push .env.sample)
+# ignore .env files 
 .env
 
 storybook-static

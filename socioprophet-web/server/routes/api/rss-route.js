@@ -3,10 +3,9 @@ const { JSDOM } = require("jsdom");
 const NodeCache = require("node-cache");
 const fetch = require("node-fetch");
 const router = express.Router();
+const { HN_URL } = require("../../constants/index");
 
 const cache = new NodeCache({ stdTTL: 600 });
-
-const HN_URL = "https://hnrss.org/newest";
 
 const fetchHackerNewsFeed = async (res) => {
   const feedResponse = await fetch(HN_URL);
