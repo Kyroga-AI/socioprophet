@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 export const StyledFooter = styled.footer`
   display: grid;
@@ -16,7 +17,15 @@ export const StyledLinksWrapper = styled.div`
   display: flex;
 `;
 
-export const StyledLink = styled.a`
+export const StyledLink = styled(Link)`
+  margin: 0 20px 0 20px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+  text-decoration: none !important;
+`;
+
+export const StyledAnchor = styled.a`
   margin: 0 20px 0 20px;
   font-size: 14px;
   font-weight: 400;
