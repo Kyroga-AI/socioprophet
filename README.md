@@ -1,84 +1,41 @@
-## SocioProphet-Web
+# Welcome to SocioProphet
 
-This folder contains the code for the socioprophet website.
+This repository contains the code for the SocioProphet website (https://socioprophet.com), split into /client and /server directories. This codebase is currently a work in progress.
 
-## SocioProphet-Web top-level directory layout
+### Directory Layout
 
-This is the directory of the monorepo for the website / user interfact of the prophet-platform. The codebase and repo are both a work in progress.
+- Root directory contains the client and server directories and a scripts directory for working with socioprophet-web.
 
-```bash
-    socioprophet-web            # Directory containing website platform code (back-end and front-end)
-    │   ├── README.md               #
-    │   ├── client                  #
-    	    └── webpack.config.js   #
-    │       └── pubilc              #
-    │        └──**/**
-    │       └── src                 #
-    │           └──**/**
-    │   ├── routes                  #
-    │   ├── scripts                 #
-    │   ├── server.js               #
-    │   ├── package.json            #
-```
+- `/client` - React 18 application using TypeScript, Webpack and Styled Components.
+- `/server` - Express application currently serving the HackerNews RSS feed to the scrolling ticker on the SocioProphet website.
+- `/scripts` - Executed via the Makefile in the root directory. To help with installing and running the client and server code concurrently.
 
-## Build Setup
+### Building with the Makefile and Yarn
 
-Some build setup documentation
-
-## Building with the Makefile and Yarn
-
-SocioProphet-Web can be built and run using the Makefile within the project root directory. The commands executed by the Makefile are the same commands one would use to build a project and run the webserver--these commands are documented here:
+socioprophet-web can be built and run using the Makefile within the project root directory. The commands executed by the Makefile are the same commands one would use to build a project and run the Webpack dev server and Node server.
 
 ```bash
-.PHONY: build_web run_server run_client
+.PHONY: install_web run_web
 
-build_web:
-	cd socioprophet-web/scripts/ && bash build_web.sh
+# install dependencies for client and server concurrently
+install_web:
+	cd socioprophet-web/scripts/ && bash install_web.sh
 
-run_server:
-	cd socioprophet-web/scripts && bash start_mongod.sh && bash run_server.sh
-
-run_client:
-	cd socioprophet-web/scripts && bash run_client.sh
+# run client and server
+run_web:
+	cd socioprophet-web/scripts/ && bash run_web.sh
 ```
 
-To build the socioprophet-web repository, run the following commands in the root directory:
+To build and run the socioprophet-web application, run the following commands in the root directory:
 
 ```bash
-# install website dependencies
-make build_web
+# install client and server dependencies
+make install_web
 
-# to run the development web-server:
-make run_server
-
-# to run the webpack-dev-server for the client build:
-make run_client
+# run client and server locally concurrently
+make run_web
 ```
 
-The 'make build_web' command documented above executes a shell script with the following:
+### Env Variables
 
-```bash
-#!/usr/bin/env bash
-
-#build prophet-web
-cd .. && yarn
-cd client && yarn
-```
-
-The 'make run_server' command documented above executes a shell script with the following:
-
-```bash
-#!/usr/bin/env bash
-
-#start-up socioprophet-web
-cd .. && yarn run dev
-```
-
-The 'make run_client' command documented above executes a shell script with the following:
-
-```bash
-#!/usr/bin/env bash
-
-#start-up socioprophet-web
-cd .. && cd client && yarn run start
-```
+Create a `.env` in both the client and server folders. Check `./client/.env.example` and `./server/.env.examples` for details.
