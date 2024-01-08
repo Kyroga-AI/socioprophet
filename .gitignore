@@ -1,15 +1,12 @@
-# ignore node modules
 node_modules/
 
-# ignore nginx config details
 nginx/
 
-# ignore build folder in production
 build/
 
-# ignore .env files 
+local_deploy/
+
 .env
 
-# ignore DS Store - only in MacOS anyway...
 .DS_Store
 
