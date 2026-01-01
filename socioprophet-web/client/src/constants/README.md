@@ -1,11 +1,19 @@
 # Client Constants
 
-## Purpose
 Central location for shared constants used by UI components and views.
 
-## Key Files
-- `urls.ts` – Maps UI labels to link destinations (contact email, privacy policy, terms of use, and external links).
+## Files
 
-## Notes
-- Keep external URLs here so navigation components can remain stateless.
-- Update these values if branding or destination URLs change.
+| File | Purpose |
+| --- | --- |
+| `urls.ts` | Maps labels to URLs and mailto destinations used across the app. |
+
+## Usage
+
+- Imported by the `Header` and `Footer` components.
+- Keeps external destinations centralized to avoid duplication.
+
+## Guidance
+
+- Update values here if link destinations change.
+- Avoid hardcoding external URLs directly in components.

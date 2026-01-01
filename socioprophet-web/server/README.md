@@ -1,30 +1,78 @@
 # Server
 
-## Purpose
-The server directory hosts a lightweight Express application that provides the RSS feed API consumed by the frontend ticker.
+The server is a **lightweight Express API** that provides the RSS feed data consumed by the frontend ticker. It performs a single upstream fetch, normalizes the data into JSON, and caches responses for performance.
 
-## Entry Points
-- `src/server.ts` – Bootstraps the Express app, configures middleware, and mounts API routes.
+## Responsibilities
 
-## Runtime Responsibilities
-- Serve JSON data from the Hacker News RSS feed.
-- Apply middleware for compression, security headers, CORS, and session/cookie handling.
-- Provide a single API namespace under `/api/feed`.
+- Fetch Hacker News RSS (`https://hnrss.org/newest`).
+- Convert XML to JSON (array of `{ title, link }`).
+- Cache responses for 10 minutes.
+- Expose the API at `/api/feed/rss`.
 
-## Key Files
-- `package.json` – Contains dependencies such as `express`, `jsdom`, `node-cache`, and `node-fetch`.
-- `tsconfig.json` – TypeScript configuration for the server.
-- `Dockerfile` – Container build instructions for deployment.
-- `src/routes/api/rss-route.ts` – Implements `/api/feed/rss`.
-- `src/constants/index.js` – Centralized constants (e.g., `HN_URL`).
+## Directory layout
 
-## Environment Expectations
-- `PORT` – The HTTP port the server listens on.
+| Path | Description |
+| --- | --- |
+| `src/` | Server source code (entry point, routes, constants). |
+| `Dockerfile` | Container build for the API server. |
+| `.env.example` | Example environment variables. |
+| `package.json` | Scripts and dependencies. |
+| `tsconfig.json` | TypeScript configuration. |
 
-## Development
-- `yarn run dev` – Starts the server with `nodemon`.
-- `yarn start` – Runs the server directly with Node.
+## Entry point
 
-## Notes
-- The server uses CommonJS `require` in `.ts` files; keep consistency when adding new modules.
-- Responses are cached for 10 minutes using `node-cache`.
+- `src/server.ts` – Configures Express middleware and mounts `/api/feed` routes.
+
+## Environment variables
+
+Create `server/.env` (see `.env.example`).
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `PORT` | ✅ | Port the Express server listens on. |
+
+## Scripts
+
+| Script | Command | Description |
+| --- | --- | --- |
+| Start | `yarn start` | Runs the server directly with Node. |
+| Dev | `yarn run dev` | Runs the server with `nodemon`. |
+
+## Middleware stack (order matters)
+
+`src/server.ts` registers middleware in this order:
+
+1. `cookie-session` – session cookies.
+2. `cors` – allows cross-origin requests.
+3. `helmet` – security headers.
+4. `compression` – gzip compression.
+5. `express.json` – JSON parsing.
+6. `express.urlencoded` – URL-encoded parsing.
+7. `cookie-parser` – cookie parsing.
+
+## API routes
+
+| Route | Method | Description |
+| --- | --- | --- |
+| `/api/feed/rss` | GET | Returns cached JSON from the HN RSS feed. |
+
+For implementation details, see `src/routes/api/rss-route.ts` and its README.
+
+## Caching behavior
+
+- Uses `node-cache` with a **600 second** TTL.
+- Cache key = `HN_URL` constant.
+- If cache is present, no upstream request is made.
+
+## Docker notes
+
+- Base image: `node:18-alpine`.
+- The container runs `yarn start`.
+- Ensure `PORT` is configured at runtime.
+
+## Further documentation
+
+- `src/README.md` – overview of server source structure
+- `src/routes/README.md` – route-level conventions
+- `src/routes/api/README.md` – API-specific notes
+- `src/constants/README.md` – shared constants

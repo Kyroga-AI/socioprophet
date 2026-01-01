@@ -1,13 +1,20 @@
 # Server Constants
 
-## Purpose
 Centralized constants used by server modules, keeping magic strings and URLs in one place.
 
-## Current Constants
-- `HN_URL` (from `index.js`) – The Hacker News RSS feed endpoint (`https://hnrss.org/newest`).
+## Files
 
-## Usage
-- Imported by `src/routes/api/rss-route.ts` to fetch and cache the feed.
+| File | Description |
+| --- | --- |
+| `index.js` | Exports shared constants (currently only `HN_URL`). |
 
-## Notes
-- Prefer adding new shared constants here rather than duplicating values across route files.
+## Current constants
+
+| Constant | Value | Used by |
+| --- | --- | --- |
+| `HN_URL` | `https://hnrss.org/newest` | `src/routes/api/rss-route.ts` |
+
+## Guidance
+
+- Add new shared values here rather than duplicating them in route modules.
+- Keep naming uppercase and descriptive (e.g., `EXTERNAL_API_URL`).
