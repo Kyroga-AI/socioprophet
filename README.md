@@ -2,6 +2,12 @@
 
 This repository contains the code for the SocioProphet website (https://socioprophet.com), split into /client and /server directories. This codebase is currently a work in progress.
 
+### Pedantic Documentation
+
+For a detailed, theory-inclusive walkthrough of the repository layout, architecture, and data flow, see:
+
+- `docs/pedantic-documentation.md`
+
 ### Directory Layout
 
 - Root directory contains the client and server directories and a scripts directory for working with socioprophet-web.
