@@ -6,11 +6,26 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Minimal baseline: users can access only their own user document.
     match /users/{uid} {
       allow read, write: if signedIn() && request.auth.uid == uid;
     }
 
+    // Posts: least-privilege baseline with basic invariants
+    // Assumed fields:
+    // - ownerUid: string (immutable)
+    // - createdAt: timestamp (immutable after create)
+    match /posts/{postId} {
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.createdAt is timestamp;
+
+      allow update, delete: if signedIn()
+        && resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.createdAt == resource.data.createdAt;
+    }
 
     // ---- NEXT COLLECTIONS (intentionally disabled until predicates are defined) ----
     // match /jobs/{jobId} {
@@ -18,21 +33,6 @@ service cloud.firestore {
     //   allow write: if false;
     // }
 
-    // Posts: least-privilege baseline
-    // Data model assumption:
-    // - ownerUid: string (immutable after create)
-    match /posts/{postId} {
-      allow read: if signedIn();
-      allow create: if signedIn()
-        && request.resource.data.ownerUid == request.auth.uid;
-
-      allow update, delete: if signedIn()
-        && resource.data.ownerUid == request.auth.uid
-        && request.resource.data.ownerUid == resource.data.ownerUid;
-    }
-
-
-    // Default: deny everything else.
     match /{document=**} {
       allow read, write: if false;
     }
