@@ -1,44 +1,42 @@
 const fs = require("fs");
 const path = require("path");
+const test = require("node:test");
+const assert = require("node:assert/strict");
+
 const {
   initializeTestEnvironment,
   assertSucceeds,
   assertFails,
 } = require("@firebase/rules-unit-testing");
 
-// Keep this aligned with the Firebase project ID we deploy to.
+// Keep aligned with the Firebase project ID
 const PROJECT_ID = "socioprophet-web-dev-env";
 
-describe("Firestore security rules (least privilege)", () => {
-  let testEnv;
-
-  beforeAll(async () => {
-    testEnv = await initializeTestEnvironment({
-      projectId: PROJECT_ID,
-      firestore: {
-        rules: fs.readFileSync(path.join(__dirname, "..", "firestore.rules"), "utf8"),
-      },
-    });
+test("Firestore rules: users/{uid} self-access only; default deny elsewhere", async (t) => {
+  const testEnv = await initializeTestEnvironment({
+    projectId: PROJECT_ID,
+    firestore: {
+      rules: fs.readFileSync(path.join(__dirname, "..", "firestore.rules"), "utf8"),
+    },
   });
 
-  afterAll(async () => {
+  t.after(async () => {
     await testEnv.cleanup();
   });
 
-  test("users/{uid}: owner can read/write own doc; cannot read others", async () => {
-    const alice = testEnv.authenticatedContext("alice").firestore();
-    const bob = testEnv.authenticatedContext("bob").firestore();
+  const alice = testEnv.authenticatedContext("alice").firestore();
+  const bob = testEnv.authenticatedContext("bob").firestore();
 
-    await assertSucceeds(alice.doc("users/alice").set({ hello: "world" }));
-    await assertSucceeds(alice.doc("users/alice").get());
+  await assertSucceeds(alice.doc("users/alice").set({ hello: "world" }));
+  await assertSucceeds(alice.doc("users/alice").get());
 
-    await assertFails(alice.doc("users/bob").get());
-    await assertFails(bob.doc("users/alice").get());
-  });
+  await assertFails(alice.doc("users/bob").get());
+  await assertFails(bob.doc("users/alice").get());
 
-  test("default deny: cannot read/write arbitrary collections", async () => {
-    const alice = testEnv.authenticatedContext("alice").firestore();
-    await assertFails(alice.doc("posts/x").set({ ownerUid: "alice" }));
-    await assertFails(alice.doc("anything/x").get());
-  });
+  // default deny: any other collections should be blocked
+  await assertFails(alice.doc("posts/x").set({ ownerUid: "alice" }));
+  await assertFails(alice.doc("anything/x").get());
+
+  // sanity: ensure asserts ran
+  assert.ok(true);
 });
