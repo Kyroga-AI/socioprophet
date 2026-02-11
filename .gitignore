@@ -26,3 +26,6 @@ socioprophet-web/client/public/firebase-config.js
 
 # Local validation artifacts
 artifacts/
+
+# Local caches
+.cache/
