@@ -17,3 +17,6 @@ local_deploy/
 *token*.json
 *adminSDK*.json
 firebase-debug.log*
+!**/.env.sample
+!**/.env.example
+**/.env.local
