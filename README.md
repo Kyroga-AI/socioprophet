@@ -1,105 +1,58 @@
-# SocioProphet Web (monorepo wrapper)
+# SocioProphet — Global Knowledge Commons (Monorepo)
 
-This repository contains the **full SocioProphet web stack**. The actual application lives under the `socioprophet-web/` folder and is split into a React frontend and an Express backend. The root folder only provides shared workflow helpers (Makefile, scripts) and high-level documentation.
+SocioProphet is building a **global knowledge commons**: an open, human-first system for sharing knowledge, tooling, and operational practice into a substrate that is **auditable**, **local-first**, and **interoperable**.
 
-> **Repository goal:** provide a working local development environment for the SocioProphet marketing site and its supporting RSS feed API.
+This repo is the monorepo for the web surface and the enforcement primitives that keep the commons safe as it grows (rules-as-code, emulator-backed tests, CI gates, and secret hygiene).
 
-## Repository layout (top level)
+## Repo layout
 
-| Path | Description |
-| --- | --- |
-| `README.md` | This file. Overview and workspace instructions. |
-| `CONTRIBUTING.md` | Contribution guidelines (style, workflow expectations). |
-| `Makefile` | Convenience commands that delegate to scripts in `socioprophet-web/scripts/`. |
-| `socioprophet-web/` | **Primary application code** (client, server, scripts). See that directory’s README for full details. |
+- socioprophet-web/ — web app + Firebase/Firestore config and policy
+  - client/ — frontend (webpack)
+  - server/ — backend (if present/used)
+  - firestore.rules / firestore.indexes.json — rules-as-code and indexes
+  - firebase.json / .firebaserc — Firebase project configuration
+  - test/ — emulator-backed Firestore rules tests
+  - scripts/run_rules_tests.sh — deterministic runner for rules tests
 
-## Prerequisites
+- .github/ — GitHub automation (CI workflows, dependabot)
+- docs/ — architecture overview and threat model
 
-- **Node.js 18+** (the codebase uses Node 18 tooling and APIs).
-- **Yarn** package manager.
-- **GNU Make** (for running top-level `make` targets).
-- **Bash** (scripts are bash). 
+## Security posture
 
-## Quick start (recommended)
+We harden against two failure modes that kill projects:
+1) Secrets leaking into git or builds
+2) Datastore rules drifting into permissive mode
 
-```bash
-# from /workspace/socioprophet
-make install_web
-make run_web
-```
+We enforce:
+- No secrets in git (CI scanning + local hygiene)
+- Firestore rules are deny-by-default
+- Rules changes must be test-backed (emulator tests locally and in CI)
 
-What this does:
-1. Installs dependencies in `socioprophet-web/client` and `socioprophet-web/server`.
-2. Starts the backend with `yarn run dev` and the frontend with `yarn start`.
+See SECURITY.md for reporting and handling.
 
-## Manual start (no Makefile)
+## Getting started (local dev)
 
-```bash
-cd socioprophet-web/client
-cp .env.example .env
-# set REACT_PORT and NODE_PORT inside .env
+Prereqs: Git, Node 20+, Java (Temurin/OpenJDK) for emulator, Yarn (client), npm (rules tests)
 
-yarn
+Already cloned:
+- cd ~/dev/socioprophet
+- git checkout master
+- git pull --ff-only
+- git status -sb
 
-yarn start
-```
+Build client:
+- cd ~/dev/socioprophet/socioprophet-web/client
+- yarn install
+- yarn build
 
-```bash
-cd socioprophet-web/server
-cp .env.example .env
-# set PORT inside .env
+Runtime Firebase public config (local dev):
+- cd ~/dev/socioprophet/socioprophet-web/client
+- cp -n public/firebase-config.js.example public/firebase-config.js
+- edit public/firebase-config.js
 
-yarn
+Firestore rules tests:
+- cd ~/dev/socioprophet/socioprophet-web
+- npm ci
+- npm run test:rules
 
-yarn run dev
-```
-
-## Environment variables
-
-Create `.env` files in the **client** and **server** folders.
-
-### Client (`socioprophet-web/client/.env`)
-
-| Variable | Required | Description |
-| --- | --- | --- |
-| `REACT_PORT` | ✅ | Port for the Webpack dev server (e.g., `3000`). |
-| `NODE_PORT` | ✅ | Port where the server is running (used for `/api` proxy). |
-
-### Server (`socioprophet-web/server/.env`)
-
-| Variable | Required | Description |
-| --- | --- | --- |
-| `PORT` | ✅ | Port that the Express server listens on (e.g., `3001`). |
-
-## How the system fits together
-
-- The **client** is a React SPA (single-page app) served by Webpack in development.
-- The **server** is a lightweight Express API that fetches the Hacker News RSS feed and returns JSON.
-- The client makes requests to `/api/feed/rss`, which is proxied to the server when running locally.
-
-## Common tasks
-
-| Task | Command | Where |
-| --- | --- | --- |
-| Install dependencies | `make install_web` | repo root |
-| Run both apps | `make run_web` | repo root |
-| Run client only | `yarn start` | `socioprophet-web/client` |
-| Run server only | `yarn run dev` | `socioprophet-web/server` |
-
-## Where to find more documentation
-
-The project is intentionally verbose about documentation. Each major folder has its own README:
-
-- `socioprophet-web/README.md` – app-level documentation
-- `socioprophet-web/client/README.md` – frontend guide
-- `socioprophet-web/server/README.md` – backend guide
-- `socioprophet-web/scripts/README.md` – helper scripts
-- `socioprophet-web/client/src/**/README.md` – component-level notes
-- `socioprophet-web/server/src/**/README.md` – server source notes
-
-## Notes and gotchas
-
-- The root `Makefile` assumes a Unix-like shell environment (Bash).
-- Both apps are expected to run **concurrently** in development. Ensure ports do not conflict.
-- The client uses a Webpack dev server; it is not preconfigured for production SSR.
-- Dockerfiles exist in the client/server directories for container builds (see their READMEs for details).
+License: MIT (see LICENSE)
