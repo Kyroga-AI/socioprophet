@@ -2,7 +2,16 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Default: deny everything. We will open specific collections intentionally.
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Minimal baseline: users can access only their own user document.
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Default: deny everything else.
     match /{document=**} {
       allow read, write: if false;
     }
