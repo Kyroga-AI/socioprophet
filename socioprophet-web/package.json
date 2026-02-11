@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test:rules": "firebase emulators:exec --only firestore \"bash -lc 'node --test test/firestore.rules.test.js 2> >(grep -v \\\"@firebase/firestore:\\\" >&2)'\""
+    "test:rules": "firebase emulators:exec --only firestore \"bash -lc 'set -o pipefail; node --test test/firestore.rules.test.js 2>&1 | grep -v \\\"@firebase/firestore:\\\"; exit ${PIPESTATUS[0]}'\""
   },
   "keywords": [],
   "author": "",
@@ -14,4 +14,4 @@
     "@firebase/rules-unit-testing": "^5.0.0",
     "firebase-admin": "^13.6.1"
   }
-}
+}\n
