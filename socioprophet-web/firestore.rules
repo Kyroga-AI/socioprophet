@@ -10,23 +10,6 @@ service cloud.firestore {
       allow read, write: if signedIn() && request.auth.uid == uid;
     }
 
-    // Posts: least-privilege baseline with basic invariants
-    // Assumed fields:
-    // - ownerUid: string (immutable)
-    // - createdAt: timestamp (immutable after create)
-    match /posts/{postId} {
-      allow read: if signedIn();
-
-      allow create: if signedIn()
-        && request.resource.data.ownerUid == request.auth.uid
-        && request.resource.data.createdAt is timestamp;
-
-      allow update, delete: if signedIn()
-        && resource.data.ownerUid == request.auth.uid
-        && request.resource.data.ownerUid == resource.data.ownerUid
-        && request.resource.data.createdAt == resource.data.createdAt;
-    }
-
     // ---- NEXT COLLECTIONS (intentionally disabled until predicates are defined) ----
     // match /jobs/{jobId} {
     //   allow read: if false;
