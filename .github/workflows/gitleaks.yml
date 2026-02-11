@@ -1,0 +1,30 @@
+name: gitleaks
+
+on:
+  pull_request:
+  push:
+    branches: ["master", "main"]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install gitleaks
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz \
+          | tar -xz
+          sudo mv gitleaks /usr/local/bin/
+
+      - name: Run gitleaks (working tree only)
+        run: |
+          gitleaks detect \
+            --source . \
+            --no-git \
+            --no-banner \
+            --redact \
+            --exit-code 1 \
+            --config .gitleaks.toml
