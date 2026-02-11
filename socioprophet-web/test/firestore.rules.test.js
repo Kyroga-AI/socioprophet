@@ -1,3 +1,4 @@
+process.env.FIREBASE_LOG_LEVEL = 'silent';
 const fs = require("fs");
 const path = require("path");
 const test = require("node:test");
