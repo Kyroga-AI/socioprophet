@@ -18,6 +18,20 @@ service cloud.firestore {
     //   allow write: if false;
     // }
 
+    // Posts: least-privilege baseline
+    // Data model assumption:
+    // - ownerUid: string (immutable after create)
+    match /posts/{postId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid;
+
+      allow update, delete: if signedIn()
+        && resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid;
+    }
+
+
     // Default: deny everything else.
     match /{document=**} {
       allow read, write: if false;
