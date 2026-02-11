@@ -9,4 +9,11 @@ local_deploy/
 .env
 
 .DS_Store
-
+# Secrets / local env
+.env.*
+*.pem
+*.key
+*.p12
+*token*.json
+*adminSDK*.json
+firebase-debug.log*
