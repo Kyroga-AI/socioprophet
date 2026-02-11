@@ -11,7 +11,7 @@ on:
       - "socioprophet-web/package.json"
       - "socioprophet-web/package-lock.json"
   push:
-    branches: ["master"]
+    branches: ["master", "main"]
     paths:
       - "socioprophet-web/firestore.rules"
       - "socioprophet-web/firestore.indexes.json"
