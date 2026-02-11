@@ -4,7 +4,8 @@
   "description": "This directory contains the **entire SocioProphet web application**, split into a frontend SPA and a backend API. Use this README for operational details; component-level documentation lives in subdirectories.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:rules": "node --test test/firestore.rules.test.js"
   },
   "keywords": [],
   "author": "",
