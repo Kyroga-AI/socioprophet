@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test:rules": "firebase emulators:exec --only firestore \"bash -lc './scripts/run_rules_tests.sh'\""
+    "test:rules": "npx -y firebase-tools emulators:exec --only firestore \"bash -lc './scripts/run_rules_tests.sh'\""
   },
   "keywords": [],
   "author": "",
