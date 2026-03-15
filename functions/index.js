@@ -2,6 +2,7 @@ const { onRequest } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const { getProducer, buildEnvelope, getKafkaConfig } = require("./lib/kafkaRelay");
 
 initializeApp();
 const db = getFirestore();
@@ -310,6 +311,83 @@ exports.leadCapture = onRequest(async (req, res) => {
     });
   } catch (err) {
     logger.error("leadCapture failed", err);
+    return res.status(500).json({ ok: false, error: "internal-error" });
+  }
+});
+
+
+exports.publishPendingOutbox = onRequest(async (req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).json({ ok: false, error: "method-not-allowed" });
+  }
+
+  const cfg = getKafkaConfig();
+  let producer;
+  try {
+    producer = await getProducer();
+  } catch (err) {
+    return res.status(503).json({
+      ok: false,
+      error: "kafka-not-configured",
+      config: { ...cfg, brokers: cfg.brokers.length }
+    });
+  }
+
+  try {
+    const snap = await db.collection("notification_outbox")
+      .where("status", "==", "pending")
+      .limit(10)
+      .get();
+
+    const results = [];
+
+    for (const docSnap of snap.docs) {
+      const raw = {
+        name: docSnap.ref.path,
+        fields: {}
+      };
+      const data = docSnap.data();
+
+      const toFS = (obj) => {
+        const out = {};
+        for (const [k,v] of Object.entries(obj || {})) {
+          if (typeof v === "string") out[k] = { stringValue: v };
+          else if (typeof v === "boolean") out[k] = { booleanValue: v };
+          else if (v && typeof v === "object" && !Array.isArray(v)) out[k] = { mapValue: { fields: toFS(v) } };
+        }
+        return out;
+      };
+      raw.fields = toFS(data);
+
+      const envelope = buildEnvelope(raw);
+      await producer.send({
+        topic: cfg.topic,
+        messages: [{
+          key: envelope.lead_id || envelope.event_id,
+          value: JSON.stringify(envelope)
+        }]
+      });
+
+      await docSnap.ref.update({
+        status: "published",
+        publishedAt: FieldValue.serverTimestamp(),
+        publishAttemptCount: FieldValue.increment(1),
+        kafka: {
+          topic: cfg.topic,
+          clientId: cfg.clientId,
+        }
+      });
+
+      results.push({ id: docSnap.id, leadId: envelope.lead_id, status: "published" });
+    }
+
+    await producer.disconnect();
+    return res.status(200).json({ ok: true, count: results.length, results });
+  } catch (err) {
+    if (producer) {
+      try { await producer.disconnect(); } catch {}
+    }
+    logger.error("publishPendingOutbox failed", err);
     return res.status(500).json({ ok: false, error: "internal-error" });
   }
 });
