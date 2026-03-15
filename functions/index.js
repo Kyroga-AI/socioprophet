@@ -326,9 +326,11 @@ exports.publishPendingOutbox = onRequest(async (req, res) => {
   try {
     producer = await getProducer();
   } catch (err) {
+    logger.error("publishPendingOutbox getProducer failed", err);
     return res.status(503).json({
       ok: false,
       error: "kafka-not-configured",
+      detail: String(err && err.message ? err.message : err),
       config: { ...cfg, brokers: cfg.brokers.length }
     });
   }

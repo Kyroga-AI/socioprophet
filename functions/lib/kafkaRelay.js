@@ -1,4 +1,5 @@
 const { Kafka, logLevel } = require("kafkajs");
+const { GoogleAuth } = require("google-auth-library");
 
 function getKafkaConfig() {
   const brokers = (process.env.KAFKA_BROKERS || "")
@@ -6,11 +7,13 @@ function getKafkaConfig() {
     .map(x => x.trim())
     .filter(Boolean);
 
-  const topic = process.env.KAFKA_TOPIC_INTAKE || "intake.leads.v1";
-  const clientId = process.env.KAFKA_CLIENT_ID || "socioprophet-intake-relay";
-  const mode = process.env.KAFKA_MODE || "disabled";
-
-  return { brokers, topic, clientId, mode };
+  return {
+    brokers,
+    topic: process.env.KAFKA_TOPIC_INTAKE || "intake.leads.v1",
+    clientId: process.env.KAFKA_CLIENT_ID || "socioprophet-intake-relay",
+    mode: process.env.KAFKA_MODE || "disabled",
+    principalEmail: process.env.KAFKA_PRINCIPAL_EMAIL || "",
+  };
 }
 
 async function getProducer() {
@@ -26,14 +29,29 @@ async function getProducer() {
     logLevel: logLevel.NOTHING,
   };
 
-  // Optional OAuth bearer path for managed Kafka later
-  if (mode === "oauthbearer") {
-    const token = process.env.KAFKA_OAUTH_BEARER_TOKEN || "";
-    if (!token) throw new Error("Missing KAFKA_OAUTH_BEARER_TOKEN");
+  if (mode === "oauthbearer_adc") {
+    const auth = new GoogleAuth({ scopes: ["https://www.googleapis.com/auth/cloud-platform"] });
     config.sasl = {
       mechanism: "oauthbearer",
-      oauthBearerProvider: async () => ({ value: token }),
+      oauthBearerProvider: async () => {
+        const token = await auth.getAccessToken();
+        if (!token) throw new Error("Unable to obtain ADC access token");
+        return { value: token };
+      },
     };
+  } else if (mode === "plain_adc") {
+    const { principalEmail } = getKafkaConfig();
+    if (!principalEmail) throw new Error("Missing KAFKA_PRINCIPAL_EMAIL");
+    const auth = new GoogleAuth({ scopes: ["https://www.googleapis.com/auth/cloud-platform"] });
+    const token = await auth.getAccessToken();
+    if (!token) throw new Error("Unable to obtain ADC access token");
+    config.sasl = {
+      mechanism: "plain",
+      username: principalEmail,
+      password: token,
+    };
+  } else {
+    throw new Error(`Unsupported KAFKA_MODE: ${mode}`);
   }
 
   const kafka = new Kafka(config);
