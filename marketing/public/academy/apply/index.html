@@ -9,21 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       function spTrack(name, params){ try{ if(typeof gtag==="function") gtag("event", name, params||{}); }catch(e){} }
-    </script>    <script src="/__/firebase/12.10.0/firebase-app-compat.js"></script>
-    <script src="/__/firebase/12.10.0/firebase-firestore-compat.js"></script>
-    <script>
-      window.__MARKETING_FIREBASE_CONFIG__ = {
-        apiKey: "AIzaSyBBqwoel1-XjTwquy66vaNEWpnu29Qu6a0",
-        authDomain: "socioprophet-web-dev-env.firebaseapp.com",
-        projectId: "socioprophet-web-dev-env",
-        storageBucket: "socioprophet-web-dev-env.firebasestorage.app",
-        messagingSenderId: "515493591230",
-        appId: "1:515493591230:web:4744bd8ae63e9e689e86ef",
-        measurementId: "G-RCMK1FNR5S"
-      };
-      if (!firebase.apps.length) {
-        firebase.initializeApp(window.__MARKETING_FIREBASE_CONFIG__);
-      }
     </script>
 </head>
   <body class="bg-slate-50 text-slate-900 font-sans">
@@ -118,8 +103,8 @@
             <input type="hidden" name="variant_id" value="control">
             <input type="hidden" name="cta_id" value="">
             <input type="hidden" name="landing_path" value="">
-            <input type="hidden" name="privacy_policy_version" value="privacy-v0">
-            <input type="hidden" name="terms_version" value="terms-v0">
+            <input type="hidden" name="privacy_policy_version" value="privacy-v2">
+            <input type="hidden" name="terms_version" value="terms-v2">
             <input type="hidden" name="surface" value="academy" />
 
             <div class="md:col-span-2">
@@ -252,8 +237,8 @@
             form.elements["variant_id"].value = params.get("variant") || "control";
             form.elements["cta_id"].value = params.get("cta") || "academy_apply_submit";
             form.elements["landing_path"].value = params.get("from") || document.referrer || "";
-            form.elements["privacy_policy_version"].value = "privacy-v0";
-            form.elements["terms_version"].value = "terms-v0";
+            form.elements["privacy_policy_version"].value = "privacy-v2";
+            form.elements["terms_version"].value = "terms-v2";
             console.log("lead_intake id", data.id, "release", data.releaseId, "slot", data.releaseSlot);
             spTrack("academy_interest_submit", {
               surface: payload.surface || "",
