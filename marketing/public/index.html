@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/site.css">
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GL5Y2786Z6"></script>
     <script>
@@ -45,7 +46,7 @@
       .btn-light { display: inline-flex; align-items: center; border-radius: 0.5rem; border: 1px solid #cbd5e1; background: white; color: #0f172a; padding: 0.75rem 1.25rem; text-decoration: none; }
       .btn-light:hover { background: #f8fafc; }
       .hero { padding: 4rem 0; }
-      .hero-grid { display: grid; gap: 2.5rem; align-items: center; }
+      .hero-grid { display: grid; gap: 2.5rem; align-items: start; }
       @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1fr 1fr; } }
       .hero h1 { font-size: 3rem; line-height: 1.05; margin: 0; }
       .hero .subtle { color: #475569; }
@@ -143,65 +144,11 @@
             <div class="panel platform-map">
               <div class="map-intro">
                 <div class="card-kicker">Explore the platform</div>
-                <h2>Map the platform</h2>
-                <p>Start with the surface that fits your mission: learning, deployment, documentation, technical product surfaces, or trust and governance.</p>
+                <h2>Prophet platform map</h2>
+                <p>See the same graph substrate that powers the explorer: learning, deployment, documentation, technical product surfaces, and trust/governance.</p>
               </div>
 
-              <svg class="map-svg" viewBox="0 0 760 420" role="img" aria-label="SocioProphet platform map">
-                <line x1="380" y1="170" x2="170" y2="110" stroke="#cbd5e1" stroke-width="2"/>
-                <line x1="380" y1="170" x2="590" y2="110" stroke="#cbd5e1" stroke-width="2"/>
-                <line x1="380" y1="170" x2="170" y2="285" stroke="#cbd5e1" stroke-width="2"/>
-                <line x1="380" y1="170" x2="590" y2="285" stroke="#cbd5e1" stroke-width="2"/>
-                <line x1="380" y1="170" x2="380" y2="350" stroke="#cbd5e1" stroke-width="2"/>
-
-                <a href="/academy/">
-                  <g>
-                    <circle cx="170" cy="110" r="52" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-                    <text x="170" y="102" text-anchor="middle" font-size="18" font-weight="600" fill="#0f172a">Academy</text>
-                    <text x="170" y="122" text-anchor="middle" font-size="11" fill="#475569">learners • families</text>
-                  </g>
-                </a>
-
-                <a href="/organizations/">
-                  <g>
-                    <circle cx="590" cy="110" r="56" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-                    <text x="590" y="102" text-anchor="middle" font-size="18" font-weight="600" fill="#0f172a">Organizations</text>
-                    <text x="590" y="122" text-anchor="middle" font-size="11" fill="#475569">deployment • institutions</text>
-                  </g>
-                </a>
-
-                <a href="https://socioprophet-web.web.app">
-                  <g>
-                    <circle cx="380" cy="170" r="62" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
-                    <text x="380" y="162" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Documentation</text>
-                    <text x="380" y="184" text-anchor="middle" font-size="12" fill="#475569">architecture • products • trust</text>
-                  </g>
-                </a>
-
-                <a href="https://socioprophet-web.web.app/guide/products/ai">
-                  <g>
-                    <circle cx="170" cy="285" r="56" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-                    <text x="170" y="277" text-anchor="middle" font-size="18" font-weight="600" fill="#0f172a">AI / Developer</text>
-                    <text x="170" y="297" text-anchor="middle" font-size="11" fill="#475569">builders • APIs • tools</text>
-                  </g>
-                </a>
-
-                <a href="https://socioprophet-web.web.app/guide/products/cloud">
-                  <g>
-                    <circle cx="590" cy="285" r="56" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-                    <text x="590" y="277" text-anchor="middle" font-size="18" font-weight="600" fill="#0f172a">Cloud / Live</text>
-                    <text x="590" y="297" text-anchor="middle" font-size="11" fill="#475569">hosted ops • live builds</text>
-                  </g>
-                </a>
-
-                <a href="https://socioprophet-web.web.app/guide/domain-surface">
-                  <g>
-                    <circle cx="380" cy="350" r="56" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-                    <text x="380" y="342" text-anchor="middle" font-size="18" font-weight="600" fill="#0f172a">Digital / Trust</text>
-                    <text x="380" y="362" text-anchor="middle" font-size="11" fill="#475569">identity • governance • trust</text>
-                  </g>
-                </a>
-              </svg>
+              <svg id="homeGraph" class="map-svg" viewBox="0 0 760 420" role="img" aria-label="Prophet platform map"></svg>
 
               <div class="map-grid">
                 <a class="map-link-card" href="/academy/">
@@ -291,5 +238,189 @@
       </div>
       <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
     </footer>
+  
+    <script>
+      (function () {
+        const el = document.getElementById("homeGraph");
+        if (!el || typeof d3 === "undefined") return;
+
+        const svg = d3.select(el);
+        const width = 760;
+        const height = 420;
+
+        function slug(text) {
+          return String(text || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        }
+
+        function colorFor(node) {
+          switch (node.category) {
+            case "learning":
+            case "deployment": return "#1d4ed8";
+            case "technical": return "#7c3aed";
+            case "trust":
+            case "governance": return "#0f766e";
+            case "domain": return "#b45309";
+            case "docs": return "#0f172a";
+            case "content": return "#64748b";
+            default: return "#64748b";
+          }
+        }
+
+        function featureSet(node) {
+          const values = [];
+          values.push("category:" + slug(node.category || ""));
+          values.push("group:" + slug(node.graph_group || ""));
+          for (const t of (node.topic_constituents || [])) values.push("topic:" + slug(t));
+          for (const t of (node.normalized_topics || [])) values.push("norm:" + slug(t));
+          for (const a of (node.audiences || [])) values.push("aud:" + slug(a));
+          for (const r of (node.related_surfaces || [])) values.push("rel:" + slug(r));
+          const overlay = node.investor_overlay || {};
+          if (overlay.lens) values.push("lens:" + slug(overlay.lens));
+          for (const d of (overlay.value_drivers || [])) values.push("driver:" + slug(d));
+          for (const p of (overlay.economic_profit_proxy || [])) values.push("proxy:" + slug(p));
+          return new Set(values.filter(Boolean));
+        }
+
+        function jaccard(a, b) {
+          const A = new Set(a);
+          const B = new Set(b);
+          let inter = 0;
+          for (const x of A) if (B.has(x)) inter += 1;
+          const uni = new Set([].concat(Array.from(A), Array.from(B))).size;
+          return uni ? inter / uni : 0;
+        }
+
+        function buildVectorLinks(surfaceNodes, threshold) {
+          const out = [];
+          for (let i = 0; i < surfaceNodes.length; i++) {
+            for (let j = i + 1; j < surfaceNodes.length; j++) {
+              const a = surfaceNodes[i];
+              const b = surfaceNodes[j];
+              const score = jaccard(featureSet(a), featureSet(b));
+              if (score >= threshold) out.push({ source: a.id, target: b.id, type: "vector", score: score });
+            }
+          }
+          return out;
+        }
+
+        function initialPosition(node, index) {
+          const anchors = {
+            docs: [390, 180],
+            learning: [560, 165],
+            deployment: [560, 165],
+            technical: [280, 315],
+            trust: [455, 300],
+            governance: [455, 300],
+            domain: [600, 235],
+            content: [190, 155]
+          };
+          const anchor = anchors[node.category] || [390, 210];
+          const dx = ((index % 3) - 1) * 42;
+          const dy = ((Math.floor(index / 3) % 3) - 1) * 34;
+          node.x = anchor[0] + dx;
+          node.y = anchor[1] + dy;
+        }
+
+        function labelLines(text) {
+          if (String(text).includes(" / ")) return String(text).split(" / ");
+          const parts = String(text).split(" ");
+          if (parts.length >= 3) {
+            const mid = Math.ceil(parts.length / 2);
+            return [parts.slice(0, mid).join(" "), parts.slice(mid).join(" ")];
+          }
+          return [String(text)];
+        }
+
+        fetch("/assets/surface-graph.json")
+          .then(function (r) { return r.json(); })
+          .then(function (graph) {
+            const nodes = (graph.nodes || [])
+              .filter(function (n) { return n.type === "surface"; })
+              .map(function (n) { return Object.assign({}, n); });
+
+            nodes.forEach(initialPosition);
+
+            const ids = new Set(nodes.map(function (n) { return n.id; }));
+            const curated = (((graph.links || {}).curated) || [])
+              .filter(function (l) { return ids.has(l.source) && ids.has(l.target); })
+              .map(function (l) { return { source: l.source, target: l.target, type: "curated" }; });
+
+            const vectors = buildVectorLinks(nodes, 0.16);
+            const seen = new Set();
+            const links = curated.concat(vectors).filter(function (l) {
+              const key = [l.source, l.target].sort().join("::") + "::" + l.type;
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+
+            svg.selectAll("*").remove();
+            const linkLayer = svg.append("g");
+            const nodeLayer = svg.append("g");
+            const labelLayer = svg.append("g");
+
+            const simulation = d3.forceSimulation(nodes)
+              .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(function (l) { return l.type === "vector" ? 150 : 118; }).strength(function (l) { return l.type === "vector" ? 0.18 : 0.42; }))
+              .force("charge", d3.forceManyBody().strength(-340))
+              .force("center", d3.forceCenter(width / 2, height / 2))
+              .force("collision", d3.forceCollide().radius(32));
+
+            for (let i = 0; i < 220; i++) simulation.tick();
+            simulation.stop();
+
+            linkLayer.selectAll("line")
+              .data(links)
+              .enter()
+              .append("line")
+              .attr("x1", function (d) { return d.source.x; })
+              .attr("y1", function (d) { return d.source.y; })
+              .attr("x2", function (d) { return d.target.x; })
+              .attr("y2", function (d) { return d.target.y; })
+              .attr("stroke", function (d) { return d.type === "vector" ? "#cbd5e1" : "#94a3b8"; })
+              .attr("stroke-width", function (d) { return d.type === "vector" ? 1.5 : 2; })
+              .attr("stroke-dasharray", function (d) { return d.type === "vector" ? "4 4" : null; });
+
+            nodeLayer.selectAll("circle")
+              .data(nodes)
+              .enter()
+              .append("circle")
+              .attr("cx", function (d) { return d.x; })
+              .attr("cy", function (d) { return d.y; })
+              .attr("r", function (d) { return d.category === "docs" ? 18 : 14; })
+              .attr("fill", function (d) { return colorFor(d); })
+              .attr("stroke", "#ffffff")
+              .attr("stroke-width", 2)
+              .style("cursor", "pointer")
+              .on("click", function (_, d) {
+                const href = d.landing_page || (d.docs_path ? "https://socioprophet-web.web.app" + d.docs_path : null);
+                if (href) window.location.href = href;
+              });
+
+            const groups = labelLayer.selectAll("g")
+              .data(nodes)
+              .enter()
+              .append("g")
+              .attr("transform", function (d) { return "translate(" + d.x + "," + (d.y + 28) + ")"; })
+              .style("pointer-events", "none");
+
+            groups.each(function (d) {
+              const g = d3.select(this);
+              labelLines(d.label).forEach(function (line, i) {
+                g.append("text")
+                  .attr("text-anchor", "middle")
+                  .attr("y", i * 11)
+                  .attr("font-size", 10.5)
+                  .attr("font-weight", d.category === "docs" ? 700 : 600)
+                  .attr("fill", "#0f172a")
+                  .text(line);
+              });
+            });
+          })
+          .catch(function (err) {
+            console.error("homeGraph render failed", err);
+          });
+      })();
+    </script>
+
   </body>
 </html>
