@@ -1,7 +1,6 @@
 import { defineConfig } from "vitepress";
 
-const repo = (process.env.GITHUB_REPOSITORY || "socioprophet").split("/").pop() || "socioprophet";
-const base = process.env.DOCS_BASE || "/" + repo + "/";
+const base = process.env.DOCS_BASE || "/";
 
 export default defineConfig({
   head: [
@@ -20,8 +19,7 @@ export default defineConfig({
       { text: "Getting Started", link: "/guide/getting-started" },
       { text: "Architecture", link: "/guide/architecture" },
       { text: "Domain Surface", link: "/guide/domain-surface" },
-        { text: "Products", link: "/guide/products/overview" },
-      { text: "Products", link: "/guide/products/overview" }
+      { text: "Products", link: "/guide/products/overview" },
     ],
     sidebar: {
       "/guide/": [
