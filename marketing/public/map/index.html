@@ -257,7 +257,7 @@
       if (node.landing_page) linkRows.push(`<a href="${node.landing_page}">Landing page</a>`);
       if (node.survey_page) linkRows.push(`<a href="${node.survey_page}">Survey / intake</a>`);
       if (node.docs_path) {
-        const href = node.docs_path.startsWith("http") ? node.docs_path : `https://socioprophet-web-dev-env.web.app${node.docs_path}`;
+        const href = node.docs_path.startsWith("http") ? node.docs_path : `https://socioprophet-web.web.app${node.docs_path}`;
         linkRows.push(`<a href="${href}" target="_blank" rel="noopener">Documentation</a>`);
       }
       if (state.showExternal && node.related_sites && node.related_sites.length) {

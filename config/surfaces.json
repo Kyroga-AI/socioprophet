@@ -29,8 +29,8 @@
       "digital-trust"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/products/academy",
-      "https://socioprophet-web-dev-env.web.app/guide/academy-safeguarding-and-minor-protection"
+      "https://socioprophet-web.web.app/guide/products/academy",
+      "https://socioprophet-web.web.app/guide/academy-safeguarding-and-minor-protection"
     ],
     "description": "Learning, family, mentorship, and cybernetics education.",
     "next_action": "Polish and continue documentation.",
@@ -88,8 +88,8 @@
       "law"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/surface-inventory",
-      "https://socioprophet-web-dev-env.web.app/guide/domain-surface"
+      "https://socioprophet-web.web.app/guide/surface-inventory",
+      "https://socioprophet-web.web.app/guide/domain-surface"
     ],
     "description": "Institutional deployment for schools, nonprofits, public-interest, and mission-aligned organizations.",
     "next_action": "Upgrade to Academy-level first-class quality.",
@@ -153,8 +153,8 @@
       "digital-trust"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/",
-      "https://socioprophet-web-dev-env.web.app/guide/canonical-platform-direction"
+      "https://socioprophet-web.web.app/",
+      "https://socioprophet-web.web.app/guide/canonical-platform-direction"
     ],
     "description": "Architecture, products, trust model, and canonical direction.",
     "next_action": "Keep as the source of deeper system detail.",
@@ -207,7 +207,7 @@
       "documentation"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/products/ai"
+      "https://socioprophet-web.web.app/guide/products/ai"
     ],
     "description": "Model, agent, orchestration, and trust-layer capabilities.",
     "next_action": "Decide whether this needs a first-class landing page.",
@@ -260,7 +260,7 @@
       "documentation"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/products/dev"
+      "https://socioprophet-web.web.app/guide/products/dev"
     ],
     "description": "SDKs, APIs, integration patterns, and developer workflows.",
     "next_action": "Promote to docs-backed landing page first.",
@@ -313,7 +313,7 @@
       "documentation"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/products/cloud"
+      "https://socioprophet-web.web.app/guide/products/cloud"
     ],
     "description": "Hosted and managed operational capabilities.",
     "next_action": "Clarify managed-platform scope.",
@@ -367,7 +367,7 @@
       "documentation"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/products/live"
+      "https://socioprophet-web.web.app/guide/products/live"
     ],
     "description": "Demonstrations, environments, and active build states.",
     "next_action": "Decide how much live operational visibility to expose.",
@@ -421,7 +421,7 @@
       "digital-trust"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/products/medical"
+      "https://socioprophet-web.web.app/guide/products/medical"
     ],
     "description": "Health, education, and support pathways requiring higher assurance.",
     "next_action": "Likely gated inquiry later, not open survey first.",
@@ -475,7 +475,7 @@
       "digital-trust"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/products/law"
+      "https://socioprophet-web.web.app/guide/products/law"
     ],
     "description": "Legal, governance, and jurisprudential workflows.",
     "next_action": "Likely gated inquiry later, not open survey first.",
@@ -526,7 +526,7 @@
       "documentation"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/products/wiki"
+      "https://socioprophet-web.web.app/guide/products/wiki"
     ],
     "description": "Structured knowledge and reference surface.",
     "next_action": "Content-first, not survey-first.",
@@ -577,7 +577,7 @@
       "documentation"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/products/blog"
+      "https://socioprophet-web.web.app/guide/products/blog"
     ],
     "description": "Long-form writing, updates, and commentary.",
     "next_action": "Content-first surface.",
@@ -632,7 +632,7 @@
       "medical"
     ],
     "related_sites": [
-      "https://socioprophet-web-dev-env.web.app/guide/domain-surface"
+      "https://socioprophet-web.web.app/guide/domain-surface"
     ],
     "description": "Trust-first positioning, digital identity, and public-facing trust surfaces.",
     "next_action": "Clarify product definition and trust narrative.",
@@ -685,7 +685,7 @@
     "related_sites": [
       "/investor/",
       "/map/",
-      "https://socioprophet-web-dev-env.web.app/guide/surface-inventory"
+      "https://socioprophet-web.web.app/guide/surface-inventory"
     ],
     "description": "Investor and governance-facing public materials.",
     "next_action": "Expand when investor materials are ready.",

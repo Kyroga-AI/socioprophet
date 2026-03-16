@@ -35,7 +35,7 @@
 - **Description:** Learning, family, mentorship, and cybernetics education.
 - **Next action:** Polish and continue documentation.
 - **Related surfaces:** documentation, organizations, digital-trust
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/products/academy, https://socioprophet-web-dev-env.web.app/guide/academy-safeguarding-and-minor-protection
+- **Related sites:** https://socioprophet-web.web.app/guide/products/academy, https://socioprophet-web.web.app/guide/academy-safeguarding-and-minor-protection
 
 ### Organizations
 
@@ -51,7 +51,7 @@
 - **Description:** Institutional deployment for schools, nonprofits, public-interest, and mission-aligned organizations.
 - **Next action:** Upgrade to Academy-level first-class quality.
 - **Related surfaces:** academy, documentation, digital-trust, medical, law
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/surface-inventory, https://socioprophet-web-dev-env.web.app/guide/domain-surface
+- **Related sites:** https://socioprophet-web.web.app/guide/surface-inventory, https://socioprophet-web.web.app/guide/domain-surface
 
 ### Documentation
 
@@ -66,7 +66,7 @@
 - **Description:** Architecture, products, trust model, and canonical direction.
 - **Next action:** Keep as the source of deeper system detail.
 - **Related surfaces:** academy, organizations, ai, developer, cloud, live, medical, law, wiki, blog, digital-trust
-- **Related sites:** https://socioprophet-web-dev-env.web.app/, https://socioprophet-web-dev-env.web.app/guide/canonical-platform-direction
+- **Related sites:** https://socioprophet-web.web.app/, https://socioprophet-web.web.app/guide/canonical-platform-direction
 
 ### AI Platform
 
@@ -81,7 +81,7 @@
 - **Description:** Model, agent, orchestration, and trust-layer capabilities.
 - **Next action:** Decide whether this needs a first-class landing page.
 - **Related surfaces:** developer, cloud, live, documentation
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/products/ai
+- **Related sites:** https://socioprophet-web.web.app/guide/products/ai
 
 ### Developer
 
@@ -96,7 +96,7 @@
 - **Description:** SDKs, APIs, integration patterns, and developer workflows.
 - **Next action:** Promote to docs-backed landing page first.
 - **Related surfaces:** ai, cloud, live, documentation
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/products/dev
+- **Related sites:** https://socioprophet-web.web.app/guide/products/dev
 
 ### Cloud Suite
 
@@ -111,7 +111,7 @@
 - **Description:** Hosted and managed operational capabilities.
 - **Next action:** Clarify managed-platform scope.
 - **Related surfaces:** ai, developer, live, documentation
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/products/cloud
+- **Related sites:** https://socioprophet-web.web.app/guide/products/cloud
 
 ### Live Builds
 
@@ -126,7 +126,7 @@
 - **Description:** Demonstrations, environments, and active build states.
 - **Next action:** Decide how much live operational visibility to expose.
 - **Related surfaces:** ai, developer, cloud, documentation
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/products/live
+- **Related sites:** https://socioprophet-web.web.app/guide/products/live
 
 ### Medical
 
@@ -141,7 +141,7 @@
 - **Description:** Health, education, and support pathways requiring higher assurance.
 - **Next action:** Likely gated inquiry later, not open survey first.
 - **Related surfaces:** law, organizations, documentation, digital-trust
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/products/medical
+- **Related sites:** https://socioprophet-web.web.app/guide/products/medical
 
 ### Law
 
@@ -156,7 +156,7 @@
 - **Description:** Legal, governance, and jurisprudential workflows.
 - **Next action:** Likely gated inquiry later, not open survey first.
 - **Related surfaces:** medical, organizations, documentation, digital-trust
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/products/law
+- **Related sites:** https://socioprophet-web.web.app/guide/products/law
 
 ### Wiki
 
@@ -171,7 +171,7 @@
 - **Description:** Structured knowledge and reference surface.
 - **Next action:** Content-first, not survey-first.
 - **Related surfaces:** blog, documentation
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/products/wiki
+- **Related sites:** https://socioprophet-web.web.app/guide/products/wiki
 
 ### Blog
 
@@ -186,7 +186,7 @@
 - **Description:** Long-form writing, updates, and commentary.
 - **Next action:** Content-first surface.
 - **Related surfaces:** wiki, documentation
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/products/blog
+- **Related sites:** https://socioprophet-web.web.app/guide/products/blog
 
 ### Digital / Trust
 
@@ -201,7 +201,7 @@
 - **Description:** Trust-first positioning, digital identity, and public-facing trust surfaces.
 - **Next action:** Clarify product definition and trust narrative.
 - **Related surfaces:** documentation, organizations, academy, law, medical
-- **Related sites:** https://socioprophet-web-dev-env.web.app/guide/domain-surface
+- **Related sites:** https://socioprophet-web.web.app/guide/domain-surface
 
 ### Investor
 
@@ -216,4 +216,4 @@
 - **Description:** Investor and governance-facing public materials.
 - **Next action:** Expand when investor materials are ready.
 - **Related surfaces:** documentation, organizations, digital-trust
-- **Related sites:** /investor/, /map/, https://socioprophet-web-dev-env.web.app/guide/surface-inventory
+- **Related sites:** /investor/, /map/, https://socioprophet-web.web.app/guide/surface-inventory
