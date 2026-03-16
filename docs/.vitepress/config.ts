@@ -12,6 +12,9 @@ export default defineConfig({
   description: "SocioProphet documentation",
   base,
   cleanUrls: true,
+  markdown: {
+    math: true,
+  },
   themeConfig: {
     logo: { light: "/icon.png", dark: "/icon.png" },
     nav: [
@@ -24,7 +27,16 @@ export default defineConfig({
     sidebar: {
       "/guide/": [
         { text: "Getting Started", link: "/guide/getting-started" },
-        { text: "Architecture", link: "/guide/architecture" }
+        { text: "Architecture", link: "/guide/architecture" },
+        { text: "Governed Cybernetic Stack", link: "/guide/governed-cybernetic-stack" },
+        { text: "Semantic Vector Stack", link: "/guide/semantic-vector-stack" },
+        { text: "Semantic Representation Ladder", link: "/guide/semantic-representation-ladder" },
+        { text: "LSA / LSI / LDA Geometry", link: "/guide/lsa-lsi-lda-geometry" },
+        { text: "Semantic Model Workstreams", link: "/guide/semantic-model-workstreams" },
+        { text: "Hybrid Representation Builder", link: "/guide/hybrid-representation-builder" },
+        { text: "Temporal Graph Evolution", link: "/guide/temporal-graph-evolution" },
+        { text: "Domain Surface", link: "/guide/domain-surface" },
+        { text: "Products", link: "/guide/products/overview" }
       ]
     }
   }

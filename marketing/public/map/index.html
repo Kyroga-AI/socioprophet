@@ -132,6 +132,11 @@
     const svg = d3.select("#graph");
     const width = 1100;
     const height = 760;
+    const params = new URLSearchParams(window.location.search);
+    const requestedFocus = params.get("focus");
+    const requestedMode = params.get("mode");
+    if (requestedMode && ["topology", "vector", "hybrid"].includes(requestedMode)) state.viewMode = requestedMode;
+    viewModeEl.value = state.viewMode;
 
     function slug(text) {
       return String(text || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -204,6 +209,18 @@
         frontier = next;
       }
       return seen;
+    }
+
+    function applyRequestedFocus() {
+      if (!requestedFocus || !state.graph || state.selectedId) return;
+      const wanted = slug(requestedFocus);
+      const candidate = (state.graph.nodes || []).find(n => n.type === "surface" && (slug(n.id) === wanted || slug(n.label) === wanted));
+      if (candidate) {
+        state.selectedId = candidate.id;
+        state.searchMode = "local";
+        searchModeEl.value = state.searchMode;
+        renderDetail(candidate);
+      }
     }
 
     function activeGraph() {
@@ -425,6 +442,7 @@
       .then(r => r.json())
       .then(graph => {
         state.graph = graph;
+      applyRequestedFocus();
         thresholdValueEl.textContent = state.threshold.toFixed(2);
         render();
       })

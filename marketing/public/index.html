@@ -32,7 +32,8 @@
     </script>
 
     <style>
-      .home-shell { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+      .home-shell { max-width: 96rem; margin: 0 auto; padding: 0 1.5rem; }
+      @media (min-width: 1440px) { .home-shell { max-width: 104rem; } }
       .home-header { border-bottom: 1px solid #e2e8f0; background: #fff; }
       .home-header-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 0; flex-wrap: wrap; }
       .home-brand { display: flex; align-items: center; gap: 0.75rem; color: #0f172a; text-decoration: none; }
@@ -43,11 +44,14 @@
       .home-nav a:hover { text-decoration: underline; }
       .btn-dark { display: inline-flex; align-items: center; border-radius: 0.5rem; background: #0f172a; color: white; padding: 0.75rem 1.25rem; text-decoration: none; }
       .btn-dark:hover { background: #1e293b; }
+      .btn-dark, .btn-dark:visited, .home-nav a.btn-dark, .home-nav a.btn-dark:visited { color: #ffffff !important; -webkit-text-fill-color: #ffffff; opacity: 1; }
       .btn-light { display: inline-flex; align-items: center; border-radius: 0.5rem; border: 1px solid #cbd5e1; background: white; color: #0f172a; padding: 0.75rem 1.25rem; text-decoration: none; }
       .btn-light:hover { background: #f8fafc; }
-      .hero { padding: 4rem 0; }
-      .hero-grid { display: grid; gap: 2.5rem; align-items: start; }
-      @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1fr 1fr; } }
+      .hero { padding: 3.5rem 0 4.75rem; }
+      .hero-grid { display: grid; gap: 3rem; align-items: start; }
+      .hero-copy { max-width: 43rem; padding-top: 0.7rem; }
+      @media (min-width: 1400px) { .hero-grid { gap: 4rem; } }
+      @media (min-width: 1024px) { .hero-grid { grid-template-columns: minmax(0, 0.98fr) minmax(620px, 1.18fr); } }
       .hero h1 { font-size: 3rem; line-height: 1.05; margin: 0; }
       .hero .subtle { color: #475569; }
       .hero p { max-width: 42rem; font-size: 1.125rem; }
@@ -75,6 +79,25 @@
       .footer a:hover { text-decoration: underline; }
     
       .platform-map { display: flex; flex-direction: column; gap: 1rem; }
+      .platform-map { padding-top: 0.8rem; }
+      .map-intro { display: flex; flex-direction: column; align-items: flex-start; gap: 0.45rem; }
+      .map-intro h2 { margin: 0; font-size: 1.65rem; line-height: 1.15; }
+      .map-intro p { margin: 0; max-width: 42rem; }
+      .map-intro .card-kicker { order: 2; }
+      .map-stage { display: grid; gap: 1rem; align-items: stretch; }
+      @media (min-width: 1180px) { .map-stage { grid-template-columns: 190px minmax(0,1fr); } }
+      .map-rail { border: 1px solid #e2e8f0; background: white; border-radius: 0.85rem; padding: 0.9rem; }
+      .map-rail-title { font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; }
+      .map-chip-row { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.7rem; }
+      .map-chip { border: 1px solid #cbd5e1; background: white; color: #0f172a; border-radius: 0.7rem; padding: 0.55rem 0.7rem; font: inherit; text-align: left; cursor: pointer; }
+      .map-chip:hover { background: #f8fafc; }
+      .map-chip.is-active { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+      .map-note { margin: 0.85rem 0 0; font-size: 0.84rem; line-height: 1.45; color: #475569; }
+      .map-rail-link { display: inline-block; margin-top: 0.85rem; font-size: 0.92rem; font-weight: 600; color: #0f172a; text-decoration: none; }
+      .map-rail-link:hover { text-decoration: underline; }
+      .map-canvas-wrap { border: 1px solid #e2e8f0; border-radius: 1rem; background: white; padding: 0.75rem; }
+      .map-svg { min-height: 340px; }
+      @media (min-width: 1400px) { .map-svg { min-height: 400px; } }
       .map-intro h2 { margin: 0.35rem 0 0; font-size: 1.5rem; line-height: 1.2; }
       .map-intro p { margin-top: 0.5rem; }
       .map-svg { width: 100%; height: auto; display: block; border: 1px solid #e2e8f0; border-radius: 1rem; background: white; }
@@ -113,7 +136,7 @@
       <section class="hero">
         <div class="home-shell">
           <div class="hero-grid">
-            <div>
+            <div class="hero-copy">
               <h1>
                 Ideas that propagate.<br>
                 <span class="subtle">Intelligence that compounds.</span>
@@ -143,12 +166,27 @@
 
             <div class="panel platform-map">
               <div class="map-intro">
-                <div class="card-kicker">Explore the platform</div>
                 <h2>Prophet platform map</h2>
-                <p>See the same graph substrate that powers the explorer: learning, deployment, documentation, technical product surfaces, and trust/governance.</p>
+                <div class="card-kicker">Explorer-inspired controls</div>
+                <p>Watch the platform graph build in rollout order from the live graph substrate: documentation, learning, deployment, technical product surfaces, and trust/governance.</p>
               </div>
 
-              <svg id="homeGraph" class="map-svg" viewBox="0 0 760 420" role="img" aria-label="Prophet platform map"></svg>
+              <div class="map-stage">
+                <aside class="map-rail">
+                  <div class="map-rail-title">Modes</div>
+                  <div class="map-chip-row">
+                    <button class="map-chip is-active" type="button" data-home-mode="rollout">Rollout build</button>
+                    <button class="map-chip" type="button" data-home-mode="hybrid">Hybrid links</button>
+                    <button class="map-chip" type="button" data-home-mode="topology">Curated topology</button>
+                  </div>
+                  <p class="map-note">Click a node to open the explorer in a new tab focused on that surface.</p>
+                  <a class="map-rail-link" href="/map/?mode=hybrid" target="_blank" rel="noopener">Open explorer ↗</a>
+                </aside>
+
+                <div class="map-canvas-wrap">
+                  <svg id="homeGraph" class="map-svg" viewBox="0 0 760 420" role="img" aria-label="Prophet platform map"></svg>
+                </div>
+              </div>
 
               <div class="map-grid">
                 <a class="map-link-card" href="/academy/">
@@ -239,7 +277,7 @@
       <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
     </footer>
   
-    <script>
+        <script>
       (function () {
         const el = document.getElementById("homeGraph");
         if (!el || typeof d3 === "undefined") return;
@@ -247,6 +285,11 @@
         const svg = d3.select(el);
         const width = 760;
         const height = 420;
+        const modeButtons = Array.from(document.querySelectorAll("[data-home-mode]"));
+        let graphData = null;
+        let simulation = null;
+        let timer = null;
+        let currentMode = "rollout";
 
         function slug(text) {
           return String(text || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -303,20 +346,27 @@
           return out;
         }
 
+        function orderValue(node, index) {
+          const raw = Number(node.map_priority);
+          const priority = Number.isFinite(raw) ? raw : (1000 + index);
+          const docsBias = node.category === "docs" ? -100 : 0;
+          return priority + docsBias;
+        }
+
         function initialPosition(node, index) {
           const anchors = {
-            docs: [390, 180],
-            learning: [560, 165],
-            deployment: [560, 165],
-            technical: [280, 315],
-            trust: [455, 300],
-            governance: [455, 300],
-            domain: [600, 235],
-            content: [190, 155]
+            docs: [390, 155],
+            learning: [560, 150],
+            deployment: [560, 150],
+            technical: [255, 308],
+            trust: [458, 305],
+            governance: [458, 305],
+            domain: [610, 242],
+            content: [200, 165]
           };
           const anchor = anchors[node.category] || [390, 210];
-          const dx = ((index % 3) - 1) * 42;
-          const dy = ((Math.floor(index / 3) % 3) - 1) * 34;
+          const dx = ((index % 3) - 1) * 26;
+          const dy = ((Math.floor(index / 3) % 3) - 1) * 22;
           node.x = anchor[0] + dx;
           node.y = anchor[1] + dy;
         }
@@ -331,90 +381,176 @@
           return [String(text)];
         }
 
-        fetch("/assets/surface-graph.json")
-          .then(function (r) { return r.json(); })
-          .then(function (graph) {
-            const nodes = (graph.nodes || [])
-              .filter(function (n) { return n.type === "surface"; })
-              .map(function (n) { return Object.assign({}, n); });
+        function stopScene() {
+          if (timer) {
+            window.clearInterval(timer);
+            timer = null;
+          }
+          if (simulation) {
+            simulation.stop();
+            simulation = null;
+          }
+        }
 
-            nodes.forEach(initialPosition);
+        function setActiveMode(mode) {
+          currentMode = mode;
+          modeButtons.forEach(function (btn) {
+            btn.classList.toggle("is-active", btn.dataset.homeMode === mode);
+          });
+        }
 
-            const ids = new Set(nodes.map(function (n) { return n.id; }));
-            const curated = (((graph.links || {}).curated) || [])
-              .filter(function (l) { return ids.has(l.source) && ids.has(l.target); })
-              .map(function (l) { return { source: l.source, target: l.target, type: "curated" }; });
+        function renderScene(mode) {
+          if (!graphData) return;
+          setActiveMode(mode);
+          stopScene();
+          svg.selectAll("*").remove();
 
-            const vectors = buildVectorLinks(nodes, 0.16);
-            const seen = new Set();
-            const links = curated.concat(vectors).filter(function (l) {
-              const key = [l.source, l.target].sort().join("::") + "::" + l.type;
-              if (seen.has(key)) return false;
-              seen.add(key);
-              return true;
+          const nodes = (graphData.nodes || [])
+            .filter(function (n) { return n.type === "surface"; })
+            .map(function (n, index) { return Object.assign({}, n, { __sourceIndex: index }); });
+
+          const ordered = nodes.slice().sort(function (a, b) {
+            return orderValue(a, a.__sourceIndex) - orderValue(b, b.__sourceIndex) ||
+              a.__sourceIndex - b.__sourceIndex ||
+              String(a.label || "").localeCompare(String(b.label || ""));
+          });
+
+          const orderById = new Map(ordered.map(function (n, i) { return [n.id, i]; }));
+          nodes.forEach(initialPosition);
+
+          const ids = new Set(nodes.map(function (n) { return n.id; }));
+          const curated = (((graphData.links || {}).curated) || [])
+            .filter(function (l) { return ids.has(l.source) && ids.has(l.target); })
+            .map(function (l) { return { source: l.source, target: l.target, type: "curated" }; });
+
+          const vectors = buildVectorLinks(nodes, 0.16);
+          const seen = new Set();
+          const links = (mode === "topology" ? curated : curated.concat(vectors)).filter(function (l) {
+            const key = [l.source, l.target].sort().join("::") + "::" + l.type;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+
+          const linkLayer = svg.append("g");
+          const nodeLayer = svg.append("g");
+          const labelLayer = svg.append("g");
+
+          const link = linkLayer.selectAll("line")
+            .data(links)
+            .enter()
+            .append("line")
+            .attr("stroke", function (d) { return d.type === "vector" ? "#cbd5e1" : "#94a3b8"; })
+            .attr("stroke-width", function (d) { return d.type === "vector" ? 1.5 : 2; })
+            .attr("stroke-dasharray", function (d) { return d.type === "vector" ? "4 4" : null; })
+            .attr("opacity", 0);
+
+          const node = nodeLayer.selectAll("circle")
+            .data(nodes)
+            .enter()
+            .append("circle")
+            .attr("r", function (d) { return d.category === "docs" ? 18 : 14; })
+            .attr("fill", function (d) { return colorFor(d); })
+            .attr("stroke", "#ffffff")
+            .attr("stroke-width", 2)
+            .attr("opacity", 0)
+            .style("cursor", "pointer")
+            .on("click", function (_, d) {
+              const href = "/map/?focus=" + encodeURIComponent(d.id) + "&mode=hybrid";
+              window.open(href, "_blank", "noopener,noreferrer");
             });
 
-            svg.selectAll("*").remove();
-            const linkLayer = svg.append("g");
-            const nodeLayer = svg.append("g");
-            const labelLayer = svg.append("g");
+          const groups = labelLayer.selectAll("g")
+            .data(nodes)
+            .enter()
+            .append("g")
+            .style("pointer-events", "none")
+            .attr("opacity", 0);
 
-            const simulation = d3.forceSimulation(nodes)
-              .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(function (l) { return l.type === "vector" ? 150 : 118; }).strength(function (l) { return l.type === "vector" ? 0.18 : 0.42; }))
-              .force("charge", d3.forceManyBody().strength(-340))
-              .force("center", d3.forceCenter(width / 2, height / 2))
-              .force("collision", d3.forceCollide().radius(32));
+          groups.each(function (d) {
+            const g = d3.select(this);
+            labelLines(d.label).forEach(function (line, i) {
+              g.append("text")
+                .attr("text-anchor", "middle")
+                .attr("y", i * 11)
+                .attr("font-size", 10.5)
+                .attr("font-weight", d.category === "docs" ? 700 : 600)
+                .attr("fill", "#0f172a")
+                .text(line);
+            });
+          });
 
-            for (let i = 0; i < 220; i++) simulation.tick();
-            simulation.stop();
+          simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(function (l) { return l.type === "vector" ? 150 : 120; }).strength(function (l) { return l.type === "vector" ? 0.18 : 0.42; }))
+            .force("charge", d3.forceManyBody().strength(-320))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(32));
 
-            linkLayer.selectAll("line")
-              .data(links)
-              .enter()
-              .append("line")
+          let visibleCount = mode === "rollout" ? 0 : ordered.length;
+
+          function isVisible(nodeDatum) {
+            return (orderById.get(nodeDatum.id) ?? 9999) < visibleCount;
+          }
+
+          function linkVisible(linkDatum) {
+            const s = linkDatum.source.id || linkDatum.source;
+            const t = linkDatum.target.id || linkDatum.target;
+            return (orderById.get(s) ?? 9999) < visibleCount && (orderById.get(t) ?? 9999) < visibleCount;
+          }
+
+          function updateVisibility() {
+            link.attr("opacity", function (d) { return linkVisible(d) ? (d.type === "vector" ? 0.65 : 0.95) : 0; });
+            node.attr("opacity", function (d) { return isVisible(d) ? 1 : 0; });
+            groups.attr("opacity", function (d) { return isVisible(d) ? 1 : 0; });
+          }
+
+          function ticked() {
+            link
               .attr("x1", function (d) { return d.source.x; })
               .attr("y1", function (d) { return d.source.y; })
               .attr("x2", function (d) { return d.target.x; })
-              .attr("y2", function (d) { return d.target.y; })
-              .attr("stroke", function (d) { return d.type === "vector" ? "#cbd5e1" : "#94a3b8"; })
-              .attr("stroke-width", function (d) { return d.type === "vector" ? 1.5 : 2; })
-              .attr("stroke-dasharray", function (d) { return d.type === "vector" ? "4 4" : null; });
+              .attr("y2", function (d) { return d.target.y; });
 
-            nodeLayer.selectAll("circle")
-              .data(nodes)
-              .enter()
-              .append("circle")
+            node
               .attr("cx", function (d) { return d.x; })
-              .attr("cy", function (d) { return d.y; })
-              .attr("r", function (d) { return d.category === "docs" ? 18 : 14; })
-              .attr("fill", function (d) { return colorFor(d); })
-              .attr("stroke", "#ffffff")
-              .attr("stroke-width", 2)
-              .style("cursor", "pointer")
-              .on("click", function (_, d) {
-                const href = d.landing_page || (d.docs_path ? "https://socioprophet-web.web.app" + d.docs_path : null);
-                if (href) window.location.href = href;
-              });
+              .attr("cy", function (d) { return d.y; });
 
-            const groups = labelLayer.selectAll("g")
-              .data(nodes)
-              .enter()
-              .append("g")
-              .attr("transform", function (d) { return "translate(" + d.x + "," + (d.y + 28) + ")"; })
-              .style("pointer-events", "none");
+            groups
+              .attr("transform", function (d) { return "translate(" + d.x + "," + (d.y + 28) + ")"; });
+          }
 
-            groups.each(function (d) {
-              const g = d3.select(this);
-              labelLines(d.label).forEach(function (line, i) {
-                g.append("text")
-                  .attr("text-anchor", "middle")
-                  .attr("y", i * 11)
-                  .attr("font-size", 10.5)
-                  .attr("font-weight", d.category === "docs" ? 700 : 600)
-                  .attr("fill", "#0f172a")
-                  .text(line);
-              });
-            });
+          simulation.on("tick", ticked);
+          ticked();
+          updateVisibility();
+
+          if (mode === "rollout") {
+            timer = window.setInterval(function () {
+              visibleCount = Math.min(ordered.length, visibleCount + 1);
+              updateVisibility();
+              simulation.alpha(0.85).restart();
+              if (visibleCount >= ordered.length) {
+                window.clearInterval(timer);
+                timer = null;
+                window.setTimeout(function () { if (simulation) simulation.alphaTarget(0); }, 1200);
+              }
+            }, 260);
+          } else {
+            simulation.alpha(0.7).restart();
+            window.setTimeout(function () { if (simulation) simulation.alphaTarget(0); }, 900);
+          }
+        }
+
+        modeButtons.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            renderScene(btn.dataset.homeMode || "rollout");
+          });
+        });
+
+        fetch("/assets/surface-graph.json")
+          .then(function (r) { return r.json(); })
+          .then(function (graph) {
+            graphData = graph;
+            renderScene(currentMode);
           })
           .catch(function (err) {
             console.error("homeGraph render failed", err);
