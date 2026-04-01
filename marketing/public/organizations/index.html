@@ -7,6 +7,7 @@
     <meta name="description" content="For schools, nonprofits, public sector, sovereign systems, and employers — institutional deployment that stays aligned with the commons." />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script>
       function spTrack(name, params){ try{ if(typeof gtag==="function") gtag("event", name, params||{}); }catch(e){} }
     </script>
@@ -19,247 +20,352 @@
           <div class="font-semibold tracking-tight">SocioProphet</div>
         </a>
         <nav class="flex items-center gap-6 text-sm">
-          <a class="hover:underline" href="https://socioprophet-web.web.app/">Documentation</a>
+          <a class="hover:underline" href="/documentation/">Documentation</a>
           <a class="hover:underline" href="/organizations/">Organizations</a>
+          <a class="hover:underline" href="/organizations/apply/">Apply</a>
           <a class="hover:underline" href="https://vue.socioprophet.com">Portal</a>
         </nav>
       </div>
     </header>
 
     <main class="mx-auto max-w-6xl px-6 py-14">
-      <div class="space-y-6">
-        <div class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
-          Organizations • Schools • Nonprofits • Public Sector • Sovereign Systems • Employers
-        </div>
-
-        <h1 class="text-4xl font-semibold tracking-tight lg:text-5xl">
-          Deploy for organizations. Stay aligned with the commons.
-        </h1>
-
-        <p class="text-lg text-slate-700 max-w-prose">
-          SocioProphet is built for people and communities first. Organizations can adopt it to serve learners, operators, and builders at scale — with governance, privacy, deployment support, and safety controls — while funding the commons rather than capturing it.
-        </p>
-
-        <section class="grid gap-6 md:grid-cols-2">
-          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 class="text-xl font-semibold tracking-tight text-slate-950">Schools & Learning Communities</h2>
-            <p class="mt-2 text-sm text-slate-600">
-              For districts, co-ops, after-school programs, and community learning networks. Run cohorts, support mentors, structure pathways, and deliver learning systems designed around human growth.
-            </p>
-          </div>
-
-          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 class="text-xl font-semibold tracking-tight text-slate-950">Nonprofits & Public Interest</h2>
-            <p class="mt-2 text-sm text-slate-600">
-              For mission-driven organizations that need learning, coordination, and support systems deployable in the public interest.
-            </p>
-          </div>
-
-          <div class="rounded-xl border bg-slate-50 p-6 md:col-span-2">
-            <h2 class="text-xl font-semibold tracking-tight text-slate-950">Institutions & Sovereign Systems</h2>
-            <p class="mt-2 text-sm text-slate-600">
-              For public sector, sovereign, and mission-critical environments that require secure learning, training, coordination, and knowledge systems. This lane supports public service, civil preparedness, resilience, and high-trust operational contexts without abandoning the commons-first ethos of the platform.
-            </p>
-
-            <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-              <h3 class="font-semibold">Human Safeguards and Defensive Perimeter</h3>
-              <p class="mt-2 text-sm text-slate-700">
-                We support sovereign, public-sector, and mission-critical deployments only where the mission is human protection, public readiness, secure learning, resilience, and ethical systems operation. Systems inside our authorized defensive perimeter may be actively hardened and defended. Systems outside that perimeter may be monitored and assessed for risk using lawful, non-destructive methods, but not penetrated without authorization. Anti-human use cases are refused, quarantined, and escalated.
-              </p>
-              <p class="mt-3 text-sm text-slate-700">
-                High-risk and charter-sensitive functions remain under controlled governance while proof-of-life and capacity conditions are satisfied. Anti-human directives are refused and escalated under the platform charter and safeguarding model.
-              </p>
+      <div class="space-y-10">
+        <section class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+          <div class="space-y-6">
+            <div class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
+              Organizations • Governed AI • Agent Plane • Entity Analytics • Authorized Cyberdefense
             </div>
+
+            <h1 class="text-4xl font-semibold tracking-tight text-slate-950 lg:text-6xl">
+              Governed AI for institutional deployment.
+            </h1>
+
+            <p class="max-w-3xl text-lg text-slate-700">
+              SocioProphet gives institutions a governed operational intelligence stack: Deterministic AI, role-bounded workflows, Entity Analytics, Authorized Cyberdefense, and explicit review and reversibility boundaries.
+            </p>
+
+            <div class="flex flex-wrap gap-3">
+              <a class="inline-flex items-center rounded-md bg-slate-900 px-5 py-3 text-white shadow-sm hover:bg-slate-800" href="/organizations/apply/">
+                Open Intake
+              </a>
+              <a class="inline-flex items-center rounded-md border border-slate-300 bg-white px-5 py-3 text-slate-900 hover:bg-slate-50" href="/documentation/guide/organizations-governance-and-institutional-safety/">
+                Review Governance Docs
+              </a>
+              <a class="inline-flex items-center rounded-md border border-slate-300 bg-white px-5 py-3 text-slate-900 hover:bg-slate-50" href="#governed-stack">
+                Explore the Governed Stack
+              </a>
+            </div>
+
+            <p class="max-w-3xl text-sm text-slate-600">
+              Public docs explain Governance, Deterministic AI, the Agent Plane, Entity Analytics, and Authorized Cyberdefense clearly. Restricted operator mechanics remain outside the public layer.
+            </p>
           </div>
 
-          <div class="rounded-xl border bg-slate-50 p-6 md:col-span-2">
-            <h2 class="text-xl font-semibold tracking-tight text-slate-950">Teams & Employers</h2>
-            <p class="mt-2 text-sm text-slate-600">
-              For organizations investing in workforce learning, internal capability building, and ethical skills-to-opportunity pathways. This lane is for employers who want to develop people, not just screen them.
-            </p>
+          <aside class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h2 class="text-xl font-semibold tracking-tight text-slate-950">Institutional Surface Graph</h2>
+                <p class="mt-2 text-sm text-slate-600">
+                  Organizations is the umbrella Surface linking Governance, Deterministic AI, the Agent Plane, Entity Analytics, and Authorized Cyberdefense into one institutional path.
+                </p>
+              </div>
+              <a class="text-sm font-medium text-slate-700 hover:text-slate-950" href="/map/?mode=hybrid" target="_blank" rel="noopener">
+                Open Map ↗
+              </a>
+            </div>
+
+            <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <svg id="orgGraph" viewBox="0 0 760 420" class="h-auto w-full" role="img" aria-label="Institutional Surface Graph"></svg>
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-2 text-sm">
+              <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/organizations-governance-and-institutional-safety/">Institutional Governance</a>
+              <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/deterministic-ai-and-mathematical-safety/">Deterministic AI</a>
+              <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/agent-plane-and-operator-workflows/">Agent Plane</a>
+              <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/organizations/apply/">Open Intake</a>
+            </div>
+          </aside>
+        </section>
+
+        <section id="governed-stack" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-semibold tracking-tight text-slate-950">Governed Operations Stack</h2>
+          <p class="mt-2 text-sm text-slate-600">
+            Organizations adopt SocioProphet through a governed stack: institutional oversight, bounded agent execution, governed identity analytics, and authorized cyberdefense with evidence-producing review loops.
+          </p>
+
+          <div class="mt-5 grid gap-4 md:grid-cols-2">
+            <a class="rounded-xl border border-slate-200 bg-slate-50 p-5 transition hover:bg-white" href="/documentation/guide/governed-ai-and-cybernetics/">
+              <div class="text-xs font-medium uppercase tracking-wide text-slate-500">operations</div>
+              <div class="mt-2 font-semibold text-slate-950">Governed AI &amp; Cybernetics</div>
+              <p class="mt-2 text-sm text-slate-600">Policy-bounded execution, human oversight, control loops, and evidence-bearing system behavior.</p>
+            </a>
+
+            <a class="rounded-xl border border-slate-200 bg-slate-50 p-5 transition hover:bg-white" href="/documentation/guide/agent-plane-and-operator-workflows/">
+              <div class="text-xs font-medium uppercase tracking-wide text-slate-500">agent plane</div>
+              <div class="mt-2 font-semibold text-slate-950">Agent Plane and Operator Workflows</div>
+              <p class="mt-2 text-sm text-slate-600">Role-bounded execution, reviewable workflows, capability routing, and audit-friendly operator state.</p>
+            </a>
+
+            <a class="rounded-xl border border-slate-200 bg-slate-50 p-5 transition hover:bg-white" href="/entity-analytics/">
+              <div class="text-xs font-medium uppercase tracking-wide text-slate-500">governed analytics</div>
+              <div class="mt-2 font-semibold text-slate-950">Entity Analytics</div>
+              <p class="mt-2 text-sm text-slate-600">Typed Event-IR, governed identity graphs, policy-constrained merges, and proof artifacts.</p>
+            </a>
+
+            <a class="rounded-xl border border-slate-200 bg-slate-50 p-5 transition hover:bg-white" href="/documentation/guide/authorized-cyberdefense-and-simulation/">
+              <div class="text-xs font-medium uppercase tracking-wide text-slate-500">defense</div>
+              <div class="mt-2 font-semibold text-slate-950">Authorized Cyberdefense and Simulation</div>
+              <p class="mt-2 text-sm text-slate-600">Defense-first validation, purple-team learning loops, blue-team hardening, and governed simulation under authorization.</p>
+            </a>
           </div>
         </section>
 
         <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 class="text-xl font-semibold tracking-tight text-slate-950">Tell us what you’re trying to build</h2>
+          <h2 class="text-xl font-semibold tracking-tight text-slate-950">Deterministic and bounded by design</h2>
           <p class="mt-2 text-sm text-slate-600">
-            Short segmented intake for organizations, educators, and the opportunity side. This first-party intake is live and is used to route follow-up appropriately.
+            SocioProphet is not an ambient-autonomy system. It is a governed operational intelligence stack with mathematically bounded safety,
+            proof-bearing workflows, explicit reversibility, and a clear public-versus-restricted security boundary.
           </p>
+          <div class="mt-4 flex flex-wrap gap-3 text-sm">
+            <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-4 py-2 hover:bg-slate-50" href="/documentation/guide/deterministic-ai-and-mathematical-safety/">Deterministic AI</a>
+            <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-4 py-2 hover:bg-slate-50" href="/documentation/guide/boundary-centric-cyber-hypergraph/">Boundary Model</a>
+            <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-4 py-2 hover:bg-slate-50" href="/documentation/guide/public-vs-restricted-security-boundary/">Public vs restricted</a>
+            <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-4 py-2 hover:bg-slate-50" href="/documentation/guide/provenance-promotion-and-reversibility/">Provenance and reversibility</a>
+          </div>
+        </section>
 
-          <form id="orgForm" class="mt-5 grid gap-4 md:grid-cols-2">
-            <input type="hidden" name="assignment_id" value="">
-            <input type="hidden" name="experiment_id" value="">
-            <input type="hidden" name="variant_id" value="control">
-            <input type="hidden" name="cta_id" value="">
-            <input type="hidden" name="landing_path" value="">
-            <input type="hidden" name="privacy_policy_version" value="privacy-v2">
-            <input type="hidden" name="terms_version" value="terms-v2">
-            <input type="hidden" name="surface" value="organizations" />
+        <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-950">Schools & Learning Communities</h2>
+            <p class="mt-2 text-sm text-slate-600">Deploy serious learning systems, mentorship structures, and governed educational operations.</p>
+          </div>
 
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium">I’m here as…</label>
-              <select name="audience" class="mt-1 w-full rounded-md border border-slate-300 bg-slate-50/40 px-3 py-2 outline-none focus:border-slate-500" required>
-                <option value="">Select…</option>
-                <option value="person">Learner / Family</option>
-                <option value="educator">Educator / Mentor</option>
-                <option value="org">Organization</option>
-                <option value="opportunity">Hiring / Opportunity side</option>
-              </select>
-            </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-950">Nonprofits & Public Interest</h2>
+            <p class="mt-2 text-sm text-slate-600">Run mission-aligned knowledge, coordination, and support systems with explicit safeguards and governance.</p>
+          </div>
 
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium">Email *</label>
-              <input name="email" required type="email" class="mt-1 w-full rounded-md border border-slate-300 bg-slate-50/40 px-3 py-2 outline-none focus:border-slate-500" placeholder="you@domain.com" />
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-950">Public Sector & Sovereign Systems</h2>
+            <p class="mt-2 text-sm text-slate-600">Support readiness, resilience, secure learning, and public-service operations inside a governed defensive perimeter.</p>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-950">Teams & Employers</h2>
+            <p class="mt-2 text-sm text-slate-600">Develop workforce capability and institutional memory through governed AI assistance and bounded operational workflows.</p>
+          </div>
+        </section>
+
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-semibold tracking-tight text-slate-950">Reading paths</h2>
+          <div class="mt-5 grid gap-6 md:grid-cols-3">
+            <div>
+              <div class="text-sm font-semibold text-slate-800">Institutional governance</div>
+              <div class="mt-3 flex flex-wrap gap-2 text-sm">
+                <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/organizations-governance-and-institutional-safety/">Governance</a>
+                <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/platform-human-protection-and-safeguarding/">Safeguarding</a>
+                <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/public-vs-restricted-security-boundary/">Public vs restricted</a>
+              </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium">Organization type</label>
-              <select name="org_type" class="mt-1 w-full rounded-md border border-slate-300 bg-slate-50/40 px-3 py-2 outline-none focus:border-slate-500">
-                <option value="">Select…</option>
-                <option>School / District</option>
-                <option>Nonprofit / NGO</option>
-                <option>Public sector / Government</option>
-                <option>Sovereign / Mission-critical</option>
-                <option>Company / Employer</option>
-              </select>
+              <div class="text-sm font-semibold text-slate-800">Operations and analytics</div>
+              <div class="mt-3 flex flex-wrap gap-2 text-sm">
+                <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/governed-ai-and-cybernetics/">Governed AI</a>
+                <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/agent-plane-and-operator-workflows/">Agent Plane</a>
+                <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/entity-analytics/">Entity Analytics</a>
+              </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium">Primary intent</label>
-              <select name="intent" class="mt-1 w-full rounded-md border border-slate-300 bg-slate-50/40 px-3 py-2 outline-none focus:border-slate-500">
-                <option value="">Select…</option>
-                <option>Learn / upskill</option>
-                <option>Run cohorts or programs</option>
-                <option>Deploy the platform</option>
-                <option>Build an opportunity pipeline</option>
-                <option>Evaluate institutional use</option>
-              </select>
+              <div class="text-sm font-semibold text-slate-800">Validation and boundary logic</div>
+              <div class="mt-3 flex flex-wrap gap-2 text-sm">
+                <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/authorized-cyberdefense-and-simulation/">Authorized cyberdefense</a>
+                <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/boundary-centric-cyber-hypergraph/">Boundary Model</a>
+                <a class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50" href="/documentation/guide/deterministic-ai-and-mathematical-safety/">Deterministic AI</a>
+              </div>
             </div>
+          </div>
+        </section>
 
-            <div>
-              <label class="block text-sm font-medium">Mission area</label>
-              <select name="mission_area" class="mt-1 w-full rounded-md border border-slate-300 bg-slate-50/40 px-3 py-2 outline-none focus:border-slate-500">
-                <option value="">Select…</option>
-                <option>Learning and education</option>
-                <option>Workforce training</option>
-                <option>Public service delivery</option>
-                <option>Civil preparedness / resilience</option>
-                <option>Secure training / mission readiness</option>
-                <option>Research / knowledge systems</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium">Oversight model</label>
-              <select name="oversight_model" class="mt-1 w-full rounded-md border border-slate-300 bg-slate-50/40 px-3 py-2 outline-none focus:border-slate-500">
-                <option value="">Select…</option>
-                <option>Internal ethics board</option>
-                <option>Public accountability body</option>
-                <option>Legal / compliance office</option>
-                <option>Other / described in notes</option>
-              </select>
-            </div>
-
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium">Human impact statement</label>
-              <textarea name="impact" rows="3" class="mt-1 w-full rounded-md border border-slate-300 bg-slate-50/40 px-3 py-2 outline-none focus:border-slate-500" placeholder="How does this deployment protect or benefit people?"></textarea>
-            </div>
-
-            <div class="md:col-span-2">
-              <label class="inline-flex items-start gap-3 text-sm text-slate-700">
-                <input type="checkbox" name="restricted_use_ack" class="mt-1" />
-                <span>This request does not involve surveillance abuse, coercive profiling, offensive cyber activity, or anti-human targeting.</span>
-              </label>
-            </div>
-
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium">Notes</label>
-              <textarea name="notes" rows="3" class="mt-1 w-full rounded-md border border-slate-300 bg-slate-50/40 px-3 py-2 outline-none focus:border-slate-500" placeholder="What are you trying to do, and who is it for?"></textarea>
-            </div>
-
-            <div style="display:none;"><label>Leave blank<input name="hp" type="text" autocomplete="off"></label></div>
-
-            <div class="md:col-span-2">
-              <label class="inline-flex items-start gap-3 text-sm text-slate-700">
-                <input type="checkbox" name="consent_ack" class="mt-1" required>
-                <span>I agree to the <a class="underline underline-offset-4" href="/privacy/" target="_blank" rel="noopener">privacy policy</a> and <a class="underline underline-offset-4" href="/terms/" target="_blank" rel="noopener">terms</a>.</span>
-              </label>
-            </div>
-
-            <div class="md:col-span-2 flex items-center gap-3">
-              <button class="inline-flex items-center rounded-md bg-slate-900 px-5 py-3 text-white shadow-sm hover:bg-slate-800" type="submit">
-                Submit interest
-              </button>
-              <span id="msg" class="text-sm text-slate-600"></span>
-            </div>
-
-            <div class="md:col-span-2 text-xs text-slate-500">
-              By submitting, you agree that we may contact you about Academy, organizational deployment, and related opportunities. Privacy, terms, and safeguarding documentation are now live and continue to be hardened ahead of production rollout.
-            </div>
-          </form>
+        <section class="rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-sm">
+          <h2 class="text-xl font-semibold tracking-tight">Public-Safe Institutional Boundary</h2>
+          <p class="mt-2 max-w-3xl text-sm text-slate-300">
+            Public docs explain architecture, governance, bounded execution, evidence, and deployment posture.
+            They do not publish sensitive operator kits, exact tactical playbooks, restricted thresholds, exploit mechanics, or misuse-enabling tradecraft.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <a class="inline-flex items-center rounded-md bg-white px-5 py-3 text-slate-950 hover:bg-slate-200" href="/organizations/apply/">
+              Open institutional intake
+            </a>
+            <a class="inline-flex items-center rounded-md border border-slate-600 px-5 py-3 text-white hover:bg-slate-900" href="/documentation/">
+              Open documentation
+            </a>
+          </div>
         </section>
       </div>
     </main>
 
-    <script>
-      const params = new URLSearchParams(location.search);
-      const form = document.getElementById("orgForm");
+    
+  
+  <!-- organizations-institutional-graph -->
+  <script>
+    (function () {
+      const el = document.getElementById("orgGraph");
+      if (!el || typeof d3 === "undefined") return;
 
-      let assignmentId = localStorage.getItem("sp_assignment_id");
-      if (!assignmentId) {
-        assignmentId = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : ("assign-" + Date.now() + "-" + Math.random().toString(16).slice(2));
-        localStorage.setItem("sp_assignment_id", assignmentId);
-      }
+      const width = 760;
+      const height = 420;
+      const svg = d3.select(el);
+      svg.selectAll("*").remove();
 
-      if (form.elements["audience"] && params.get("audience")) {
-        form.elements["audience"].value = params.get("audience");
-      }
-      form.elements["assignment_id"].value = assignmentId;
-      form.elements["experiment_id"].value = params.get("exp") || "";
-      form.elements["variant_id"].value = params.get("variant") || "control";
-      form.elements["cta_id"].value = params.get("cta") || "organizations_submit";
-      form.elements["landing_path"].value = params.get("from") || document.referrer || "";
+      const nodes = [
+        { id: "organizations", label: "Organizations", note: "Institutional Surface", href: "/organizations/", category: "deployment", x0: 380, y0: 188, featured: true },
+        { id: "deterministic-ai", label: "Deterministic AI", note: "bounded execution", href: "/documentation/guide/deterministic-ai-and-mathematical-safety/", category: "governance", x0: 380, y0: 56 },
+        { id: "governed-ai", label: "Governed AI", note: "control loops and proofs", href: "/documentation/guide/governed-ai-and-cybernetics/", category: "governance", x0: 164, y0: 120 },
+        { id: "agent-plane", label: "Agent Plane", note: "role-bounded workflows", href: "/documentation/guide/agent-plane-and-operator-workflows/", category: "technical", x0: 596, y0: 120 },
+        { id: "entity-analytics", label: "Entity Analytics", note: "Event-IR and proof artifacts", href: "/entity-analytics/", category: "technical", x0: 206, y0: 308 },
+        { id: "authorized-cyberdefense", label: "Cyberdefense", note: "validation under Governance", href: "/documentation/guide/authorized-cyberdefense-and-simulation/", category: "trust", x0: 554, y0: 308 },
+        { id: "institutional-governance", label: "Governance", note: "institutional safety", href: "/documentation/guide/organizations-governance-and-institutional-safety/", category: "trust", x0: 118, y0: 216 },
+        { id: "intake", label: "Open Intake", note: "deployment path", href: "/organizations/apply/", category: "deployment", x0: 642, y0: 216 }
+      ];
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const payload = Object.fromEntries(new FormData(form).entries());
-        payload.page = location.pathname;
-        payload.referrer = document.referrer || "";
-        payload.ts = Date.now();
+      const links = [
+        { source: "organizations", target: "deterministic-ai", primary: true },
+        { source: "organizations", target: "governed-ai", primary: true },
+        { source: "organizations", target: "agent-plane", primary: true },
+        { source: "organizations", target: "entity-analytics", primary: true },
+        { source: "organizations", target: "authorized-cyberdefense", primary: true },
+        { source: "organizations", target: "institutional-governance", primary: true },
+        { source: "organizations", target: "intake", primary: true },
+        { source: "deterministic-ai", target: "governed-ai", primary: false },
+        { source: "deterministic-ai", target: "agent-plane", primary: false },
+        { source: "institutional-governance", target: "authorized-cyberdefense", primary: false },
+        { source: "entity-analytics", target: "authorized-cyberdefense", primary: false }
+      ];
 
-        try {
-          const res = await fetch("/api/lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          const data = await res.json();
-          if (data.ok) {
-            document.getElementById("msg").textContent = `Captured — reference ID: ${data.id}`;
-            form.reset();
-            form.elements["assignment_id"].value = assignmentId;
-            form.elements["experiment_id"].value = params.get("exp") || "";
-            form.elements["variant_id"].value = params.get("variant") || "control";
-            form.elements["cta_id"].value = params.get("cta") || "organizations_submit";
-            form.elements["landing_path"].value = params.get("from") || document.referrer || "";
-            form.elements["privacy_policy_version"].value = "privacy-v2";
-            form.elements["terms_version"].value = "terms-v2";
-            console.log("lead_intake id", data.id, "release", data.releaseId, "slot", data.releaseSlot);
-            spTrack("org_interest_submit", {
-              surface: payload.surface || "",
-              audience: payload.audience || "",
-              reason: payload.reason || "",
-              releaseId: data.releaseId || "",
-              releaseSlot: data.releaseSlot || ""
-            });
-          } else {
-            document.getElementById("msg").textContent = "There was a problem saving your submission.";
-          }
-        } catch (err) {
-          console.error(err);
-          document.getElementById("msg").textContent = "There was a problem saving your submission.";
+      const colorFor = (d) => {
+        switch (d.category) {
+          case "deployment": return "#bfdbfe";
+          case "technical": return "#ddd6fe";
+          case "trust":
+          case "governance": return "#99f6e4";
+          default: return "#e2e8f0";
         }
+      };
+
+      nodes.forEach((d) => {
+        d.r = d.featured ? 30 : 21;
+        d.x = d.x0;
+        d.y = d.y0;
       });
-    </script>
-  </body>
+
+      const defs = svg.append("defs");
+      const glow = defs.append("filter").attr("id", "orgNodeGlow");
+      glow.append("feGaussianBlur").attr("stdDeviation", 6).attr("result", "coloredBlur");
+      const merge = glow.append("feMerge");
+      merge.append("feMergeNode").attr("in", "coloredBlur");
+      merge.append("feMergeNode").attr("in", "SourceGraphic");
+
+      const root = svg.append("g");
+
+      const link = root.append("g")
+        .attr("fill", "none")
+        .attr("stroke", "#cbd5e1")
+        .attr("stroke-opacity", 0.95)
+        .selectAll("line")
+        .data(links)
+        .join("line")
+        .attr("stroke-width", (d) => d.primary ? 2.5 : 1.4);
+
+      const node = root.append("g")
+        .selectAll("g")
+        .data(nodes)
+        .join("g")
+        .attr("cursor", "pointer")
+        .on("click", (_, d) => { window.location.href = d.href; });
+
+      node.append("circle")
+        .attr("r", (d) => d.r)
+        .attr("fill", (d) => colorFor(d))
+        .attr("stroke", "#ffffff")
+        .attr("stroke-width", (d) => d.featured ? 4 : 3)
+        .attr("filter", "url(#orgNodeGlow)");
+
+      node.append("text")
+        .attr("text-anchor", "middle")
+        .attr("dy", (d) => d.featured ? 5 : 4)
+        .attr("font-family", "Inter, sans-serif")
+        .attr("font-size", (d) => d.featured ? 16 : 13)
+        .attr("font-weight", 700)
+        .attr("fill", "#0f172a")
+        .attr("paint-order", "stroke")
+        .attr("stroke", "#ffffff")
+        .attr("stroke-width", 4)
+        .attr("stroke-linejoin", "round")
+        .text((d) => d.label);
+
+      const note = root.append("g")
+        .selectAll("text.note")
+        .data(nodes)
+        .join("text")
+        .attr("class", "note")
+        .attr("text-anchor", "middle")
+        .attr("font-family", "Inter, sans-serif")
+        .attr("font-size", 11)
+        .attr("font-weight", 600)
+        .attr("fill", "#334155")
+        .text((d) => d.note);
+
+      const simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id((d) => d.id).distance((d) => d.primary ? 130 : 94).strength((d) => d.primary ? 1 : 0.55))
+        .force("charge", d3.forceManyBody().strength((d) => d.featured ? -1550 : -900))
+        .force("x", d3.forceX((d) => d.x0).strength(0.24))
+        .force("y", d3.forceY((d) => d.y0).strength(0.24))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collision", d3.forceCollide().radius((d) => d.r + 24));
+
+      function ticked() {
+        link
+          .attr("x1", (d) => d.source.x)
+          .attr("y1", (d) => d.source.y)
+          .attr("x2", (d) => d.target.x)
+          .attr("y2", (d) => d.target.y);
+
+        node.attr("transform", (d) => `translate(${d.x},${d.y})`);
+
+        note
+          .attr("x", (d) => d.x)
+          .attr("y", (d) => d.y + d.r + 18);
+      }
+
+      function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.18).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+
+      function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+      }
+
+      function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+
+      node.call(
+        d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended)
+      );
+
+      simulation.on("tick", ticked);
+      ticked();
+    })();
+  </script>
+</body>
 </html>
