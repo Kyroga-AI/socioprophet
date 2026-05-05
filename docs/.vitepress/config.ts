@@ -22,6 +22,7 @@ export default defineConfig({
       { text: "Getting Started", link: "/guide/getting-started" },
       { text: "Governance", link: "/guide/organizations-governance-and-institutional-safety" },
       { text: "Entity Analytics", link: "/guide/entity-analytics-reference" },
+      { text: "Legal Entities", link: "/guide/legal-entity-reference-fabric" },
       { text: "Academy", link: "/guide/academy-policy-index" },
       { text: "Products", link: "/guide/products/overview" },
     ],
@@ -74,6 +75,7 @@ export default defineConfig({
           items: [
             { text: "Entity Analytics Overview", link: "/guide/entity-analytics-overview" },
             { text: "Entity Analytics Reference", link: "/guide/entity-analytics-reference" },
+            { text: "Legal Entity Reference Fabric", link: "/guide/legal-entity-reference-fabric" },
             { text: "Entity Graph and Safe Linkage", link: "/guide/entity-graph-and-safe-linkage" },
             { text: "Identity Prime and Event IR", link: "/guide/identity-prime-and-event-ir" },
             { text: "Policy Constrained Merging and Unmerge", link: "/guide/policy-constrained-merging-and-unmerge" },
