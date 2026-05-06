@@ -20,6 +20,7 @@ export default defineConfig({
     nav: [
       { text: "Docs", link: "/" },
       { text: "Getting Started", link: "/guide/getting-started" },
+      { text: "Repo Map", link: "/repo-map" },
       { text: "Governance", link: "/guide/organizations-governance-and-institutional-safety" },
       { text: "Entity Analytics", link: "/guide/entity-analytics-reference" },
       { text: "Legal Entities", link: "/guide/legal-entity-reference-fabric" },
