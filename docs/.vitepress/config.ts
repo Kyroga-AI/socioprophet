@@ -127,6 +127,7 @@ export default defineConfig({
             { text: "Products Overview", link: "/guide/products/overview" },
             { text: "Product Surface Standard", link: "/guide/product-surface-standard" },
             { text: "Product Surface Maturity Matrix", link: "/guide/product-surface-maturity-matrix" },
+            { text: "Repo Map and Prophet Understand", link: "/guide/repo-map-prophet-understand" },
             { text: "Academy", link: "/guide/products/academy" },
             { text: "AI", link: "/guide/products/ai" },
             { text: "Cloud", link: "/guide/products/cloud" },
