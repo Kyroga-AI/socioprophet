@@ -12,9 +12,11 @@ FIXTURE = ROOT / "marketing" / "public" / "orchestration" / "event-native-fixtur
 PAGE = ROOT / "marketing" / "public" / "orchestration" / "index.html"
 DOC = ROOT / "docs" / "guide" / "event-native-orchestration-workbench.md"
 CONFIG = ROOT / "docs" / ".vitepress" / "config.ts"
+BUILDER = ROOT / "scripts" / "build_event_orchestration_fixture.py"
 
 REQUIRED_RECORD_FIELDS = {"record_id", "event", "capability", "reaction", "admission", "queue_state", "receipt_refs"}
 REQUIRED_QUEUE_STATES = {"pending", "waiting-approval", "blocked", "dead-letter"}
+EXPECTED_GENERATOR = "SocioProphet/prophet-platform/specs/orchestration/world_class_event_loop_demo.py"
 FORBIDDEN_FIRST_SLICE_STRINGS = {
     "navigator.credentials.create",
     "navigator.credentials.get",
@@ -45,6 +47,8 @@ def verify_fixture(data: dict) -> list[str]:
         errors.append("fixture mode must be 'fixture'")
     if data.get("readOnly") is not True:
         errors.append("fixture must be explicitly readOnly")
+    if data.get("generatedFrom") != EXPECTED_GENERATOR:
+        errors.append("fixture generatedFrom must point to the Prophet Platform world-class event loop demo")
     if data.get("demoReport", {}).get("status") != "pass":
         errors.append("demoReport.status must be pass")
 
@@ -78,10 +82,14 @@ def verify_fixture(data: dict) -> list[str]:
             errors.append(f"{record_id}: missing event.event_id")
         if not capability.get("capability_id"):
             errors.append(f"{record_id}: missing capability.capability_id")
+        if not capability.get("display_name"):
+            errors.append(f"{record_id}: missing capability.display_name")
         if not reaction.get("reaction_id"):
             errors.append(f"{record_id}: missing reaction.reaction_id")
         if not causality.get("idempotency_key"):
             errors.append(f"{record_id}: missing idempotency key")
+        if not causality.get("policy_epoch"):
+            errors.append(f"{record_id}: missing policy_epoch")
         if not record.get("receipt_refs"):
             errors.append(f"{record_id}: missing receipt_refs")
         observed_states.add(str(record.get("queue_state")))
@@ -112,6 +120,10 @@ def verify_fixture(data: dict) -> list[str]:
     traces = data.get("embodiedTraceRecords")
     if not isinstance(traces, list) or not traces:
         errors.append("embodiedTraceRecords must be non-empty")
+    else:
+        families = {str(trace.get("task_family")) for trace in traces if isinstance(trace, dict)}
+        if not ({"track_permanence", "plan_generation"} & families):
+            errors.append("embodiedTraceRecords should include permanence or planning traces")
 
     return errors
 
@@ -140,12 +152,25 @@ def verify_docs() -> list[str]:
         errors.append("VitePress config missing guide nav link")
     if "No UI path can trigger live actuation" not in doc_text:
         errors.append("guide page missing no-live-actuation boundary")
+    if "world_class_event_loop_demo.py" not in doc_text:
+        errors.append("guide page should reference the canonical Prophet Platform demo generator")
+    return errors
+
+
+def verify_builder() -> list[str]:
+    errors: list[str] = []
+    text = BUILDER.read_text(encoding="utf-8")
+    for required in ("demo-report.json", "event-capability.policy-annotated.records.json", "sourceos-queue.snapshot.json", "agentplane-admission.artifact.json", "sherlock-event-capability-index.json"):
+        if required not in text:
+            errors.append(f"fixture builder missing input artifact reference: {required}")
+    if "readOnly" not in text or "True" not in text:
+        errors.append("fixture builder must force readOnly true")
     return errors
 
 
 def main() -> int:
     errors: list[str] = []
-    for path in (FIXTURE, PAGE, DOC, CONFIG):
+    for path in (FIXTURE, PAGE, DOC, CONFIG, BUILDER):
         if not path.exists():
             errors.append(f"missing required path: {path.relative_to(ROOT)}")
 
@@ -153,6 +178,7 @@ def main() -> int:
         errors.extend(verify_fixture(load_json(FIXTURE)))
         errors.extend(verify_page())
         errors.extend(verify_docs())
+        errors.extend(verify_builder())
 
     if errors:
         print("event orchestration workbench verification failed", file=sys.stderr)
