@@ -35,6 +35,7 @@ export default defineConfig({
             { text: "Getting Started", link: "/guide/getting-started" },
             { text: "Architecture", link: "/guide/architecture" },
             { text: "Canonical Platform Direction", link: "/guide/canonical-platform-direction" },
+            { text: "Event-Native Orchestration Workbench", link: "/guide/event-native-orchestration-workbench" },
             { text: "Surface Inventory", link: "/guide/surface-inventory" },
             { text: "Desktop Linux Distro Strategy", link: "/guide/desktop-linux-distro-strategy" },
             { text: "Domain Surface", link: "/guide/domain-surface" },
