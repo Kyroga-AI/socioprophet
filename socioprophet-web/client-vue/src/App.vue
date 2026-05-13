@@ -49,6 +49,14 @@
         <span>⌕</span>
         <input type="search" placeholder="Search or command…" />
       </div>
+      <div class="sp-runtime-strip" aria-label="Runtime adapter status">
+        <span class="sp-runtime-strip__label">Runtime</span>
+        <RuntimeAdapterStatusBadge
+          v-for="feature in activeRuntimeFeatures"
+          :key="feature.feature_id"
+          :feature="feature"
+        />
+      </div>
     </footer>
   </div>
 </template>
@@ -56,7 +64,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
+import RuntimeAdapterStatusBadge from './components/RuntimeAdapterStatusBadge.vue';
 import { domainSurfaces, surfaceForRoute, surfacesForDomain } from './config/domainRoutes';
+import { getRuntimeFeature } from './runtime-adapters';
+import type { RuntimeAdapterFeature } from './runtime-adapters';
 
 const route = useRoute();
 
@@ -85,5 +96,35 @@ const breadcrumbs = computed(() => {
   const fallback = domainSurfaces.find((item) => route.path.startsWith(item.route));
   if (fallback) return [fallback.domain, fallback.item];
   return ['SocioProphet', route.path.replace(/^\//, '') || 'workspace'];
+});
+
+const activeRuntimeFeatureIds = computed(() => {
+  if (route.path.startsWith('/map')) {
+    return ['graph-universe-explorer', 'lattice-runtime-placement-surface'];
+  }
+
+  if (route.path.startsWith('/analytics')) {
+    return ['graph-universe-explorer'];
+  }
+
+  if (route.path.startsWith('/feed') || route.path.startsWith('/reader')) {
+    return ['browser-capture-clip-inbox'];
+  }
+
+  if (route.path.startsWith('/law')) {
+    return ['domain-ontology-workbench'];
+  }
+
+  if (route.path.startsWith('/people') || route.path.startsWith('/gates') || route.path.startsWith('/settings')) {
+    return ['agent-configuration-workbench', 'life-mirror-telemetry-panel'];
+  }
+
+  return ['agent-configuration-workbench'];
+});
+
+const activeRuntimeFeatures = computed<RuntimeAdapterFeature[]>(() => {
+  return activeRuntimeFeatureIds.value
+    .map((featureId) => getRuntimeFeature(featureId))
+    .filter((feature): feature is RuntimeAdapterFeature => Boolean(feature));
 });
 </script>
