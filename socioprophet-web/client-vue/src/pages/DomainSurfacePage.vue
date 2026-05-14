@@ -12,6 +12,11 @@
         <span class="tag">{{ surface?.implementation || 'mocked' }}</span>
         <span v-if="surface?.provenanceRibbon" class="tag tag-blue">provenance</span>
         <span v-if="surface?.commentCard" class="tag tag-green">comments</span>
+        <RuntimeAdapterStatusBadge
+          v-for="feature in runtimeFeatures"
+          :key="feature.feature_id"
+          :feature="feature"
+        />
       </div>
     </header>
 
@@ -45,6 +50,16 @@
           <span>Implementation</span><strong>{{ surface?.implementation || 'mocked' }}</strong>
         </div>
       </section>
+
+      <section class="carbon-card surface-module wide">
+        <div class="section-title">Runtime adapter status</div>
+        <div class="detail-grid" v-for="feature in runtimeFeatures" :key="`${feature.feature_id}-details`">
+          <span>{{ feature.display_name }}</span><strong>{{ feature.runtime_state }} · {{ feature.evidence_level }}</strong>
+          <span>Owner</span><strong>{{ feature.service_owner_repo }}</strong>
+          <span>Contract</span><strong>{{ feature.live_contract_ref || 'pending' }}</strong>
+          <span>Boundary</span><strong>{{ feature.mock_boundary || 'none declared' }}</strong>
+        </div>
+      </section>
     </div>
   </section>
 </template>
@@ -52,8 +67,19 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import RuntimeAdapterStatusBadge from '../components/RuntimeAdapterStatusBadge.vue';
 import { surfaceForRoute } from '../config/domainRoutes';
+import {
+  getRuntimeFeature,
+  runtimeFeatureIdsForPath,
+  type RuntimeAdapterFeature,
+} from '../runtime-adapters';
 
 const route = useRoute();
 const surface = computed(() => surfaceForRoute(route.path));
+const runtimeFeatures = computed<RuntimeAdapterFeature[]>(() =>
+  runtimeFeatureIdsForPath(route.path)
+    .map((featureId) => getRuntimeFeature(featureId))
+    .filter((feature): feature is RuntimeAdapterFeature => Boolean(feature)),
+);
 </script>
