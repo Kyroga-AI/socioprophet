@@ -16,8 +16,22 @@
         <span class="tag">newhope-membrane-query</span>
         <span class="tag">fixture-backed</span>
         <span class="tag">/feed</span>
+        <RuntimeAdapterStatusBadge
+          v-for="feature in runtimeFeatures"
+          :key="feature.feature_id"
+          :feature="feature"
+        />
       </div>
     </header>
+
+    <section class="carbon-card surface-module" style="margin-bottom:1rem">
+      <div class="section-title">Runtime adapter status</div>
+      <div class="detail-grid" v-for="feature in runtimeFeatures" :key="`${feature.feature_id}-feed`">
+        <span>{{ feature.display_name }}</span><strong>{{ feature.runtime_state }} · {{ feature.evidence_level }}</strong>
+        <span>Owner</span><strong>{{ feature.service_owner_repo }}</strong>
+        <span>Contract</span><strong>{{ feature.live_contract_ref || 'pending' }}</strong>
+      </div>
+    </section>
 
     <!-- Slash-topic filter -->
     <div class="feed-controls">
@@ -159,7 +173,19 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
+import RuntimeAdapterStatusBadge from '../components/RuntimeAdapterStatusBadge.vue';
 import { ALL_SLASH_TOPICS, FEED_FIXTURES } from '../fixtures/feedFixtures';
+import {
+  getRuntimeFeature,
+  runtimeFeatureIdsForPath,
+  type RuntimeAdapterFeature,
+} from '../runtime-adapters';
+
+const runtimeFeatures = computed<RuntimeAdapterFeature[]>(() =>
+  runtimeFeatureIdsForPath('/feed')
+    .map((featureId) => getRuntimeFeature(featureId))
+    .filter((feature): feature is RuntimeAdapterFeature => Boolean(feature)),
+);
 
 // ── Slash-topic filter state ──────────────────────────────────────────────────
 
