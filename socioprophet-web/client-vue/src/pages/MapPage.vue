@@ -16,6 +16,11 @@
         <span class="tag tag-blue">non-production tiles</span>
         <span class="tag">last loaded · {{ lastLoadedAtLabel }}</span>
         <span class="tag">/map</span>
+        <RuntimeAdapterStatusBadge
+          v-for="feature in mapRuntimeFeatures"
+          :key="feature.feature_id"
+          :feature="feature"
+        />
       </div>
     </header>
 
@@ -36,6 +41,7 @@
             {{ refreshing ? 'Refreshing…' : 'Refresh snapshot' }}
           </button>
           <div class="control-actions">
+            <button class="secondary" type="button" @click="jumpToPanel('runtime-adapter-panel')">Runtime</button>
             <button class="secondary" type="button" @click="jumpToPanel('feature-panel')">Feature</button>
             <button class="secondary" type="button" @click="jumpToPanel('evidence-panel')">Evidence</button>
             <button class="secondary" type="button" @click="jumpToPanel('governance-panel')">Governance</button>
@@ -110,6 +116,23 @@
       </main>
 
       <aside class="panel right-panel">
+        <section id="runtime-adapter-panel" class="panel-section" data-testid="map-runtime-adapter-panel">
+          <div class="section-title">Runtime adapter status</div>
+          <div class="tag-row">
+            <RuntimeAdapterStatusBadge
+              v-for="feature in mapRuntimeFeatures"
+              :key="`${feature.feature_id}-panel-badge`"
+              :feature="feature"
+            />
+          </div>
+          <div class="detail-grid" v-for="feature in mapRuntimeFeatures" :key="`${feature.feature_id}-details`">
+            <span>{{ feature.display_name }}</span><strong>{{ feature.runtime_state }} · {{ feature.evidence_level }}</strong>
+            <span>Owner</span><strong>{{ feature.service_owner_repo }}</strong>
+            <span>Contract</span><strong>{{ feature.live_contract_ref || 'pending' }}</strong>
+            <span>Boundary</span><strong>{{ feature.mock_boundary || 'none declared' }}</strong>
+          </div>
+        </section>
+
         <section id="feature-panel" class="panel-section">
           <div class="section-title">Feature inspector</div>
           <h2>{{ selectedFeature?.gaia_ref?.entity_id || 'No feature selected' }}</h2>
@@ -178,6 +201,7 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import maplibregl from 'maplibre-gl';
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
+import RuntimeAdapterStatusBadge from '../components/RuntimeAdapterStatusBadge.vue';
 import {
   fetchFeaturesByH3WithFallback,
   fetchGaiaLayerCatalogWithFallback,
@@ -186,6 +210,11 @@ import {
   isPlaceholderTileUrl,
   type GaiaMapDataMode,
 } from '../api/gaiaMap';
+import {
+  getRuntimeFeature,
+  runtimeFeatureIdsForPath,
+  type RuntimeAdapterFeature,
+} from '../runtime-adapters';
 import type {
   GaiaLayerCatalog,
   GaiaLayerEntry,
@@ -220,6 +249,11 @@ const mapContainer = ref<HTMLElement | null>(null);
 let map: maplibregl.Map | null = null;
 let marker: maplibregl.Marker | null = null;
 
+const mapRuntimeFeatures = computed<RuntimeAdapterFeature[]>(() =>
+  runtimeFeatureIdsForPath('/map')
+    .map((featureId) => getRuntimeFeature(featureId))
+    .filter((feature): feature is RuntimeAdapterFeature => Boolean(feature)),
+);
 const dataModeLabel = computed(() => (dataMode.value === 'live' ? 'live API' : 'demo fallback'));
 const catalogModeLabel = computed(() => (catalogMode.value === 'live' ? 'live catalog' : 'demo catalog'));
 const lastLoadedAtLabel = computed(() => lastLoadedAt.value?.toLocaleString() || 'not loaded');
