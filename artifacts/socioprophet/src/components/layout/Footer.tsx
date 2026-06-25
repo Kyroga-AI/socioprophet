@@ -1,0 +1,55 @@
+import { Link } from "wouter";
+
+export function Footer() {
+  return (
+    <footer className="border-t border-border/40 bg-card/50 py-16 mt-24">
+      <div className="container mx-auto px-4 md:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div className="col-span-1 md:col-span-1">
+            <Link href="/" className="flex items-center gap-2 mb-4">
+              <span className="font-sans font-bold text-xl tracking-tight text-white">Socio<span className="text-primary">Prophet</span></span>
+            </Link>
+            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+              Frontier-grade AI you can hand to a regulator. Governed, sovereign AI infrastructure for regulated enterprises.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-white mb-4">Platform</h4>
+            <ul className="space-y-3">
+              <li><Link href="/platform" className="text-sm text-muted-foreground hover:text-white transition-colors">Control Plane</Link></li>
+              <li><Link href="/platform" className="text-sm text-muted-foreground hover:text-white transition-colors">Model Stable</Link></li>
+              <li><Link href="/platform" className="text-sm text-muted-foreground hover:text-white transition-colors">Evidence Fabric</Link></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-white mb-4">Products</h4>
+            <ul className="space-y-3">
+              <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">Noetica</Link></li>
+              <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">The Profit Platform</Link></li>
+              <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">Hellagraph</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-white mb-4">Company</h4>
+            <ul className="space-y-3">
+              <li><Link href="/company" className="text-sm text-muted-foreground hover:text-white transition-colors">About Us</Link></li>
+              <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-white transition-colors">Contact</Link></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-muted-foreground">
+            &copy; {new Date().getFullYear()} SocioProphet. All rights reserved.
+          </p>
+          <div className="flex gap-4">
+            <span className="text-xs text-muted-foreground font-mono tracking-widest uppercase">Your Brain. Your Agents. Your AI.</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

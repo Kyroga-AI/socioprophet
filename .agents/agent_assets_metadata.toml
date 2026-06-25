@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "j_FXprauQG3XmHOdazgHs"
+uri = "file://artifacts/socioprophet/src/assets/images/hero-abstract.png"
+type = "image"
+title = "Abstract data flow governance"
+
+[[generated]]
+id = "18e_EanS_jgGuZRW8CD4w"
+uri = "file://artifacts/socioprophet/src/assets/images/platform-mesh.png"
+type = "image"
+title = "Platform architecture mesh"
+
+[[generated]]
+id = "BEb3798Uc7W_b1r9iN0zB"
+uri = "file://artifacts/socioprophet/src/assets/images/evidence-fabric.png"
+type = "image"
+title = "Cryptographic evidence fabric"

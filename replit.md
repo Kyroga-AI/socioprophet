@@ -1,6 +1,6 @@
-# [Project name]
+# SocioProphet
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A marketing website for SocioProphet — sovereign, governed enterprise AI for regulated institutions (banking, financial services, insurance, healthcare).
 
 ## Run & Operate
 
