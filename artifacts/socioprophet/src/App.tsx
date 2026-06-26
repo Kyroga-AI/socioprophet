@@ -8,7 +8,12 @@ import { Footer } from "@/components/layout/Footer";
 import { Home } from "@/pages/Home";
 import { Platform } from "@/pages/Platform";
 import { Products } from "@/pages/Products";
+import { ProductDetail } from "@/pages/products/ProductDetail";
 import { Solutions } from "@/pages/Solutions";
+import { Sr262 } from "@/pages/solutions/Sr262";
+import { SolutionDetail } from "@/pages/solutions/SolutionDetail";
+import { Compare } from "@/pages/Compare";
+import { Evidence } from "@/pages/Evidence";
 import { Company } from "@/pages/Company";
 import { Contact } from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
@@ -24,8 +29,14 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/platform" component={Platform} />
           <Route path="/products" component={Products} />
+          <Route path="/products/:slug" component={ProductDetail} />
           <Route path="/solutions" component={Solutions} />
+          <Route path="/solutions/sr26-2" component={Sr262} />
+          <Route path="/solutions/:slug" component={SolutionDetail} />
+          <Route path="/compare" component={Compare} />
+          <Route path="/evidence" component={Evidence} />
           <Route path="/company" component={Company} />
+          <Route path="/about" component={Company} />
           <Route path="/contact" component={Contact} />
           <Route component={NotFound} />
         </Switch>

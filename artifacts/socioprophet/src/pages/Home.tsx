@@ -11,10 +11,12 @@ import {
   Search,
   DownloadCloud,
   TrendingUp,
+  ScrollText,
 } from "lucide-react";
 import heroAbstract from "@/assets/images/hero-abstract.png";
 import platformMesh from "@/assets/images/platform-mesh.png";
 import evidenceFabric from "@/assets/images/evidence-fabric.png";
+import { CTASection } from "@/components/sections/CTASection";
 
 const ARGUMENT = [
   "Every regulated institution faces a binary trap: use public AI and leak IP, or build your own and fall behind.",
@@ -42,13 +44,17 @@ const PILLARS = [
   },
 ];
 
+type State = "no" | "partial" | "yes";
+
 const COMPARISON: {
   capability: string;
   socio: string;
-  publicAI: "no" | "partial" | "yes";
+  publicAI: State;
   publicAILabel: string;
-  diy: "no" | "partial" | "yes";
+  diy: State;
   diyLabel: string;
+  trueFoundry: State;
+  trueFoundryLabel: string;
 }[] = [
   {
     capability: "Data stays in-perimeter",
@@ -57,6 +63,8 @@ const COMPARISON: {
     publicAILabel: "Leaves your control",
     diy: "yes",
     diyLabel: "Yes",
+    trueFoundry: "partial",
+    trueFoundryLabel: "Gateway only",
   },
   {
     capability: "Frontier model currency",
@@ -65,6 +73,8 @@ const COMPARISON: {
     publicAILabel: "Vendor-controlled",
     diy: "no",
     diyLabel: "Falls behind",
+    trueFoundry: "partial",
+    trueFoundryLabel: "Bring-your-own",
   },
   {
     capability: "Signed, replayable evidence",
@@ -73,6 +83,8 @@ const COMPARISON: {
     publicAILabel: "None",
     diy: "partial",
     diyLabel: "Bolted on",
+    trueFoundry: "partial",
+    trueFoundryLabel: "Gateway logs",
   },
   {
     capability: "Regulator-ready by design",
@@ -81,6 +93,8 @@ const COMPARISON: {
     publicAILabel: "No",
     diy: "partial",
     diyLabel: "Manual effort",
+    trueFoundry: "partial",
+    trueFoundryLabel: "Pass / fail checks",
   },
 ];
 
@@ -105,7 +119,16 @@ const ENGAGEMENT = [
   },
 ];
 
-function StatusCell({ state, label }: { state: "no" | "partial" | "yes"; label: string }) {
+const REGULATIONS: { label: string; href?: string }[] = [
+  { label: "SR 26-2 (US)", href: "/solutions/sr26-2" },
+  { label: "APRA CPS 230 (AU)" },
+  { label: "EU AI Act" },
+  { label: "FCA (UK)" },
+  { label: "DORA" },
+  { label: "MAS (SG)" },
+];
+
+function StatusCell({ state, label }: { state: State; label: string }) {
   const Icon = state === "yes" ? Check : state === "partial" ? Minus : X;
   const tone =
     state === "yes"
@@ -210,6 +233,29 @@ export function Home() {
               <span className="text-primary"> that is what SocioProphet is built to be.</span>
             </p>
           </div>
+
+          {/* SR 26-2 carve-out trigger */}
+          <Link
+            href="/solutions/sr26-2"
+            className="group mt-8 flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 border border-primary/30 bg-card hover:border-primary/60 transition-colors"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-primary/10 rounded flex items-center justify-center shrink-0">
+                <ScrollText className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white mb-1">Banking on the US Federal Reserve's SR 26-2?</h3>
+                <p className="text-muted-foreground leading-relaxed max-w-2xl">
+                  It excludes generative AI from model risk guidance — which means your bank owns the
+                  governance gap. See how to close it in 60 days.
+                </p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-primary shrink-0">
+              SR 26-2 brief
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </span>
+          </Link>
         </div>
       </section>
 
@@ -263,11 +309,18 @@ export function Home() {
                   <span className="text-white">Immutable audit trails for compliance reporting</span>
                 </li>
               </ul>
-              <Button asChild variant="link" className="text-primary p-0 h-auto font-semibold uppercase tracking-wider text-sm">
-                <Link href="/platform" className="flex items-center gap-2">
-                  Read the Platform Architecture <ArrowRight className="w-4 h-4" />
-                </Link>
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-6">
+                <Button asChild variant="link" className="text-primary p-0 h-auto font-semibold uppercase tracking-wider text-sm">
+                  <Link href="/platform" className="flex items-center gap-2">
+                    Read the Platform Architecture <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </Button>
+                <Button asChild variant="link" className="text-primary p-0 h-auto font-semibold uppercase tracking-wider text-sm">
+                  <Link href="/evidence" className="flex items-center gap-2">
+                    See the Evidence <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </Button>
+              </div>
             </div>
             <div className="relative aspect-square md:aspect-[4/3] border border-border/50 bg-card p-2">
               <img src={evidenceFabric} alt="Cryptographic Evidence Fabric" className="w-full h-full object-cover filter grayscale opacity-80" />
@@ -314,32 +367,35 @@ export function Home() {
           <div className="max-w-3xl mb-16">
             <span className="font-mono text-primary text-sm uppercase tracking-widest">Where we stand apart</span>
             <h2 className="text-3xl md:text-4xl font-bold text-white mt-4">
-              One platform resolves what neither alternative can
+              One platform resolves what no alternative can
             </h2>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse min-w-[720px]">
+            <table className="w-full border-collapse min-w-[860px]">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left p-5 font-mono text-xs uppercase tracking-widest text-muted-foreground font-medium w-[28%]">
+                  <th className="text-left p-5 font-mono text-xs uppercase tracking-widest text-muted-foreground font-medium w-[22%]">
                     Capability
                   </th>
-                  <th className="text-left p-5 font-bold text-white bg-primary/5 border-x border-primary/20 w-[24%]">
+                  <th className="text-left p-5 font-bold text-white bg-primary/5 border-x border-primary/20 w-[20%]">
                     SocioProphet
                   </th>
-                  <th className="text-left p-5 font-mono text-xs uppercase tracking-widest text-muted-foreground font-medium w-[24%]">
+                  <th className="text-left p-5 font-mono text-xs uppercase tracking-widest text-muted-foreground font-medium w-[19%]">
                     Public AI
                   </th>
-                  <th className="text-left p-5 font-mono text-xs uppercase tracking-widest text-muted-foreground font-medium w-[24%]">
+                  <th className="text-left p-5 font-mono text-xs uppercase tracking-widest text-muted-foreground font-medium w-[19%]">
                     DIY build
+                  </th>
+                  <th className="text-left p-5 font-mono text-xs uppercase tracking-widest text-muted-foreground font-medium w-[20%]">
+                    TrueFoundry
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {COMPARISON.map((row) => (
                   <tr key={row.capability} className="border-b border-border">
-                    <td className="p-5 text-white font-medium align-top">{row.capability}</td>
+                    <th scope="row" className="p-5 text-white font-medium align-top text-left">{row.capability}</th>
                     <td className="p-5 bg-primary/5 border-x border-primary/20 align-top">
                       <div className="flex items-center gap-2">
                         <Check className="w-4 h-4 shrink-0 text-primary" />
@@ -352,10 +408,21 @@ export function Home() {
                     <td className="p-5 align-top">
                       <StatusCell state={row.diy} label={row.diyLabel} />
                     </td>
+                    <td className="p-5 align-top">
+                      <StatusCell state={row.trueFoundry} label={row.trueFoundryLabel} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+
+          <div className="mt-10">
+            <Button asChild variant="link" className="text-primary p-0 h-auto font-semibold uppercase tracking-wider text-sm">
+              <Link href="/compare" className="flex items-center gap-2">
+                See the full six-way comparison <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -384,6 +451,16 @@ export function Home() {
               </div>
             ))}
           </div>
+
+          <div className="mt-8 border-l-2 border-primary bg-primary/5 p-8">
+            <p className="text-lg text-white leading-relaxed">
+              Regulated and under time pressure? Our{" "}
+              <Link href="/solutions/sr26-2" className="text-primary underline-offset-4 hover:underline">
+                60-day SR 26-2 readiness sprint
+              </Link>{" "}
+              takes you from discovery to a mock examination — evidenced from day one.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -397,29 +474,32 @@ export function Home() {
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
             Governance is shifting from optional to mandatory — and the buying window is open. SocioProphet maps directly to the frameworks already in force.
           </p>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-70">
-            <span className="text-xl font-bold text-white">SR 26-2 (US)</span>
-            <span className="text-xl font-bold text-white">APRA CPS 230 (AU)</span>
-            <span className="text-xl font-bold text-white">EU AI Act</span>
-            <span className="text-xl font-bold text-white">FCA (UK)</span>
-            <span className="text-xl font-bold text-white">DORA</span>
-            <span className="text-xl font-bold text-white">MAS (SG)</span>
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12">
+            {REGULATIONS.map((reg) =>
+              reg.href ? (
+                <Link
+                  key={reg.label}
+                  href={reg.href}
+                  className="text-xl font-bold text-white hover:text-primary transition-colors underline-offset-8 hover:underline"
+                >
+                  {reg.label}
+                </Link>
+              ) : (
+                <span key={reg.label} className="text-xl font-bold text-white opacity-70">
+                  {reg.label}
+                </span>
+              ),
+            )}
+          </div>
+          <div className="mt-12">
+            <Button asChild variant="outline" className="rounded-none font-semibold uppercase tracking-wider text-xs border-muted-foreground/30 hover:bg-muted-foreground/10">
+              <Link href="/solutions">Explore solutions by industry</Link>
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-32 bg-primary/5 relative overflow-hidden border-t border-primary/20">
-        <div className="container mx-auto px-4 md:px-8 relative z-10 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Ready to secure your AI frontier?</h2>
-          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Schedule a briefing to discuss how SocioProphet can deploy a sovereign, governed AI infrastructure within your organisation.
-          </p>
-          <Button asChild size="lg" className="rounded-none font-semibold uppercase tracking-wider h-14 px-10 text-sm">
-            <Link href="/contact">Request a Briefing</Link>
-          </Button>
-        </div>
-      </section>
+      <CTASection />
     </div>
   );
 }

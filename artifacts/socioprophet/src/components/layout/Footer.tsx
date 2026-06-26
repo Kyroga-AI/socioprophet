@@ -18,17 +18,21 @@ export function Footer() {
             <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-white mb-4">Platform</h4>
             <ul className="space-y-3">
               <li><Link href="/platform" className="text-sm text-muted-foreground hover:text-white transition-colors">Control Plane</Link></li>
-              <li><Link href="/platform" className="text-sm text-muted-foreground hover:text-white transition-colors">Model Stable</Link></li>
+              <li><Link href="/platform" className="text-sm text-muted-foreground hover:text-white transition-colors">Model Choir</Link></li>
               <li><Link href="/platform" className="text-sm text-muted-foreground hover:text-white transition-colors">Evidence Fabric</Link></li>
+              <li><Link href="/evidence" className="text-sm text-muted-foreground hover:text-white transition-colors">Evidence &amp; Benchmarks</Link></li>
+              <li><Link href="/compare" className="text-sm text-muted-foreground hover:text-white transition-colors">Compare</Link></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-white mb-4">Products</h4>
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-white mb-4">Products & Solutions</h4>
             <ul className="space-y-3">
-              <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">Noetica</Link></li>
-              <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">The Profit Platform</Link></li>
-              <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">Hellagraph</Link></li>
+              <li><Link href="/products/noetica" className="text-sm text-muted-foreground hover:text-white transition-colors">Noetica</Link></li>
+              <li><Link href="/products/profit" className="text-sm text-muted-foreground hover:text-white transition-colors">The Profit Platform</Link></li>
+              <li><Link href="/products/hellagraph" className="text-sm text-muted-foreground hover:text-white transition-colors">Hellagraph</Link></li>
+              <li><Link href="/solutions/sr26-2" className="text-sm text-muted-foreground hover:text-white transition-colors">SR 26-2</Link></li>
+              <li><Link href="/solutions" className="text-sm text-muted-foreground hover:text-white transition-colors">All Solutions</Link></li>
             </ul>
           </div>
 

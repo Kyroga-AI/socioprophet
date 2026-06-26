@@ -8,6 +8,8 @@ export function Header() {
     { href: "/platform", label: "Platform" },
     { href: "/products", label: "Products" },
     { href: "/solutions", label: "Solutions" },
+    { href: "/compare", label: "Compare" },
+    { href: "/evidence", label: "Evidence" },
     { href: "/company", label: "Company" },
   ];
 
@@ -19,7 +21,7 @@ export function Header() {
             <span className="font-sans font-bold text-xl tracking-tight text-white">Socio<span className="text-primary">Prophet</span></span>
           </Link>
           
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-5">
             {links.map((link) => (
               <Link 
                 key={link.href} 
