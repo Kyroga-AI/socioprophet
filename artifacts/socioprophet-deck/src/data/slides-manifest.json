@@ -1,0 +1,154 @@
+[
+  {
+    "id": "b1f2c3d4-0001-4a11-9c01-000000000001",
+    "position": 1,
+    "filepath": "src/pages/slides/Title.tsx",
+    "title": "Title",
+    "description": "Cover slide introducing SocioProphet as sovereign, governed enterprise AI for regulated institutions.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0002-4a11-9c01-000000000002",
+    "position": 2,
+    "filepath": "src/pages/slides/ExecSummary.tsx",
+    "title": "Executive Summary",
+    "description": "The core argument condensed into five numbered lines.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0003-4a11-9c01-000000000003",
+    "position": 3,
+    "filepath": "src/pages/slides/BinaryTrap.tsx",
+    "title": "The Problem",
+    "description": "The binary trap regulated institutions face between public AI and building their own.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0004-4a11-9c01-000000000004",
+    "position": 4,
+    "filepath": "src/pages/slides/ThirdPath.tsx",
+    "title": "The Solution",
+    "description": "SocioProphet as the third path: a governed AI control plane inside your environment.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0005-4a11-9c01-000000000005",
+    "position": 5,
+    "filepath": "src/pages/slides/Sovereignty.tsx",
+    "title": "Pillar I — Sovereignty",
+    "description": "Sovereignty: all models and data run inside your boundary, nothing leaves.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0006-4a11-9c01-000000000006",
+    "position": 6,
+    "filepath": "src/pages/slides/Governance.tsx",
+    "title": "Pillar II — Governance",
+    "description": "Governance built into the architecture with signed, replayable evidence.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0007-4a11-9c01-000000000007",
+    "position": 7,
+    "filepath": "src/pages/slides/ManagedCurrency.tsx",
+    "title": "Pillar III — Managed Currency",
+    "description": "Managed currency keeps institutions at the frontier without an internal AI arms race.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0008-4a11-9c01-000000000008",
+    "position": 8,
+    "filepath": "src/pages/slides/Uncertainty.tsx",
+    "title": "The Differentiator",
+    "description": "Carrying uncertainty with provenance to the decision rather than collapsing it.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0009-4a11-9c01-000000000009",
+    "position": 9,
+    "filepath": "src/pages/slides/Platform.tsx",
+    "title": "Platform Architecture",
+    "description": "The three-layer platform: control plane, governed model choir, and evidence fabric.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0010-4a11-9c01-000000000010",
+    "position": 10,
+    "filepath": "src/pages/slides/ProductFamily.tsx",
+    "title": "Product Family",
+    "description": "Three products on one governed platform: Noetica, Profit Platform, Hellagraph.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0011-4a11-9c01-000000000011",
+    "position": 11,
+    "filepath": "src/pages/slides/Noetica.tsx",
+    "title": "Product — Noetica",
+    "description": "Noetica, the private knowledge brain that compounds institutional expertise.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0012-4a11-9c01-000000000012",
+    "position": 12,
+    "filepath": "src/pages/slides/ProfitPlatform.tsx",
+    "title": "Product — Profit Platform",
+    "description": "Profit Platform, governed AI agents that execute revenue and efficiency workflows.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0013-4a11-9c01-000000000013",
+    "position": 13,
+    "filepath": "src/pages/slides/Hellagraph.tsx",
+    "title": "Product — Hellagraph",
+    "description": "Hellagraph, the evidence and provenance layer that makes outputs defensible.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0014-4a11-9c01-000000000014",
+    "position": 14,
+    "filepath": "src/pages/slides/FinancialServices.tsx",
+    "title": "Market — Financial Services",
+    "description": "Banking and financial services as the highest-stakes, highest-scrutiny market.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0015-4a11-9c01-000000000015",
+    "position": 15,
+    "filepath": "src/pages/slides/InsuranceHealthcare.tsx",
+    "title": "Market — Insurance & Healthcare",
+    "description": "Insurance and healthcare markets where trust is the gate to AI adoption.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0016-4a11-9c01-000000000016",
+    "position": 16,
+    "filepath": "src/pages/slides/RegulatoryWave.tsx",
+    "title": "Why Now",
+    "description": "The arriving regulatory wave that makes governed AI mandatory now.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0017-4a11-9c01-000000000017",
+    "position": 17,
+    "filepath": "src/pages/slides/Competitive.tsx",
+    "title": "Competitive Landscape",
+    "description": "Comparison table showing how SocioProphet stands apart from public AI and DIY builds.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0018-4a11-9c01-000000000018",
+    "position": 18,
+    "filepath": "src/pages/slides/Engagements.tsx",
+    "title": "How We Engage",
+    "description": "The engagement model: discovery, deploy, and scale.",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b1f2c3d4-0019-4a11-9c01-000000000019",
+    "position": 19,
+    "filepath": "src/pages/slides/Closing.tsx",
+    "title": "Contact",
+    "description": "Closing slide with the brand promise and contact details.",
+    "speakerNotes": ""
+  }
+]

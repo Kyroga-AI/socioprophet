@@ -1,0 +1,1 @@
+- [Slides professional-mode sizing](slides-sizing.md) — vw/vh + 2.2vw floor overflows dense slides at 16:9; tighten paddings/gaps/line-height, verify every dense slide visually.

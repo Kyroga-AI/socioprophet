@@ -1,0 +1,31 @@
+kind = "slides"
+previewPath = "/socioprophet-deck/"
+title = "SocioProphet Deck"
+version = "1.0.0"
+id = "artifacts/socioprophet-deck"
+router = "path"
+
+[[integratedSkills]]
+name = "slides"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/socioprophet-deck/" ]
+localPort = 25822
+
+[services.development]
+run = "pnpm --filter @workspace/socioprophet-deck run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/socioprophet-deck", "run", "build" ]
+publicDir = "artifacts/socioprophet-deck/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25822"
+BASE_PATH = "/socioprophet-deck/"

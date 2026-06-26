@@ -18,3 +18,9 @@ id = "BEb3798Uc7W_b1r9iN0zB"
 uri = "file://artifacts/socioprophet/src/assets/images/evidence-fabric.png"
 type = "image"
 title = "Cryptographic evidence fabric"
+
+[[generated]]
+id = "eMbAfCal_CcNc7uH6VuOi"
+uri = "file://artifacts/socioprophet-deck/public/platform-mesh.png"
+type = "image"
+title = "platform architecture mesh"
