@@ -38,6 +38,9 @@ export function Solutions() {
                 <p className="text-lg text-muted-foreground leading-relaxed mb-8">
                   SocioProphet delivers frontier capabilities within the firewall, allowing quantitative analysts and wealth managers to leverage AI safely.
                 </p>
+                <blockquote className="border-l-2 border-primary pl-5 mb-8 italic text-white text-lg leading-relaxed">
+                  &ldquo;Our portfolio managers use ungoverned tools &mdash; and ASIC is asking us to replay the reasoning.&rdquo;
+                </blockquote>
                 <div className="p-6 bg-card border border-border">
                   <h4 className="font-mono text-xs uppercase tracking-wider text-primary mb-3">Regulatory Drivers</h4>
                   <ul className="space-y-2 text-sm text-white">
@@ -116,6 +119,9 @@ export function Solutions() {
                 <p className="text-lg text-muted-foreground leading-relaxed mb-8">
                   By running the models on your hardware, SocioProphet enables clinical research and administrative automation with absolute guarantee of zero data leakage.
                 </p>
+                <blockquote className="border-l-2 border-primary pl-5 mb-8 italic text-white text-lg leading-relaxed">
+                  &ldquo;Our clinical AI infers things it was never told &mdash; and we can&rsquo;t show a regulator the difference.&rdquo;
+                </blockquote>
                 <div className="p-6 bg-card border border-border">
                   <h4 className="font-mono text-xs uppercase tracking-wider text-primary mb-3">Regulatory Drivers</h4>
                   <ul className="space-y-2 text-sm text-white">
