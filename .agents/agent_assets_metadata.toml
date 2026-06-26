@@ -1,5 +1,4 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "j_FXprauQG3XmHOdazgHs"
@@ -24,3 +23,9 @@ id = "eMbAfCal_CcNc7uH6VuOi"
 uri = "file://artifacts/socioprophet-deck/public/platform-mesh.png"
 type = "image"
 title = "platform architecture mesh"
+
+[[outputs]]
+id = "sGq1ACnJZBblEt8oACUJ8"
+uri = "file://.local/outputs/Regulated-Insight.pptx"
+type = "slides"
+title = "Regulated Insight.pptx"

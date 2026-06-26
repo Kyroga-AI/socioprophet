@@ -38,19 +38,20 @@
 }
 
 :root {
-  /* SocioProphet — investor-memo palette */
-  --slide-primary: #1c1c1c;
-  --slide-accent: #0b6e79;
-  --slide-bg: #ffffff;
-  --slide-text: #1c1c1c;
-  --slide-muted: #4a4a4a;
-  --slide-light: #888888;
-  --slide-border: #e0e0e0;
-  --slide-ghost: #f5f5f5;
-  --font-display-family: "Inter", system-ui, sans-serif;
-  --font-body-family: "Inter", system-ui, sans-serif;
-  --font-mono-family: "DM Mono", ui-monospace, monospace;
-  color-scheme: light;
+  /* SocioProphet — sovereign dark palette (matches marketing site) */
+  --slide-primary: #f2f4f8;
+  --slide-accent: #3fb6c2;
+  --slide-violet: #866cf7;
+  --slide-bg: #0a0b0f;
+  --slide-text: #f2f4f8;
+  --slide-muted: #9aa3b4;
+  --slide-light: #59617a;
+  --slide-border: #222a3a;
+  --slide-ghost: #14161f;
+  --font-display-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono-family: "Space Mono", ui-monospace, monospace;
+  color-scheme: dark;
 }
 
 html,

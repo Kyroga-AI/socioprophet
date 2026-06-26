@@ -3,9 +3,9 @@ export default function Title() {
     <div
       className="w-screen h-screen overflow-hidden relative"
       style={{
-        backgroundColor: "#FFFFFF",
-        fontFamily: "'Inter', sans-serif",
-        color: "#1C1C1C",
+        backgroundColor: "#0A0B0F",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        color: "#F2F4F8",
         display: "flex",
         flexDirection: "column",
         padding: "5.5vh 8vw",
@@ -16,7 +16,7 @@ export default function Title() {
         style={{
           width: "84vw",
           height: "0.2vh",
-          backgroundColor: "#1C1C1C",
+          backgroundColor: "#222A3A",
           position: "absolute",
           top: "8vh",
           left: "8vw",
@@ -31,10 +31,10 @@ export default function Title() {
           marginTop: "2vh",
         }}
       >
-        <div style={{ fontSize: "2.2vw", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+        <div style={{ fontSize: "2.2vw", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
           SocioProphet
         </div>
-        <div style={{ fontSize: "2.2vw", fontWeight: 400, color: "#666666" }}>
+        <div style={{ fontSize: "2.2vw", fontWeight: 400, color: "#7E889A" }}>
           Sovereign Enterprise AI
         </div>
       </div>
@@ -46,7 +46,7 @@ export default function Title() {
           left: "8vw",
           fontSize: "25vw",
           fontWeight: 700,
-          color: "#F5F5F5",
+          color: "#14161F",
           lineHeight: 0.8,
           zIndex: 0,
           userSelect: "none",
@@ -83,7 +83,7 @@ export default function Title() {
           style={{
             fontSize: "3vw",
             fontWeight: 500,
-            color: "#1C1C1C",
+            color: "#F2F4F8",
             marginTop: "4vh",
             maxWidth: "62vw",
             lineHeight: 1.3,
@@ -96,13 +96,13 @@ export default function Title() {
           style={{
             fontSize: "2.6vw",
             fontWeight: 400,
-            color: "#4A4A4A",
+            color: "#9AA3B4",
             marginTop: "2.5vh",
             maxWidth: "55vw",
             lineHeight: 1.4,
           }}
         >
-          Frontier-grade AI you can hand to a regulator.
+          Frontier AI you can hand to a regulator &mdash; with your data inside your walls.
         </p>
       </div>
 
@@ -111,20 +111,20 @@ export default function Title() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          borderTop: "0.1vh solid #E0E0E0",
+          borderTop: "0.1vh solid #222A3A",
           paddingTop: "2.5vh",
           marginTop: "auto",
-          fontFamily: "'DM Mono', monospace",
+          fontFamily: "'Space Mono', monospace",
           fontSize: "2.2vw",
-          color: "#4A4A4A",
+          color: "#9AA3B4",
           zIndex: 1,
         }}
       >
         <div>
           June 2026 &middot; Prepared by SocioProphet &middot;{" "}
-          <span style={{ color: "#0B6E79", fontWeight: 500 }}>Confidential</span>
+          <span style={{ color: "#3FB6C2", fontWeight: 500 }}>Confidential</span>
         </div>
-        <div style={{ color: "#888888" }}>01 / 19</div>
+        <div style={{ color: "#59617A" }}>01 / 19</div>
       </div>
     </div>
   );
