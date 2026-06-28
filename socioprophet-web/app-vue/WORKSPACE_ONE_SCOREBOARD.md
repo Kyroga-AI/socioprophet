@@ -6,15 +6,15 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ---
 
 ## ▶ This turn's delta (gaps bridged)
-- **Linux-first developer program + marketplace core** (`marketplace.ts`, 7/7) — **Flatpak-native**: manifest +
-  conformance validator + **sandbox-permission governance** (`assessPermissions`: `--filesystem=host` → HIGH →
-  scope-d install gate). Federates **Flathub** + a **sovereign OSTree remote**; also handles AppImage/OCI/MCP-plugin.
-  Marketplace panel (`Market.vue`) + Market app + `DEVELOPER_PROGRAM.md` (clarifies **Flatpak ≠ LXC**: OSTree +
-  bubblewrap + portals, not system containers). Rides Gitea + broker + the MCP plugin-store.
-- **Marketplace suite 7/7; vue-tsc clean.** *We don't just show permissions like Flathub — we gate them by policy.*
+- **Choir AI woven into the apps — graph-grounded + governed** (`choir-grounding.ts`, 4/4): `buildGroundedContext`
+  (answers from a real subgraph, **cites nodes by id**), `assemblePrompt`, `gateAction` (**scope-d** read/write
+  gating), `checkGrounding` (**structural anti-hallucination** — every cited id must resolve). In-editor AI panel
+  (Ask/Summarize/Draft) with a grounded/ungrounded badge + policy-denial; `choirApi` stub (sovereign mesh when wired).
+- This is "AI-native" the way Nextcloud/Zoho can't: real **graph grounding** + **governed** + **on sovereign models** +
+  **anti-hallucination by construction**. **Choir suite 4/4; vue-tsc clean.**
 
-### (prev) T-11 delta
-- Broker container entrypoint (`sovereign-broker-server` + Dockerfile, 2/2 live-HTTP) — IdP boots & serves OIDC end-to-end.
+### (prev) T-12 delta
+- Linux-first marketplace core (`marketplace.ts`, 7/7) — Flatpak-native, permission-governed; Market panel + dev-program doc.
 
 ### Turn log
 | Turn | Shipped (proven) |
@@ -30,7 +30,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-9 | Broker HTTP service `sovereign-broker-service.ts` (5/5) — enroll→challenge→verify→token, public-only storage; Helm chart (lint clean). 41 tests |
 | T-10 | Gitea Code app (OIDC'd, Helm); cross-vendor cloud broker services layer (12/12) + Cloud panel; deployment cloud-agnostic (one chart, any cloud) |
 | T-11 | Broker container entrypoint (`sovereign-broker-server` + Dockerfile, 2/2 live-HTTP) — IdP boots & serves OIDC end-to-end. Identity suite 25 |
-| T-12 | **Linux-first marketplace core (`marketplace.ts`, 7/7) — Flatpak-native, sandbox-permission governance, Flathub federation + sovereign OSTree; Market panel + dev-program doc** |
+| T-12 | Linux-first marketplace core (`marketplace.ts`, 7/7) — Flatpak-native, sandbox-permission governance, Flathub federation + sovereign OSTree; Market panel + dev-program doc |
+| T-13 | **Choir AI woven in — graph-grounded + governed (`choir-grounding.ts`, 4/4): cites real nodes, scope-d gating, structural anti-hallucination; in-editor AI panel** |
 
 ---
 
@@ -59,7 +60,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | Groups + **federated Discussions** | ⬜ | 🟡 | ❌ | ❌ | 🟡 Talk-fed | ❌ |
 | **Graph-native knowledge** (Notion leapfrog) | 🟡 core + editor | ❌ | ❌ | ❌ | ❌ | ✅ (fakes graph) |
 | Work-mgmt / Wiki / Canvas / Flows | ⬜ | 🟡 | 🟡 | ❌ | 🟡 | ✅ |
-| AI woven into apps (sovereign models) | ⬜ choir | ✅ Gemini | ✅ Copilot | ✅ Lumo | ✅ Assistant | ✅ |
+| AI woven into apps (sovereign models) | 🟡 choir grounded+governed | ✅ Gemini | ✅ Copilot | ✅ Lumo | ✅ Assistant | ✅ |
+| **AI grounded in a real graph + anti-hallucination + governed** | ✅ unique | ❌ vector RAG | ❌ | ❌ | ❌ | ❌ |
 | **Code / Git + dev workspace** | 🟡 Gitea OIDC'd (Helm) | 🟡 (Cloud Source) | ✅ GitHub | ❌ | ❌ | ❌ |
 | **Cloud console (cross-vendor)** | 🟡 broker panel | ✅ (own cloud) | ✅ (own) | ❌ | ❌ | ❌ |
 

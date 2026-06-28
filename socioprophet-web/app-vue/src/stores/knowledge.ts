@@ -4,6 +4,8 @@ import {
   pageId, type Block, type GNode, type KGraph,
 } from "../services/knowledgeGraph";
 import * as knowledgeApi from "../services/knowledgeApi";
+import * as choirApi from "../services/choirApi";
+import { buildGroundedContext, assemblePrompt, gateAction, checkGrounding, type ChoirAction } from "../services/choirGrounding";
 
 // Find a block anywhere in a page tree (for in-place edits).
 function findBlock(root: Block, id: string): Block | null {
@@ -38,6 +40,8 @@ export const useKnowledge = defineStore("knowledge", {
     docs: seed() as Block[],
     currentId: "p-meeting" as string,
     persistMsg: "" as string,
+    choir: { busy: false, answer: "", grounded: true, unknown: [] as string[], denied: "" },
+    policy: { read: true, write: true, egress: false }, // owner default; scope-d supplies this per session
   }),
   getters: {
     graph(state): KGraph { return mergeGraphs(state.docs.map(projectDoc)); },
@@ -84,6 +88,21 @@ export const useKnowledge = defineStore("knowledge", {
         const r = await knowledgeApi.persist(this.graph);
         this.persistMsg = r.sealed ? `Saved ${r.nodes} nodes (content sealed under your key)` : `Local-first: ${r.nodes} nodes, ${r.edges} edges (backend not wired)`;
       } catch (e) { this.persistMsg = (e as Error).message; }
+    },
+    /** Ask the choir, grounded in the current page's subgraph and gated by scope-d policy. */
+    async askChoir(action: ChoirAction, question: string) {
+      if (!this.current) return;
+      const gate = gateAction(action, this.policy);
+      if (!gate.allowed) { this.choir.denied = gate.reason; this.choir.answer = ""; return; }
+      this.choir.denied = ""; this.choir.busy = true; this.choir.answer = "";
+      try {
+        const grounded = buildGroundedContext(this.graph, pageId(this.current.text ?? ""));
+        const prompt = assemblePrompt(action, question, grounded);
+        const answer = await choirApi.complete(prompt, grounded, action);
+        const g = checkGrounding(answer, grounded);
+        this.choir.answer = answer; this.choir.grounded = g.grounded; this.choir.unknown = g.unknownCitations;
+      } catch (e) { this.choir.answer = (e as Error).message; }
+      finally { this.choir.busy = false; }
     },
   },
 });

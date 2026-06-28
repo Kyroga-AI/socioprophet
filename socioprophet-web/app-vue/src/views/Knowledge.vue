@@ -8,6 +8,7 @@ const newPage = ref("");
 const connA = ref("");
 const connB = ref("");
 const connPath = computed(() => (connA.value && connB.value ? k.connection(connA.value, connB.value) : null));
+const aiQ = ref("");
 
 const escapeHtml = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -83,6 +84,22 @@ function nodeTitle(n: GNode): string {
 
     <!-- graph panels: the things Notion can't do -->
     <aside class="panels">
+      <section class="ai">
+        <h3>✦ Choir <span class="auto">graph-grounded · governed</span></h3>
+        <input v-model="aiQ" placeholder="Ask about this page…" @keyup.enter="k.askChoir('ask', aiQ)" />
+        <div class="aibtns">
+          <button @click="k.askChoir('ask', aiQ)" :disabled="k.choir.busy">Ask</button>
+          <button @click="k.askChoir('summarize', '')" :disabled="k.choir.busy">Summarize</button>
+          <button @click="k.askChoir('draft', aiQ)" :disabled="k.choir.busy">Draft</button>
+        </div>
+        <div v-if="k.choir.denied" class="denied">⛔ {{ k.choir.denied }}</div>
+        <div v-if="k.choir.busy" class="empty">thinking…</div>
+        <div v-else-if="k.choir.answer" class="ans">
+          <p>{{ k.choir.answer }}</p>
+          <span v-if="k.choir.grounded" class="pill ok">✓ grounded</span>
+          <span v-else class="pill bad">⚠ ungrounded: {{ k.choir.unknown.join(', ') }}</span>
+        </div>
+      </section>
       <section>
         <h3>Backlinks <span class="auto">auto · cross-doc</span></h3>
         <p v-if="!k.currentBacklinks.length" class="empty">No backlinks yet.</p>
@@ -156,4 +173,13 @@ function nodeTitle(n: GNode): string {
 .path { margin-top: 6px; font-size: 13px; color: #137333; background: #e6f4ea; padding: 4px 8px; border-radius: 6px; }
 .save { width: 100%; border: 0; background: #1a73e8; color: #fff; border-radius: 8px; padding: 8px; cursor: pointer; font-weight: 500; }
 .save:hover { background: #1765cc; }
+.ai { background: #faf7ff; border: 1px solid #e9ddff; border-radius: 8px; padding: 10px; }
+.ai input { width: 100%; padding: 6px 8px; border: 1px solid #dadce0; border-radius: 6px; }
+.aibtns { display: flex; gap: 6px; margin-top: 6px; }
+.aibtns button { flex: 1; border: 1px solid #d9c7ff; background: #fff; color: #7b3ff2; border-radius: 6px; padding: 4px; cursor: pointer; font-size: 12px; }
+.aibtns button:disabled { opacity: .5; }
+.ans { margin-top: 8px; font-size: 13px; } .ans p { margin: 0 0 6px; }
+.denied { color: #c5221f; font-size: 12px; margin-top: 6px; }
+.pill { font-size: 11px; border-radius: 10px; padding: 1px 7px; }
+.pill.ok { background: #e6f4ea; color: #137333; } .pill.bad { background: #fce8e6; color: #c5221f; }
 </style>
