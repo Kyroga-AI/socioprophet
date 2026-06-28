@@ -6,13 +6,15 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ---
 
 ## ▶ This turn's delta (gaps bridged)
-- **GDS live in the editor** — `pagerank` ("your most central ideas") + `pathBetween` ("what connects A↔B"), proven in
-  noetica (9/9) and **surfaced in the Knowledge editor UI**: a Central-Ideas panel + a "what connects?" path tool.
-  These are real graph computations **Notion structurally cannot do**, now visible in the product.
-- **Bug fix:** unresolved `[[links]]` now materialize **stub nodes** (Roam-style) — better behavior + makes them rank.
-- **Sealed persistence wired** — `knowledgeApi` (stub/local-first) + "Save to graph (sealed)" button; server path seals
-  content under the root (`knowledge-persist.ts`) and stores structure for `hg_analytics`.
-- **36 tests passing** (identity 18 + knowledge 9 + vault 5 + persist 4). Leapfrog is durable, GDS-real, sealed, and demoable.
+- **Broker HTTP service** (`sovereign-broker-service.ts`, 5/5) — the cloud verifier + OIDC issuer: full
+  `enroll → challenge → verify → token` + discovery/JWKS, holding **only public material** (credentials = pubkey +
+  alias; no roots, no data keys) → compulsion-safe even if fully compromised. One-time challenges (no replay).
+- **Helm chart** — broker Deployment/Service/Ingress in `prophet-workspace` (helm lint clean, renders). Identity moat
+  moves from *proven-crypto* → **runnable service + deployable chart**.
+- **41 tests passing** (identity 23 + knowledge 9 + vault 5 + persist 4).
+
+### (prev) T-8 delta
+- GDS live in the editor (`pagerank` central-ideas + `pathBetween` what-connects, 9/9); stub-node fix; sealed persist wired.
 
 ### Turn log
 | Turn | Shipped (proven) |
@@ -24,7 +26,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-5 | Graph-native knowledge layer `knowledge-graph.ts` (7/7) — the Notion leapfrog; Wiki+Notes → foundation |
 | T-6 | Compulsion-resistance vault `sovereign-vault.ts` (5/5); knowledge editor UI (live backlinks/rollups); DAO model. 30 tests |
 | T-7 | Sealed HellGraph write-path `knowledge-persist.ts` (4/4) — durable + GDS-on-ciphertext + content sealed under root. 34 tests |
-| T-8 | **GDS live in editor: PageRank "central ideas" + pathBetween "what connects A↔B" (9/9); stub-node fix; sealed persist wired. 36 tests** |
+| T-8 | GDS live in editor: PageRank "central ideas" + pathBetween "what connects A↔B" (9/9); stub-node fix; sealed persist wired. 36 tests |
+| T-9 | **Broker HTTP service `sovereign-broker-service.ts` (5/5) — enroll→challenge→verify→token, public-only storage; Helm chart (lint clean). 41 tests** |
 
 ---
 
@@ -37,7 +40,7 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | Per-scope alias (defeat entity-resolution) | ✅ | ❌ | ❌ | 🟡 email-only | ❌ | ❌ |
 | Root-never-leaves-edge auth (passkey-derived) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Standard OIDC issuance (RP-consumable) | ✅ | ✅ | ✅ | 🟡 | ✅ | ✅ |
-| IdP deployed + fronting apps | ⬜ next | ✅ | ✅ | ✅ | ✅ | ✅ |
+| IdP deployed + fronting apps | 🟡 service+Helm done, cluster pending | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Anonymous credentials (SD-JWT-VC/BBS+) | ⬜ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | MDM compartmentalization | ⬜ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Trace-open governance (accountable anonymity) | ⬜ | ❌ | ❌ | ❌ | ❌ | ❌ |
@@ -70,7 +73,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 
 ## ▶ Backlog (prioritized; world-class bar)
 **P0 — Identity moat (the lead; finish it):**
-1. ⬜ IdP deploy — Zitadel/Authentik Helm in prophet-workspace, calling `sovereign-broker.verify`; per-app pairwise clients. ← NEXT
+1. 🟡 IdP deploy — broker service (`sovereign-broker-service.ts`) + Helm chart DONE (lint clean); remaining: build the
+   `workspace-broker` container image + apply to a cluster + front Matrix/mail/DAV on it.
 2. ⬜ External-IdP relay (consume Google/corp/passkey → bind to root, strip correlation) + wire `scopeAlias`→`mail_aliases` live.
 3. ⬜ Anonymous credentials (SD-JWT-VC) + `AnonymousReputationReceipt` runtime.
 4. ⬜ MDM work-facet compartmentalization.
