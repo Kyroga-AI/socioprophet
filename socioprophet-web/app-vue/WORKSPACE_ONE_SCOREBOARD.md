@@ -6,18 +6,15 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ---
 
 ## ▶ This turn's delta (gaps bridged)
-- **Gitea = the integrated Code/Git app** — sovereign git + dev workspace in the suite (Helm: Deployment/Service/
-  Ingress/PVC, Postgres-backed, **single sovereign login via OIDC to the broker**). Code app + `/code` view (embeds
-  git.<domain>). helm lint clean.
-- **Cross-vendor cloud broker — services layer** (`cloud-broker.ts` extended, 12/12): commodity catalog (object-store/
-  k8s/postgres/dns/LB/secrets) × GCP/AWS/Azure/IBM/OCI/Hetzner + `selectVendor` (cheapest, residency/exclude-aware) +
-  `mapResource`. **Cloud panel** (`Cloud.vue`) shows every vendor per service with the broker's pick highlighted.
-- **Deployment is cloud-vendor agnostic** — `cloudProvider` value + `pw.lbAnnotations` helper: the SAME chart renders
-  GCP/AWS/Azure/IBM/Hetzner LB annotations by flipping one value (proven via `helm template --set cloudProvider=eks`).
-- Code + Cloud apps registered; ONLYOFFICE office decision stands. **Cloud-broker suite 12/12; vue-tsc clean.**
+- **Broker container entrypoint** (`sovereign-broker-server.ts` + `-main.ts` + `Dockerfile.broker`, 2/2 live-HTTP) —
+  the IdP **RUNS end-to-end**: boots on `node:http`, serves `/.well-known/openid-configuration` + `jwks.json`, and a
+  real `enroll → challenge → verify → token` round-trip over HTTP (verified by an RP). Signing key from a mounted
+  secret (`signingKeyFromPem`); ephemeral in dev. Boot smoke-test confirmed (`/healthz`, discovery).
+- Identity moat: **proven-crypto → runnable service → bootable container.** Remaining: image build/push + cluster apply.
+- **Identity suite 25; full new-core suite 45** (identity 25 + knowledge 9 + vault 5 + persist 4) + cloud-broker 12.
 
-### (prev) T-9 delta
-- Broker HTTP service (`sovereign-broker-service.ts`, 5/5) + Helm; identity moat → runnable service + chart. 41 tests.
+### (prev) T-10 delta
+- Gitea Code app (OIDC'd, Helm); cross-vendor cloud broker services layer (12/12) + Cloud panel; deployment cloud-agnostic.
 
 ### Turn log
 | Turn | Shipped (proven) |
@@ -31,7 +28,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-7 | Sealed HellGraph write-path `knowledge-persist.ts` (4/4) — durable + GDS-on-ciphertext + content sealed under root. 34 tests |
 | T-8 | GDS live in editor: PageRank "central ideas" + pathBetween "what connects A↔B" (9/9); stub-node fix; sealed persist wired. 36 tests |
 | T-9 | Broker HTTP service `sovereign-broker-service.ts` (5/5) — enroll→challenge→verify→token, public-only storage; Helm chart (lint clean). 41 tests |
-| T-10 | **Gitea Code app (OIDC'd, Helm); cross-vendor cloud broker services layer (12/12) + Cloud panel; deployment cloud-agnostic (one chart, any cloud)** |
+| T-10 | Gitea Code app (OIDC'd, Helm); cross-vendor cloud broker services layer (12/12) + Cloud panel; deployment cloud-agnostic (one chart, any cloud) |
+| T-11 | **Broker container entrypoint (`sovereign-broker-server` + Dockerfile, 2/2 live-HTTP) — IdP boots & serves OIDC end-to-end. Identity suite 25** |
 
 ---
 
@@ -44,7 +42,7 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | Per-scope alias (defeat entity-resolution) | ✅ | ❌ | ❌ | 🟡 email-only | ❌ | ❌ |
 | Root-never-leaves-edge auth (passkey-derived) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Standard OIDC issuance (RP-consumable) | ✅ | ✅ | ✅ | 🟡 | ✅ | ✅ |
-| IdP deployed + fronting apps | 🟡 service+Helm done, cluster pending | ✅ | ✅ | ✅ | ✅ | ✅ |
+| IdP deployed + fronting apps | 🟡 service+Helm+container boot, cluster pending | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Anonymous credentials (SD-JWT-VC/BBS+) | ⬜ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | MDM compartmentalization | ⬜ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Trace-open governance (accountable anonymity) | ⬜ | ❌ | ❌ | ❌ | ❌ | ❌ |
@@ -80,8 +78,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 
 ## ▶ Backlog (prioritized; world-class bar)
 **P0 — Identity moat (the lead; finish it):**
-1. 🟡 IdP deploy — broker service (`sovereign-broker-service.ts`) + Helm chart DONE (lint clean); remaining: build the
-   `workspace-broker` container image + apply to a cluster + front Matrix/mail/DAV on it.
+1. 🟡 IdP deploy — broker service + Helm + **container entrypoint (boots, serves OIDC) DONE**; remaining: build/push the
+   `workspace-broker` image (Dockerfile.broker) + apply to a cluster + front Gitea/Matrix/mail/DAV on it.
 2. ⬜ External-IdP relay (consume Google/corp/passkey → bind to root, strip correlation) + wire `scopeAlias`→`mail_aliases` live.
 3. ⬜ Anonymous credentials (SD-JWT-VC) + `AnonymousReputationReceipt` runtime.
 4. ⬜ MDM work-facet compartmentalization.
