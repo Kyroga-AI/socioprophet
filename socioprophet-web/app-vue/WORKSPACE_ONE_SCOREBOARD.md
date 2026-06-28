@@ -6,15 +6,14 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ---
 
 ## ▶ This turn's delta (gaps bridged)
-- **Choir AI woven into the apps — graph-grounded + governed** (`choir-grounding.ts`, 4/4): `buildGroundedContext`
-  (answers from a real subgraph, **cites nodes by id**), `assemblePrompt`, `gateAction` (**scope-d** read/write
-  gating), `checkGrounding` (**structural anti-hallucination** — every cited id must resolve). In-editor AI panel
-  (Ask/Summarize/Draft) with a grounded/ungrounded badge + policy-denial; `choirApi` stub (sovereign mesh when wired).
-- This is "AI-native" the way Nextcloud/Zoho can't: real **graph grounding** + **governed** + **on sovereign models** +
-  **anti-hallucination by construction**. **Choir suite 4/4; vue-tsc clean.**
+- **Mail bridge core** (`mail-bridge.ts`, 5/5) — IMAP↔REST with the **Hey model**: `classifyView` (Imbox / Feed /
+  Paper Trail) + **Screener** allow-list (new senders wait; approve/block) + thread actions (read / reply-later /
+  set-aside / done) that **mutate IMAP** (\Seen, flags, Archive/Spam moves). Proven against a fake ImapStore; prod
+  swaps in Dovecot. Maps 1:1 to the Vue `mailApi` contract → the choir's summarize/draft run on real mail.
+- **The gate on leaving Google is now buildable end-to-end.** Mail bridge suite 5/5; typecheck 0.
 
-### (prev) T-12 delta
-- Linux-first marketplace core (`marketplace.ts`, 7/7) — Flatpak-native, permission-governed; Market panel + dev-program doc.
+### (prev) T-13 delta
+- Choir AI woven in — graph-grounded + governed (`choir-grounding.ts`, 4/4): cites real nodes, scope-d gating, anti-hallucination.
 
 ### Turn log
 | Turn | Shipped (proven) |
@@ -31,7 +30,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-10 | Gitea Code app (OIDC'd, Helm); cross-vendor cloud broker services layer (12/12) + Cloud panel; deployment cloud-agnostic (one chart, any cloud) |
 | T-11 | Broker container entrypoint (`sovereign-broker-server` + Dockerfile, 2/2 live-HTTP) — IdP boots & serves OIDC end-to-end. Identity suite 25 |
 | T-12 | Linux-first marketplace core (`marketplace.ts`, 7/7) — Flatpak-native, sandbox-permission governance, Flathub federation + sovereign OSTree; Market panel + dev-program doc |
-| T-13 | **Choir AI woven in — graph-grounded + governed (`choir-grounding.ts`, 4/4): cites real nodes, scope-d gating, structural anti-hallucination; in-editor AI panel** |
+| T-13 | Choir AI woven in — graph-grounded + governed (`choir-grounding.ts`, 4/4): cites real nodes, scope-d gating, structural anti-hallucination; in-editor AI panel |
+| T-14 | **Mail bridge core (`mail-bridge.ts`, 5/5) — IMAP↔REST, Hey model (Imbox/Feed/Paper Trail) + Screener + actions mutating IMAP; gate on leaving Google** |
 
 ---
 
@@ -52,7 +52,7 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ### Suite apps
 | App | Us | Google | MS | Proton | Nextcloud | Notion |
 |---|---|---|---|---|---|---|
-| Mail | 🟡 stub UI | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Mail | 🟡 stub UI + bridge core (5/5) | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Calendar / Contacts | ⬜ (Radicale/CardDAV) | ✅ | ✅ | ✅ | ✅ | 🟡 |
 | Office (Docs/Sheets/Slides) | ⬜ (ONLYOFFICE) | ✅ | ✅✅ desktop | ✅ | ✅ | 🟡 |
 | Drive / Photos | ⬜ | ✅ | ✅ | ✅ | ✅ | — |
