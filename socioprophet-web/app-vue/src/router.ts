@@ -7,6 +7,7 @@ const routes = [
   { path: "/builder", component: () => import("./views/Builder.vue") },
   { path: "/builds", component: () => import("./views/Builds.vue") },
   { path: "/fleet", component: () => import("./views/Fleet.vue") },
+  { path: "/mail", component: () => import("./views/Mail.vue") },
 ];
 
 export const router = createRouter({ history: createWebHistory(), routes });
