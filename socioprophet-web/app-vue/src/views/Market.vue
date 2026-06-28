@@ -24,6 +24,7 @@ const riskColor: Record<string, string> = { low: "#137333", elevated: "#b06000",
       </div>
     </header>
 
+    <p v-if="!results.length" class="none">No apps match “{{ q }}”. Try a different search or kind.</p>
     <div class="grid">
       <article v-for="m in results" :key="m.id" class="card">
         <div class="top">
@@ -66,4 +67,5 @@ h1 { font-size: 26px; margin: 0 0 4px; } .tag { font-size: 12px; background: #e8
 .pill.ok { color: #137333; border-color: #cde8d4; } .pill.warn { color: #b06000; border-color: #fde293; }
 .warns { margin: 4px 0; padding-left: 16px; font-size: 12px; color: #c5221f; }
 .install { display: block; background: #202124; color: #e8eaed; padding: 6px 8px; border-radius: 6px; font-size: 12px; overflow-x: auto; }
+.none { color: #5f6368; padding: 20px 0; }
 </style>

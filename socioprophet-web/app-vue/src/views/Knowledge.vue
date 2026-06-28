@@ -93,6 +93,7 @@ function nodeTitle(n: GNode): string {
           <button @click="k.askChoir('draft', aiQ)" :disabled="k.choir.busy">Draft</button>
         </div>
         <div v-if="k.choir.denied" class="denied">⛔ {{ k.choir.denied }}</div>
+        <div v-if="k.choir.error" class="denied">⚠ choir error: {{ k.choir.error }}</div>
         <div v-if="k.choir.busy" class="empty">thinking…</div>
         <div v-else-if="k.choir.answer" class="ans">
           <p>{{ k.choir.answer }}</p>

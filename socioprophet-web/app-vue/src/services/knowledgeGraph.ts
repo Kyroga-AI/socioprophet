@@ -57,7 +57,11 @@ export function projectDoc(page: Block): KGraph {
 export function mergeGraphs(graphs: KGraph[]): KGraph {
   const nodes = new Map<string, GNode>();
   const edges: GEdge[] = [];
-  for (const g of graphs) { for (const n of g.nodes) if (!nodes.has(n.id)) nodes.set(n.id, n); edges.push(...g.edges); }
+  const seen = new Set<string>();
+  for (const g of graphs) {
+    for (const n of g.nodes) { const ex = nodes.get(n.id); if (!ex || (ex.props?.["stub"] && !n.props?.["stub"])) nodes.set(n.id, n); }
+    for (const e of g.edges) { const k = `${e.from}|${e.type}|${e.to}`; if (!seen.has(k)) { seen.add(k); edges.push(e); } }
+  }
   return { nodes: [...nodes.values()], edges };
 }
 

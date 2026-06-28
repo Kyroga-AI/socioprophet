@@ -10,6 +10,7 @@ const giteaUrl = (import.meta as { env?: Record<string, string> }).env?.VITE_GIT
       <div><strong>⌥ Code</strong> <span class="tag">Gitea · sovereign git</span></div>
       <a :href="giteaUrl" target="_blank" rel="noopener">Open full ↗</a>
     </header>
+    <div class="note">If this stays blank, your Gitea blocks embedding (X-Frame-Options) — use <a :href="giteaUrl" target="_blank" rel="noopener">Open full ↗</a>.</div>
     <iframe :src="giteaUrl" title="Gitea" />
   </div>
 </template>
@@ -20,4 +21,5 @@ header { display: flex; justify-content: space-between; align-items: center; pad
 .tag { font-size: 12px; background: #e6f4ea; color: #137333; padding: 2px 8px; border-radius: 10px; }
 header a { color: #1a73e8; text-decoration: none; font-size: 13px; }
 iframe { flex: 1; border: 0; width: 100%; }
+.note { font-size: 12px; color: #b06000; background: #fef7e0; padding: 4px 14px; } .note a { color: #1a73e8; }
 </style>

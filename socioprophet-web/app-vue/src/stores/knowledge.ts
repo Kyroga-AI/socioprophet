@@ -40,7 +40,7 @@ export const useKnowledge = defineStore("knowledge", {
     docs: seed() as Block[],
     currentId: "p-meeting" as string,
     persistMsg: "" as string,
-    choir: { busy: false, answer: "", grounded: true, unknown: [] as string[], denied: "" },
+    choir: { busy: false, answer: "", grounded: true, unknown: [] as string[], denied: "", error: "" },
     policy: { read: true, write: true, egress: false }, // owner default; scope-d supplies this per session
   }),
   getters: {
@@ -94,14 +94,14 @@ export const useKnowledge = defineStore("knowledge", {
       if (!this.current) return;
       const gate = gateAction(action, this.policy);
       if (!gate.allowed) { this.choir.denied = gate.reason; this.choir.answer = ""; return; }
-      this.choir.denied = ""; this.choir.busy = true; this.choir.answer = "";
+      this.choir = { busy: true, answer: "", grounded: true, unknown: [], denied: "", error: "" }; // reset every signal on entry
       try {
         const grounded = buildGroundedContext(this.graph, pageId(this.current.text ?? ""));
         const prompt = assemblePrompt(action, question, grounded);
         const answer = await choirApi.complete(prompt, grounded, action);
         const g = checkGrounding(answer, grounded);
         this.choir.answer = answer; this.choir.grounded = g.grounded; this.choir.unknown = g.unknownCitations;
-      } catch (e) { this.choir.answer = (e as Error).message; }
+      } catch (e) { this.choir.error = (e as Error).message; }
       finally { this.choir.busy = false; }
     },
   },
