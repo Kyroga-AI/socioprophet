@@ -6,13 +6,13 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ---
 
 ## ▶ This turn's delta (gaps bridged)
-- **Sealed HellGraph write-path** (`knowledge-persist.ts`, 4/4) — persists the knowledge projection with **structure
-  in the clear (for GDS) and content sealed under the user's root.** Proven: stored labels are ciphertext (operator
-  can't read), numeric props survive for rollups, and **centrality ranks "the most central ideas" using only the
-  sealed structure — GDS without ever decrypting a block.** Durable + GDS-real + compulsion-resistant in one path.
-- Knowledge layer is now **core + editor + sealed persistence**; the production GDS engine is `hg_analytics` (PageRank/
-  Louvain/betweenness) over the same structure.
-- **34 tests passing** (identity 18 + knowledge 7 + vault 5 + persist 4). The leapfrog is durable, real, and unreadable-by-us.
+- **GDS live in the editor** — `pagerank` ("your most central ideas") + `pathBetween` ("what connects A↔B"), proven in
+  noetica (9/9) and **surfaced in the Knowledge editor UI**: a Central-Ideas panel + a "what connects?" path tool.
+  These are real graph computations **Notion structurally cannot do**, now visible in the product.
+- **Bug fix:** unresolved `[[links]]` now materialize **stub nodes** (Roam-style) — better behavior + makes them rank.
+- **Sealed persistence wired** — `knowledgeApi` (stub/local-first) + "Save to graph (sealed)" button; server path seals
+  content under the root (`knowledge-persist.ts`) and stores structure for `hg_analytics`.
+- **36 tests passing** (identity 18 + knowledge 9 + vault 5 + persist 4). Leapfrog is durable, GDS-real, sealed, and demoable.
 
 ### Turn log
 | Turn | Shipped (proven) |
@@ -23,7 +23,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-4 | OIDC issuance `sovereign-oidc.ts` (6/6); full login 18/18; this scoreboard |
 | T-5 | Graph-native knowledge layer `knowledge-graph.ts` (7/7) — the Notion leapfrog; Wiki+Notes → foundation |
 | T-6 | Compulsion-resistance vault `sovereign-vault.ts` (5/5); knowledge editor UI (live backlinks/rollups); DAO model. 30 tests |
-| T-7 | **Sealed HellGraph write-path `knowledge-persist.ts` (4/4) — durable + GDS-on-ciphertext + content sealed under root. 34 tests** |
+| T-7 | Sealed HellGraph write-path `knowledge-persist.ts` (4/4) — durable + GDS-on-ciphertext + content sealed under root. 34 tests |
+| T-8 | **GDS live in editor: PageRank "central ideas" + pathBetween "what connects A↔B" (9/9); stub-node fix; sealed persist wired. 36 tests** |
 
 ---
 

@@ -5,6 +5,9 @@ import { pageId, type Block, type GNode } from "../services/knowledgeGraph";
 
 const k = useKnowledge();
 const newPage = ref("");
+const connA = ref("");
+const connB = ref("");
+const connPath = computed(() => (connA.value && connB.value ? k.connection(connA.value, connB.value) : null));
 
 const escapeHtml = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -92,14 +95,28 @@ function nodeTitle(n: GNode): string {
         <span v-for="n in k.currentRelated" :key="n.id" class="chip rel">{{ n.label }}</span>
       </section>
       <section>
-        <h3>Central entities <span class="auto">degree → PageRank server-side</span></h3>
-        <div v-for="e in k.central" :key="e.name" class="bar">
-          <span class="chip ent">@{{ e.name }}</span><span class="deg">{{ e.degree }}</span>
+        <h3>Central ideas <span class="auto">PageRank · Notion can't</span></h3>
+        <div v-for="e in k.centralIdeas" :key="e.id" class="bar">
+          <span class="chip" :class="e.id.startsWith('entity:') ? 'ent' : 'link'">{{ e.label }}</span>
+          <span class="deg">{{ (e.score * 100).toFixed(1) }}</span>
         </div>
+      </section>
+      <section>
+        <h3>What connects? <span class="auto">graph path</span></h3>
+        <div class="connsel">
+          <select v-model="connA"><option value="">A…</option><option v-for="t in k.pageTitles" :key="t" :value="t">{{ t }}</option></select>
+          <select v-model="connB"><option value="">B…</option><option v-for="t in k.pageTitles" :key="t" :value="t">{{ t }}</option></select>
+        </div>
+        <div v-if="connPath" class="path">{{ connPath.join(" → ") }}</div>
+        <div v-else-if="connA && connB" class="empty">No connection found.</div>
       </section>
       <section>
         <h3>All todos <span class="auto">cross-doc query</span></h3>
         <div v-for="t in k.allTodos" :key="t.id" class="todo">☐ {{ t.label }}</div>
+      </section>
+      <section>
+        <button class="save" @click="k.persist()">⛁ Save to graph (sealed)</button>
+        <div v-if="k.persistMsg" class="empty">{{ k.persistMsg }}</div>
       </section>
     </aside>
   </div>
@@ -135,4 +152,8 @@ function nodeTitle(n: GNode): string {
 .ref { display: block; width: 100%; text-align: left; border: 0; background: #fff; border: 1px solid #e8eaed; border-radius: 6px; padding: 6px 8px; margin-bottom: 4px; cursor: pointer; }
 .empty { color: #80868b; font-size: 13px; } .bar { display: flex; justify-content: space-between; align-items: center; margin: 3px 0; }
 .todo { padding: 2px 0; color: #3c4043; }
+.connsel { display: flex; gap: 6px; } .connsel select { flex: 1; padding: 4px; border: 1px solid #dadce0; border-radius: 6px; font: inherit; }
+.path { margin-top: 6px; font-size: 13px; color: #137333; background: #e6f4ea; padding: 4px 8px; border-radius: 6px; }
+.save { width: 100%; border: 0; background: #1a73e8; color: #fff; border-radius: 8px; padding: 8px; cursor: pointer; font-weight: 500; }
+.save:hover { background: #1765cc; }
 </style>

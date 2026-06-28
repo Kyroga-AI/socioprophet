@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 import {
-  projectDoc, mergeGraphs, backlinks, related, rollup, query, centralEntities,
+  projectDoc, mergeGraphs, backlinks, related, rollup, query, centralEntities, pagerank, pathBetween,
   pageId, type Block, type GNode, type KGraph,
 } from "../services/knowledgeGraph";
+import * as knowledgeApi from "../services/knowledgeApi";
 
 // Find a block anywhere in a page tree (for in-place edits).
 function findBlock(root: Block, id: string): Block | null {
@@ -36,6 +37,7 @@ export const useKnowledge = defineStore("knowledge", {
   state: () => ({
     docs: seed() as Block[],
     currentId: "p-meeting" as string,
+    persistMsg: "" as string,
   }),
   getters: {
     graph(state): KGraph { return mergeGraphs(state.docs.map(projectDoc)); },
@@ -45,6 +47,14 @@ export const useKnowledge = defineStore("knowledge", {
     currentRelated(): GNode[] { return this.current ? related(this.graph, pageId(this.current.text ?? ""), 1) : []; },
     allTodos(): GNode[] { return query(this.graph, (n) => n.kind === "todo"); },
     central(): Array<{ name: string; degree: number }> { return centralEntities(this.graph); },
+    /** "Your most central ideas" — PageRank over the workspace graph (pages + entities). Notion can't compute this. */
+    centralIdeas(): Array<{ id: string; label: string; score: number }> {
+      const byId = new Map(this.graph.nodes.map((n) => [n.id, n]));
+      return pagerank(this.graph)
+        .map((r) => ({ id: r.id, label: byId.get(r.id)?.label ?? r.id, score: r.score }))
+        .filter((r) => { const k = byId.get(r.id)?.kind; return k === "page" || k === "entity"; })
+        .slice(0, 6);
+    },
   },
   actions: {
     selectPage(id: string) { this.currentId = id; },
@@ -62,5 +72,18 @@ export const useKnowledge = defineStore("knowledge", {
     },
     /** Graph-native rollup over a database block's rows (the thing Notion limits to one relation hop). */
     rollupSum(databaseBlockId: string, prop: string): number { return rollup(this.graph, databaseBlockId, "CONTAINS", prop, "sum"); },
+    /** "What connects A and B?" — shortest path between two pages, as readable labels. */
+    connection(aTitle: string, bTitle: string): string[] | null {
+      const byId = new Map(this.graph.nodes.map((n) => [n.id, n]));
+      const path = pathBetween(this.graph, pageId(aTitle), pageId(bTitle));
+      return path && path.map((id) => byId.get(id)?.label ?? id);
+    },
+    /** Persist the sealed projection to HellGraph (stub/local-first until VITE_KNOWLEDGE_API is set). */
+    async persist() {
+      try {
+        const r = await knowledgeApi.persist(this.graph);
+        this.persistMsg = r.sealed ? `Saved ${r.nodes} nodes (content sealed under your key)` : `Local-first: ${r.nodes} nodes, ${r.edges} edges (backend not wired)`;
+      } catch (e) { this.persistMsg = (e as Error).message; }
+    },
   },
 });
