@@ -6,13 +6,13 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ---
 
 ## ▶ This turn's delta (gaps bridged)
-- **Compulsion-resistance vault** (`sovereign-vault.ts`, 5/5) — data E2E-sealed under root-derived keys; the operator
-  holds only ciphertext → **"can't" unlock/reveal, not "won't."** Trace-open backdoor removed (user-key-gated); **DAO
-  transition** (threshold IdP signing key, no single compellable party) added to the plan.
-- **Knowledge editor UI** (`Knowledge.vue` + store + client service) — the visible Notion-killer: live `[[wikilinks]]`,
-  `@entity` chips, **automatic cross-doc backlinks**, a **database view with graph-native rollups**, central-entities
-  (degree→PageRank), cross-doc todos. Local-first (runs in-browser). Routed at `/wiki` + `/notes`. vue-tsc clean.
-- **30 tests passing** (identity 18 + knowledge 7 + vault 5). Two moats + the leapfrog are now real, demoable code.
+- **Sealed HellGraph write-path** (`knowledge-persist.ts`, 4/4) — persists the knowledge projection with **structure
+  in the clear (for GDS) and content sealed under the user's root.** Proven: stored labels are ciphertext (operator
+  can't read), numeric props survive for rollups, and **centrality ranks "the most central ideas" using only the
+  sealed structure — GDS without ever decrypting a block.** Durable + GDS-real + compulsion-resistant in one path.
+- Knowledge layer is now **core + editor + sealed persistence**; the production GDS engine is `hg_analytics` (PageRank/
+  Louvain/betweenness) over the same structure.
+- **34 tests passing** (identity 18 + knowledge 7 + vault 5 + persist 4). The leapfrog is durable, real, and unreadable-by-us.
 
 ### Turn log
 | Turn | Shipped (proven) |
@@ -22,7 +22,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-3 | Auth handshake `sovereign-broker.ts` — root never leaves edge, passkey-style (6/6); ONLYOFFICE decision |
 | T-4 | OIDC issuance `sovereign-oidc.ts` (6/6); full login 18/18; this scoreboard |
 | T-5 | Graph-native knowledge layer `knowledge-graph.ts` (7/7) — the Notion leapfrog; Wiki+Notes → foundation |
-| T-6 | **Compulsion-resistance vault `sovereign-vault.ts` (5/5); knowledge editor UI (live backlinks/rollups); DAO model. 30 tests** |
+| T-6 | Compulsion-resistance vault `sovereign-vault.ts` (5/5); knowledge editor UI (live backlinks/rollups); DAO model. 30 tests |
+| T-7 | **Sealed HellGraph write-path `knowledge-persist.ts` (4/4) — durable + GDS-on-ciphertext + content sealed under root. 34 tests** |
 
 ---
 
