@@ -12,6 +12,7 @@ const routes = [
   { path: "/notes", component: () => import("./views/Knowledge.vue") },
   { path: "/cloud", component: () => import("./views/Cloud.vue") },
   { path: "/code", component: () => import("./views/Code.vue") },
+  { path: "/market", component: () => import("./views/Market.vue") },
 ];
 
 export const router = createRouter({ history: createWebHistory(), routes });

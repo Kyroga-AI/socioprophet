@@ -6,15 +6,15 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ---
 
 ## ▶ This turn's delta (gaps bridged)
-- **Broker container entrypoint** (`sovereign-broker-server.ts` + `-main.ts` + `Dockerfile.broker`, 2/2 live-HTTP) —
-  the IdP **RUNS end-to-end**: boots on `node:http`, serves `/.well-known/openid-configuration` + `jwks.json`, and a
-  real `enroll → challenge → verify → token` round-trip over HTTP (verified by an RP). Signing key from a mounted
-  secret (`signingKeyFromPem`); ephemeral in dev. Boot smoke-test confirmed (`/healthz`, discovery).
-- Identity moat: **proven-crypto → runnable service → bootable container.** Remaining: image build/push + cluster apply.
-- **Identity suite 25; full new-core suite 45** (identity 25 + knowledge 9 + vault 5 + persist 4) + cloud-broker 12.
+- **Linux-first developer program + marketplace core** (`marketplace.ts`, 7/7) — **Flatpak-native**: manifest +
+  conformance validator + **sandbox-permission governance** (`assessPermissions`: `--filesystem=host` → HIGH →
+  scope-d install gate). Federates **Flathub** + a **sovereign OSTree remote**; also handles AppImage/OCI/MCP-plugin.
+  Marketplace panel (`Market.vue`) + Market app + `DEVELOPER_PROGRAM.md` (clarifies **Flatpak ≠ LXC**: OSTree +
+  bubblewrap + portals, not system containers). Rides Gitea + broker + the MCP plugin-store.
+- **Marketplace suite 7/7; vue-tsc clean.** *We don't just show permissions like Flathub — we gate them by policy.*
 
-### (prev) T-10 delta
-- Gitea Code app (OIDC'd, Helm); cross-vendor cloud broker services layer (12/12) + Cloud panel; deployment cloud-agnostic.
+### (prev) T-11 delta
+- Broker container entrypoint (`sovereign-broker-server` + Dockerfile, 2/2 live-HTTP) — IdP boots & serves OIDC end-to-end.
 
 ### Turn log
 | Turn | Shipped (proven) |
@@ -29,7 +29,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-8 | GDS live in editor: PageRank "central ideas" + pathBetween "what connects A↔B" (9/9); stub-node fix; sealed persist wired. 36 tests |
 | T-9 | Broker HTTP service `sovereign-broker-service.ts` (5/5) — enroll→challenge→verify→token, public-only storage; Helm chart (lint clean). 41 tests |
 | T-10 | Gitea Code app (OIDC'd, Helm); cross-vendor cloud broker services layer (12/12) + Cloud panel; deployment cloud-agnostic (one chart, any cloud) |
-| T-11 | **Broker container entrypoint (`sovereign-broker-server` + Dockerfile, 2/2 live-HTTP) — IdP boots & serves OIDC end-to-end. Identity suite 25** |
+| T-11 | Broker container entrypoint (`sovereign-broker-server` + Dockerfile, 2/2 live-HTTP) — IdP boots & serves OIDC end-to-end. Identity suite 25 |
+| T-12 | **Linux-first marketplace core (`marketplace.ts`, 7/7) — Flatpak-native, sandbox-permission governance, Flathub federation + sovereign OSTree; Market panel + dev-program doc** |
 
 ---
 
@@ -67,6 +68,7 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 |---|---|---|
 | Self-host / data-never-leaves | ✅ | NC ✅ · Proton hosted-E2E · Google/MS/Notion ❌ |
 | **Cloud-vendor agnostic / cross-vendor broker** | ✅ one chart any cloud + service broker | ❌ — they ARE the vendor (lock-in by design) |
+| **Linux-first marketplace + dev program** | ✅ Flatpak-native, permission-governed (core) | app stores tied to their OS/cloud; none govern Flatpak perms by policy |
 | **Compulsion resistance (operator *can't* decrypt/unlock)** | ✅ vault proven | ❌ all — even Proton can be served/forced; none are no-custody + DAO |
 | Ontology-governed sharing (scope-d) | 🟡 estate | ❌ all |
 | E2E encryption (content) | 🟡 vault proven, wiring pending | Proton ✅ · others ❌ |

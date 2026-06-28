@@ -25,6 +25,7 @@ export const APPS: WorkspaceApp[] = [
   { id: "discuss",  name: "Discussions", icon: "news",       color: "#0b8043", route: "/discussions", backend: "Matrix federated rooms/threads (+ NNTP gateway)", status: "planned" },
   { id: "code",     name: "Code",      icon: "git-merge",    color: "#609926", route: "/code",     backend: "Gitea (sovereign git) — OIDC via broker", status: "planned" },
   { id: "cloud",    name: "Cloud",     icon: "cloud",        color: "#4285f4", route: "/cloud",    backend: "cross-vendor broker (cloud-broker.ts)", status: "foundation" },
+  { id: "market",   name: "Marketplace", icon: "apps",       color: "#609926", route: "/market",   backend: "Linux-first marketplace (Flatpak-native, marketplace.ts)", status: "foundation" },
   { id: "forms",    name: "Forms",     icon: "forms",        color: "#7627bb", route: "/forms",    backend: "platform",                            status: "planned" },
   // Categories the 2026-H1 audit surfaced as real gaps (NOT thin embeds — see WORKSPACE_ONE_AUDIT_2026H1.md):
   { id: "wiki",     name: "Wiki",      icon: "book",         color: "#0b8043", route: "/wiki",     backend: "graph-native knowledge layer (knowledge-graph.ts → HellGraph)", status: "foundation" },
