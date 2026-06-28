@@ -24,5 +24,11 @@ export const APPS: WorkspaceApp[] = [
   { id: "groups",   name: "Groups",    icon: "users-group",  color: "#1a73e8", route: "/groups",   backend: "mailing-list (mlmmj) + Matrix Space", status: "planned" },
   { id: "discuss",  name: "Discussions", icon: "news",       color: "#0b8043", route: "/discussions", backend: "Matrix federated rooms/threads (+ NNTP gateway)", status: "planned" },
   { id: "forms",    name: "Forms",     icon: "forms",        color: "#7627bb", route: "/forms",    backend: "platform",                            status: "planned" },
+  // Categories the 2026-H1 audit surfaced as real gaps (NOT thin embeds — see WORKSPACE_ONE_AUDIT_2026H1.md):
+  { id: "wiki",     name: "Wiki",      icon: "book",         color: "#0b8043", route: "/wiki",     backend: "graph-native (HellGraph + sherlock + choir)", status: "planned" },
+  { id: "notes",    name: "Notes",     icon: "notes",        color: "#f4b400", route: "/notes",    backend: "graph-native quick-capture",          status: "planned" },
+  { id: "projects", name: "Projects",  icon: "layout-kanban", color: "#1a73e8", route: "/projects", backend: "work-mgmt (graph-native or Plane/Focalboard)", status: "planned" },
+  { id: "canvas",   name: "Canvas",    icon: "layout-board", color: "#00897b", route: "/canvas",   backend: "whiteboard (Excalidraw/tldraw)",      status: "planned" },
+  { id: "flows",    name: "Flows",     icon: "circuit",      color: "#7627bb", route: "/flows",    backend: "automation + choir agents",           status: "planned" },
   { id: "aistudio", name: "AI Studio", icon: "sparkles",     color: "#7b3ff2", route: "/ai-studio", backend: "sovereign choir",                    status: "planned" },
 ];

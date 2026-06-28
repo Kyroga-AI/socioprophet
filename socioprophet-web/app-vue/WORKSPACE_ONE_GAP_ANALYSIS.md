@@ -1,5 +1,12 @@
 # Workspace/one — does it bridge the gaps, and what are we missing?
 
+> **2026-H1 audit correction (see [WORKSPACE_ONE_AUDIT_2026H1.md](WORKSPACE_ONE_AUDIT_2026H1.md)):** the "apps are
+> easy, embed OSS" thesis below holds for mail/calendar/office-files/chat but **breaks for connected-docs/wiki,
+> work-management, and chat-depth** — those are full products, not embeds. And **sovereignty is NOT a differentiator
+> vs our closest peers (Proton/Nextcloud) — it's table stakes.** The two moats that survive: anonymous-first
+> unlinkable identity + ontology-governed sharing/platform. Reposition as the identity + graph-native-knowledge +
+> governance layer (optionally *fronting* a commodity suite), not a from-scratch Google clone.
+
 Short answer: **the apps are the easy part** (embed OSS). The gaps are the **cross-cutting platform plumbing** that
 makes a dozen apps feel like *one* product. Get that right and Workspace/one reaches Google parity on the suite
 *and* overshoots it on sovereignty, federation, AI-native, and governed sharing — things Google can't do.
