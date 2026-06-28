@@ -18,7 +18,11 @@ Drive (object storage) · Docs/Sheets/Slides (**Collabora** via the platform's W
 3. **Storage service** — Drive + Photos need a real object store + a metadata DB (sharing, versions, thumbnails,
    EXIF, albums). One service powers both.
 4. **Unified search** — across mail/files/people/messages. **We have `sherlock-search` in the estate** — wire it.
-5. **Notifications + presence (real-time)** — WebSocket/SSE fabric for Chat/Meet/Calendar-invites/new-mail. Missing.
+5. **Real-time = Matrix (chosen substrate — NOT a gap).** Synapse/Dendrite is the realtime fabric: presence, push
+   notifications (Sygnal → web/mobile), Chat, Meet signaling (MatrixRTC/Element Call), Groups (Spaces), and —
+   because Matrix is natively **federated** — the Usenet-style federated Discussions. One substrate collapses
+   Chat + presence + notifications + Meet + much of Groups/Discussions. Remaining work is *deploy + SSO-front it*,
+   not invent a notification system. (Matrix also needs the IdP from #1 — reinforces identity-first.)
 6. **Sharing & permissions model** — who-can-see-what across Drive/Docs/Calendar/Groups. Google's is basic ACLs;
    **ours can be ontology-governed via scope-d** — a differentiator, not just parity.
 7. **Admin console** — provision users/groups/policies. **The platform already has the orggov control plane** — surface it.
@@ -28,10 +32,11 @@ Drive (object storage) · Docs/Sheets/Slides (**Collabora** via the platform's W
 ## Groups + Usenet — the part that beats Google
 - **Groups** = mailing lists + shared/collaborative inboxes (mlmmj/Sympa) with the group as a graph entity (members,
    policy, history). Google Groups parity.
-- **Discussions (Usenet-style)** = threaded, store-and-forward, **federated** discussion. Architecturally this is
-   our **S0 CRDT sync engine** (`sync-engine.ts` / `sync-transport.ts`) + a thread data model, optionally with an
-   **NNTP gateway** for interop. Result: offline-capable, sovereign, federated discussion across edges + the
-   managed service — **Google has no equivalent.** This is where the sync work I built pays off as a product feature.
+- **Discussions (Usenet-style)** = threaded, store-and-forward, **federated** discussion. **Matrix already gives us
+   this**: federated rooms + native threads + store-and-forward replication *is* the usenet model, modernized — so
+   Discussions = Matrix federated/threaded rooms, with an optional **NNTP gateway** for legacy interop. (The S0 CRDT
+   sync engine stays focused on the GRAPH/derived state, not chat — two different fabrics: Matrix for human
+   discussion, CRDT for the knowledge graph.) Either way, **Google has no federated-discussion equivalent.**
 
 ## Does it bridge the gaps? (vs the competitive analysis)
 - **vs Google Workspace:** at parity on the suite once 1–8 land; **ahead** on sovereignty (self-hosted, data never
