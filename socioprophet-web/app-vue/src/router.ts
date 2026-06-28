@@ -8,6 +8,8 @@ const routes = [
   { path: "/builds", component: () => import("./views/Builds.vue") },
   { path: "/fleet", component: () => import("./views/Fleet.vue") },
   { path: "/mail", component: () => import("./views/Mail.vue") },
+  { path: "/wiki", component: () => import("./views/Knowledge.vue") },
+  { path: "/notes", component: () => import("./views/Knowledge.vue") },
 ];
 
 export const router = createRouter({ history: createWebHistory(), routes });
