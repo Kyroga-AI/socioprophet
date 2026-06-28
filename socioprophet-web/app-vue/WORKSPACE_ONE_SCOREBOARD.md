@@ -38,7 +38,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-13 | Choir AI woven in — graph-grounded + governed (`choir-grounding.ts`, 4/4): cites real nodes, scope-d gating, structural anti-hallucination; in-editor AI panel |
 | T-14 | Mail bridge core (`mail-bridge.ts`, 5/5) — IMAP↔REST, Hey model (Imbox/Feed/Paper Trail) + Screener + actions mutating IMAP; gate on leaving Google |
 | T-15 | Mail bridge runs (HTTP); 3-agent reassessment + hardening (impersonation/DoS/root-loss/OIDC/CORS fixes); 54/54 |
-| T-16 | **NeoCloud added to the broker (CoreWeave/Lambda/Nebius/Crusoe; H100 ~$2/hr, 14/14) + HYPERSCALER_STRATEGY.md (broker-not-build + Google-sheet coverage map)** |
+| T-16 | NeoCloud added to the broker (CoreWeave/Lambda/Nebius/Crusoe; H100 ~$2/hr, 14/14) + HYPERSCALER_STRATEGY.md (broker-not-build + Google-sheet coverage map) |
+| T-17 | **AI stack head-to-head — Azure/Google/AWS/IBM watsonx mapped vs us (AI_STACK_COMPARISON.md, 12 research agents); verdict + converged priorities** |
 
 ## ▶ Reassessment (T-15) — fixed vs tracked
 **Fixed this turn (security/correctness/UX):** broker impersonation (self-signed enroll), OIDC alg/iat/nonce, root-loss on transient error, HTTP body caps + timeouts, mail CORS+OPTIONS, broker fail-closed key, mail thread collisions, mergeGraphs stub/dedupe, choir error signal, Code iframe fallback, Market empty state.
