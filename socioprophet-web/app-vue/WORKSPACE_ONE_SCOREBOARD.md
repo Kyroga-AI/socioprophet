@@ -6,15 +6,18 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ---
 
 ## ▶ This turn's delta (gaps bridged)
-- **Broker HTTP service** (`sovereign-broker-service.ts`, 5/5) — the cloud verifier + OIDC issuer: full
-  `enroll → challenge → verify → token` + discovery/JWKS, holding **only public material** (credentials = pubkey +
-  alias; no roots, no data keys) → compulsion-safe even if fully compromised. One-time challenges (no replay).
-- **Helm chart** — broker Deployment/Service/Ingress in `prophet-workspace` (helm lint clean, renders). Identity moat
-  moves from *proven-crypto* → **runnable service + deployable chart**.
-- **41 tests passing** (identity 23 + knowledge 9 + vault 5 + persist 4).
+- **Gitea = the integrated Code/Git app** — sovereign git + dev workspace in the suite (Helm: Deployment/Service/
+  Ingress/PVC, Postgres-backed, **single sovereign login via OIDC to the broker**). Code app + `/code` view (embeds
+  git.<domain>). helm lint clean.
+- **Cross-vendor cloud broker — services layer** (`cloud-broker.ts` extended, 12/12): commodity catalog (object-store/
+  k8s/postgres/dns/LB/secrets) × GCP/AWS/Azure/IBM/OCI/Hetzner + `selectVendor` (cheapest, residency/exclude-aware) +
+  `mapResource`. **Cloud panel** (`Cloud.vue`) shows every vendor per service with the broker's pick highlighted.
+- **Deployment is cloud-vendor agnostic** — `cloudProvider` value + `pw.lbAnnotations` helper: the SAME chart renders
+  GCP/AWS/Azure/IBM/Hetzner LB annotations by flipping one value (proven via `helm template --set cloudProvider=eks`).
+- Code + Cloud apps registered; ONLYOFFICE office decision stands. **Cloud-broker suite 12/12; vue-tsc clean.**
 
-### (prev) T-8 delta
-- GDS live in the editor (`pagerank` central-ideas + `pathBetween` what-connects, 9/9); stub-node fix; sealed persist wired.
+### (prev) T-9 delta
+- Broker HTTP service (`sovereign-broker-service.ts`, 5/5) + Helm; identity moat → runnable service + chart. 41 tests.
 
 ### Turn log
 | Turn | Shipped (proven) |
@@ -27,7 +30,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-6 | Compulsion-resistance vault `sovereign-vault.ts` (5/5); knowledge editor UI (live backlinks/rollups); DAO model. 30 tests |
 | T-7 | Sealed HellGraph write-path `knowledge-persist.ts` (4/4) — durable + GDS-on-ciphertext + content sealed under root. 34 tests |
 | T-8 | GDS live in editor: PageRank "central ideas" + pathBetween "what connects A↔B" (9/9); stub-node fix; sealed persist wired. 36 tests |
-| T-9 | **Broker HTTP service `sovereign-broker-service.ts` (5/5) — enroll→challenge→verify→token, public-only storage; Helm chart (lint clean). 41 tests** |
+| T-9 | Broker HTTP service `sovereign-broker-service.ts` (5/5) — enroll→challenge→verify→token, public-only storage; Helm chart (lint clean). 41 tests |
+| T-10 | **Gitea Code app (OIDC'd, Helm); cross-vendor cloud broker services layer (12/12) + Cloud panel; deployment cloud-agnostic (one chart, any cloud)** |
 
 ---
 
@@ -57,11 +61,14 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | **Graph-native knowledge** (Notion leapfrog) | 🟡 core + editor | ❌ | ❌ | ❌ | ❌ | ✅ (fakes graph) |
 | Work-mgmt / Wiki / Canvas / Flows | ⬜ | 🟡 | 🟡 | ❌ | 🟡 | ✅ |
 | AI woven into apps (sovereign models) | ⬜ choir | ✅ Gemini | ✅ Copilot | ✅ Lumo | ✅ Assistant | ✅ |
+| **Code / Git + dev workspace** | 🟡 Gitea OIDC'd (Helm) | 🟡 (Cloud Source) | ✅ GitHub | ❌ | ❌ | ❌ |
+| **Cloud console (cross-vendor)** | 🟡 broker panel | ✅ (own cloud) | ✅ (own) | ❌ | ❌ | ❌ |
 
 ### Platform / trust differentiators
 | Capability | Us | Others |
 |---|---|---|
 | Self-host / data-never-leaves | ✅ | NC ✅ · Proton hosted-E2E · Google/MS/Notion ❌ |
+| **Cloud-vendor agnostic / cross-vendor broker** | ✅ one chart any cloud + service broker | ❌ — they ARE the vendor (lock-in by design) |
 | **Compulsion resistance (operator *can't* decrypt/unlock)** | ✅ vault proven | ❌ all — even Proton can be served/forced; none are no-custody + DAO |
 | Ontology-governed sharing (scope-d) | 🟡 estate | ❌ all |
 | E2E encryption (content) | 🟡 vault proven, wiring pending | Proton ✅ · others ❌ |

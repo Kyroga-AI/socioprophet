@@ -10,6 +10,8 @@ const routes = [
   { path: "/mail", component: () => import("./views/Mail.vue") },
   { path: "/wiki", component: () => import("./views/Knowledge.vue") },
   { path: "/notes", component: () => import("./views/Knowledge.vue") },
+  { path: "/cloud", component: () => import("./views/Cloud.vue") },
+  { path: "/code", component: () => import("./views/Code.vue") },
 ];
 
 export const router = createRouter({ history: createWebHistory(), routes });
