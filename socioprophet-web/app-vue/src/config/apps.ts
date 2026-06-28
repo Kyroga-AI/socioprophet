@@ -20,6 +20,9 @@ export const APPS: WorkspaceApp[] = [
   { id: "sheets",   name: "Sheets",    icon: "table",        color: "#0f9d58", route: "/sheets",   backend: "Collabora (WOPI)",                    status: "planned" },
   { id: "slides",   name: "Slides",    icon: "presentation", color: "#f4b400", route: "/slides",   backend: "Collabora (WOPI)",                    status: "planned" },
   { id: "contacts", name: "Contacts",  icon: "users",        color: "#1a73e8", route: "/contacts", backend: "CardDAV",                             status: "planned" },
+  { id: "photos",   name: "Photos",    icon: "photo",        color: "#ea4335", route: "/photos",   backend: "object storage + thumbs/EXIF",        status: "planned" },
+  { id: "groups",   name: "Groups",    icon: "users-group",  color: "#1a73e8", route: "/groups",   backend: "mailing-list mgr (mlmmj) + graph",    status: "planned" },
+  { id: "discuss",  name: "Discussions", icon: "news",       color: "#0b8043", route: "/discussions", backend: "Usenet/NNTP + CRDT federation",    status: "planned" },
   { id: "forms",    name: "Forms",     icon: "forms",        color: "#7627bb", route: "/forms",    backend: "platform",                            status: "planned" },
   { id: "aistudio", name: "AI Studio", icon: "sparkles",     color: "#7b3ff2", route: "/ai-studio", backend: "sovereign choir",                    status: "planned" },
 ];
