@@ -6,9 +6,11 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 ---
 
 ## ▶ This turn's delta (gaps bridged)
-- **OIDC issuance layer** (`sovereign-oidc.ts`) — verify → signed EdDSA ID token (pairwise `sub` + per-scope alias) + JWKS. 6/6 proven. → standard RPs (Matrix/ONLYOFFICE/mail/web) can consume our sovereign login with zero custom code.
-- **Full sovereign login proven end-to-end** (edge sign → IdP verify → standard token → RP verify): identity suite now **18/18**.
-- Decisions locked: **ONLYOFFICE** (not Collabora) for office; **Nextcloud rejected** (bloat) — build our own lean layer on primitives.
+- **Graph-native knowledge layer core** (`knowledge-graph.ts`, 7/7) — the **Notion leapfrog**. Docs project onto a
+  REAL graph; the 5 things Notion fakes are now first-class + proven: automatic cross-doc **backlinks**, **entity
+  hubs** (PageRank-able), **graph-native rollups**, **related-discovery**, **cross-doc block queries**.
+- Wiki + Notes promoted to **foundation** (ride the layer). Design: `KNOWLEDGE_LAYER.md`.
+- **This is the one app where we're ahead by construction, not catching up.** Identity moat still leads; suite tests now **25 passing**.
 
 ### Turn log
 | Turn | Shipped (proven) |
@@ -16,7 +18,8 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | T-1 | Sovereign identity architecture; broker core `sovereign-id.ts` — per-scope unlinkable facets + aliases (6/6) |
 | T-2 | `provisionScopeAlias` (Senzing defeat deliverable via mail_aliases); 4-agent competitive audit + reframe |
 | T-3 | Auth handshake `sovereign-broker.ts` — root never leaves edge, passkey-style (6/6); ONLYOFFICE decision |
-| T-4 | **OIDC issuance `sovereign-oidc.ts` (6/6); full login 18/18; this scoreboard** |
+| T-4 | OIDC issuance `sovereign-oidc.ts` (6/6); full login 18/18; this scoreboard |
+| T-5 | **Graph-native knowledge layer `knowledge-graph.ts` (7/7) — the Notion leapfrog; Wiki+Notes → foundation** |
 
 ---
 
@@ -43,7 +46,7 @@ This is the running backlog + capabilities comparison. Each turn: log the delta,
 | Drive / Photos | ⬜ | ✅ | ✅ | ✅ | ✅ | — |
 | Chat / Meet (Matrix) | ⬜ | ✅ | ✅ | 🟡 | ✅ | — |
 | Groups + **federated Discussions** | ⬜ | 🟡 | ❌ | ❌ | 🟡 Talk-fed | ❌ |
-| **Graph-native knowledge** (Notion leapfrog) | ⬜ offensive | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Graph-native knowledge** (Notion leapfrog) | 🟡 core proven | ❌ | ❌ | ❌ | ❌ | ✅ (fakes graph) |
 | Work-mgmt / Wiki / Canvas / Flows | ⬜ | 🟡 | 🟡 | ❌ | 🟡 | ✅ |
 | AI woven into apps (sovereign models) | ⬜ choir | ✅ Gemini | ✅ Copilot | ✅ Lumo | ✅ Assistant | ✅ |
 
