@@ -47,18 +47,27 @@ NC Talk; AI = both ship local AI now; cost = real but minor). **Two survive:**
 2. **Ontology-governed sharing + the SocioProphet platform** (banking/case/governance/graph) as the substrate. Real,
    uncopied — but it's the *sovereign-enterprise* story, not the *replace-my-Gmail* story.
 
-## The strategic call (the reframe)
-**Stop competing as a from-scratch suite. We will not out-suite Nextcloud + Proton + Zoho — they shipped; we specced.**
-Reposition as the **sovereign identity + AI-governance + graph-native knowledge layer** — optionally *fronting* a
-commodity suite (Nextcloud Hub / Mailcow+Collabora already = most of our planned backend) rather than rebuilding it.
-Spend the scarce build budget on the two moats, not on re-deriving Dovecot.
+## The strategic call (DECIDED)
+**Build our own lean, world-class app layer on best-of-breed PRIMITIVES — reject the bloated suites.**
+- **Primitives we keep (mature, lean, proven):** Postfix/Dovecot (mail), Radicale/CardDAV (calendar/contacts),
+  **ONLYOFFICE** (office — better OOXML fidelity + cleaner UX than Collabora; LibreOffice-headless for conversions),
+  Matrix/Synapse (chat/meet/groups/discussions/realtime), object storage (drive/photos).
+- **Rejected:** **Nextcloud** — its app layer is bloated and mediocre; adopting it would cap us at its UX. We are not
+  fronting it. **Collabora** demoted to fallback (ONLYOFFICE is the default office engine).
+- **What makes ours world-class (better than all of the above), not just another suite:** (1) the two moats —
+  anonymous-first **unlinkable identity** (nobody has it) + **ontology-governed sharing**/platform; (2) a
+  **graph-native knowledge layer** (the Notion leapfrog — docs/db/entities as HellGraph nodes, queryable, governed);
+  (3) the **choir woven into every app** as governed agents, on sovereign models; (4) a single fast, beautiful,
+  Google-grade shell over lean primitives — none of Nextcloud's bloat.
+Spend the scarce build budget on the moats + the knowledge layer + the shell, NOT on re-deriving Dovecot or adopting
+someone else's suite.
 
 ## Improvements (ranked, actionable)
 1. **Build the sovereign broker → IdP and make the "Senzing sees N people, not one" demo the wedge.** It's the only
    build where we are *ahead*, and neither Proton nor Nextcloud can show it. (Core done this session; next = IdP + relay.)
-2. **Decide build-vs-front the suite.** Seriously evaluate fronting Nextcloud Hub (it already has the apps + SAML/OIDC
-   to point at our broker) vs hand-rolling. If we keep building, the **mail-API bridge is the critical path** (and
-   Mailcow/Mailu prove it's off-the-shelf — build or adopt now).
+2. **DECIDED — build our own app layer on primitives, no Nextcloud (bloated).** Office engine = **ONLYOFFICE**
+   (+ LibreOffice-headless for conversions). The **mail-API bridge is now the critical path** (Mailcow/Mailu prove
+   the Postfix/Dovecot half is off-the-shelf — wire it next after identity).
 3. **Make the knowledge layer graph-native — the Notion leapfrog.** A block editor backed by HellGraph (+ sherlock +
    choir), not a Collabora clone. This is the one place we could be *better*, not behind. Add Wiki + Notes as graph-native.
 4. **Add the missing app categories** to the registry: **Projects** (work-mgmt), **Wiki** (graph-native knowledge),

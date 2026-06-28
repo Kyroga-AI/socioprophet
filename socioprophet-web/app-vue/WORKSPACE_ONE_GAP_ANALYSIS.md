@@ -4,8 +4,9 @@
 > easy, embed OSS" thesis below holds for mail/calendar/office-files/chat but **breaks for connected-docs/wiki,
 > work-management, and chat-depth** — those are full products, not embeds. And **sovereignty is NOT a differentiator
 > vs our closest peers (Proton/Nextcloud) — it's table stakes.** The two moats that survive: anonymous-first
-> unlinkable identity + ontology-governed sharing/platform. Reposition as the identity + graph-native-knowledge +
-> governance layer (optionally *fronting* a commodity suite), not a from-scratch Google clone.
+> unlinkable identity + ontology-governed sharing/platform. **DECIDED:** build our own lean, world-class app layer on
+> best-of-breed primitives (Dovecot/Postfix, **ONLYOFFICE**, Radicale, Matrix, object-store) — **reject Nextcloud
+> (bloated)**; differentiate on the two moats + a graph-native knowledge layer + choir-in-every-app.
 
 Short answer: **the apps are the easy part** (embed OSS). The gaps are the **cross-cutting platform plumbing** that
 makes a dozen apps feel like *one* product. Get that right and Workspace/one reaches Google parity on the suite
