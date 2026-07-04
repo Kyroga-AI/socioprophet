@@ -45,8 +45,8 @@
       <!-- Watchlist -->
       <div class="mk-watch">
         <div class="mk-watch-head">
-          <span>Watchlist</span>
-          <div class="mk-filter">
+          <span>{{ scope && !scope.isPrimary ? scope.label : 'Watchlist' }}</span>
+          <div v-if="classes.length > 2" class="mk-filter">
             <button v-for="c in classes" :key="c" class="mk-fbtn" :class="{ on: klass === c }" @click="setKlass(c)">{{ c }}</button>
           </div>
         </div>
@@ -106,6 +106,16 @@
           </div>
         </div>
 
+        <div class="mk-block" v-if="chainNodes.length">
+          <div class="mk-block-h">Supply chain</div>
+          <div class="mk-sc">
+            <button v-for="n in chainNodes" :key="n.id" class="mk-sc-link" @click="openChain(n.id)">⛓ {{ chainName(n.chain) }} chain · {{ n.name }} →</button>
+          </div>
+        </div>
+
+        <!-- Cross-cutting human spine (capital / labor / supply) -->
+        <HumanNetworks :entity-id="selected.symbol" />
+
         <div class="mk-block">
           <div class="mk-block-h">Provenance</div>
           <div class="mk-kv wide"><span>Source</span><code>fixture · deterministic series</code></div>
@@ -117,25 +127,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
-import { indices, watchlist, asOf, type Instrument, type AssetClass } from '../data/marketsFixture';
+import { indices, watchlist, instrumentsForPath, asOf, type Instrument } from '../data/marketsFixture';
+import { nodesForMarketSymbol, chains } from '../data/supplyChainFixture';
+import HumanNetworks from '../components/HumanNetworks.vue';
 import { arrowRove } from '../utils/listKeys';
 
-const classes = ['All', 'equity', 'crypto', 'fx', 'commodity'] as const;
-const klass = ref<(typeof classes)[number]>('All');
-const selected = ref<Instrument>(indices[0]!);
+const route = useRoute();
+const router = useRouter();
+// Active DOMAIN-axis sub-domain → the real slice of instruments it surfaces
+// (Equities & Preferreds → equities/preferreds, Crypto/Digital → crypto, …).
+const scope = computed(() => navScopeForPath(route.path));
+const subInstruments = computed<Instrument[]>(() => instrumentsForPath(route.path));
+const classes = computed<string[]>(() => ['All', ...Array.from(new Set(subInstruments.value.map((i) => i.klass)))]);
+const klass = ref<string>('All');
+const selected = ref<Instrument>(subInstruments.value[0] ?? indices[0]!);
 const listEl = ref<HTMLElement | null>(null);
 const cmd = ref('');
 const tape = [...indices, ...watchlist];
-const route = useRoute();
-// Active DOMAIN-axis sub-domain (e.g. Equities & Preferreds) shown as the board's
-// lens; the monitor is the shared Capital & Markets surface at this stage.
-const scope = computed(() => navScopeForPath(route.path));
 onMounted(() => { const sym = typeof route.query.sym === 'string' ? route.query.sym.toUpperCase() : ''; if (sym) { const hit = tape.find((i) => i.symbol === sym); if (hit) selected.value = hit; } });
 
-const rows = computed<Instrument[]>(() => (klass.value === 'All' ? watchlist : watchlist.filter((i) => i.klass === klass.value)));
+const rows = computed<Instrument[]>(() => (klass.value === 'All' ? subInstruments.value : subInstruments.value.filter((i) => i.klass === klass.value)));
+// Keep a valid selection + reset the class filter as the sub-domain changes.
+watch(rows, (r) => { if (!r.some((i) => i.symbol === selected.value.symbol) && r[0]) selected.value = r[0]; });
+watch(() => route.path, () => { klass.value = 'All'; });
 
 function pick(it: Instrument) { selected.value = it; }
 // Bloomberg-style command line: type a ticker, <GO> jumps to it.
@@ -145,7 +162,13 @@ function runCmd() {
   const hit = tape.find((i) => i.symbol === q) ?? tape.find((i) => i.symbol.startsWith(q)) ?? tape.find((i) => i.name.toUpperCase().includes(q));
   if (hit) { pick(hit); cmd.value = ''; }
 }
-function setKlass(c: (typeof classes)[number]) { klass.value = c; if (!rows.value.some((r) => r.symbol === selected.value.symbol) && rows.value[0]) pick(rows.value[0]); }
+function setKlass(c: string) { klass.value = c; if (!rows.value.some((r) => r.symbol === selected.value.symbol) && rows.value[0]) pick(rows.value[0]); }
+
+// Supply-chain integration: instruments that sit on a modeled supply chain link
+// into the Supply Chain surface (which links on to the graph / map / twin).
+const chainNodes = computed(() => nodesForMarketSymbol(selected.value.symbol));
+function chainName(cid: string): string { return chains.find((c) => c.id === cid)?.name ?? cid; }
+function openChain(id: string) { router.push({ path: '/analytics/supply-chain', query: { node: id } }); }
 
 // SVG sparkline / area point strings.
 function scale(series: number[], w: number, h: number): Array<[number, number]> {
@@ -227,4 +250,5 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .mk-block-h { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.4); margin-bottom: 0.5rem; }
 .mk-sigs { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .mk-sig { font-size: 0.72rem; border-radius: 6px; padding: 0.15rem 0.5rem; border: 1px solid var(--line-2); color: rgba(255, 255, 255, 0.75); } .mk-sig.up { color: var(--up); border-color: rgba(63, 185, 80, 0.4); } .mk-sig.down { color: var(--down); border-color: rgba(248, 81, 73, 0.4); }
+.mk-sc { display: flex; flex-direction: column; gap: 0.4rem; } .mk-sc-link { text-align: left; border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2); border-radius: 8px; padding: 0.4rem 0.6rem; font-size: 0.78rem; cursor: pointer; } .mk-sc-link:hover { border-color: var(--accent); color: var(--accent); }
 </style>

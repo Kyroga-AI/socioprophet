@@ -42,6 +42,11 @@ import ExperimentsBoard from './pages/ExperimentsBoard.vue';
 import BehavioralAnalytics from './pages/BehavioralAnalytics.vue';
 import AppBuildBoard from './pages/AppBuildBoard.vue';
 import AnalyticsStudio from './pages/AnalyticsStudio.vue';
+import SupplyChainMap from './pages/SupplyChainMap.vue';
+import LandResources from './pages/LandResources.vue';
+import AgenticOS from './pages/AgenticOS.vue';
+import Marketplace from './pages/Marketplace.vue';
+import LaborMarket from './pages/LaborMarket.vue';
 import WorkbenchPage from './pages/WorkbenchPage.vue';
 import ScopeDFabric from './pages/workbench/ScopeDFabric.vue';
 import './styles.css';
@@ -51,6 +56,9 @@ const explicitRoutes = [
   { path: '/', redirect: '/capability/dashboard' },
   { path: '/login', component: Login, meta: { public: true } },
   { path: '/capability/dashboard', component: OperatorDashboard },
+  { path: '/agentic-os', component: AgenticOS },
+  { path: '/marketplace', component: Marketplace },
+  { path: '/people/labor-market', component: LaborMarket },
   // Capability-rail cells that are realized through an existing surface — the
   // capability keeps its own /capability/* URL + rail highlight, and the host
   // screen shows the capability as its header lens (via navScopeForPath).
@@ -62,6 +70,10 @@ const explicitRoutes = [
   { path: '/capability/mobile-app-development', component: AppBuildBoard },
   // Maps & Analytics — the analytics trio (Maps itself is MapPage) shares one
   // Analytics Studio that charts the platform's existing fixtures.
+  { path: '/analytics/supply-chain', component: SupplyChainMap },
+  // Layer 0 — Land & Natural Resources (the base of the economic model). Also
+  // gives the Weather domain's "Natural Resources" sub-domain a real surface.
+  { path: '/weather/natural-resources', component: LandResources },
   { path: '/analytics/trending-infographics', component: AnalyticsStudio },
   { path: '/analytics/charts-graphs', component: AnalyticsStudio },
   { path: '/analytics', component: AnalyticsStudio },

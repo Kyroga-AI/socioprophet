@@ -46,6 +46,7 @@ export const DOMAIN_MENU: NavGroup[] = [
     to: '/people/search',
     items: [
       { label: 'People Search', to: '/people/search' },
+      { label: 'Labor Market', to: '/people/labor-market' },
       { label: 'Government & Politics', to: '/people/government-politics' },
       { label: 'Population & Demographics', to: '/people/demographics' },
       { label: 'Polls & Opinion', to: '/people/polls-opinion' },
@@ -97,6 +98,7 @@ export const DOMAIN_MENU: NavGroup[] = [
     label: 'Maps & Analytics',
     to: '/map',
     items: [
+      { label: 'Supply Chain', to: '/analytics/supply-chain' },
       { label: 'Trending Infographics', to: '/analytics/trending-infographics' },
       { label: 'Charts & Graphs', to: '/analytics/charts-graphs' },
       { label: 'Maps & Interactives', to: '/map' },
@@ -165,6 +167,20 @@ export const OPERATOR_SHORTCUTS: NavLeaf[] = [
 // agent-machine /api/* endpoints (sovereign, no auth). These are the ported
 // command-center surfaces: workstation ops, models, knowledge, forge.
 export const AGENT_COCKPIT: NavGroup[] = [
+  {
+    label: 'Operating System',
+    to: '/agentic-os',
+    items: [
+      { label: 'Agentic OS', to: '/agentic-os' },
+    ],
+  },
+  {
+    label: 'Marketplace',
+    to: '/marketplace',
+    items: [
+      { label: 'Triparty Netting', to: '/marketplace' },
+    ],
+  },
   {
     label: 'Noetica',
     to: '/noetica',
