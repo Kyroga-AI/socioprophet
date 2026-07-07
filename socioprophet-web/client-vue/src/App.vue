@@ -12,9 +12,25 @@
           >
             {{ menu.label }}<span class="sp-caret" aria-hidden="true">▾</span>
           </RouterLink>
-          <div class="sp-menu-panel" role="menu">
+          <div class="sp-menu-panel" :class="{ 'sp-menu-panel--grouped': menu.groups }" role="menu">
+            <template v-if="menu.groups">
+              <div v-for="grp in menu.groups" :key="grp.label" class="sp-menu-col">
+                <RouterLink :to="grp.to" class="sp-menu-colhead" @click="openMenu = null">{{ grp.label }}</RouterLink>
+                <RouterLink
+                  v-for="leaf in grp.items"
+                  :key="leaf.to"
+                  :to="leaf.to"
+                  class="sp-menu-item"
+                  role="menuitem"
+                  @click="openMenu = null"
+                >
+                  {{ leaf.label }}
+                </RouterLink>
+              </div>
+            </template>
             <RouterLink
               v-for="leaf in menu.items"
+              v-else
               :key="leaf.to"
               :to="leaf.to"
               class="sp-menu-item"
@@ -206,7 +222,7 @@ import GraphDock from './components/GraphDock.vue';
 import { useOperatorTerminal } from './composables/useOperatorTerminal';
 import { useNoeticaChat } from './composables/useNoeticaChat';
 import { domainSurfaces, surfaceForRoute, surfacesForDomain } from './config/domainRoutes';
-import { AGENT_COCKPIT, CAPABILITY_RAIL, DOMAIN_MENU, OPERATOR_SHORTCUTS } from './config/cockpitNav';
+import { AGENT_COCKPIT, CAPABILITY_RAIL, DOMAIN_MENU, OPERATOR_MENU, OPERATOR_SHORTCUTS } from './config/cockpitNav';
 import {
   entriesForDomain,
   registryEntryForPath,
@@ -226,7 +242,7 @@ const logout = async () => {
   router.push('/login');
 };
 
-const domainMenu = DOMAIN_MENU;
+const domainMenu = [...DOMAIN_MENU, OPERATOR_MENU];
 const capabilityRail = CAPABILITY_RAIL;
 const operatorShortcuts = OPERATOR_SHORTCUTS;
 const agentCockpit = AGENT_COCKPIT;
@@ -528,6 +544,22 @@ const activeRuntimeFeatures = computed<RuntimeAdapterFeature[]>(() => {
 .sp-menu:hover .sp-menu-panel,
 .sp-menu.open .sp-menu-panel { display: flex; }
 .sp-menu-item:focus-visible, .sp-menu-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 4px; }
+/* Grouped mega-menu (Operator) — anchored right so it doesn't overflow the viewport. */
+.sp-menu-panel--grouped {
+  left: auto; right: 0;
+  flex-direction: row; flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  width: max-content; max-width: 44rem;
+  padding: 0.85rem 1rem;
+}
+.sp-menu-col { display: flex; flex-direction: column; min-width: 9.5rem; }
+.sp-menu-colhead {
+  font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
+  color: var(--text-3, #8b949e); text-decoration: none;
+  padding: 0.2rem 0.75rem 0.3rem; margin-bottom: 0.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.sp-menu-colhead:hover { color: var(--text); }
 .sp-menu-item {
   padding: 0.5rem 1rem;
   color: rgba(255, 255, 255, 0.78);

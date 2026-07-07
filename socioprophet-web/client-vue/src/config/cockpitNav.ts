@@ -17,6 +17,7 @@ export interface NavGroup {
   label: string;
   to: string; // domain/capability landing
   items: NavLeaf[];
+  groups?: NavGroup[]; // optional sub-columns (grouped mega-menu, e.g. Operator)
 }
 
 // --- DOMAIN axis (top mega-menu) ---------------------------------------------
@@ -108,6 +109,16 @@ export const DOMAIN_MENU: NavGroup[] = [
     ],
   },
 ];
+
+// Operator mega-menu — the operational cockpit (marketplace, operator/infra,
+// knowledge, models) surfaced as a top-bar domain with grouped columns, so it
+// isn't buried in the hamburger. Backed by AGENT_COCKPIT (defined below).
+export const OPERATOR_MENU: NavGroup = {
+  label: 'Operator',
+  to: '/agentic-os',
+  items: [],
+  get groups() { return AGENT_COCKPIT; },
+};
 
 // Resolve the DOMAIN-axis scope for a route path — the parent domain plus the
 // active sub-domain leaf label — so a flagship surface can show which lens the
