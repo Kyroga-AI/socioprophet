@@ -708,14 +708,28 @@ function setBasemap(b: 'streets' | 'light' | 'dark') {
   src?.setTiles?.([BASEMAPS[b].url]);
 }
 
+// Red→amber→green diverging ramp for the site-suitability score.
+const SITE_RAMP: Array<[number, string]> = [[0, '#d73027'], [0.25, '#fc8d59'], [0.5, '#fee08b'], [0.75, '#91cf60'], [1, '#1a9850']];
+
+// Build a MapLibre `step` fill expression from class breaks. Guards MapLibre's
+// hard requirement that stop inputs be strictly ascending — low-variance metrics
+// can yield duplicate quantile breaks, which would otherwise throw and blank the map.
+function buildStepExpr(input: unknown, breaks: number[], colors: string[]): unknown {
+  const expr: Array<unknown> = ['step', input, colors[0]];
+  let last = -Infinity;
+  for (let i = 0; i < breaks.length; i++) {
+    if (breaks[i]! <= last) continue;
+    expr.push(breaks[i], colors[i + 1]);
+    last = breaks[i]!;
+  }
+  return expr;
+}
+
 // Data-driven fill color for the active civic metric — a stepped classification
 // (equal / quantile / Jenks) so each class is a distinct, honest band.
 function civicColorExpr(m: MetricDef, factor: number): unknown {
   const br = breaksFor(classMode.value, cellValues(m.key, factor), m.min * factor, m.max * factor, N_CLASSES);
-  const cols = classColorsFor(m);
-  const expr: Array<unknown> = ['step', ['*', ['get', m.key], factor], cols[0]];
-  for (let i = 0; i < br.length; i++) { expr.push(br[i], cols[i + 1]); }
-  return expr;
+  return buildStepExpr(['*', ['get', m.key], factor], br, classColorsFor(m));
 }
 type FillData = Parameters<maplibregl.GeoJSONSource['setData']>[0];
 function paintCivic(data: FillData, color: never) {
@@ -751,9 +765,14 @@ function renderCivic() {
   paintCivic(baseGrid as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
 }
 function renderSite() {
-  const scored = { type: 'FeatureCollection', features: baseGrid.features.map((f) => ({ ...f, properties: { ...f.properties, siteScore: scoreCell(f.properties, siteProfile.value) } })) };
-  const color = ['interpolate', ['linear'], ['get', 'siteScore'], 0, '#d73027', 50, '#fee08b', 100, '#1a9850'] as never;
-  paintCivic(scored as unknown as FillData, color);
+  // Suitability scores cluster tightly (e.g. 50–60), so a raw 0–100 ramp paints
+  // everything the same shade. Classify over the ACTUAL score range so the best
+  // areas go green and the worst red — the whole point of a site-selection map.
+  const scores = baseGrid.features.map((f) => scoreCell(f.properties, siteProfile.value));
+  const scored = { type: 'FeatureCollection', features: baseGrid.features.map((f, i) => ({ ...f, properties: { ...f.properties, siteScore: scores[i] } })) };
+  const br = breaksFor('quantile', scores, Math.min(...scores), Math.max(...scores), N_CLASSES);
+  const cols = Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(SITE_RAMP, i / (N_CLASSES - 1)));
+  paintCivic(scored as unknown as FillData, buildStepExpr(['get', 'siteScore'], br, cols) as never);
 }
 function hideCivic() { if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); }
 // Beauty: mute the basemap when data goes on top, so the choropleth reads clean.
