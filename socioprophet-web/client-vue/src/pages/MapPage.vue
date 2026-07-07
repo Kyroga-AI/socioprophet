@@ -65,6 +65,20 @@
         </section>
 
         <section class="panel-section">
+          <div class="section-title">Basemap</div>
+          <div class="mapx-basemap">
+            <button
+              v-for="(b, key) in BASEMAPS"
+              :key="key"
+              class="mapx-bm"
+              :class="{ on: basemap === key }"
+              type="button"
+              @click="setBasemap(key as 'streets' | 'light' | 'dark')"
+            >{{ b.label }}</button>
+          </div>
+        </section>
+
+        <section class="panel-section">
           <div class="section-title">Legacy map layers</div>
           <button
             v-for="layer in layers"
@@ -247,6 +261,12 @@ const loading = ref(true);
 const refreshing = ref(false);
 const leftOpen = ref(true);
 const rightOpen = ref(true);
+const basemap = ref<'streets' | 'light' | 'dark'>('streets');
+const BASEMAPS: Record<'streets' | 'light' | 'dark', { url: string; label: string }> = {
+  streets: { url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', label: 'Streets' },
+  light: { url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', label: 'Light' },
+  dark: { url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', label: 'Dark' },
+};
 const h3Loading = ref(false);
 const tileManifestLoading = ref(false);
 const error = ref<string | null>(null);
@@ -323,11 +343,18 @@ function initializeMap() {
     },
   });
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right');
+  map.addControl(new maplibregl.FullscreenControl(), 'bottom-right');
   map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-right');
   marker = new maplibregl.Marker({ color: '#0f62fe' })
     .setLngLat(center)
     .setPopup(new maplibregl.Popup({ offset: 16 }).setText(`OSM ${selectedFeature.value?.osm_ref?.osm_type || 'way'} ${selectedFeature.value?.osm_ref?.osm_id || '424242'}`))
     .addTo(map);
+}
+
+function setBasemap(b: 'streets' | 'light' | 'dark') {
+  basemap.value = b;
+  const src = map?.getSource('osm') as { setTiles?: (t: string[]) => void } | undefined;
+  src?.setTiles?.([BASEMAPS[b].url]);
 }
 
 function updateMapMarker() {
@@ -569,6 +596,10 @@ onUnmounted(() => {
 .primary:hover { filter: brightness(1.1); }
 .primary:disabled { opacity: 0.5; cursor: default; }
 .control-actions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0; }
+.mapx-basemap { display: flex; gap: 0.35rem; }
+.mapx-bm { flex: 1; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text-2); padding: 0.35rem 0.5rem; font-size: 0.74rem; cursor: pointer; }
+.mapx-bm:hover { border-color: rgba(255, 255, 255, 0.25); color: var(--text); }
+.mapx-bm.on { border-color: var(--map-accent); background: rgba(47, 107, 255, 0.14); color: #fff; }
 .secondary { padding: 0.3rem 0.6rem; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 8px; background: rgba(255, 255, 255, 0.04); color: var(--text-2); font-size: 0.72rem; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
 .secondary:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.3); }
 .lookup-status { margin: 0.45rem 0 0; font-size: 0.7rem; color: var(--text-3); line-height: 1.45; }

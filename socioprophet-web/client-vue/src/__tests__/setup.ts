@@ -42,6 +42,8 @@ class PopupStub {
 
 class NavigationControlStub {}
 class ScaleControlStub {}
+class FullscreenControlStub {}
+class GeolocateControlStub { on() {} }
 
 class LngLatBoundsStub {
   extend() { return this; }
@@ -55,6 +57,8 @@ vi.mock('maplibre-gl', () => ({
     Popup: PopupStub,
     NavigationControl: NavigationControlStub,
     ScaleControl: ScaleControlStub,
+    FullscreenControl: FullscreenControlStub,
+    GeolocateControl: GeolocateControlStub,
     LngLatBounds: LngLatBoundsStub,
   },
   Map: MapStub,
