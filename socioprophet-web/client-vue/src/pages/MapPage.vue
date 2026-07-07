@@ -46,7 +46,8 @@
       </div>
 
       <!-- LEFT floating panel: controls, layers, lookup -->
-      <aside class="mapx-panel mapx-panel--left">
+      <aside v-show="leftOpen" class="mapx-panel mapx-panel--left">
+        <button class="mapx-collapse" type="button" title="Collapse controls" aria-label="Collapse controls" @click="leftOpen = false">‹</button>
         <section class="panel-section">
           <div class="section-title">Workbench controls</div>
           <button class="primary" type="button" :disabled="refreshing" @click="refreshSnapshot">
@@ -115,7 +116,8 @@
       </aside>
 
       <!-- RIGHT floating panel: inspector -->
-      <aside class="mapx-panel mapx-panel--right">
+      <aside v-show="rightOpen" class="mapx-panel mapx-panel--right">
+        <button class="mapx-collapse" type="button" title="Collapse inspector" aria-label="Collapse inspector" @click="rightOpen = false">›</button>
         <section id="runtime-adapter-panel" class="panel-section" data-testid="map-runtime-adapter-panel">
           <div class="section-title">Runtime adapter status</div>
           <div class="tag-row">
@@ -194,6 +196,10 @@
         </section>
       </aside>
 
+      <!-- Re-open tabs when a panel is collapsed -->
+      <button v-if="!leftOpen" class="mapx-reopen mapx-reopen--left" type="button" @click="leftOpen = true">Controls ›</button>
+      <button v-if="!rightOpen" class="mapx-reopen mapx-reopen--right" type="button" @click="rightOpen = true">‹ Inspector</button>
+
       <!-- Bottom-center coordinate / selection readout -->
       <div class="mapx-readout">
         <span class="mapx-readout-key">{{ selectedGaiaLayer?.title || selectedLayer?.title || 'GAIA layer' }}</span>
@@ -239,6 +245,8 @@ import type {
 
 const loading = ref(true);
 const refreshing = ref(false);
+const leftOpen = ref(true);
+const rightOpen = ref(true);
 const h3Loading = ref(false);
 const tileManifestLoading = ref(false);
 const error = ref<string | null>(null);
@@ -525,8 +533,28 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px;
   box-shadow: 0 12px 44px rgba(0, 0, 0, 0.5);
 }
-.mapx-panel--left { left: 14px; }
-.mapx-panel--right { right: 14px; width: 372px; max-height: calc(100% - 7.5rem); }
+.mapx-panel--left { left: 14px; max-height: calc(100% - 9rem); }
+.mapx-panel--right { right: 14px; width: 372px; max-height: calc(100% - 9rem); }
+
+/* Collapse control (per panel) + re-open tabs on the edge */
+.mapx-collapse {
+  position: absolute; top: 8px; right: 8px; z-index: 3;
+  width: 22px; height: 22px; border-radius: 6px; cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.05); color: var(--text-2);
+  font-size: 0.8rem; line-height: 1; display: grid; place-items: center;
+}
+.mapx-collapse:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.3); }
+.mapx-panel .section-title { padding-right: 1.6rem; }
+.mapx-reopen {
+  position: absolute; z-index: 5; top: 14px;
+  padding: 0.4rem 0.7rem; border-radius: 10px; cursor: pointer; white-space: nowrap;
+  background: rgba(16, 18, 23, 0.9); backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  color: var(--text-2); font-size: 0.76rem; font-weight: 600;
+}
+.mapx-reopen:hover { color: var(--text); border-color: var(--map-accent); }
+.mapx-reopen--left { left: 14px; }
+.mapx-reopen--right { right: 14px; }
 .mapx-panel::-webkit-scrollbar { width: 8px; }
 .mapx-panel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 8px; }
 

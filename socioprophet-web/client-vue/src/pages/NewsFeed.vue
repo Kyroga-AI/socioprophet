@@ -10,6 +10,10 @@
         <span class="nf-pill">fixture</span>
       </div>
       <div class="nf-tools">
+        <label class="nf-search">
+          <span class="nf-search-icon" aria-hidden="true">⌕</span>
+          <input v-model="q" type="search" placeholder="Search news, tags, @handles…" aria-label="Search news" />
+        </label>
         <div v-if="mode !== 'calendar'" class="nf-seg" role="tablist" aria-label="Ranking">
           <button role="tab" :class="{ on: sort === 'hot' }" @click="sort = 'hot'">Hot</button>
           <button role="tab" :class="{ on: sort === 'newest' }" @click="sort = 'newest'">Newest</button>
@@ -241,6 +245,7 @@ const activeSourceId = ref<'all' | string>('all');
 const activeTag = ref<string>('');
 const sort = ref<'hot' | 'newest' | 'active'>('hot');
 const governedOnly = ref(false);
+const q = ref('');
 const selectedId = ref<string>('');
 const upvoted = ref<Set<string>>(new Set());
 const saved = ref<Set<string>>(new Set());
@@ -261,6 +266,13 @@ const items = computed<FeedItem[]>(() => {
   if (activeSourceId.value !== 'all') list = list.filter((i) => i.sourceId === activeSourceId.value);
   if (activeTag.value) list = list.filter((i) => metaOf(i).tags.includes(activeTag.value));
   if (governedOnly.value) list = list.filter((i) => i.membraneDecision !== 'admit');
+  const needle = q.value.trim().toLowerCase();
+  if (needle) list = list.filter((i) =>
+    i.title.toLowerCase().includes(needle)
+    || i.summary.toLowerCase().includes(needle)
+    || metaOf(i).tags.some((t) => t.toLowerCase().includes(needle))
+    || (bskyOf(i)?.actor.handle.toLowerCase().includes(needle) ?? false),
+  );
   const byNew = (a: FeedItem, b: FeedItem) => +new Date(b.publishedAt) - +new Date(a.publishedAt);
   if (mode.value === 'calendar') return [...list].sort(byNew);
   const s = [...list];
@@ -380,6 +392,11 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .nf-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
 .nf-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 5px; padding: 0.1rem 0.35rem; }
 .nf-tools { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.nf-search { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid var(--line-2); border-radius: 8px; padding: 0.25rem 0.6rem; background: var(--surface-2); min-width: 15rem; }
+.nf-search:focus-within { border-color: #58a6ff; }
+.nf-search-icon { color: var(--text-3); font-size: 0.9rem; }
+.nf-search input { flex: 1; min-width: 0; border: none; background: transparent; color: var(--text); font: inherit; font-size: 0.82rem; outline: none; }
+.nf-search input::placeholder { color: var(--text-3); }
 .nf-seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
 .nf-seg button { border: none; background: transparent; color: rgba(255, 255, 255, 0.6); padding: 0.3rem 0.7rem; font-size: 0.78rem; cursor: pointer; } .nf-seg button.on { background: rgba(88, 166, 255, 0.18); color: #58a6ff; }
 .nf-btn { border: 1px solid var(--line-2); background: transparent; color: rgba(255, 255, 255, 0.7); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.76rem; cursor: pointer; } .nf-btn.on { border-color: #58a6ff; color: #58a6ff; background: rgba(88, 166, 255, 0.12); }
