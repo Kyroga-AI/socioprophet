@@ -37,7 +37,7 @@
               @click="sc.selectProvider(s.id, p.id)"
             >
               <div class="sco-cand-top"><span class="sco-cand-name">{{ p.name }}</span><span v-if="recId(s.id) === p.id" class="sco-cand-rec">✦ best</span><span class="sco-cand-rep" :class="p.reputation">{{ p.reputation === 'verified' ? '✓' : '·' }}</span></div>
-              <div class="sco-cand-meta">{{ p.kind }} · {{ p.geo.place }}</div>
+              <div class="sco-cand-meta">{{ p.kind }} · {{ p.geo.place }} <ReputationBadge :subject="p.name" /></div>
               <div class="sco-cand-stats"><span>{{ p.capacityPct }}% cap</span><span>{{ p.leadDays }}d</span><span>{{ money(p.unitCost) }}</span><span>{{ p.rating }}★</span></div>
             </button>
           </div>
@@ -70,6 +70,7 @@ import { computed, onMounted } from 'vue';
 import SurfaceHeader from '../components/SurfaceHeader.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import CrossLinks from '../components/CrossLinks.vue';
+import ReputationBadge from '../components/ReputationBadge.vue';
 import { prov } from '../features/provenance/types';
 import { STAGES, providersForStage, type Stage } from '../data/providersFixture';
 import { scoreProvider, useSupplyChain } from '../stores/supplyChain';

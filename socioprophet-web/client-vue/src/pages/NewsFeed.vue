@@ -71,6 +71,7 @@
                   <span class="nf-bsky-name">{{ bskyOf(it)!.actor.displayName }}</span>
                   <span class="nf-bsky-handle">@{{ bskyOf(it)!.actor.handle }}</span>
                   <span class="nf-bsky-did" :title="bskyOf(it)!.actor.did">did ✓</span>
+                  <ReputationBadge :subject="bskyOf(it)!.actor.handle" />
                   <span class="nf-time">· {{ relative(it.publishedAt) }}</span>
                   <span v-if="it.membraneDecision !== 'admit'" class="nf-mem" :class="it.membraneDecision">{{ it.membraneDecision }}</span>
                 </div>
@@ -222,6 +223,7 @@ import { useResearch } from '../stores/research';
 import { useCockpit } from '../stores/cockpit';
 import ExtractionPanel from '../components/ExtractionPanel.vue';
 import ClaimsPanel from '../components/ClaimsPanel.vue';
+import ReputationBadge from '../components/ReputationBadge.vue';
 
 // Bluesky (ATProto) is a first-class social source alongside the RSS/capture feeds.
 const sources = [...newsSources, ...blueskySources];
