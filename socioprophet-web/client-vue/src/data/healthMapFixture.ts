@@ -169,6 +169,28 @@ import { polygonToCells, cellToBoundary, cellToLatLng } from 'h3-js';
 
 const BBOX = { minLon: -74.09, maxLon: -73.90, minLat: 40.64, maxLat: 40.82 };
 function hash(a: number, b: number): number { let h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) >>> 0; return h / 4294967296; }
+
+// Land mask — cells / corridors should not cover water or non-livable space. These
+// are approximate [lon,lat] polygons of the major water bodies in the bbox (Hudson
+// River, East River, Upper Bay / harbor); anything inside them is excluded. A real
+// deployment swaps these for an actual coastline / land-cover layer.
+const WATER: number[][][] = [
+  // Hudson River — between the Jersey shore (west) and Manhattan's west shore (east)
+  [[-73.985, 40.82], [-73.995, 40.79], [-74.0, 40.766], [-74.008, 40.744], [-74.013, 40.72], [-74.018, 40.704], [-74.033, 40.714], [-74.028, 40.74], [-74.024, 40.76], [-74.024, 40.82]],
+  // East River — between Manhattan (west) and Brooklyn / Queens (east)
+  [[-74.0, 40.707], [-73.975, 40.72], [-73.965, 40.75], [-73.952, 40.778], [-73.935, 40.80], [-73.927, 40.795], [-73.945, 40.767], [-73.957, 40.744], [-73.958, 40.718], [-73.969, 40.702], [-73.99, 40.699]],
+  // Upper Bay / harbor — south of the Battery, between Jersey and Brooklyn
+  [[-74.05, 40.702], [-74.018, 40.703], [-73.99, 40.699], [-73.975, 40.68], [-73.99, 40.659], [-74.02, 40.645], [-74.055, 40.66]],
+];
+function pointInPoly(x: number, y: number, poly: number[][]): boolean {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i]![0]!; const yi = poly[i]![1]!; const xj = poly[j]![0]!; const yj = poly[j]![1]!;
+    if (((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+export function isLand(lon: number, lat: number): boolean { return !WATER.some((w) => pointInPoly(lon, lat, w)); }
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
 // Smooth 0..1 spatial field (bilinear value noise over a coarse lattice) so a
@@ -227,9 +249,12 @@ export function civicGrid(cols = 34, rows = 34): CivicGrid {
       const a = A[i * rows + j]!;             // "advantage" axis 0..1 (affluence) — smooth, full-range
       const b = B[i * rows + j]!;             // "commercial intensity" 0..1 (foot traffic) — decorrelated
       const n = (hash(i + 31, j + 17) - 0.5) * 0.6; // fine per-cell texture
+      const cLon = +(lon0 + dLon / 2).toFixed(5);
+      const cLat = +(lat0 + dLat / 2).toFixed(5);
+      if (!isLand(cLon, cLat)) continue; // skip water / non-livable cells
       features.push({
         type: 'Feature',
-        properties: buildCellProps(a, b, n, `cell-${i}-${j}`, +(lon0 + dLon / 2).toFixed(5), +(lat0 + dLat / 2).toFixed(5), i * 131 + j),
+        properties: buildCellProps(a, b, n, `cell-${i}-${j}`, cLon, cLat, i * 131 + j),
         geometry: {
           type: 'Polygon',
           coordinates: [[[lon0, lat0], [lon0 + dLon, lat0], [lon0 + dLon, lat0 + dLat], [lon0, lat0 + dLat], [lon0, lat0]]],
@@ -305,7 +330,7 @@ function buildCellProps(a: number, b: number, n: number, id: string, cLon: numbe
 // sampled at each hex centroid; fields normalised across the tessellation.
 export function civicHexGrid(res = 8): CivicGrid {
   const poly: number[][] = [[BBOX.minLat, BBOX.minLon], [BBOX.minLat, BBOX.maxLon], [BBOX.maxLat, BBOX.maxLon], [BBOX.maxLat, BBOX.minLon]];
-  const cells = polygonToCells(poly, res);
+  const cells = polygonToCells(poly, res).filter((h3) => { const [lat, lon] = cellToLatLng(h3); return isLand(lon, lat); }); // land only
   const spanLon = BBOX.maxLon - BBOX.minLon;
   const spanLat = BBOX.maxLat - BBOX.minLat;
   const centers = cells.map((h3) => cellToLatLng(h3)); // [lat, lng]

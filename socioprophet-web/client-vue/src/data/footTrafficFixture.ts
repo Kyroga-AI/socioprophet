@@ -3,7 +3,7 @@
 // corridor network of street segments, each with a base intensity (sampled from
 // the commercial field) and a kind whose time-of-day profile scales it. UI-only;
 // a real mobility adapter (Placer/SafeGraph-style) emits the same segment shape.
-import { CITY_BBOX, sampleCommercial } from './healthMapFixture';
+import { CITY_BBOX, sampleCommercial, isLand } from './healthMapFixture';
 
 export type FtKind = 'commercial' | 'transit' | 'residential';
 export interface FtSeg {
@@ -32,7 +32,10 @@ export function footTrafficNetwork(): FtNetwork {
     for (let k = 0; k < pts.length - 1; k += 1) {
       const a = pts[k]!;
       const b = pts[k + 1]!;
-      const base = sampleCommercial((a[0]! + b[0]!) / 2, (a[1]! + b[1]!) / 2);
+      const midLon = (a[0]! + b[0]!) / 2;
+      const midLat = (a[1]! + b[1]!) / 2;
+      if (!isLand(midLon, midLat)) continue; // streets don't run across rivers/harbor
+      const base = sampleCommercial(midLon, midLat);
       raw.push({ type: 'Feature', properties: { id: `${corridor}-${k}`, corridor, kind, base }, geometry: { type: 'LineString', coordinates: [a, b] } });
     }
   };
