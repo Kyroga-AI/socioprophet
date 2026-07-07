@@ -19,7 +19,8 @@
       </p>
     </div>
 
-    <div class="on-grid">
+    <SplitPane storage-key="ontology" label="entities" :initial="420">
+      <template #list>
       <!-- Entity classes + induced instances -->
       <div class="on-panel">
         <div class="on-panel-h">Entity classes <span class="on-hint">{{ stats.classes }} · lexical variants induced from the corpus</span></div>
@@ -34,6 +35,9 @@
           </div>
         </div>
       </div>
+      </template>
+
+      <template #detail>
 
       <!-- Induced relations + topics -->
       <div class="on-panel">
@@ -53,11 +57,13 @@
           <p v-if="!topics.length" class="on-empty">No topics observed yet.</p>
         </div>
       </div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { computed, onMounted } from 'vue';
 import SurfaceHeader from '../components/SurfaceHeader.vue';
 import InfoLabel from '../components/InfoLabel.vue';

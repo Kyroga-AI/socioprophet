@@ -14,7 +14,8 @@
       </div>
     </header>
 
-    <div class="ab2-body">
+    <SplitPane storage-key="app-build" label="apps" :initial="300">
+      <template #list>
       <!-- App list -->
       <div ref="listEl" class="ab2-list" aria-label="Apps" @keydown="arrowRove($event, listEl, '.ab2-row')">
         <p class="ab2-count">{{ apps.length }} apps</p>
@@ -27,6 +28,9 @@
           <div v-if="a.status === 'building' || a.status === 'review'" class="ab2-prog"><div class="ab2-prog-fill" :style="{ width: a.progress + '%' }" /></div>
         </button>
       </div>
+      </template>
+
+      <template #detail>
 
       <!-- Detail -->
       <article v-if="selected" class="ab2-detail" aria-label="App detail">
@@ -80,11 +84,13 @@
         <div class="ab2-boundary">Fixture board · no live CI or signing keys wired. A live build adapter (Forge / cross-platform packaging) swaps in behind this shape.</div>
       </article>
       <div v-else class="ab2-detail empty">Select an app</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { apps, type App } from '../data/mobileAppFixture';
