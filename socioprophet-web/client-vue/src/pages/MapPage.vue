@@ -271,6 +271,15 @@
                 <div><b>{{ Math.round(isoSummary.footTraffic / 1000) }}k</b><span>daily visits</span></div>
                 <div><b>{{ isoSummary.cells }}</b><span>areas</span></div>
               </div>
+              <div class="mapx-catch">
+                <div class="mapx-catch-h">Catchment profile <span>vs city avg</span></div>
+                <div v-for="s in catchmentStats" :key="s.label" class="mapx-catch-row">
+                  <span class="mapx-catch-l">{{ s.label }}</span>
+                  <b class="mapx-catch-v">{{ s.value }}</b>
+                  <span class="mapx-catch-d" :class="s.favorable === null ? 'neutral' : (s.favorable ? 'up' : 'down')">{{ s.delta >= 0 ? '+' : '' }}{{ s.delta }}%</span>
+                </div>
+              </div>
+              <button class="mapx-ask mapx-ask-sm" type="button" @click="askIsoNoetica">◇ Ask Noetica about this catchment</button>
               <button class="mapx-bm sm" type="button" @click="clearIso">Reset origin</button>
             </template>
           </template>
@@ -651,6 +660,29 @@ const isoSummary = computed(() => {
     footTraffic: r.reduce((s, p) => s + Number(p.footTrafficDaily ?? 0), 0),
   };
 });
+// Catchment profile — what the reachable population looks like vs the whole city.
+const CATCHMENT: Array<{ key: string; label: string; fmt: (v: number) => string; good: boolean | null }> = [
+  { key: 'medianIncome', label: 'Median income', fmt: (v) => `$${Math.round(v / 1000)}k`, good: true },
+  { key: 'walkScore', label: 'Walk score', fmt: (v) => `${Math.round(v)}`, good: true },
+  { key: 'crimeRate', label: 'Violent crime', fmt: (v) => `${v.toFixed(0)}/1k`, good: false },
+  { key: 'reMedianPrice', label: 'Home price', fmt: (v) => `$${(v / 1e6).toFixed(1)}M`, good: null },
+];
+const catchmentStats = computed(() => {
+  const r = isoReached.value;
+  const all = baseGrid.value.features.map((f) => f.properties as Record<string, number>);
+  if (!r.length || !all.length) return [] as Array<{ label: string; value: string; delta: number; favorable: boolean | null }>;
+  const mean = (arr: Record<string, number>[], key: string) => arr.reduce((s, p) => s + Number(p[key] ?? 0), 0) / arr.length;
+  return CATCHMENT.map((m) => {
+    const c = mean(r, m.key);
+    const city = mean(all, m.key) || 1;
+    const delta = ((c - city) / city) * 100;
+    return { label: m.label, value: m.fmt(c), delta: Math.round(delta), favorable: m.good === null ? null : (m.good ? delta >= 0 : delta <= 0) };
+  });
+});
+function askIsoNoetica() {
+  const s = catchmentStats.value.map((x) => `${x.label} ${x.value} (${x.delta >= 0 ? '+' : ''}${x.delta}% vs city)`).join(', ');
+  cockpit.askAbout(`Reachability catchment: within a ${isoMax.value}-min ${isoMode.value} of this point are ${isoSummary.value.population.toLocaleString()} people across ${isoSummary.value.cells} areas — ${s}. Is this a strong catchment for a new location, and what does the profile favor?`);
+}
 const topAreas = computed(() =>
   baseGrid.value.features
     .map((f) => ({ props: f.properties as Record<string, number>, score: scoreCell(f.properties, siteProfile.value) }))
@@ -1495,6 +1527,13 @@ onUnmounted(() => {
 .mapx-iso-sum > div { display: flex; flex-direction: column; padding: 0.4rem 0.5rem; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 9px; background: rgba(255, 255, 255, 0.03); }
 .mapx-iso-sum b { font-size: 0.95rem; color: var(--text); font-variant-numeric: tabular-nums; }
 .mapx-iso-sum span { font-size: 0.6rem; color: var(--text-3); }
+.mapx-catch { margin: 0.2rem 0 0.5rem; }
+.mapx-catch-h { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 0.3rem; } .mapx-catch-h span { text-transform: none; letter-spacing: 0; }
+.mapx-catch-row { display: grid; grid-template-columns: 1fr auto auto; align-items: baseline; gap: 0.5rem; padding: 0.15rem 0; font-size: 0.72rem; }
+.mapx-catch-l { color: var(--text-3); }
+.mapx-catch-v { color: var(--text); font-variant-numeric: tabular-nums; }
+.mapx-catch-d { font-size: 0.66rem; font-variant-numeric: tabular-nums; min-width: 3rem; text-align: right; }
+.mapx-catch-d.up { color: #4bbf73; } .mapx-catch-d.down { color: #f0656a; } .mapx-catch-d.neutral { color: var(--text-3); }
 .mapx-cells { margin-bottom: 0.6rem; }
 .mapx-cells-l { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.3rem; }
 .mapx-cells-res { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.35rem; font-size: 0.66rem; color: var(--text-3); }
