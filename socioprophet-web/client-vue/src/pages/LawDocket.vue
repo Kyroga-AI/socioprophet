@@ -9,8 +9,8 @@
         <span class="lw-pill">fixture</span>
       </div>
       <form class="term-cmd" @submit.prevent="runCmd">
-        <span class="term-cmd-prompt">›</span>
-        <input v-model="cmd" spellcheck="false" placeholder="Jump to a cite or title (e.g. HR-2026-882)" />
+        <span class="term-cmd-prompt">⌕</span>
+        <input v-model="cmd" spellcheck="false" placeholder="Search cite, title, agency, #tag…" aria-label="Search dockets" />
         <button type="submit" class="term-cmd-go">&lt;GO&gt;</button>
       </form>
       <div class="lw-filters">
@@ -44,8 +44,9 @@
       <article v-if="selected" class="lw-detail" aria-label="Docket detail">
         <!-- provenance ribbon -->
         <div class="lw-ribbon">
-          <span class="lw-ribbon-k">provenance</span>
+          <ProvenanceBadge :p="docketProv" />
           <code>{{ selected.provenanceHash }}</code>
+          <button class="lw-ask" type="button" @click="askNoetica" title="Ask Noetica about this docket">◇ Ask Noetica</button>
           <span class="lw-ribbon-as">as of {{ asOfLabel }}</span>
         </div>
 
@@ -56,6 +57,37 @@
         <h2 class="lw-d-title">{{ selected.title }}</h2>
         <div class="lw-d-meta">{{ selected.cite }} · {{ selected.jurisdiction }} · updated {{ relative(selected.updated) }}</div>
         <p class="lw-d-summary">{{ selected.summary }}</p>
+
+        <!-- Key facts -->
+        <div class="lw-facts">
+          <div class="lw-fact"><span>Agency</span><b>{{ selected.agency }}</b></div>
+          <div class="lw-fact"><span>Jurisdiction</span><b>{{ selected.jurisdiction }}</b></div>
+          <div v-if="selected.commentDeadline" class="lw-fact"><span>Comment closes</span><b :class="{ soon: deadlineSoon(selected.commentDeadline) }">{{ dateLabel(selected.commentDeadline) }} · {{ countdown(selected.commentDeadline) }}</b></div>
+          <div v-if="selected.effectiveDate" class="lw-fact"><span>Effective</span><b>{{ selected.effectiveDate.includes('T') ? dateLabel(selected.effectiveDate) : selected.effectiveDate }}</b></div>
+        </div>
+
+        <!-- Impact + tags -->
+        <div class="lw-block">
+          <div class="lw-block-h">Impact</div>
+          <p class="lw-impact">{{ selected.impact }}</p>
+          <div class="lw-tags"><button v-for="t in selected.tags" :key="t" class="lw-tag" @click="cmd = t">#{{ t }}</button></div>
+        </div>
+
+        <!-- Affected entities — cross-links -->
+        <div v-if="crossLinks.length" class="lw-block">
+          <div class="lw-block-h">Affected — trace across</div>
+          <CrossLinks :links="crossLinks" />
+        </div>
+
+        <!-- Citations -->
+        <div v-if="selected.citations.length" class="lw-block">
+          <div class="lw-block-h">Cites</div>
+          <div class="lw-cites">
+            <button v-for="cite in selected.citations" :key="cite.cite" class="lw-cite-link" :class="{ nav: cite.docketId }" :disabled="!cite.docketId" @click="goDocket(cite.docketId)">
+              <code>{{ cite.cite }}</code> {{ cite.title }}<span v-if="cite.docketId" class="lw-cite-arrow"> →</span>
+            </button>
+          </div>
+        </div>
 
         <div class="lw-block">
           <div class="lw-block-h">Redline <span class="lw-legend"><i class="add" />added <i class="del" />removed</span></div>
@@ -78,6 +110,13 @@ import { useRoute } from 'vue-router';
 import { dockets, asOf, type Docket, type DocketStatus } from '../data/lawFixture';
 import { navScopeForPath } from '../config/cockpitNav';
 import { arrowRove } from '../utils/listKeys';
+import ProvenanceBadge from '../components/ProvenanceBadge.vue';
+import { prov } from '../features/provenance/types';
+import CrossLinks from '../components/CrossLinks.vue';
+import { crossLinksForDocket } from '../features/crosslink/entityLinks';
+import { useCockpit } from '../stores/cockpit';
+
+const cockpit = useCockpit();
 
 const statuses = ['all', 'comment', 'pending', 'enacted', 'open'] as const;
 const status = ref<(typeof statuses)[number]>('all');
@@ -103,19 +142,36 @@ function inScope(d: Docket): boolean {
   }
 }
 onMounted(() => { const d = typeof route.query.d === 'string' ? route.query.d : ''; if (d && dockets.some((x) => x.id === d)) { deepLinked.value = true; status.value = 'all'; selectedId.value = d; } });
+// Live search: the box filters the docket list (cite / title / agency / #tag);
+// GO selects the first match.
 const cmd = ref('');
-function runCmd() {
-  const q = cmd.value.trim().toLowerCase();
-  if (!q) return;
-  const hit = dockets.find((d) => d.cite.toLowerCase() === q) ?? dockets.find((d) => d.cite.toLowerCase().includes(q) || d.title.toLowerCase().includes(q));
-  if (hit) { status.value = 'all'; selectedId.value = hit.id; cmd.value = ''; }
-}
+function runCmd() { if (results.value[0]) selectedId.value = results.value[0].id; }
 
-const results = computed<Docket[]>(() =>
-  dockets.filter((d) => inScope(d) && (status.value === 'all' || d.status === (status.value as DocketStatus))),
-);
+const results = computed<Docket[]>(() => {
+  const needle = cmd.value.trim().toLowerCase();
+  return dockets.filter((d) => inScope(d)
+    && (status.value === 'all' || d.status === (status.value as DocketStatus))
+    && (!needle || d.title.toLowerCase().includes(needle) || d.cite.toLowerCase().includes(needle)
+      || d.agency.toLowerCase().includes(needle) || d.tags.some((t) => t.includes(needle))));
+});
 const selected = computed<Docket | undefined>(() => dockets.find((d) => d.id === selectedId.value));
 function setStatus(s: (typeof statuses)[number]) { status.value = s; }
+
+// Moat + integration: provenance verdict, affected-entity cross-links, assistant.
+const crossLinks = computed(() => (selected.value ? crossLinksForDocket(selected.value.affects) : []));
+const docketProv = computed(() => prov('retrieved', {
+  verifier: selected.value?.agency ?? 'issuing body',
+  sources: [selected.value?.cite ?? 'docket'],
+  receipt: selected.value?.provenanceHash,
+  asOf: asOfLabel,
+  note: 'Sourced regulatory document; redline diffed against the prior text.',
+}));
+function goDocket(id?: string) { if (id) { deepLinked.value = true; selectedId.value = id; } }
+function askNoetica() {
+  const d = selected.value; if (!d) return;
+  cockpit.askAbout(`Explain ${d.cite} — "${d.title}" (${d.type}, ${d.status}, ${d.jurisdiction}, issued by ${d.agency}). ${d.impact} Who is most affected, and what is the concrete compliance ask?`);
+}
+watch(selected, (d) => { if (d) cockpit.setContext({ surface: 'Law & Regulation', entityLabel: `${d.cite} · ${d.title}`, detail: `${d.type} · ${d.status}`, route: route.path }); }, { immediate: true });
 // Keep a valid selection as the scope/status narrows the visible set.
 watch(results, (r) => { if (!r.some((d) => d.id === selectedId.value) && r[0]) selectedId.value = r[0].id; }, { immediate: true });
 // Moving between sub-domains resumes scope filtering (deep-link was one-shot).
@@ -129,6 +185,9 @@ function relative(iso: string): string {
   return h < 24 ? `${h}h ago` : `${Math.round(h / 24)}d ago`;
 }
 const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+function dateLabel(iso: string): string { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+function countdown(iso: string): string { const days = Math.round((new Date(iso).getTime() - NOW) / 86400000); return days > 0 ? `${days}d left` : days === 0 ? 'today' : 'closed'; }
+function deadlineSoon(iso: string): boolean { const days = (new Date(iso).getTime() - NOW) / 86400000; return days >= 0 && days <= 30; }
 </script>
 
 <style scoped>
@@ -163,6 +222,18 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .lw-d-title { margin: 0.5rem 0 0.3rem; font-size: 1.35rem; line-height: 1.25; }
 .lw-d-meta { font-size: 0.76rem; color: rgba(255, 255, 255, 0.5); font-family: ui-monospace, monospace; }
 .lw-d-summary { margin: 0.7rem 0 0; font-size: 0.9rem; line-height: 1.6; color: rgba(255, 255, 255, 0.8); }
+.lw-ask { border: 1px solid rgba(120, 160, 255, 0.45); background: rgba(120, 160, 255, 0.08); color: #93b4ff; border-radius: 7px; padding: 0.15rem 0.5rem; font-size: 0.7rem; cursor: pointer; } .lw-ask:hover { background: rgba(120, 160, 255, 0.16); color: #fff; }
+.lw-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.5rem; margin-top: 0.9rem; }
+.lw-fact { display: flex; flex-direction: column; gap: 0.1rem; border: 1px solid var(--line-2); border-radius: 9px; padding: 0.4rem 0.6rem; }
+.lw-fact span { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); }
+.lw-fact b { font-size: 0.82rem; color: var(--text); } .lw-fact b.soon { color: #e3b341; }
+.lw-impact { margin: 0; font-size: 0.86rem; line-height: 1.55; color: rgba(255, 255, 255, 0.82); }
+.lw-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.6rem; }
+.lw-tag { border: 1px solid var(--line-2); background: rgba(255, 255, 255, 0.05); color: var(--text-2); border-radius: 999px; padding: 0.08rem 0.5rem; font-size: 0.68rem; cursor: pointer; } .lw-tag:hover { border-color: #58a6ff; color: #58a6ff; }
+.lw-cites { display: flex; flex-direction: column; gap: 0.35rem; }
+.lw-cite-link { text-align: left; border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2); border-radius: 8px; padding: 0.4rem 0.6rem; font-size: 0.78rem; cursor: default; } .lw-cite-link code { color: rgba(255,255,255,0.9); font-family: ui-monospace, monospace; font-size: 0.72rem; }
+.lw-cite-link.nav { cursor: pointer; } .lw-cite-link.nav:hover { border-color: var(--accent); color: var(--accent); }
+.lw-cite-arrow { color: var(--accent); }
 .lw-block { margin-top: 1rem; border-top: 1px solid var(--line-2); padding-top: 0.85rem; }
 .lw-block-h { display: flex; align-items: center; justify-content: space-between; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.4); margin-bottom: 0.6rem; }
 .lw-legend { display: flex; align-items: center; gap: 0.4rem; text-transform: none; letter-spacing: 0; color: rgba(255, 255, 255, 0.4); } .lw-legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; margin-right: 0.2rem; } .lw-legend i.add { background: var(--up); } .lw-legend i.del { background: var(--down); }

@@ -27,6 +27,16 @@ export function crossLinksForInstrument(symbol: string): CrossLink[] {
   return links;
 }
 
+// Law docket → the entities it affects (Markets instruments, Economy sectors, News).
+export function crossLinksForDocket(affects: { sectors?: string[]; symbols?: string[]; topics?: string[] }): CrossLink[] {
+  const links: CrossLink[] = [];
+  const sym = affects.symbols?.[0];
+  if (sym) links.push({ label: `Affected: ${sym}`, surface: 'Markets', icon: '▲', to: { path: '/markets/equities-preferreds', query: { sym } } });
+  if (affects.sectors && affects.sectors.length) links.push({ label: 'Sector impact', surface: 'Economy', icon: '▤', to: { path: '/capability/economic-prophet' } });
+  links.push({ label: 'Related coverage', surface: 'News', icon: '❑', to: { path: '/news' } });
+  return links;
+}
+
 // Supply-chain commodity → Markets + Digital Twin (the reciprocal direction).
 export function crossLinksForChain(marketSymbol: string | undefined, twinId?: string): CrossLink[] {
   const links: CrossLink[] = [];
