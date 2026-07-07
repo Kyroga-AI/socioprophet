@@ -71,6 +71,41 @@ export const CIVIC_LAYERS: LayerGroup[] = [
     ],
   },
   {
+    id: 'housing', label: 'Housing', blurb: 'Affordability, burden, and stability.',
+    metrics: [
+      { key: 'rentBurdenPct', label: 'Rent burden', min: 18, max: 55, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
+      { key: 'costBurdenedPct', label: 'Cost-burdened', min: 20, max: 60, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
+      { key: 'evictionPct', label: 'Eviction rate', min: 0.3, max: 5, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
+      { key: 'housingVacancyPct', label: 'Vacancy', min: 2, max: 14, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
+    ],
+  },
+  {
+    id: 'environment', label: 'Environment', blurb: 'Air, flood risk, and green space.',
+    metrics: [
+      { key: 'airQualityAqi', label: 'Air quality (AQI)', min: 20, max: 120, unit: '', higherBetter: false, ramp: BAD_HIGH },
+      { key: 'floodRiskPct', label: 'Flood risk', min: 2, max: 40, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
+      { key: 'greenSpacePct', label: 'Green space', min: 3, max: 45, unit: '%', higherBetter: true, ramp: GOOD_HIGH, format: 'pct' },
+    ],
+  },
+  {
+    id: 'mobility', label: 'Mobility', blurb: 'Transit access, commute, walkability, safety.',
+    metrics: [
+      { key: 'transitAccessIdx', label: 'Transit access', min: 20, max: 95, unit: '', higherBetter: true, ramp: GOOD_HIGH },
+      { key: 'walkScore', label: 'Walk score', min: 25, max: 98, unit: '', higherBetter: true, ramp: GOOD_HIGH },
+      { key: 'commuteMin', label: 'Commute', min: 18, max: 52, unit: 'min', higherBetter: false, ramp: BAD_HIGH },
+      { key: 'crashRate', label: 'Crash rate', min: 2, max: 30, unit: '/1k', higherBetter: false, ramp: BAD_HIGH },
+    ],
+  },
+  {
+    id: 'economic', label: 'Economic', blurb: 'Income, employment, poverty, business density.',
+    metrics: [
+      { key: 'medianIncome', label: 'Median income', min: 35000, max: 180000, unit: '', higherBetter: true, ramp: BLUE, format: 'money' },
+      { key: 'unemploymentPct', label: 'Unemployment', min: 2, max: 14, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
+      { key: 'povertyPct', label: 'Poverty', min: 4, max: 32, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
+      { key: 'businessDensity', label: 'Business density', min: 5, max: 90, unit: '/1k', higherBetter: true, ramp: GOOD_HIGH },
+    ],
+  },
+  {
     id: 'people', label: 'People', blurb: 'Population and density.',
     metrics: [
       { key: 'population', label: 'Population', min: 2000, max: 42000, unit: '', higherBetter: true, ramp: BLUE },
@@ -128,6 +163,25 @@ export function civicGrid(cols = 12, rows = 11): CivicGrid {
           reVacancyPct: +clamp(12 - a * 8 + n * 2.5, 2, 12).toFixed(1),
           reChurnPct: Math.round(clamp(35 - a * 22 + n * 6, 8, 35)),
           rePriceTrend: JSON.stringify(rePriceTrend),
+          // Housing
+          rentBurdenPct: Math.round(clamp(55 - a * 35 + n * 6, 18, 55)),
+          costBurdenedPct: Math.round(clamp(60 - a * 38 + n * 6, 20, 60)),
+          evictionPct: +clamp(5 - a * 4.5 + n * 1, 0.3, 5).toFixed(1),
+          housingVacancyPct: +clamp(14 - a * 10 + n * 3, 2, 14).toFixed(1),
+          // Environment
+          airQualityAqi: Math.round(clamp(120 - a * 95 + n * 22, 20, 120)),
+          floodRiskPct: +clamp(2 + (1 - a) * 30 + n * 8, 2, 40).toFixed(1),
+          greenSpacePct: +clamp(3 + a * 40 + n * 6, 3, 45).toFixed(1),
+          // Mobility
+          transitAccessIdx: Math.round(clamp(20 + a * 70 + n * 10, 20, 95)),
+          walkScore: Math.round(clamp(25 + a * 70 + n * 8, 25, 98)),
+          commuteMin: Math.round(clamp(52 - a * 32 + n * 6, 18, 52)),
+          crashRate: +clamp(30 - a * 24 + n * 6, 2, 30).toFixed(1),
+          // Economic
+          medianIncome: Math.round(clamp(35000 + a * 140000 + n * 15000, 35000, 180000)),
+          unemploymentPct: +clamp(14 - a * 11 + n * 2, 2, 14).toFixed(1),
+          povertyPct: +clamp(32 - a * 26 + n * 5, 4, 32).toFixed(1),
+          businessDensity: Math.round(clamp(5 + a * 82 + n * 10, 5, 90)),
         },
         geometry: {
           type: 'Polygon',

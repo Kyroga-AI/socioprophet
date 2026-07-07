@@ -82,7 +82,7 @@
           <div class="section-title">Civic layers</div>
           <label class="mapx-switch">
             <input type="checkbox" :checked="civicOn" @change="toggleCivic" />
-            <span>Choropleth overlay <span class="mapx-sub2">place-based statistics</span></span>
+            <span>Choropleth overlay <InfoLabel info="Shades each area by the selected statistic (a choropleth). Areas are binned into an aggregation grid — a fixture stand-in for census / agency data." /></span>
           </label>
           <template v-if="civicOn">
             <div class="mapx-basemap mapx-groups">
@@ -154,7 +154,7 @@
 
         <section class="panel-section">
           <div class="section-title">Spatial lookup</div>
-          <label class="input-label" for="h3-cell">H3 cell</label>
+          <label class="input-label" for="h3-cell"><InfoLabel label="H3 cell" info="Uber's hexagonal geospatial index — tiles the Earth into hexagons at 16 zoom levels, each with a stable ID. It's the join key for aggregating data by area." /></label>
           <input id="h3-cell" v-model="h3Cell" class="field" type="text" />
           <button class="primary" type="button" :disabled="h3Loading" data-testid="h3-inspect-button" @click="refreshH3">
             {{ h3Loading ? 'Inspecting…' : 'Inspect H3' }}
@@ -276,6 +276,7 @@ import maplibregl from 'maplibre-gl';
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import RuntimeAdapterStatusBadge from '../components/RuntimeAdapterStatusBadge.vue';
 import { useCockpit } from '../stores/cockpit';
+import InfoLabel from '../components/InfoLabel.vue';
 import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, type MetricDef } from '../data/healthMapFixture';
 import {
   fetchFeaturesByH3WithFallback,
