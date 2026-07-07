@@ -191,6 +191,19 @@ export const AGENT_COCKPIT: NavGroup[] = [
     ],
   },
   {
+    label: 'Operator & Infra',
+    to: '/operator/data-catalog',
+    items: [
+      { label: 'Data Catalog', to: '/operator/data-catalog' },
+      { label: 'Pipelines (Beam / Ray)', to: '/operator/pipelines' },
+      { label: 'Model Labs', to: '/operator/labs' },
+      { label: 'Studio', to: '/operator/studio' },
+      { label: 'RAG Inspect', to: '/operator/rag-inspect' },
+      { label: 'HolographMe', to: '/operator/holograph-me' },
+      { label: 'Lattice Forge', to: '/operator/lattice-forge' },
+    ],
+  },
+  {
     label: 'Workstation',
     to: '/workstation/pipelines',
     items: [
