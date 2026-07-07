@@ -268,6 +268,46 @@
       <aside v-show="rightOpen" class="mapx-panel mapx-panel--right" :style="{ width: rightW + 'px' }">
         <button class="mapx-collapse" type="button" title="Collapse inspector" aria-label="Collapse inspector" @click="rightOpen = false">›</button>
         <div class="mapx-resize mapx-resize--right" role="separator" aria-orientation="vertical" title="Drag to resize" @pointerdown="startPanelResize('right', $event)"></div>
+
+        <!-- Area profile — real stats for the clicked cell, leading the inspector -->
+        <section v-if="selectedCell" class="panel-section mapx-ap">
+          <div class="section-title mapx-ap-head">
+            <span>Area profile</span>
+            <button class="mapx-cell-x" type="button" aria-label="Clear selection" @click="selectedCell = null">✕</button>
+          </div>
+          <div class="mapx-ap-name">{{ areaLabel(selectedCell) }}</div>
+
+          <div v-if="selectedSite" class="mapx-ap-score">
+            <div class="mapx-ap-score-n" :style="{ color: goodColor(selectedSite.score / 100) }">{{ selectedSite.score }}<small>/100</small></div>
+            <div class="mapx-ap-score-l">
+              <b>{{ selectedSite.label }}</b> suitability
+              <span class="mapx-ap-rank">rank #{{ selectedSite.rank }} of {{ selectedSite.total }}</span>
+            </div>
+          </div>
+
+          <div class="mapx-ap-hl">
+            <div class="mapx-ap-hl-col">
+              <div class="mapx-ap-hl-h up">Strengths</div>
+              <div v-for="s in areaHighlights.strengths" :key="s.label" class="mapx-ap-hl-row"><span>{{ s.label }}</span><b>{{ s.val }}</b></div>
+            </div>
+            <div class="mapx-ap-hl-col">
+              <div class="mapx-ap-hl-h down">Watch-outs</div>
+              <div v-for="w in areaHighlights.weaknesses" :key="w.label" class="mapx-ap-hl-row"><span>{{ w.label }}</span><b>{{ w.val }}</b></div>
+            </div>
+          </div>
+
+          <details v-for="g in CIVIC_LAYERS" :key="g.id" class="mapx-ap-grp" :open="g.id === civicGroupId">
+            <summary>{{ g.label }}</summary>
+            <div v-for="m in g.metrics" :key="m.key" class="mapx-ap-metric">
+              <span class="mapx-ap-m-l">{{ m.label }}</span>
+              <span class="mapx-ap-m-bar"><i :style="{ width: (cellGood(selectedCell, m) * 100) + '%', background: goodColor(cellGood(selectedCell, m)) }" /></span>
+              <b class="mapx-ap-m-v">{{ fmtVal(cellRaw(selectedCell, m), m) }}</b>
+            </div>
+          </details>
+
+          <button class="mapx-ask mapx-ask-sm" type="button" @click="askAreaNoetica">◇ Ask Noetica about this area</button>
+        </section>
+
         <section id="runtime-adapter-panel" class="panel-section" data-testid="map-runtime-adapter-panel">
           <div class="section-title">Runtime adapter status</div>
           <div class="tag-row">
@@ -497,6 +537,37 @@ const topAreas = computed(() =>
     .sort((a, b) => b.score - a.score)
     .slice(0, 5),
 );
+// ── Area profile — real stats for a selected cell (replaces demo plumbing) ────
+const areaLabel = (c: Record<string, string | number>) => `Area ${String(c.id ?? '').replace('cell-', '')} · ${c.cLat}, ${c.cLon}`;
+const cellFactor = (key: string) => segFactor(reSegment.value, key); // 1 for non-real-estate keys
+const cellRaw = (c: Record<string, string | number>, m: MetricDef) => Number(c[m.key] ?? 0) * cellFactor(m.key);
+// Normalized 0..1 goodness for a metric (higher-better aware), for bars + ranking.
+function cellGood(c: Record<string, string | number>, m: MetricDef): number {
+  const lo = m.min * cellFactor(m.key);
+  const hi = m.max * cellFactor(m.key);
+  const t = (cellRaw(c, m) - lo) / ((hi - lo) || 1);
+  return Math.max(0, Math.min(1, m.higherBetter ? t : 1 - t));
+}
+const goodColor = (g: number) => (g >= 0.66 ? '#4bbf73' : g >= 0.4 ? '#e3b341' : '#f0656a');
+const allMetrics = CIVIC_LAYERS.flatMap((g) => g.metrics);
+// Selected area's site score + city rank for the active business profile.
+const selectedSite = computed(() => {
+  const c = selectedCell.value; if (!c) return null;
+  const score = scoreCell(c, siteProfile.value);
+  const sorted = baseGrid.features.map((f) => scoreCell(f.properties, siteProfile.value)).sort((a, b) => b - a);
+  const rank = sorted.findIndex((s) => s <= score) + 1;
+  return { score, rank, total: sorted.length, label: SITE_PROFILES.find((p) => p.id === siteProfile.value)?.label ?? '' };
+});
+// Top strengths / watch-outs across every domain metric.
+const areaHighlights = computed(() => {
+  const c = selectedCell.value; if (!c) return { strengths: [], weaknesses: [] };
+  const scored = allMetrics.map((m) => ({ m, g: cellGood(c, m) })).sort((a, b) => b.g - a.g);
+  return {
+    strengths: scored.slice(0, 3).map((x) => ({ label: x.m.label, val: fmtVal(cellRaw(c, x.m), x.m) })),
+    weaknesses: scored.slice(-3).reverse().map((x) => ({ label: x.m.label, val: fmtVal(cellRaw(c, x.m), x.m) })),
+  };
+});
+
 const siteProv = computed(() => prov('computed', {
   verifier: 'site-selection engine',
   formula: 'score = Σ wᵢ · norm(metricᵢ)  (foot traffic, income, walkability, rent, …)',
@@ -1130,6 +1201,25 @@ onUnmounted(() => {
 .mapx-site-head { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; font-size: 0.66rem; color: var(--text-3); }
 .mapx-site-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.45rem; font-size: 0.6rem; color: var(--text-3); }
 .mapx-site-bar { flex: 1; height: 8px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.14); background: linear-gradient(90deg, #d73027, #fc8d59, #fee08b, #91cf60, #1a9850); }
+
+/* Area profile (right panel lead) */
+.mapx-ap-head { display: flex; align-items: center; justify-content: space-between; }
+.mapx-ap-name { font-size: 0.78rem; color: var(--text); font-weight: 600; font-family: ui-monospace, monospace; margin-bottom: 0.6rem; word-break: break-word; }
+.mapx-ap-score { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.6rem; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; background: rgba(255, 255, 255, 0.03); }
+.mapx-ap-score-n { font-size: 1.6rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; } .mapx-ap-score-n small { font-size: 0.7rem; color: var(--text-3); font-weight: 600; }
+.mapx-ap-score-l { font-size: 0.74rem; color: var(--text-2); } .mapx-ap-score-l b { color: var(--text); }
+.mapx-ap-rank { display: block; font-size: 0.66rem; color: var(--text-3); margin-top: 0.1rem; }
+.mapx-ap-hl { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-top: 0.7rem; }
+.mapx-ap-hl-h { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; } .mapx-ap-hl-h.up { color: #4bbf73; } .mapx-ap-hl-h.down { color: #f0656a; }
+.mapx-ap-hl-row { display: flex; align-items: baseline; justify-content: space-between; gap: 0.4rem; font-size: 0.7rem; padding: 0.1rem 0; } .mapx-ap-hl-row span { color: var(--text-3); } .mapx-ap-hl-row b { color: var(--text); font-variant-numeric: tabular-nums; }
+.mapx-ap-grp { margin-top: 0.6rem; border-top: 1px solid rgba(255, 255, 255, 0.07); padding-top: 0.4rem; }
+.mapx-ap-grp summary { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); cursor: pointer; list-style: none; }
+.mapx-ap-grp summary::-webkit-details-marker { display: none; }
+.mapx-ap-grp summary::before { content: '▸ '; } .mapx-ap-grp[open] summary::before { content: '▾ '; }
+.mapx-ap-metric { display: grid; grid-template-columns: 6.2rem 1fr 3.4rem; align-items: center; gap: 0.4rem; margin-top: 0.35rem; font-size: 0.7rem; }
+.mapx-ap-m-l { color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mapx-ap-m-bar { height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); overflow: hidden; } .mapx-ap-m-bar i { display: block; height: 100%; }
+.mapx-ap-m-v { text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
 .mapx-toplist { display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.5rem; }
 .mapx-toparea { display: grid; grid-template-columns: 1.1rem 2.2rem 1fr; align-items: center; gap: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text); padding: 0.4rem 0.55rem; cursor: pointer; text-align: left; }
 .mapx-toparea:hover { border-color: rgba(255, 255, 255, 0.24); }
