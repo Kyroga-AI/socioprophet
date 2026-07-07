@@ -526,7 +526,7 @@ onUnmounted(() => {
   box-shadow: 0 12px 44px rgba(0, 0, 0, 0.5);
 }
 .mapx-panel--left { left: 14px; }
-.mapx-panel--right { right: 14px; width: 348px; max-height: calc(100% - 7.5rem); }
+.mapx-panel--right { right: 14px; width: 372px; max-height: calc(100% - 7.5rem); }
 .mapx-panel::-webkit-scrollbar { width: 8px; }
 .mapx-panel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 8px; }
 
@@ -558,10 +558,11 @@ onUnmounted(() => {
 .layer-meta { margin-top: 0.15rem; font-size: 0.68rem; color: var(--text-2); font-family: ui-monospace, monospace; word-break: break-all; }
 .layer-attribution { margin-top: 0.2rem; font-size: 0.66rem; color: var(--text-3); }
 
-/* Detail grid — the readability fix (was #525252 on dark) */
-.detail-grid { display: grid; grid-template-columns: minmax(5.5rem, auto) 1fr; gap: 0.4rem 0.85rem; font-size: 0.74rem; }
-.detail-grid span { color: var(--text-3); }
-.detail-grid strong { text-align: right; color: var(--text); font-weight: 600; word-break: break-word; }
+/* Detail grid — capped label column + left-aligned values so long repo paths /
+   URLs wrap cleanly instead of collapsing the value column to one char wide. */
+.detail-grid { display: grid; grid-template-columns: minmax(0, 6.5rem) minmax(0, 1fr); gap: 0.5rem 0.9rem; font-size: 0.74rem; align-items: baseline; }
+.detail-grid span { color: var(--text-3); overflow-wrap: anywhere; }
+.detail-grid strong { text-align: left; color: var(--text); font-weight: 600; overflow-wrap: anywhere; }
 
 /* Runtime rows */
 .runtime-row { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.28rem 0; font-size: 0.75rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
