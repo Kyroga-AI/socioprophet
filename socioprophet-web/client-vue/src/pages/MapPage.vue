@@ -146,7 +146,8 @@
             <!-- Foot traffic: corridor network + time-of-day -->
             <div v-if="isFootTraffic" class="mapx-ft">
               <div class="mapx-ft-time">
-                <input v-model.number="ftHour" type="range" min="0" max="23" step="1" aria-label="Hour of day" />
+                <button class="mapx-ft-play" type="button" :aria-label="ftPlaying ? 'Pause' : 'Play the day'" :title="ftPlaying ? 'Pause' : 'Play the day'" @click="toggleFtPlay">{{ ftPlaying ? '❚❚' : '▶' }}</button>
+                <input v-model.number="ftHour" type="range" min="0" max="23" step="1" aria-label="Hour of day" @pointerdown="stopFtPlay" />
                 <span class="mapx-ft-hr">{{ hourLabel(ftHour) }}</span>
               </div>
               <div class="mapx-basemap mapx-ft-day">
@@ -573,7 +574,15 @@ const baseGrid = ref<CivicGrid>(civicHexGrid(hexRes.value));
 const ftNet = footTrafficNetwork();
 const ftHour = ref(18);
 const ftWeekend = ref(false);
+const ftPlaying = ref(false);
+let ftTimer: number | null = null;
 const isFootTraffic = computed(() => civicGroupId.value === 'foottraffic');
+function stopFtPlay() { if (ftTimer !== null) { clearInterval(ftTimer); ftTimer = null; } ftPlaying.value = false; }
+function toggleFtPlay() {
+  if (ftPlaying.value) { stopFtPlay(); return; }
+  ftPlaying.value = true;
+  ftTimer = window.setInterval(() => { ftHour.value = (ftHour.value + 1) % 24; }, 550);
+}
 const topAreas = computed(() =>
   baseGrid.value.features
     .map((f) => ({ props: f.properties as Record<string, number>, score: scoreCell(f.properties, siteProfile.value) }))
@@ -1002,6 +1011,7 @@ function eventDate(iso: string): string { return new Date(iso).toLocaleDateStrin
 watch([civicMetricKey, reSegment, classMode, bivariateOn], () => { if (!siteMode.value && civicOn.value) renderCivic(); });
 watch([gridType, hexRes], rebuildGrid);
 watch([ftHour, ftWeekend], () => { if (isFootTraffic.value && civicOn.value && !siteMode.value) renderFootTraffic(); });
+watch(isFootTraffic, (on) => { if (!on) stopFtPlay(); });
 watch(siteProfile, () => { if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
@@ -1136,6 +1146,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  stopFtPlay();
   window.removeEventListener('pointermove', onPanelMove);
   window.removeEventListener('pointerup', endPanelResize);
   clearEvents();
@@ -1367,6 +1378,8 @@ onUnmounted(() => {
 .mapx-ft { margin-top: 0.2rem; }
 .mapx-ft-time { display: flex; align-items: center; gap: 0.5rem; }
 .mapx-ft-time input { flex: 1; accent-color: var(--map-accent); }
+.mapx-ft-play { flex: 0 0 auto; width: 1.7rem; height: 1.7rem; display: grid; place-items: center; padding: 0; border-radius: 7px; border: 1px solid var(--map-accent); background: rgba(47, 107, 255, 0.14); color: #93b4ff; font-size: 0.66rem; cursor: pointer; }
+.mapx-ft-play:hover { background: rgba(47, 107, 255, 0.24); color: #fff; }
 .mapx-ft-hr { min-width: 3.2rem; text-align: right; font-size: 0.82rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .mapx-ft-day { margin-top: 0.45rem; }
 .mapx-ft-bar { flex: 1; height: 9px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.14); background: linear-gradient(90deg, #3b4ea8, #7f9bd6, #ffd36b, #ff8a3d, #ff2d2d); }
