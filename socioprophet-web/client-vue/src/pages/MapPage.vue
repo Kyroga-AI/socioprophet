@@ -79,6 +79,26 @@
         </section>
 
         <section class="panel-section">
+          <div class="section-title">Population &amp; health</div>
+          <label class="mapx-switch">
+            <input type="checkbox" :checked="healthOn" @change="toggleHealth" />
+            <span>Choropleth overlay</span>
+          </label>
+          <template v-if="healthOn">
+            <div class="mapx-basemap mapx-metrics">
+              <button v-for="m in HEALTH_METRICS" :key="m.key" class="mapx-bm" :class="{ on: healthMetric === m.key }" type="button" @click="healthMetric = m.key">{{ m.label }}</button>
+            </div>
+            <div class="mapx-legend">
+              <span class="mapx-legend-lo">{{ activeMetric.min }}{{ activeMetric.unit }}</span>
+              <span class="mapx-legend-bar" :style="{ background: legendGradient }" />
+              <span class="mapx-legend-hi">{{ activeMetric.max }}{{ activeMetric.unit }}</span>
+            </div>
+            <label class="mapx-opacity">Opacity <input v-model.number="healthOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
+            <p class="lookup-status">Binned aggregation grid over the extent · {{ activeMetric.label }}. Fixture — a census/CDC adapter emits the same shape.</p>
+          </template>
+        </section>
+
+        <section class="panel-section">
           <div class="section-title">Legacy map layers</div>
           <button
             v-for="layer in layers"
@@ -234,6 +254,7 @@ import maplibregl from 'maplibre-gl';
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import RuntimeAdapterStatusBadge from '../components/RuntimeAdapterStatusBadge.vue';
 import { useCockpit } from '../stores/cockpit';
+import { healthGrid, HEALTH_METRICS, type HealthMetricDef } from '../data/healthMapFixture';
 import {
   fetchFeaturesByH3WithFallback,
   fetchGaiaLayerCatalogWithFallback,
@@ -267,6 +288,13 @@ const BASEMAPS: Record<'streets' | 'light' | 'dark', { url: string; label: strin
   light: { url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', label: 'Light' },
   dark: { url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', label: 'Dark' },
 };
+
+// Population + health choropleth overlay
+const healthOn = ref(false);
+const healthMetric = ref<HealthMetricDef['key']>('healthIndex');
+const healthOpacity = ref(0.62);
+const activeMetric = computed(() => HEALTH_METRICS.find((m) => m.key === healthMetric.value)!);
+const legendGradient = computed(() => `linear-gradient(90deg, ${activeMetric.value.ramp.map(([p, c]) => `${c} ${Math.round(p * 100)}%`).join(', ')})`);
 const h3Loading = ref(false);
 const tileManifestLoading = ref(false);
 const error = ref<string | null>(null);
@@ -356,6 +384,36 @@ function setBasemap(b: 'streets' | 'light' | 'dark') {
   const src = map?.getSource('osm') as { setTiles?: (t: string[]) => void } | undefined;
   src?.setTiles?.([BASEMAPS[b].url]);
 }
+
+// Data-driven fill color for the active health metric (interpolate over its ramp).
+function healthColorExpr(m: HealthMetricDef): unknown {
+  const stops: Array<number | string> = [];
+  for (const [pos, color] of m.ramp) stops.push(m.min + (m.max - m.min) * pos, color);
+  return ['interpolate', ['linear'], ['get', m.key], ...stops];
+}
+function renderHealth() {
+  if (!map) return;
+  const m = activeMetric.value;
+  const data = healthGrid() as unknown as Parameters<maplibregl.GeoJSONSource['setData']>[0];
+  const src = map.getSource('health') as maplibregl.GeoJSONSource | undefined;
+  if (src) src.setData(data);
+  else map.addSource('health', { type: 'geojson', data });
+  const color = healthColorExpr(m) as never;
+  if (map.getLayer('health-fill')) {
+    map.setPaintProperty('health-fill', 'fill-color', color);
+    map.setPaintProperty('health-fill', 'fill-opacity', healthOpacity.value);
+    map.setLayoutProperty('health-fill', 'visibility', 'visible');
+  } else {
+    map.addLayer({ id: 'health-fill', type: 'fill', source: 'health', paint: { 'fill-color': color, 'fill-opacity': healthOpacity.value, 'fill-outline-color': 'rgba(255,255,255,0.12)' } });
+  }
+}
+function toggleHealth() {
+  healthOn.value = !healthOn.value;
+  if (healthOn.value) renderHealth();
+  else if (map?.getLayer('health-fill')) map.setLayoutProperty('health-fill', 'visibility', 'none');
+}
+watch(healthMetric, () => { if (healthOn.value) renderHealth(); });
+watch(healthOpacity, () => { if (healthOn.value && map?.getLayer('health-fill')) map.setPaintProperty('health-fill', 'fill-opacity', healthOpacity.value); });
 
 function updateMapMarker() {
   if (!map || !marker) return;
@@ -600,6 +658,15 @@ onUnmounted(() => {
 .mapx-bm { flex: 1; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text-2); padding: 0.35rem 0.5rem; font-size: 0.74rem; cursor: pointer; }
 .mapx-bm:hover { border-color: rgba(255, 255, 255, 0.25); color: var(--text); }
 .mapx-bm.on { border-color: var(--map-accent); background: rgba(47, 107, 255, 0.14); color: #fff; }
+.mapx-metrics { flex-wrap: wrap; margin-top: 0.5rem; }
+.mapx-metrics .mapx-bm { flex: 1 1 45%; }
+.mapx-switch { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text-2); cursor: pointer; }
+.mapx-switch input { accent-color: var(--map-accent); }
+.mapx-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }
+.mapx-legend-bar { flex: 1; height: 9px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.14); }
+.mapx-legend-lo, .mapx-legend-hi { font-size: 0.62rem; color: var(--text-3); white-space: nowrap; }
+.mapx-opacity { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.55rem; font-size: 0.68rem; color: var(--text-3); }
+.mapx-opacity input { flex: 1; accent-color: var(--map-accent); }
 .secondary { padding: 0.3rem 0.6rem; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 8px; background: rgba(255, 255, 255, 0.04); color: var(--text-2); font-size: 0.72rem; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
 .secondary:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.3); }
 .lookup-status { margin: 0.45rem 0 0; font-size: 0.7rem; color: var(--text-3); line-height: 1.45; }
