@@ -128,8 +128,10 @@ import HumanNetworks from '../components/HumanNetworks.vue';
 import { sparkPoints, areaPoints } from '../utils/sparkline';
 import { navScopeForPath } from '../config/cockpitNav';
 import { arrowRove } from '../utils/listKeys';
+import { useCockpit } from '../stores/cockpit';
 
 const router = useRouter();
+const cockpit = useCockpit();
 
 const sp = sparkPoints;
 const ar = areaPoints;
@@ -162,6 +164,7 @@ function runCmd() {
 const selectedSector = computed(() => (sel.value.kind === 'sector' ? sectors.find((s) => s.id === sel.value.id) : undefined));
 const selectedIndicator = computed(() => (sel.value.kind === 'indicator' ? indicators.find((k) => k.id === sel.value.id) : undefined));
 const detail = computed<Sector | Indicator | undefined>(() => selectedSector.value ?? selectedIndicator.value);
+watch(detail, () => cockpit.setContext({ surface: 'Economy', entityLabel: detail.value?.name ?? 'sector', detail: sel.value.kind, route: route.path }), { immediate: true });
 
 // Supply-chain integration: sectors/indicators that sit on a modeled supply chain.
 const chainNodes = computed(() => (sel.value.kind === 'sector' ? nodesForSector(sel.value.id) : nodesForIndicator(sel.value.id)));

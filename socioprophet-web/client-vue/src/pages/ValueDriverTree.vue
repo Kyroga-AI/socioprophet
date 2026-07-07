@@ -11,10 +11,11 @@
           <option v-for="i in industries" :key="i.id" :value="i.id">{{ i.label }}</option>
         </select>
         <span v-else class="vdt-ind">{{ industry }}</span>
+        <button class="vdt-ask" type="button" @click="askNoetica" title="Ask Noetica about these value drivers">◇ Ask Noetica</button>
       </div>
       <div class="vdt-metrics">
         <div class="vdt-metric"><span class="vdt-m-label">Enterprise value</span><span class="vdt-m-val">{{ money(evBaseline) }}</span></div>
-        <div class="vdt-metric up"><span class="vdt-m-label">Projected uplift</span><span class="vdt-m-val">+{{ money(c.totalUplift) }}</span><span class="vdt-m-sub">+{{ (c.upliftFraction * 100).toFixed(2) }}%</span></div>
+        <div class="vdt-metric up"><span class="vdt-m-label">Projected uplift <ProvenanceBadge :p="upliftProv" compact /></span><span class="vdt-m-val">+{{ money(c.totalUplift) }}</span><span class="vdt-m-sub">+{{ (c.upliftFraction * 100).toFixed(2) }}%</span></div>
         <div class="vdt-metric"><span class="vdt-m-label">Projected EV</span><span class="vdt-m-val">{{ money(c.projectedEnterpriseValue) }}</span></div>
       </div>
     </header>
@@ -80,6 +81,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { fetchVdtWithFallback, fetchVdtCatalogWithFallback, fixtureView, type VdtView, type VdtIndustry } from '../api/vdtApi';
+import { useCockpit } from '../stores/cockpit';
+import ProvenanceBadge from '../components/ProvenanceBadge.vue';
+import { prov } from '../features/provenance/types';
 
 // Initialise from the fixture (canonical engine math computed locally) so the surface renders
 // synchronously; on mount, load the industry catalog + the live dashboard-bff /v1/vdt and swap in
@@ -166,6 +170,25 @@ function cellStyle(w: number): Record<string, string> {
 const driversWithUplift = computed(() => view.value.drivers.filter((d) => (view.value.perDriver[d] ?? 0) !== 0));
 const maxDriverUplift = computed(() => Math.max(1, ...Object.values(view.value.perDriver)));
 const barPct = (v: number) => Math.max(2, (v / maxDriverUplift.value) * 100);
+
+// The uplift is engine-computed (deterministic) — the verified-compute moat.
+const cockpit = useCockpit();
+const upliftProv = computed(() => prov('computed', {
+  verifier: 'economic-prophet engine',
+  formula: 'uplift = Σ_kpi baseline × weight × |Δpct| / 100',
+  sources: [`vdt:${industryId.value}`, mode.value === 'live' ? 'dashboard-bff /v1/vdt' : 'local fixture (same engine math)'],
+  receipt: `sha256:vdt-${industryId.value}`,
+  note: mode.value === 'live' ? 'Served live from the value engine.' : 'Local fixture — identical engine math, self-consistent (reported == computed).',
+}));
+function askNoetica() {
+  cockpit.askAbout(`Read the value-driver tree for ${industry.value}: projected uplift +${(c.value.upliftFraction * 100).toFixed(2)}% (${money(c.value.totalUplift)}) on ${money(evBaseline.value)} EV. Which KPI levers drive it, and where's the risk in that attribution?`);
+}
+watch([industry, () => c.value.upliftFraction], () => cockpit.setContext({
+  surface: 'Value Drivers',
+  entityLabel: industry.value,
+  detail: `+${(c.value.upliftFraction * 100).toFixed(2)}% uplift · ${mode.value}`,
+  route: '/economy/value-drivers',
+}), { immediate: true });
 </script>
 
 <style scoped>
@@ -180,7 +203,8 @@ const barPct = (v: number) => Math.max(2, (v / maxDriverUplift.value) * 100);
 .vdt-metrics { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .vdt-metric { display: flex; flex-direction: column; border: 1px solid var(--line-2); border-radius: 10px; padding: 0.4rem 0.8rem; min-width: 8rem; }
 .vdt-metric.up { border-color: rgba(63, 185, 80, 0.35); }
-.vdt-m-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.45); }
+.vdt-m-label { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.45); }
+.vdt-ask { border: 1px solid rgba(120, 160, 255, 0.45); background: rgba(120, 160, 255, 0.08); color: #93b4ff; border-radius: 8px; padding: 0.28rem 0.65rem; font-size: 0.74rem; cursor: pointer; } .vdt-ask:hover { background: rgba(120, 160, 255, 0.16); color: #fff; }
 .vdt-m-val { font-size: 1.05rem; font-weight: 700; } .vdt-metric.up .vdt-m-val { color: var(--up); }
 .vdt-m-sub { font-size: 0.68rem; color: var(--up); }
 

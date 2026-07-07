@@ -126,9 +126,11 @@ import { regions } from '../data/weatherFixture';
 import { newsItems } from '../data/newsFeedFixture';
 import { riskForNode, chainRisk, clusterRisk, ratingColor, FACTORS } from '../data/supplyChainRiskFixture';
 import { arrowRove } from '../utils/listKeys';
+import { useCockpit } from '../stores/cockpit';
 
 const router = useRouter();
 const route = useRoute();
+const cockpit = useCockpit();
 const scope = computed(() => navScopeForPath(route.path));
 
 const chainId = ref<string>('copper');
@@ -152,6 +154,7 @@ function edgeKind(from: string, to: string): string { return edgesForChain(chain
 
 const selectedId = ref<string>(flow.value[0]?.id ?? '');
 const selected = computed<SCNode | undefined>(() => nodeById(selectedId.value));
+watch(selected, () => cockpit.setContext({ surface: 'Supply Chain', entityLabel: selected.value?.name ?? 'node', detail: chain.value?.name, route: '/analytics/supply-chain' }), { immediate: true });
 // Operational-risk lens (BIAN/FICO): the selected node's residual risk, plus the
 // chain's accumulated path risk and common-mode cluster.
 const risk = computed(() => riskForNode(selectedId.value));

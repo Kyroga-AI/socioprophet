@@ -19,6 +19,7 @@
             <option v-for="s in scenarios" :key="s.id" :value="s.id">{{ s.name }}</option>
           </select>
         </label>
+        <button class="dt-ask" type="button" @click="askNoetica" title="Ask Noetica about this twin">◇ Ask Noetica</button>
       </div>
     </header>
 
@@ -48,6 +49,8 @@
         <span class="dt-m-sub">{{ twin?.chains.length }} chain(s) · {{ mappable.length }} geo-located</span>
       </div>
     </div>
+
+    <div class="dt-trace"><span class="dt-trace-h">Trace across</span><CrossLinks :links="twinLinks" /></div>
 
     <div class="dt-body">
       <div class="dt-left">
@@ -125,6 +128,9 @@ import { ratingColor } from '../data/supplyChainRiskFixture';
 import { twins, scenarios, simulate, severityColor } from '../data/twinFixture';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import { prov } from '../features/provenance/types';
+import { useCockpit } from '../stores/cockpit';
+import CrossLinks from '../components/CrossLinks.vue';
+import { crossLinksForChain } from '../features/crosslink/entityLinks';
 
 const route = useRoute();
 const twinId = ref<string>('nvda');
@@ -151,6 +157,9 @@ const riskProv = computed(() => prov('computed', {
   receipt: `sha256:twin-${twinId.value}-${scenarioId.value}`,
   note: result.value.provenance?.note,
 }));
+
+const cockpit = useCockpit();
+const twinLinks = computed(() => crossLinksForChain(twin.value?.headlineSymbol));
 
 // ── Twin graph — the supply network as a node-link diagram, laid out left→right
 // by supply-chain depth, nodes colored by simulated impact, arrows showing flow.
@@ -207,6 +216,19 @@ function shortName(name: string): string { return name.length > 16 ? `${name.sli
 
 const money = (n: number): string =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(n);
+
+// Assistant context + one-tap ask (defined after money() to avoid a TDZ in the immediate watch).
+function askNoetica() {
+  const t = twin.value; const s = scenario.value; const r = result.value;
+  if (!t) return;
+  cockpit.askAbout(`Read the ${t.name} digital twin under "${s?.name}": ${r.impacted.length} of ${r.nodes.length} facilities impacted, value-at-risk ${money(r.valueAtRisk)} (${(r.valueAtRiskPct * 100).toFixed(1)}% of EV). Where's the concentration and what should I hedge?`);
+}
+watch([twin, scenario], () => cockpit.setContext({
+  surface: 'Digital Twin',
+  entityLabel: twin.value?.name ?? 'twin',
+  detail: `${scenario.value?.name} · VaR ${money(result.value.valueAtRisk)}`,
+  route: '/analytics/digital-twin',
+}), { immediate: true });
 
 // ── OSM map — the twin's nodes across geography, pins colored by simulated impact.
 const mapEl = ref<HTMLElement | null>(null);
@@ -297,6 +319,8 @@ watch(selectedId, (id) => {
 .dt-controls { display: flex; gap: 0.7rem; flex-wrap: wrap; }
 .dt-ctl { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); }
 .dt-ctl select { font-size: 0.82rem; text-transform: none; letter-spacing: 0; color: var(--text); background: var(--surface); border: 1px solid var(--line-2); border-radius: 8px; padding: 0.35rem 0.5rem; min-width: 12rem; }
+.dt-ask { align-self: flex-end; border: 1px solid rgba(120, 160, 255, 0.45); background: rgba(120, 160, 255, 0.08); color: #93b4ff; border-radius: 8px; padding: 0.4rem 0.7rem; font-size: 0.76rem; cursor: pointer; } .dt-ask:hover { background: rgba(120, 160, 255, 0.16); color: #fff; }
+.dt-trace { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; } .dt-trace-h { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); }
 .dt-note { margin: 0; font-size: 0.82rem; color: var(--text-2); max-width: 80ch; }
 .dt-scn { margin: 0; font-size: 0.78rem; color: var(--text-3); max-width: 80ch; }
 
