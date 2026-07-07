@@ -169,21 +169,53 @@ const BBOX = { minLon: -74.09, maxLon: -73.90, minLat: 40.64, maxLat: 40.82 };
 function hash(a: number, b: number): number { let h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) >>> 0; return h / 4294967296; }
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
+// Smooth 0..1 spatial field (bilinear value noise over a coarse lattice) so a
+// finer grid forms COHERENT neighborhoods with gradients rather than salt-and-
+// pepper. `freq` = lattice cells across the bbox — higher = smaller districts.
+function field(u: number, v: number, seed: number, freq: number): number {
+  const x = u * freq;
+  const y = v * freq;
+  const xi = Math.floor(x);
+  const yi = Math.floor(y);
+  const sm = (t: number) => t * t * (3 - 2 * t);
+  const g = (a: number, b: number) => hash(a + seed * 101, b + seed * 211);
+  const sx = sm(x - xi);
+  const sy = sm(y - yi);
+  const top = g(xi, yi) + (g(xi + 1, yi) - g(xi, yi)) * sx;
+  const bot = g(xi, yi + 1) + (g(xi + 1, yi + 1) - g(xi, yi + 1)) * sx;
+  return top + (bot - top) * sy;
+}
+// Two octaves — broad districts + finer texture within them. Range is stretched
+// to full 0..1 by normalising across the whole grid in civicGrid() (value noise
+// regresses to the mean, so a raw field would wash out the choropleth).
+function sfield(u: number, v: number, seed: number): number {
+  return 0.68 * field(u, v, seed, 5) + 0.32 * field(u, v, seed + 7, 12);
+}
+
 interface Cell { type: 'Feature'; properties: Record<string, number | string>; geometry: { type: 'Polygon'; coordinates: number[][][] } }
 export interface CivicGrid { type: 'FeatureCollection'; features: Cell[] }
 
-// Build the aggregation grid; deterministic + cross-correlated per (col,row).
-export function civicGrid(cols = 12, rows = 11): CivicGrid {
+// Build the aggregation grid; deterministic + spatially coherent. Fine-grained by
+// default (a ~1k-cell neighborhood lattice); pass cols/rows to change resolution.
+export function civicGrid(cols = 34, rows = 34): CivicGrid {
   const dLon = (BBOX.maxLon - BBOX.minLon) / cols;
   const dLat = (BBOX.maxLat - BBOX.minLat) / rows;
+  // Pass 1: raw smooth fields, then normalise each to full 0..1 so districts span
+  // the metrics' whole design range (keeps Equal-interval + quantile both honest).
+  const rawA: number[] = [];
+  const rawB: number[] = [];
+  for (let i = 0; i < cols; i += 1) for (let j = 0; j < rows; j += 1) { rawA.push(sfield((i + 0.5) / cols, (j + 0.5) / rows, 1)); rawB.push(sfield((i + 0.5) / cols, (j + 0.5) / rows, 2)); }
+  const norm = (arr: number[]) => { const mn = Math.min(...arr); const d = (Math.max(...arr) - mn) || 1; return arr.map((x) => (x - mn) / d); };
+  const A = norm(rawA);
+  const B = norm(rawB);
   const features: Cell[] = [];
   for (let i = 0; i < cols; i += 1) {
     for (let j = 0; j < rows; j += 1) {
       const lon0 = BBOX.minLon + i * dLon;
       const lat0 = BBOX.minLat + j * dLat;
-      const a = hash(i, j);                 // "advantage" axis 0..1 (affluence)
-      const b = hash(i + 50, j + 50);       // "commercial intensity" axis 0..1 (foot traffic) — decorrelated from a
-      const n = (hash(i + 31, j + 17) - 0.5); // small noise
+      const a = A[i * rows + j]!;             // "advantage" axis 0..1 (affluence) — smooth, full-range
+      const b = B[i * rows + j]!;             // "commercial intensity" 0..1 (foot traffic) — decorrelated
+      const n = (hash(i + 31, j + 17) - 0.5) * 0.6; // fine per-cell texture
       const reMedianPrice = Math.round(400000 + a * 2100000 + n * 200000);
       const reMedianRent = Math.round(1800 + a * 4000 + n * 500);
       // 8-quarter price trend (index 100 = current), rising faster in advantaged cells.
