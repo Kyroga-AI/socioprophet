@@ -276,8 +276,22 @@
             <div class="mapx-iso-bands">
               <span v-for="(c, i) in ISO_COLORS.slice(0, 4)" :key="i" class="mapx-iso-band"><i :style="{ background: c }" />≤{{ ISO_BANDS[i] }}</span>
             </div>
-            <button v-if="!isoOrigin" class="mapx-bm sm" type="button" :class="{ on: isoArm }" @click="isoArm = true">📍 Click the map to set origin{{ isoArm ? '…' : '' }}</button>
-            <template v-else>
+            <label class="mapx-switch mapx-switch--sm">
+              <input type="checkbox" :checked="compareOn" @change="toggleCompare" />
+              <span>Compare two points (A / B)</span>
+            </label>
+
+            <!-- A/B set-point buttons -->
+            <div v-if="compareOn" class="mapx-basemap mapx-ft-day">
+              <button class="mapx-bm sm" :class="{ on: isoArm && isoArmTarget === 'a' }" type="button" @click="armIso('a')"><i class="mapx-dot" style="background:#22d3ee" /> A {{ isoOrigin ? '✓' : '' }}</button>
+              <button class="mapx-bm sm" :class="{ on: isoArm && isoArmTarget === 'b' }" type="button" @click="armIso('b')"><i class="mapx-dot" style="background:#a855f7" /> B {{ isoOriginB ? '✓' : '' }}</button>
+            </div>
+            <p v-if="compareOn && isoArm" class="lookup-status">Click the map to set point {{ isoArmTarget.toUpperCase() }}.</p>
+
+            <button v-else-if="!isoOrigin" class="mapx-bm sm" type="button" :class="{ on: isoArm }" @click="armIso('a')">📍 Click the map to set origin{{ isoArm ? '…' : '' }}</button>
+
+            <!-- Single-point catchment -->
+            <template v-if="!compareOn && isoOrigin">
               <div class="mapx-iso-sum">
                 <div><b>{{ isoSummary.population.toLocaleString() }}</b><span>people reachable</span></div>
                 <div><b>{{ Math.round(isoSummary.footTraffic / 1000) }}k</b><span>daily visits</span></div>
@@ -293,6 +307,24 @@
               </div>
               <button class="mapx-ask mapx-ask-sm" type="button" @click="askIsoNoetica">◇ Ask Noetica about this catchment</button>
               <button class="mapx-bm sm" type="button" @click="clearIso">Reset origin</button>
+            </template>
+
+            <!-- A/B compare -->
+            <template v-if="compareOn && isoOrigin && isoOriginB">
+              <div class="mapx-cmp2-sum">
+                <div class="a"><b>{{ isoSummary.population.toLocaleString() }}</b><span>A reach</span></div>
+                <div class="b"><b>{{ isoSummaryB.population.toLocaleString() }}</b><span>B reach</span></div>
+              </div>
+              <div class="mapx-cmp2">
+                <div class="mapx-cmp2-row mapx-cmp2-hdr"><span></span><span class="a">A</span><span class="b">B</span></div>
+                <div v-for="r in compareRows" :key="r.label" class="mapx-cmp2-row">
+                  <span class="mapx-cmp2-l">{{ r.label }}</span>
+                  <b :class="{ win: r.winner === 'a' }">{{ r.a }}</b>
+                  <b :class="{ win: r.winner === 'b' }">{{ r.b }}</b>
+                </div>
+              </div>
+              <button class="mapx-ask mapx-ask-sm" type="button" @click="askIsoNoetica">◇ Ask Noetica to compare A vs B</button>
+              <button class="mapx-bm sm" type="button" @click="clearIso">Reset points</button>
             </template>
           </template>
         </section>
@@ -637,14 +669,19 @@ function toggleFtPlay() {
 // Reachability (isochrone) — travel-time bands from a point, respecting the local
 // walkability / transit field (you reach further where the network is good).
 const isoOn = ref(false);
+const compareOn = ref(false);
 const isoArm = ref(false);
+const isoArmTarget = ref<'a' | 'b'>('a');
 const isoOrigin = ref<{ lng: number; lat: number } | null>(null);
+const isoOriginB = ref<{ lng: number; lat: number } | null>(null);
 const isoMode = ref<'walk' | 'bike' | 'transit'>('walk');
 const isoMax = ref(15);
 let isoMarker: maplibregl.Marker | null = null;
+let isoMarkerB: maplibregl.Marker | null = null;
 const ISO_SPEED: Record<'walk' | 'bike' | 'transit', number> = { walk: 4.8, bike: 15, transit: 22 }; // km/h base
 const ISO_BANDS = [5, 10, 15, 20];
-const ISO_COLORS = ['#1a9850', '#66bd63', '#fee08b', '#fdae61', '#f46d43'];
+const ISO_COLORS = ['#1a9850', '#66bd63', '#fee08b', '#fdae61', '#f46d43'];       // A — green→red
+const ISO_COLORS_B = ['#54278f', '#756bb1', '#9e9ac8', '#bcbddc', '#dadaeb'];     // B — purples
 function haversineKm(lo1: number, la1: number, lo2: number, la2: number): number {
   const R = 6371; const dLa = (la2 - la1) * Math.PI / 180; const dLo = (lo2 - lo1) * Math.PI / 180;
   const a = Math.sin(dLa / 2) ** 2 + Math.cos(la1 * Math.PI / 180) * Math.cos(la2 * Math.PI / 180) * Math.sin(dLo / 2) ** 2;
@@ -655,23 +692,24 @@ function isoSpeedFactor(p: Record<string, number>): number {
   if (isoMode.value === 'transit') return 0.5 + (Number(p.transitAccessIdx ?? 50) / 95) * 1.3;
   return 0.8 + (Number(p.walkScore ?? 50) / 98) * 0.4; // bike
 }
-function isoTimeMin(p: Record<string, number>): number {
-  if (!isoOrigin.value) return Infinity;
-  const d = haversineKm(isoOrigin.value.lng, isoOrigin.value.lat, Number(p.cLon), Number(p.cLat));
+function isoTimeMin(p: Record<string, number>, origin: { lng: number; lat: number } | null): number {
+  if (!origin) return Infinity;
+  const d = haversineKm(origin.lng, origin.lat, Number(p.cLon), Number(p.cLat));
   return (d / (ISO_SPEED[isoMode.value] * isoSpeedFactor(p))) * 60;
 }
-const isoReached = computed(() => {
-  if (!isoOrigin.value) return [] as Record<string, number>[];
-  return baseGrid.value.features.map((f) => f.properties as Record<string, number>).filter((p) => isoTimeMin(p) <= isoMax.value);
+function reachedFor(origin: { lng: number; lat: number } | null): Record<string, number>[] {
+  if (!origin) return [];
+  return baseGrid.value.features.map((f) => f.properties as Record<string, number>).filter((p) => isoTimeMin(p, origin) <= isoMax.value);
+}
+const summaryOf = (r: Record<string, number>[]) => ({
+  cells: r.length,
+  population: r.reduce((s, p) => s + Number(p.population ?? 0), 0),
+  footTraffic: r.reduce((s, p) => s + Number(p.footTrafficDaily ?? 0), 0),
 });
-const isoSummary = computed(() => {
-  const r = isoReached.value;
-  return {
-    cells: r.length,
-    population: r.reduce((s, p) => s + Number(p.population ?? 0), 0),
-    footTraffic: r.reduce((s, p) => s + Number(p.footTrafficDaily ?? 0), 0),
-  };
-});
+const isoReached = computed(() => reachedFor(isoOrigin.value));
+const isoReachedB = computed(() => reachedFor(isoOriginB.value));
+const isoSummary = computed(() => summaryOf(isoReached.value));
+const isoSummaryB = computed(() => summaryOf(isoReachedB.value));
 // Catchment profile — what the reachable population looks like vs the whole city.
 const CATCHMENT: Array<{ key: string; label: string; fmt: (v: number) => string; good: boolean | null }> = [
   { key: 'medianIncome', label: 'Median income', fmt: (v) => `$${Math.round(v / 1000)}k`, good: true },
@@ -679,11 +717,11 @@ const CATCHMENT: Array<{ key: string; label: string; fmt: (v: number) => string;
   { key: 'crimeRate', label: 'Violent crime', fmt: (v) => `${v.toFixed(0)}/1k`, good: false },
   { key: 'reMedianPrice', label: 'Home price', fmt: (v) => `$${(v / 1e6).toFixed(1)}M`, good: null },
 ];
+const mean = (arr: Record<string, number>[], key: string) => (arr.length ? arr.reduce((s, p) => s + Number(p[key] ?? 0), 0) / arr.length : 0);
 const catchmentStats = computed(() => {
   const r = isoReached.value;
   const all = baseGrid.value.features.map((f) => f.properties as Record<string, number>);
   if (!r.length || !all.length) return [] as Array<{ label: string; value: string; delta: number; favorable: boolean | null }>;
-  const mean = (arr: Record<string, number>[], key: string) => arr.reduce((s, p) => s + Number(p[key] ?? 0), 0) / arr.length;
   return CATCHMENT.map((m) => {
     const c = mean(r, m.key);
     const city = mean(all, m.key) || 1;
@@ -691,7 +729,23 @@ const catchmentStats = computed(() => {
     return { label: m.label, value: m.fmt(c), delta: Math.round(delta), favorable: m.good === null ? null : (m.good ? delta >= 0 : delta <= 0) };
   });
 });
+// A/B compare — diff the two catchments, flag the winner per metric.
+const compareRows = computed(() => {
+  const A = isoReached.value; const B = isoReachedB.value;
+  if (!A.length || !B.length) return [] as Array<{ label: string; a: string; b: string; winner: 'a' | 'b' | null }>;
+  return CATCHMENT.map((m) => {
+    const a = mean(A, m.key); const b = mean(B, m.key);
+    let winner: 'a' | 'b' | null = null;
+    if (m.good !== null && Math.abs(a - b) > 1e-9) winner = m.good ? (a > b ? 'a' : 'b') : (a < b ? 'a' : 'b');
+    return { label: m.label, a: m.fmt(a), b: m.fmt(b), winner };
+  });
+});
 function askIsoNoetica() {
+  if (compareOn.value && isoOriginB.value) {
+    const rows = compareRows.value.map((x) => `${x.label} A=${x.a} B=${x.b}${x.winner ? ` (${x.winner.toUpperCase()} better)` : ''}`).join('; ');
+    cockpit.askAbout(`Compare two catchments for a ${isoMax.value}-min ${isoMode.value}: A reaches ${isoSummary.value.population.toLocaleString()} people, B reaches ${isoSummaryB.value.population.toLocaleString()}. Profiles — ${rows}. Which site is the better bet and why?`);
+    return;
+  }
   const s = catchmentStats.value.map((x) => `${x.label} ${x.value} (${x.delta >= 0 ? '+' : ''}${x.delta}% vs city)`).join(', ');
   cockpit.askAbout(`Reachability catchment: within a ${isoMax.value}-min ${isoMode.value} of this point are ${isoSummary.value.population.toLocaleString()} people across ${isoSummary.value.cells} areas — ${s}. Is this a strong catchment for a new location, and what does the profile favor?`);
 }
@@ -1051,38 +1105,64 @@ function renderFootTraffic() {
 }
 function hideFootTraffic() { if (map?.getLayer('ft-line')) map.setLayoutProperty('ft-line', 'visibility', 'none'); }
 // Isochrone: band the reached hexes by travel time, painted above the choropleth.
-function renderIso() {
-  if (!map || !isoOrigin.value) return;
+function paintIsoLayer(origin: { lng: number; lat: number } | null, sourceId: string, layerId: string, colors: string[]) {
+  if (!map) return;
+  if (!origin) { if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none'); return; }
   const feats = baseGrid.value.features
-    .map((f) => ({ f, t: isoTimeMin(f.properties as Record<string, number>) }))
+    .map((f) => ({ f, t: isoTimeMin(f.properties as Record<string, number>, origin) }))
     .filter((x) => x.t <= isoMax.value)
     .map((x) => ({ ...x.f, properties: { ...x.f.properties, isoBand: ISO_BANDS.findIndex((b) => x.t <= b) === -1 ? ISO_BANDS.length : ISO_BANDS.findIndex((b) => x.t <= b) } }));
   const data = { type: 'FeatureCollection', features: feats } as unknown as FillData;
-  const src = map.getSource('iso') as maplibregl.GeoJSONSource | undefined;
+  const src = map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
   if (src) src.setData(data);
-  else map.addSource('iso', { type: 'geojson', data });
-  const color = ['match', ['get', 'isoBand'], 0, ISO_COLORS[0], 1, ISO_COLORS[1], 2, ISO_COLORS[2], 3, ISO_COLORS[3], ISO_COLORS[4]] as never;
-  if (map.getLayer('iso-fill')) {
-    map.setLayoutProperty('iso-fill', 'visibility', 'visible');
-    map.setPaintProperty('iso-fill', 'fill-color', color);
+  else map.addSource(sourceId, { type: 'geojson', data });
+  const color = ['match', ['get', 'isoBand'], 0, colors[0], 1, colors[1], 2, colors[2], 3, colors[3], colors[4]] as never;
+  const opacity = compareOn.value ? 0.42 : 0.5;
+  if (map.getLayer(layerId)) {
+    map.setLayoutProperty(layerId, 'visibility', 'visible');
+    map.setPaintProperty(layerId, 'fill-color', color);
+    map.setPaintProperty(layerId, 'fill-opacity', opacity);
   } else {
-    map.addLayer({ id: 'iso-fill', type: 'fill', source: 'iso', paint: { 'fill-color': color, 'fill-opacity': 0.5, 'fill-outline-color': 'rgba(255,255,255,0.25)' } });
+    map.addLayer({ id: layerId, type: 'fill', source: sourceId, paint: { 'fill-color': color, 'fill-opacity': opacity, 'fill-outline-color': 'rgba(255,255,255,0.25)' } });
   }
 }
-function hideIso() { if (map?.getLayer('iso-fill')) map.setLayoutProperty('iso-fill', 'visibility', 'none'); }
+function renderIso() {
+  paintIsoLayer(isoOrigin.value, 'iso', 'iso-fill', ISO_COLORS);
+  if (compareOn.value) paintIsoLayer(isoOriginB.value, 'isoB', 'iso-fill-b', ISO_COLORS_B);
+  else if (map?.getLayer('iso-fill-b')) map.setLayoutProperty('iso-fill-b', 'visibility', 'none');
+}
+function hideIso() { for (const l of ['iso-fill', 'iso-fill-b']) if (map?.getLayer(l)) map.setLayoutProperty(l, 'visibility', 'none'); }
 function setIsoOrigin(lngLat: { lng: number; lat: number }) {
-  isoOrigin.value = { lng: +lngLat.lng.toFixed(5), lat: +lngLat.lat.toFixed(5) };
+  const pt = { lng: +lngLat.lng.toFixed(5), lat: +lngLat.lat.toFixed(5) };
+  if (compareOn.value && isoArmTarget.value === 'b') {
+    isoOriginB.value = pt;
+    if (isoMarkerB) isoMarkerB.setLngLat([pt.lng, pt.lat]);
+    else if (map) isoMarkerB = new maplibregl.Marker({ color: '#a855f7' }).setLngLat([pt.lng, pt.lat]).addTo(map);
+  } else {
+    isoOrigin.value = pt;
+    if (isoMarker) isoMarker.setLngLat([pt.lng, pt.lat]);
+    else if (map) isoMarker = new maplibregl.Marker({ color: '#22d3ee' }).setLngLat([pt.lng, pt.lat]).addTo(map);
+  }
   isoArm.value = false;
-  if (isoMarker) isoMarker.setLngLat([lngLat.lng, lngLat.lat]);
-  else if (map) isoMarker = new maplibregl.Marker({ color: '#22d3ee' }).setLngLat([lngLat.lng, lngLat.lat]).addTo(map);
   renderIso();
 }
+function armIso(target: 'a' | 'b') { isoArmTarget.value = target; isoArm.value = true; }
 function toggleIso() {
   isoOn.value = !isoOn.value;
-  if (isoOn.value) { muteBasemapForData(); if (isoOrigin.value) renderIso(); else isoArm.value = true; }
-  else { isoArm.value = false; hideIso(); isoMarker?.remove(); isoMarker = null; }
+  if (isoOn.value) { muteBasemapForData(); if (isoOrigin.value) renderIso(); else armIso('a'); }
+  else { isoArm.value = false; hideIso(); isoMarker?.remove(); isoMarker = null; isoMarkerB?.remove(); isoMarkerB = null; }
 }
-function clearIso() { isoOrigin.value = null; hideIso(); isoMarker?.remove(); isoMarker = null; isoArm.value = isoOn.value; }
+function toggleCompare() {
+  compareOn.value = !compareOn.value;
+  if (compareOn.value) { if (!isoOriginB.value) armIso('b'); renderIso(); }
+  else { isoOriginB.value = null; isoMarkerB?.remove(); isoMarkerB = null; if (map?.getLayer('iso-fill-b')) map.setLayoutProperty('iso-fill-b', 'visibility', 'none'); renderIso(); }
+}
+function clearIso() {
+  isoOrigin.value = null; isoOriginB.value = null;
+  hideIso();
+  isoMarker?.remove(); isoMarker = null; isoMarkerB?.remove(); isoMarkerB = null;
+  if (isoOn.value) armIso(compareOn.value ? 'a' : 'a');
+}
 function renderCivic() {
   if (isFootTraffic.value) { hideCivic(); renderFootTraffic(); return; }
   hideFootTraffic();
@@ -1320,6 +1400,7 @@ onUnmounted(() => {
   stopFtPlay();
   stopTimePlay();
   isoMarker?.remove();
+  isoMarkerB?.remove();
   window.removeEventListener('pointermove', onPanelMove);
   window.removeEventListener('pointerup', endPanelResize);
   clearEvents();
@@ -1571,6 +1652,19 @@ onUnmounted(() => {
 .mapx-catch-v { color: var(--text); font-variant-numeric: tabular-nums; }
 .mapx-catch-d { font-size: 0.66rem; font-variant-numeric: tabular-nums; min-width: 3rem; text-align: right; }
 .mapx-catch-d.up { color: #4bbf73; } .mapx-catch-d.down { color: #f0656a; } .mapx-catch-d.neutral { color: var(--text-3); }
+/* A/B compare */
+.mapx-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; vertical-align: middle; }
+.mapx-cmp2-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin: 0.5rem 0; }
+.mapx-cmp2-sum > div { display: flex; flex-direction: column; padding: 0.4rem 0.5rem; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 9px; }
+.mapx-cmp2-sum .a { border-left: 3px solid #22d3ee; } .mapx-cmp2-sum .b { border-left: 3px solid #a855f7; }
+.mapx-cmp2-sum b { font-size: 0.95rem; color: var(--text); font-variant-numeric: tabular-nums; } .mapx-cmp2-sum span { font-size: 0.6rem; color: var(--text-3); }
+.mapx-cmp2 { margin: 0.2rem 0 0.5rem; }
+.mapx-cmp2-row { display: grid; grid-template-columns: 1fr 3.2rem 3.2rem; align-items: baseline; gap: 0.4rem; padding: 0.15rem 0; font-size: 0.72rem; }
+.mapx-cmp2-row b { text-align: right; color: var(--text-2); font-variant-numeric: tabular-nums; font-weight: 500; }
+.mapx-cmp2-row b.win { color: #4bbf73; font-weight: 700; }
+.mapx-cmp2-l { color: var(--text-3); }
+.mapx-cmp2-hdr { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); }
+.mapx-cmp2-hdr .a { color: #22d3ee; text-align: right; } .mapx-cmp2-hdr .b { color: #a855f7; text-align: right; }
 .mapx-cells { margin-bottom: 0.6rem; }
 .mapx-cells-l { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.3rem; }
 .mapx-cells-res { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.35rem; font-size: 0.66rem; color: var(--text-3); }
