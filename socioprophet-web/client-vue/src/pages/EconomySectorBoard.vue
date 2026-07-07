@@ -30,7 +30,8 @@
     </div>
 
     <!-- Body: sector board · detail -->
-    <div class="ec-body">
+    <SplitPane storage-key="economy-sectors" label="sectors" :initial="380">
+      <template #list>
       <div class="ec-board">
         <div class="ec-board-head">Sector board <span>breadth · momentum</span></div>
         <div class="ec-grid" @keydown="arrowRove($event, $event.currentTarget, '.ec-sector', 'both')">
@@ -53,6 +54,9 @@
           </button>
         </div>
       </div>
+      </template>
+
+      <template #detail>
 
       <!-- Detail -->
       <article class="ec-detail" aria-label="Detail">
@@ -115,11 +119,13 @@
           </div>
         </template>
       </article>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { indicators, indicatorsForPath, sectors, asOf, type Indicator, type Sector } from '../data/economyFixture';

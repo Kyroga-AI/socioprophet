@@ -13,7 +13,8 @@
       </div>
     </header>
 
-    <div class="ie-body" v-if="selected">
+    <SplitPane v-if="selected" storage-key="nlp-extraction" label="document" :initial="420">
+      <template #list>
       <!-- Document with entity highlights -->
       <article class="ie-text" aria-label="Document">
         <div class="ie-doc-head">
@@ -32,6 +33,9 @@
           <span class="ie-sent-score">{{ selected.sentiment.score >= 0 ? '+' : '' }}{{ selected.sentiment.score.toFixed(2) }}</span>
         </div>
       </article>
+      </template>
+
+      <template #detail>
 
       <!-- Extractions -->
       <div class="ie-out">
@@ -65,11 +69,13 @@
 
         <div class="ie-boundary">Read-only extraction · no PII writeback · no live model. A live extractor swaps in behind this shape.</div>
       </div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { docs, type Doc, type NerType } from '../data/nlpFixture';

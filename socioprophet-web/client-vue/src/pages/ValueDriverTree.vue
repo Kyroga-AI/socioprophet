@@ -20,7 +20,8 @@
       </div>
     </header>
 
-    <div class="vdt-body">
+    <SplitPane storage-key="value-drivers" label="drivers" :initial="380">
+      <template #list>
       <!-- Driver × capability-domain value-attribution tensor -->
       <div class="vdt-panel">
         <div class="vdt-panel-h vdt-panel-h-row">
@@ -47,6 +48,9 @@
           </template>
         </div>
       </div>
+      </template>
+
+      <template #detail>
 
       <!-- Per-driver uplift -->
       <div class="vdt-panel">
@@ -72,13 +76,15 @@
           </div>
         </div>
       </div>
-    </div>
+      </template>
+    </SplitPane>
 
     <p class="vdt-foot">Same model as the canonical value engine — <code>economic-prophet --mode vdt</code>. Each KPI lever moves the value carried by its (driver × domain) cell; <span class="vdt-pol">lower-better</span> metrics improve as they fall.</p>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { fetchVdtWithFallback, fetchVdtCatalogWithFallback, fixtureView, type VdtView, type VdtIndustry } from '../api/vdtApi';
 import { useCockpit } from '../stores/cockpit';

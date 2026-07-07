@@ -38,7 +38,8 @@
       </div>
     </div>
 
-    <div class="pf-body">
+    <SplitPane storage-key="portfolio" label="holdings" :initial="380">
+      <template #list>
       <!-- Positions -->
       <div class="pf-panel">
         <div class="pf-panel-h">Positions</div>
@@ -60,6 +61,9 @@
           </button>
         </div>
       </div>
+      </template>
+
+      <template #detail>
 
       <!-- Blotter -->
       <div class="pf-panel">
@@ -76,11 +80,13 @@
         </div>
         <p class="pf-prov">Paper book · deterministic client-side state · persisted locally. Marks use the Market Monitor's fixture quotes.</p>
       </div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { instruments } from '../data/marketsFixture';

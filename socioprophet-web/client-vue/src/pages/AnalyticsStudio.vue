@@ -25,7 +25,8 @@
     </div>
 
     <!-- Chart gallery / builder -->
-    <div v-else class="an-body">
+    <SplitPane v-else storage-key="analytics-studio" label="datasets" :initial="380">
+      <template #list>
       <div ref="listEl" class="an-list" aria-label="Datasets" @keydown="arrowRove($event, listEl, '.an-ds')">
         <p class="an-list-h">Datasets</p>
         <button v-for="d in datasets" :key="d.id" class="an-ds" :class="{ on: d.id === selectedId }" @click="selectedId = d.id">
@@ -33,6 +34,9 @@
           <span class="an-ds-n">{{ d.name }}</span>
         </button>
       </div>
+      </template>
+
+      <template #detail>
 
       <article v-if="selected" class="an-canvas" aria-label="Chart">
         <div class="an-canvas-h">
@@ -81,11 +85,13 @@
 
         <div class="an-boundary">Derived from the platform's typed fixtures · read-only · a live analytics adapter renders the same specs over live data.</div>
       </article>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';

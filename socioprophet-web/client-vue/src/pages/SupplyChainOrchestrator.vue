@@ -19,7 +19,8 @@
       <ProvenanceBadge :p="chainProv" />
     </div>
 
-    <div class="sco-body">
+    <SplitPane storage-key="supply-orchestrate" label="stages" :initial="380">
+      <template #list>
       <!-- Composer: stage by stage -->
       <div class="sco-stages">
         <div v-for="s in STAGES" :key="s.id" class="sco-stage">
@@ -43,6 +44,9 @@
           </div>
         </div>
       </div>
+      </template>
+
+      <template #detail>
 
       <!-- Contracts + cross-links -->
       <aside class="sco-side">
@@ -61,11 +65,13 @@
           <CrossLinks :links="traceLinks" />
         </div>
       </aside>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { computed, onMounted } from 'vue';
 import SurfaceHeader from '../components/SurfaceHeader.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';

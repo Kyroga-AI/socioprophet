@@ -42,7 +42,8 @@
     </div>
 
     <!-- Body: watchlist · detail -->
-    <div class="mk-body">
+    <SplitPane storage-key="market-monitor" label="watchlist" :initial="380">
+      <template #list>
       <!-- Watchlist -->
       <div class="mk-watch">
         <div class="mk-watch-head">
@@ -68,6 +69,9 @@
           </button>
         </div>
       </div>
+      </template>
+
+      <template #detail>
 
       <!-- Detail -->
       <article class="mk-detail" aria-label="Instrument detail">
@@ -139,11 +143,13 @@
           <div class="mk-kv wide"><span>As of</span><code>{{ asOfLabel }}</code></div>
         </div>
       </article>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';

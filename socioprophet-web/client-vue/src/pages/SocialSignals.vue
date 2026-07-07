@@ -25,7 +25,8 @@
       </div>
     </div>
 
-    <div class="ss-body">
+    <SplitPane storage-key="social-signals" label="stream" :initial="380">
+      <template #list>
       <!-- Signal stream -->
       <div class="ss-stream" aria-label="Signal stream">
         <p v-if="filtered.length === 0" class="ss-empty">No signals match — clear the filters.</p>
@@ -43,6 +44,9 @@
           <div class="ss-eng"><span>♥ {{ fmtNum(sig.likes) }}</span><span>⇄ {{ fmtNum(sig.reposts) }}</span></div>
         </article>
       </div>
+      </template>
+
+      <template #detail>
 
       <!-- Trending -->
       <aside class="ss-trend" aria-label="Trending">
@@ -62,11 +66,13 @@
           <div class="ss-mood-legend"><span class="pos">{{ moodPct('pos') }}% pos</span><span class="neu">{{ moodPct('neu') }}% neu</span><span class="neg">{{ moodPct('neg') }}% neg</span></div>
         </div>
       </aside>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { socialSignals, trends, asOf, type SocialSignal, type Sentiment } from '../data/socialFixture';

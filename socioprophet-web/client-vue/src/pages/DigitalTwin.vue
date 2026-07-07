@@ -52,7 +52,8 @@
 
     <div class="dt-trace"><span class="dt-trace-h">Trace across</span><CrossLinks :links="twinLinks" /></div>
 
-    <div class="dt-body">
+    <SplitPane storage-key="digital-twin" label="graph" :initial="380">
+      <template #list>
       <div class="dt-left">
         <div class="dt-graphpanel">
           <div class="dt-map-h">
@@ -94,6 +95,9 @@
           <p v-if="mappable.length === 0" class="dt-empty">No geocoded nodes for this twin.</p>
         </div>
       </div>
+      </template>
+
+      <template #detail>
 
       <div class="dt-panel">
         <div class="dt-panel-h">Impact propagation</div>
@@ -114,11 +118,13 @@
         </div>
         <p class="dt-prov">{{ result.provenance.note }}</p>
       </div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import maplibregl from 'maplibre-gl';
