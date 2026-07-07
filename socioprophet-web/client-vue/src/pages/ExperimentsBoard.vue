@@ -13,7 +13,8 @@
       </div>
     </header>
 
-    <div class="xp-body">
+    <SplitPane storage-key="experiments" label="experiments" :initial="360">
+      <template #list>
       <!-- Experiment list -->
       <div ref="listEl" class="xp-list" aria-label="Experiments" @keydown="arrowRove($event, listEl, '.xp-row')">
         <p class="xp-count">{{ results.length }} experiment{{ results.length === 1 ? '' : 's' }}</p>
@@ -31,6 +32,9 @@
       </div>
 
       <!-- Detail -->
+      </template>
+
+      <template #detail>
       <article v-if="selected" class="xp-detail" aria-label="Experiment detail">
         <div class="xp-ribbon">
           <span class="xp-ribbon-k">run manifest</span>
@@ -64,11 +68,13 @@
         <div class="xp-boundary">Fixture board · no live runner or model. A live board runner emits the same arms + run manifest.</div>
       </article>
       <div v-else class="xp-detail empty">Select an experiment</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { experiments, asOf, type Experiment, type ExpKind, type Arm } from '../data/experimentsFixture';

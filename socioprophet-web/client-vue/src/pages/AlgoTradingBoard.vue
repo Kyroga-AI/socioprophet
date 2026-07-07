@@ -18,7 +18,8 @@
       </div>
     </header>
 
-    <div class="at-body">
+    <SplitPane storage-key="algo-trading" label="strategies" :initial="360">
+      <template #list>
       <!-- Strategy list -->
       <div ref="listEl" class="at-list" aria-label="Strategies" @keydown="arrowRove($event, listEl, '.at-row')">
         <p class="at-count">{{ results.length }} strateg{{ results.length === 1 ? 'y' : 'ies' }}</p>
@@ -36,6 +37,9 @@
       </div>
 
       <!-- Detail -->
+      </template>
+
+      <template #detail>
       <article v-if="selected" class="at-detail" aria-label="Strategy detail">
         <div class="at-ribbon">
           <span class="at-ribbon-k">governance</span>
@@ -104,11 +108,13 @@
         </div>
       </article>
       <div v-else class="at-detail empty">Select a strategy</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { strategies, asOf, type Strategy, type StrategyStatus } from '../data/algoTradingFixture';

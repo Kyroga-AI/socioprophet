@@ -14,7 +14,8 @@
       </div>
     </header>
 
-    <div class="ba-body">
+    <SplitPane storage-key="behavioral" label="cohorts" :initial="360">
+      <template #list>
       <!-- Cohort list -->
       <div ref="listEl" class="ba-list" aria-label="Cohorts" @keydown="arrowRove($event, listEl, '.ba-row')">
         <p class="ba-count">{{ cohorts.length }} cohorts</p>
@@ -29,6 +30,9 @@
       </div>
 
       <!-- Detail -->
+      </template>
+
+      <template #detail>
       <article v-if="selected" class="ba-detail" aria-label="Cohort detail">
         <div class="ba-d-head">
           <div>
@@ -81,11 +85,13 @@
         <div class="ba-boundary">Aggregate-only · no per-user PII · fixture data. A live product-analytics adapter swaps in behind this shape.</div>
       </article>
       <div v-else class="ba-detail empty">Select a cohort</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { cohorts, type Cohort } from '../data/behavioralFixture';

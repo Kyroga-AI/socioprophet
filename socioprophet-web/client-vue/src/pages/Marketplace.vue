@@ -15,7 +15,8 @@
     </header>
     <p class="mp-note">Governed triparty netting cells — the smallest local clearing object coupling value + proof + authority + disclosure. Release/refund/export is disposed by policy, not confidence; export is stricter than local validity. Cells can clear supply-chain trades.</p>
 
-    <div class="mp-body">
+    <SplitPane storage-key="marketplace" label="cells" :initial="360">
+      <template #list>
       <!-- Cell list -->
       <div ref="listEl" class="mp-list" aria-label="Netting cells" @keydown="arrowRove($event, listEl, '.mp-row')">
         <p class="mp-count">{{ cells.length }} netting cells</p>
@@ -30,6 +31,9 @@
       </div>
 
       <!-- Cell detail -->
+      </template>
+
+      <template #detail>
       <article v-if="selected" class="mp-detail" aria-label="Netting cell detail">
         <div class="mp-d-head">
           <div>
@@ -90,11 +94,13 @@
         <div class="mp-boundary">Shapes mirror the sourceos-spec NettingCell / TripartyBundle contract; a live NettingCell/PolicyKernel/ReserveManager runtime settles the same objects.</div>
       </article>
       <div v-else class="mp-detail empty">Select a netting cell</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';

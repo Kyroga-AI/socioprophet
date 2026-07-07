@@ -24,7 +24,8 @@
       </div>
     </div>
 
-    <div class="aos-body">
+    <SplitPane storage-key="agentic-os" label="objectives" :initial="360">
+      <template #list>
       <!-- Objective portfolio -->
       <div ref="listEl" class="aos-list" aria-label="Objectives" @keydown="arrowRove($event, listEl, '.aos-row')">
         <p class="aos-count">{{ opportunities.length }} objectives</p>
@@ -43,6 +44,9 @@
       </div>
 
       <!-- Objective detail -->
+      </template>
+
+      <template #detail>
       <article v-if="selected" class="aos-detail" aria-label="Objective detail">
         <div class="aos-d-head">
           <div>
@@ -105,11 +109,13 @@
         <div class="aos-boundary">Draft of the sourceos-spec agentic-OS contract (Opportunity / AgentPod / ReadinessScore / CaptureCadence / DeltaControl). A live registry adapter resolves the same objects.</div>
       </article>
       <div v-else class="aos-detail empty">Select an objective</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';

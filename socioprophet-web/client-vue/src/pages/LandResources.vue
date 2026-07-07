@@ -15,7 +15,8 @@
     </header>
     <p class="lr-note">The base layer of the economy: land, minerals, water, energy, forests, and fisheries — with reserves, renewability, and tenure. Everything upstream (extraction → commodities → markets → trade) is built on these.</p>
 
-    <div class="lr-body">
+    <SplitPane storage-key="land-resources" label="endowments" :initial="360">
+      <template #list>
       <!-- Endowment list -->
       <div ref="listEl" class="lr-list" aria-label="Endowments" @keydown="arrowRove($event, listEl, '.lr-row')">
         <p class="lr-count">{{ results.length }} endowment{{ results.length === 1 ? '' : 's' }}</p>
@@ -30,6 +31,9 @@
       </div>
 
       <!-- Detail -->
+      </template>
+
+      <template #detail>
       <article v-if="selected" class="lr-detail" aria-label="Endowment detail">
         <div class="lr-d-head">
           <div>
@@ -86,11 +90,13 @@
         <div class="lr-boundary">Endowments carry a HellGraph ref + geo + twin handle — live land-registry / GAIA / economic-prophet adapters resolve the same identities.</div>
       </article>
       <div v-else class="lr-detail empty">Select an endowment</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';

@@ -15,7 +15,8 @@
     </header>
     <p class="lm-note">Labor as <b>request + response + evidence + fulfillment + trust</b> — not identity, feed, or attention. The unit is a structured request; fit is scored <b>request ↔ response</b>. There is no global human-worth score.</p>
 
-    <div class="lm-body">
+    <SplitPane storage-key="labor-market" label="requests" :initial="360">
+      <template #list>
       <!-- Request list -->
       <div ref="listEl" class="lm-list" aria-label="Requests" @keydown="arrowRove($event, listEl, '.lm-row')">
         <p class="lm-count">{{ requests.length }} requests</p>
@@ -30,6 +31,9 @@
       </div>
 
       <!-- Request detail -->
+      </template>
+
+      <template #detail>
       <article v-if="selected" class="lm-detail" aria-label="Request detail">
         <div class="lm-d-head">
           <div>
@@ -98,11 +102,13 @@
         <div class="lm-boundary">Shapes mirror the sourceos-spec LaborRequest / LaborResponse / FitScore / LaborAward / TrustEvent contract. Requesters/responders reference the human-spine networks + People.</div>
       </article>
       <div v-else class="lm-detail empty">Select a request</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
+import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
