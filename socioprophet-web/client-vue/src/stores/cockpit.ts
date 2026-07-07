@@ -16,12 +16,15 @@ export interface SurfaceContext {
 
 export const useCockpit = defineStore('cockpit', () => {
   const dockOpen = ref(false);
+  const graphOpen = ref(false);
   const context = ref<SurfaceContext>({ surface: '' });
 
   function setContext(c: SurfaceContext) { context.value = c; }
   function openDock() { dockOpen.value = true; }
   function closeDock() { dockOpen.value = false; }
   function toggleDock() { dockOpen.value = !dockOpen.value; }
+  function toggleGraph() { graphOpen.value = !graphOpen.value; }
+  function closeGraph() { graphOpen.value = false; }
 
   // One-tap "ask Noetica about what I'm looking at": open the dock + send a
   // context-framed prompt into the shared chat session.
@@ -30,5 +33,5 @@ export const useCockpit = defineStore('cockpit', () => {
     useNoeticaChat().send(prompt);
   }
 
-  return { dockOpen, context, setContext, openDock, closeDock, toggleDock, askAbout };
+  return { dockOpen, graphOpen, context, setContext, openDock, closeDock, toggleDock, toggleGraph, closeGraph, askAbout };
 });

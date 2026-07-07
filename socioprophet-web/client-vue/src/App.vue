@@ -135,6 +135,13 @@
         <RouterLink class="sp-capture-link" to="/research">Research</RouterLink>
         <button
           type="button"
+          class="sp-graph-toggle"
+          :class="{ on: cockpit.graphOpen }"
+          title="Toggle knowledge graph (⌘G / Ctrl+G)"
+          @click="cockpit.toggleGraph()"
+        >◈ Graph</button>
+        <button
+          type="button"
           class="sp-noetica-toggle"
           :class="{ on: cockpit.dockOpen }"
           title="Toggle Noetica assistant (⌘J / Ctrl+J)"
@@ -179,6 +186,9 @@
 
     <!-- Global Noetica assistant dock — available on every page (⌘J / Ctrl+J) -->
     <NoeticaDock :open="cockpit.dockOpen" @close="cockpit.closeDock()" />
+
+    <!-- Global knowledge-graph dock (⌘G / Ctrl+G) -->
+    <GraphDock :open="cockpit.graphOpen" @close="cockpit.closeGraph()" />
   </div>
 </template>
 
@@ -192,6 +202,7 @@ import RuntimeAdapterStatusBadge from './components/RuntimeAdapterStatusBadge.vu
 import QuakeTerminal from './components/QuakeTerminal.vue';
 import CommandPalette from './components/CommandPalette.vue';
 import NoeticaDock from './components/NoeticaDock.vue';
+import GraphDock from './components/GraphDock.vue';
 import { useOperatorTerminal } from './composables/useOperatorTerminal';
 import { useNoeticaChat } from './composables/useNoeticaChat';
 import { domainSurfaces, surfaceForRoute, surfacesForDomain } from './config/domainRoutes';
@@ -318,7 +329,14 @@ function onTermHotkey(e: KeyboardEvent) {
     cockpit.toggleDock();
     return;
   }
+  // Cmd/Ctrl+G — toggle the global knowledge-graph dock.
+  if ((e.metaKey || e.ctrlKey) && (e.key === 'g' || e.key === 'G')) {
+    e.preventDefault();
+    cockpit.toggleGraph();
+    return;
+  }
   if (e.key === 'Escape' && cockpit.dockOpen && !termOpen.value) { cockpit.closeDock(); return; }
+  if (e.key === 'Escape' && cockpit.graphOpen && !termOpen.value) { cockpit.closeGraph(); return; }
   // Ctrl+`  (backquote) — the classic Quake / VS Code terminal toggle.
   if (e.ctrlKey && (e.key === '`' || e.code === 'Backquote')) {
     e.preventDefault();
@@ -461,6 +479,18 @@ const activeRuntimeFeatures = computed<RuntimeAdapterFeature[]>(() => {
 }
 .sp-noetica-toggle:hover { background: rgba(120, 160, 255, 0.12); }
 .sp-noetica-toggle.on { background: rgba(120, 160, 255, 0.18); color: #fff; }
+.sp-graph-toggle {
+  border: 1px solid rgba(47, 107, 255, 0.4);
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(130, 160, 255, 0.95);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.76rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sp-graph-toggle:hover { background: rgba(47, 107, 255, 0.12); }
+.sp-graph-toggle.on { background: rgba(47, 107, 255, 0.2); color: #fff; }
 
 /* Domain mega-menu (top axis) — faithful to Will's HeaderMenu dropdowns */
 .sp-domain-nav { display: flex; align-items: stretch; gap: 0; }
