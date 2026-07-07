@@ -66,6 +66,11 @@
           <div v-if="selected.effectiveDate" class="lw-fact"><span>Effective</span><b>{{ selected.effectiveDate.includes('T') ? dateLabel(selected.effectiveDate) : selected.effectiveDate }}</b></div>
         </div>
 
+        <!-- Extraction -->
+        <div class="lw-block">
+          <ExtractionPanel :text="`${selected.title}. ${selected.summary} ${selected.impact}`" :source="selected.cite" />
+        </div>
+
         <!-- Impact + tags -->
         <div class="lw-block">
           <div class="lw-block-h">Impact</div>
@@ -115,6 +120,7 @@ import { prov } from '../features/provenance/types';
 import CrossLinks from '../components/CrossLinks.vue';
 import { crossLinksForDocket } from '../features/crosslink/entityLinks';
 import { useCockpit } from '../stores/cockpit';
+import ExtractionPanel from '../components/ExtractionPanel.vue';
 
 const cockpit = useCockpit();
 

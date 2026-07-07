@@ -25,6 +25,29 @@
         </article>
       </div>
 
+      <!-- Data Catalog: every source registered with its live-adapter status -->
+      <div v-if="def.id === 'data-catalog'" class="op-catalog">
+        <div class="op-cat-summary">
+          <span class="op-cat-pill live">{{ liveCount }} live</span>
+          <span class="op-cat-pill fixture">{{ fixtureCount }} fixture</span>
+          <span class="op-cat-pill planned">{{ plannedCount }} planned adapter</span>
+        </div>
+        <div class="op-table-wrap">
+          <table class="op-table">
+            <thead><tr><th>Source</th><th>Domain</th><th>Upstream</th><th>Feeds</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr v-for="s in sources" :key="s.id">
+                <td class="op-td-name">{{ s.name }}</td>
+                <td>{{ s.domain }}</td>
+                <td class="op-td-up">{{ s.upstream }}</td>
+                <td class="op-td-feeds">{{ s.feeds.join(', ') }}</td>
+                <td><span class="op-src-status" :class="s.status">{{ s.status }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <p class="op-note">
         <template v-if="def.status === 'in-noetica'">This surface is implemented in the Noetica app and reachable from here; a native cockpit port is on the roadmap.</template>
         <template v-else-if="def.status === 'standalone'">This capability lives in a standalone repo. It's referenced by the platform but not yet embedded in the cockpit.</template>
@@ -43,11 +66,16 @@ import SurfaceHeader from '../components/SurfaceHeader.vue';
 import InfoLabel from '../components/InfoLabel.vue';
 import EmptyState from '../components/EmptyState.vue';
 import { operatorSurfaceById, type SurfaceStatus } from '../data/operatorSurfaces';
+import { DATA_SOURCES } from '../data/dataSources';
 import { useCockpit } from '../stores/cockpit';
 
 const route = useRoute();
 const cockpit = useCockpit();
 const def = computed(() => operatorSurfaceById(String(route.params.id ?? '')));
+const sources = DATA_SOURCES;
+const liveCount = sources.filter((s) => s.status === 'live').length;
+const fixtureCount = sources.filter((s) => s.status === 'fixture').length;
+const plannedCount = sources.filter((s) => s.status === 'planned').length;
 const statusLabel = (s: SurfaceStatus): string => (s === 'in-noetica' ? 'in Noetica' : s === 'standalone' ? 'standalone repo' : 'wired');
 function askNoetica() {
   if (!def.value) return;
@@ -72,4 +100,16 @@ watch(def, (d) => { if (d) cockpit.setContext({ surface: d.title, entityLabel: d
 .op-cap-h { font-size: 0.86rem; font-weight: 640; color: var(--text); }
 .op-cap-d { margin: 0.3rem 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--text-2); }
 .op-note { margin: 0; font-size: 0.76rem; color: var(--text-3); line-height: 1.5; border-top: 1px solid var(--line); padding-top: 0.8rem; }
+.op-catalog { display: flex; flex-direction: column; gap: 0.6rem; }
+.op-cat-summary { display: flex; gap: 0.4rem; }
+.op-cat-pill { font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; border-radius: 999px; padding: 0.15rem 0.55rem; }
+.op-cat-pill.live { color: #7ee2a8; background: rgba(75, 191, 115, 0.14); } .op-cat-pill.fixture { color: #f0c987; background: rgba(227, 179, 65, 0.14); } .op-cat-pill.planned { color: #93b4ff; background: rgba(120, 160, 255, 0.14); }
+.op-table-wrap { overflow-x: auto; border: 1px solid var(--line-2); border-radius: 10px; }
+.op-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+.op-table th { text-align: left; padding: 0.5rem 0.7rem; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); border-bottom: 1px solid var(--line-2); background: var(--surface-2); position: sticky; top: 0; }
+.op-table td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); color: var(--text-2); vertical-align: top; }
+.op-td-name { color: var(--text); font-weight: 600; white-space: nowrap; }
+.op-td-up, .op-td-feeds { color: var(--text-3); font-size: 0.72rem; }
+.op-src-status { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; border-radius: 5px; padding: 0.05rem 0.4rem; white-space: nowrap; }
+.op-src-status.live { color: #7ee2a8; background: rgba(75, 191, 115, 0.14); } .op-src-status.fixture { color: #f0c987; background: rgba(227, 179, 65, 0.14); } .op-src-status.planned { color: #93b4ff; background: rgba(120, 160, 255, 0.14); }
 </style>

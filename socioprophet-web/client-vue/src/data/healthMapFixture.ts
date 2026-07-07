@@ -114,6 +114,15 @@ export const CIVIC_LAYERS: LayerGroup[] = [
     ],
   },
   {
+    id: 'newssocial', label: 'News & Social', blurb: 'Where the story is — news volume, social activity, sentiment, civic engagement by area.',
+    metrics: [
+      { key: 'newsVolume', label: 'News volume', min: 0, max: 120, unit: '/wk', higherBetter: true, ramp: BLUE },
+      { key: 'socialPosts', label: 'Social activity', min: 100, max: 8000, unit: '/day', higherBetter: true, ramp: BLUE },
+      { key: 'netSentiment', label: 'Net sentiment', min: -60, max: 60, unit: '', higherBetter: true, ramp: GOOD_HIGH },
+      { key: 'civicEngagement', label: 'Civic engagement', min: 10, max: 90, unit: '', higherBetter: true, ramp: GOOD_HIGH },
+    ],
+  },
+  {
     id: 'people', label: 'People', blurb: 'Population and density.',
     metrics: [
       { key: 'population', label: 'Population', min: 2000, max: 42000, unit: '', higherBetter: true, ramp: BLUE },
@@ -227,6 +236,11 @@ export function civicGrid(cols = 12, rows = 11): CivicGrid {
           footTrafficDaily: Math.round(clamp(200 + b * 22000 + a * 3000 + n * 3000, 200, 25000)),
           dwellMin: Math.round(clamp(12 + a * 22 + (1 - b) * 8 + n * 4, 8, 45)),
           captureRate: +clamp(2 + b * 13 + n * 3, 2, 18).toFixed(1),
+          // News & social by region
+          newsVolume: Math.round(clamp(5 + b * 100 + n * 15, 0, 120)),
+          socialPosts: Math.round(clamp(100 + b * 7000 + a * 800 + n * 800, 100, 8000)),
+          netSentiment: Math.round(clamp((a - 0.5) * 100 + n * 25, -60, 60)),
+          civicEngagement: Math.round(clamp(10 + a * 70 + n * 12, 10, 90)),
         },
         geometry: {
           type: 'Polygon',
