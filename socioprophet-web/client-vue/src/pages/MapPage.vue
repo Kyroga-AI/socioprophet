@@ -161,6 +161,12 @@
               </div>
             </div>
 
+            <!-- Temporal replay -->
+            <div v-if="!isFootTraffic && !bivariateOn" class="mapx-time">
+              <div class="mapx-time-head"><span>Time <InfoLabel info="Replay the metric back through time. Each area has a development momentum — gentrifying areas were lower on 'good' metrics (and higher on crime) in the past. Scrub to watch the map change." /></span><b :class="{ past: timeQ > 0 }">{{ quarterLabel(timeQ) }}</b></div>
+              <input v-model.number="timeQ" type="range" min="0" max="7" step="1" aria-label="Quarters ago" />
+            </div>
+
             <label v-if="!isFootTraffic" class="mapx-opacity">Opacity <input v-model.number="civicOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
             <p class="lookup-status">{{ isFootTraffic ? 'Foot traffic flows along corridors — thicker & brighter = busier. Scrub the hour: commercial strips peak at lunch & evening, transit at commute.' : activeGroup.blurb + ' Click a cell to inspect. Fixture aggregation grid.' }}</p>
 
@@ -744,7 +750,21 @@ const CLASS_MODES = [
 const classMode = ref<ClassMode>('quantile');
 const bivariateOn = ref(false);
 const isRealEstate = computed(() => activeGroup.value.id === 'realestate');
-const cellValues = (key: string, factor: number) => baseGrid.value.features.map((f) => Number((f.properties as Record<string, number>)[key] ?? 0) * factor);
+// Temporal replay — scrub the active metric back through quarters. "Better"
+// metrics fall into the past where momentum is positive (gentrifying) and vice versa.
+const timeQ = ref(0); // quarters before "now"
+function tFeatures() {
+  if (timeQ.value === 0) return baseGrid.value.features;
+  const m = activeMetric.value;
+  const dir = m.higherBetter ? 1 : -1;
+  return baseGrid.value.features.map((f) => {
+    const p = f.properties as Record<string, number>;
+    const adj = Math.max(m.min, Math.min(m.max, Number(p[m.key] ?? 0) * (1 - Number(p.momentum ?? 0) * dir * timeQ.value)));
+    return { ...f, properties: { ...p, [m.key]: adj } };
+  });
+}
+const quarterLabel = (q: number) => (q === 0 ? 'now' : `−${q}Q (~${q * 3}mo ago)`);
+const cellValues = (key: string, factor: number) => tFeatures().map((f) => Number((f.properties as Record<string, number>)[key] ?? 0) * factor);
 const classColorsFor = (m: MetricDef) => Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(m.ramp, i / (N_CLASSES - 1)));
 const classBreaks = computed(() => breaksFor(classMode.value, cellValues(activeMetric.value.key, metricFactor.value), activeMetric.value.min * metricFactor.value, activeMetric.value.max * metricFactor.value, N_CLASSES));
 const legendClasses = computed(() => {
@@ -1053,7 +1073,7 @@ function renderCivic() {
   if (isFootTraffic.value) { hideCivic(); renderFootTraffic(); return; }
   hideFootTraffic();
   if (bivariateOn.value && isRealEstate.value) { renderBivariate(); return; }
-  paintCivic(baseGrid.value as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
+  paintCivic({ type: 'FeatureCollection', features: tFeatures() } as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
 }
 function renderSite() {
   // Suitability scores cluster tightly (e.g. 50–60), so a raw 0–100 ramp paints
@@ -1147,6 +1167,7 @@ watch([gridType, hexRes], rebuildGrid);
 watch([ftHour, ftWeekend], () => { if (isFootTraffic.value && civicOn.value && !siteMode.value) renderFootTraffic(); });
 watch(isFootTraffic, (on) => { if (!on) stopFtPlay(); });
 watch([isoMode, isoMax], () => { if (isoOn.value && isoOrigin.value) renderIso(); });
+watch(timeQ, () => { if (civicOn.value && !siteMode.value && !isFootTraffic.value) renderCivic(); });
 watch(siteProfile, () => { if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
@@ -1551,6 +1572,11 @@ onUnmounted(() => {
 .mapx-biv-ax--x { bottom: -1rem; left: 0; }
 .mapx-biv-ax--y { transform: rotate(-90deg); transform-origin: left bottom; left: -0.3rem; bottom: 1.4rem; white-space: nowrap; }
 .mapx-switch--sm { font-size: 0.72rem; margin-top: 0.55rem; }
+.mapx-time { margin-top: 0.6rem; }
+.mapx-time-head { display: flex; align-items: baseline; justify-content: space-between; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 0.2rem; }
+.mapx-time-head b { font-size: 0.72rem; text-transform: none; letter-spacing: 0; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.mapx-time-head b.past { color: #e3b341; }
+.mapx-time input { width: 100%; accent-color: var(--map-accent); }
 .mapx-opacity { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.55rem; font-size: 0.68rem; color: var(--text-3); }
 .mapx-opacity input { flex: 1; accent-color: var(--map-accent); }
 .secondary { padding: 0.3rem 0.6rem; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 8px; background: rgba(255, 255, 255, 0.04); color: var(--text-2); font-size: 0.72rem; cursor: pointer; transition: color 0.15s, border-color 0.15s; }

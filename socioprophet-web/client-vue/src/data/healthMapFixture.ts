@@ -275,6 +275,9 @@ function buildCellProps(a: number, b: number, n: number, id: string, cLon: numbe
     id,
     cLon,
     cLat,
+    // Development momentum — per-quarter rate of change (gentrifying > 0, declining < 0).
+    // Drives the temporal replay: "better" metrics rise where momentum is positive.
+    momentum: +((a - 0.45) * 0.09 + n * 0.015).toFixed(4),
     population: Math.round(2000 + a * 40000),
     healthIndex: Math.round(clamp(42 + a * 40 + n * 14, 42, 94)),
     uninsuredPct: +clamp(24 - a * 18 + n * 5, 3, 24).toFixed(1),
