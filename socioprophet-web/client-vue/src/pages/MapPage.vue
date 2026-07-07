@@ -146,6 +146,10 @@
             <input type="checkbox" :checked="eventsOn" @change="toggleEvents" />
             <span>Community events <span class="mapx-sub2">parades · marches · civic</span></span>
           </label>
+          <label class="mapx-switch">
+            <input type="checkbox" :checked="mlsOn" @change="toggleListings" />
+            <span>MLS listings <span class="mapx-sub2">for-sale / for-rent inventory</span></span>
+          </label>
           <div class="mapx-basemap mapx-tools2">
             <button class="mapx-bm" :class="{ on: pinMode }" type="button" @click="pinMode = !pinMode">{{ pinMode ? '◎ click map…' : '📍 Drop a pin' }}</button>
             <button v-if="droppedPin || pinMarker" class="mapx-bm" type="button" @click="clearPin">Clear pin</button>
@@ -312,6 +316,17 @@
       <button v-if="!leftOpen" class="mapx-reopen mapx-reopen--left" type="button" @click="leftOpen = true">Controls ›</button>
       <button v-if="!rightOpen" class="mapx-reopen mapx-reopen--right" type="button" @click="rightOpen = true">‹ Inspector</button>
 
+      <!-- MLS listing detail (floating) -->
+      <div v-if="selectedListing" class="mapx-listing">
+        <button class="mapx-event-x" type="button" @click="selectedListing = null">✕</button>
+        <div class="mapx-listing-type" :class="selectedListing.type">{{ selectedListing.type === 'sale' ? 'For sale' : 'For rent' }} · {{ selectedListing.status }}</div>
+        <div class="mapx-listing-price">{{ listingLabel(selectedListing) }}</div>
+        <div class="mapx-listing-addr">{{ selectedListing.address }}</div>
+        <div class="mapx-listing-stats">
+          <span>{{ selectedListing.beds }} bd</span><span>{{ selectedListing.baths }} ba</span><span>{{ selectedListing.sqft.toLocaleString() }} sqft</span><span class="mapx-listing-yield">{{ selectedListing.capRate }}% yield</span>
+        </div>
+      </div>
+
       <!-- Community event detail (floating) -->
       <div v-if="selectedEvent" class="mapx-event">
         <button class="mapx-event-x" type="button" @click="selectedEvent = null">✕</button>
@@ -353,6 +368,7 @@ import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import { prov } from '../features/provenance/types';
 import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef } from '../data/healthMapFixture';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
+import { LISTINGS, type Listing } from '../data/mlsFixture';
 import {
   fetchFeaturesByH3WithFallback,
   fetchGaiaLayerCatalogWithFallback,
@@ -403,6 +419,8 @@ const eventsOn = ref(false);
 const selectedEvent = ref<CommunityEvent | null>(null);
 const pinMode = ref(false);
 const droppedPin = ref<{ lng: number; lat: number } | null>(null);
+const mlsOn = ref(false);
+const selectedListing = ref<Listing | null>(null);
 const baseGrid = civicGrid();
 const topAreas = computed(() =>
   baseGrid.features
@@ -494,6 +512,7 @@ let map: maplibregl.Map | null = null;
 let marker: maplibregl.Marker | null = null;
 let eventMarkers: maplibregl.Marker[] = [];
 let pinMarker: maplibregl.Marker | null = null;
+let mlsMarkers: maplibregl.Marker[] = [];
 
 const mapRuntimeFeatures = computed<RuntimeAdapterFeature[]>(() =>
   runtimeFeatureIdsForPath('/map')
@@ -661,6 +680,22 @@ function askAreaNoetica() {
   cockpit.askAbout(`Tell me about this area on the ${activeGroup.value.label} layer: ${stats}. How does it compare to the rest of the city, and what should I know before ${activeGroup.value.id === 'realestate' ? 'investing' : 'opening a business or moving'} here?`);
 }
 function clearPin() { pinMarker?.remove(); pinMarker = null; droppedPin.value = null; }
+// MLS listings — individual inventory over the aggregate choropleth.
+const listingLabel = (l: Listing) => (l.type === 'sale' ? (l.price >= 1_000_000 ? `$${(l.price / 1_000_000).toFixed(2)}M` : `$${Math.round(l.price / 1000)}k`) : `$${(l.price / 1000).toFixed(1)}k/mo`);
+function clearListings() { mlsMarkers.forEach((m) => m.remove()); mlsMarkers = []; }
+function renderListings() {
+  if (!map) return;
+  clearListings();
+  for (const l of LISTINGS) {
+    const el = document.createElement('button');
+    el.className = `mapx-mls ${l.type}`;
+    el.textContent = listingLabel(l);
+    el.title = `${l.address} · ${l.beds}bd/${l.baths}ba · ${l.capRate}% yield`;
+    el.addEventListener('click', (e) => { e.stopPropagation(); selectedListing.value = l; if (map) map.flyTo({ center: [l.lon, l.lat], zoom: Math.max(map.getZoom(), 14), duration: 500 }); });
+    mlsMarkers.push(new maplibregl.Marker({ element: el }).setLngLat([l.lon, l.lat]).addTo(map));
+  }
+}
+function toggleListings() { mlsOn.value = !mlsOn.value; if (mlsOn.value) renderListings(); else { clearListings(); selectedListing.value = null; } }
 function eventDate(iso: string): string { return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
 watch([civicMetricKey, reSegment], () => { if (!siteMode.value && civicOn.value) renderCivic(); });
 watch(siteProfile, () => { if (siteMode.value) renderSite(); });
@@ -798,6 +833,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   clearEvents();
+  clearListings();
   pinMarker?.remove();
   marker?.remove();
   map?.remove();
@@ -975,6 +1011,16 @@ onUnmounted(() => {
 .mapx-event-when { font-size: 0.76rem; color: var(--text); margin-top: 0.3rem; font-weight: 600; }
 .mapx-event-org { font-size: 0.72rem; color: var(--text-2); margin-top: 0.1rem; }
 .mapx-event-desc { font-size: 0.74rem; color: var(--text-2); line-height: 1.5; margin: 0.45rem 0 0; }
+/* MLS listing markers + detail */
+:deep(.mapx-mls) { border: 1px solid #fff; border-radius: 6px; background: #2f6bff; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 4px; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); }
+:deep(.mapx-mls.rent) { background: #16a34a; }
+.mapx-listing { position: absolute; z-index: 7; left: 14px; bottom: 60px; width: 15rem; padding: 0.75rem 0.85rem; border-radius: 12px; background: rgba(16, 18, 23, 0.94); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5); }
+.mapx-listing-type { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #2f6bff; }
+.mapx-listing-type.rent { color: #22c55e; }
+.mapx-listing-price { font-size: 1.3rem; font-weight: 800; color: var(--text); margin-top: 0.1rem; }
+.mapx-listing-addr { font-size: 0.76rem; color: var(--text-2); margin-top: 0.15rem; }
+.mapx-listing-stats { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.72rem; color: var(--text-2); }
+.mapx-listing-yield { color: var(--up); font-weight: 600; }
 .mapx-switch { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text-2); cursor: pointer; }
 .mapx-switch input { accent-color: var(--map-accent); }
 .mapx-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }
