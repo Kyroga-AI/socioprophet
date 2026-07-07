@@ -181,6 +181,7 @@ export const AGENT_COCKPIT: NavGroup[] = [
     to: '/marketplace',
     items: [
       { label: 'Triparty Netting', to: '/marketplace' },
+      { label: 'Supply-chain Orchestrator', to: '/marketplace/orchestrate' },
     ],
   },
   {
