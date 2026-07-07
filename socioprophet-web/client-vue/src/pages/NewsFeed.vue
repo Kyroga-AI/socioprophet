@@ -127,6 +127,7 @@
           <span class="nf-src-tag" :style="{ color: sourceColor(selected.sourceId) }">{{ sourceOf(selected)?.title }}</span>
           <span class="nf-time">{{ relative(selected.publishedAt) }}</span>
           <span class="nf-q" :class="metaOf(selected).qualityBand">◆ {{ Math.round(metaOf(selected).quality * 100) }} truth</span>
+          <button class="nf-reader-close" type="button" aria-label="Close reader" title="Close (Esc)" @click="closeReader">✕</button>
         </div>
         <h2 class="nf-reader-title">{{ selected.title }}</h2>
         <div class="nf-reader-tags">
@@ -291,7 +292,8 @@ const items = computed<FeedItem[]>(() => {
   else s.sort((a, b) => scoreOf(b) - scoreOf(a)); // hot
   return s;
 });
-const selected = computed<FeedItem | undefined>(() => all.find((i) => i.id === selectedId.value) ?? items.value[0]);
+const readerClosed = ref(false);
+const selected = computed<FeedItem | undefined>(() => (readerClosed.value ? undefined : (all.find((i) => i.id === selectedId.value) ?? items.value[0])));
 
 const sourceById = new Map(sources.map((s) => [s.id, s]));
 const sourceOf = (it: FeedItem) => sourceById.get(it.sourceId);
@@ -309,7 +311,8 @@ const SRC_COLORS: Record<string, string> = {
 const sourceColor = (sid: string) => SRC_COLORS[sid] ?? '#8b949e';
 function domainOf(url: string): string { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return 'source'; } }
 
-function select(id: string) { selectedId.value = id; }
+function select(id: string) { selectedId.value = id; readerClosed.value = false; }
+function closeReader() { readerClosed.value = true; }
 function setSource(sid: 'all' | string) { activeSourceId.value = sid; }
 function toggleTag(t: string) { activeTag.value = activeTag.value === t ? '' : t; }
 function toggleUp(id: string) { if (upvoted.value.has(id)) upvoted.value.delete(id); else upvoted.value.add(id); upvoted.value = new Set(upvoted.value); }
@@ -369,6 +372,7 @@ function onKey(e: KeyboardEvent) {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   const tag = (e.target as HTMLElement | null)?.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  if (e.key === 'Escape') { if (!readerClosed.value) { e.preventDefault(); closeReader(); } return; }
   const list = items.value;
   if (!list.length) return;
   const idx = list.findIndex((i) => i.id === selectedId.value);
@@ -494,6 +498,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .nf-reader { min-height: 0; overflow-y: auto; border: 1px solid var(--line-2); border-radius: 12px; padding: 1.1rem 1.25rem; }
 .nf-reader.empty { display: grid; place-items: center; color: rgba(255, 255, 255, 0.35); font-size: 0.85rem; }
 .nf-reader-meta { display: flex; align-items: center; gap: 0.6rem; font-size: 0.72rem; }
+.nf-reader-close { margin-left: auto; display: grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 8px; border: 1px solid var(--line-2); background: transparent; color: var(--text-2); font-size: 0.8rem; cursor: pointer; transition: background 0.12s ease, color 0.12s ease; }
+.nf-reader-close:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }
 .nf-reader-title { margin: 0.5rem 0 0.5rem; font-size: 1.35rem; line-height: 1.25; letter-spacing: -0.02em; }
 .nf-reader-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.8rem; }
 .nf-reader-body { margin: 0 0 1rem; font-size: 0.95rem; line-height: 1.6; color: rgba(255, 255, 255, 0.82); }

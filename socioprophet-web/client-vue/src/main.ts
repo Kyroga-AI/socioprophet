@@ -43,6 +43,7 @@ import OperatorSurface from './pages/OperatorSurface.vue';
 import OntologySurface from './pages/OntologySurface.vue';
 import UniverseViewer from './pages/UniverseViewer.vue';
 import SupplyChainOrchestrator from './pages/SupplyChainOrchestrator.vue';
+import HolographMe from './pages/HolographMe.vue';
 import NlpExtractionBench from './pages/NlpExtractionBench.vue';
 import ExperimentsBoard from './pages/ExperimentsBoard.vue';
 import BehavioralAnalytics from './pages/BehavioralAnalytics.vue';
@@ -70,6 +71,7 @@ const explicitRoutes = [
   // capability keeps its own /capability/* URL + rail highlight, and the host
   // screen shows the capability as its header lens (via navScopeForPath).
   { path: '/capability/portfolios', component: PortfolioBoard },
+  { path: '/operator/holograph-me', component: HolographMe },
   { path: '/operator/:id', component: OperatorSurface },
   { path: '/ontology', component: OntologySurface },
   { path: '/universe', component: UniverseViewer },

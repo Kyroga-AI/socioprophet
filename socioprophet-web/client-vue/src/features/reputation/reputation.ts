@@ -21,7 +21,7 @@ export interface Reputation {
   occurrents: string[];    // recent grounding episodes
 }
 
-const REPUTATIONS: Reputation[] = [
+export const REPUTATIONS: Reputation[] = [
   { id: 'r-ada', aliases: ['ada.newhope.social', 'Ada L.', '@ada.newhope.social'], displayName: 'Ada L.', did: 'did:plc:ada7h0penn3wh0pe', score: 86, tier: 'trusted', hats: [{ kind: 'verified', label: 'verified' }, { kind: 'local', label: 'local' }], attestations: 214, disputes: 3, traits: ['careful sourcing', 'local-first'], occurrents: ['Reported storm-drain flooding (3 corroborations)', 'Posted provenance-rail explainer'] },
   { id: 'r-grace', aliases: ['grace.marketsdesk.io', 'Grace', 'Grace — Markets Desk', '@grace.marketsdesk.io'], displayName: 'Grace (Markets Desk)', did: 'did:plc:gr4cem4rketsd3sk1', score: 79, tier: 'established', hats: [{ kind: 'verified', label: 'verified' }, { kind: 'expert', label: 'markets' }], attestations: 96, disputes: 5, traits: ['markets expertise'], occurrents: ['Filed 311 on pothole cluster', 'Commodities tape thread'] },
   { id: 'r-linus', aliases: ['linus.dev', 'Linus (local-first)', '@linus.dev'], displayName: 'Linus', did: 'did:plc:l1nus0urcef0rge00', score: 74, tier: 'established', hats: [{ kind: 'verified', label: 'verified' }, { kind: 'expert', label: 'infra' }], attestations: 61, disputes: 2, traits: ['infra depth'], occurrents: ['Reported community mural unveiling', 'Sovereign-forge post'] },
