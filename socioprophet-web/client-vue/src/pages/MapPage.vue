@@ -46,8 +46,9 @@
       </div>
 
       <!-- LEFT floating panel: controls, layers, lookup -->
-      <aside v-show="leftOpen" class="mapx-panel mapx-panel--left">
+      <aside v-show="leftOpen" class="mapx-panel mapx-panel--left" :style="{ width: leftW + 'px' }">
         <button class="mapx-collapse" type="button" title="Collapse controls" aria-label="Collapse controls" @click="leftOpen = false">‹</button>
+        <div class="mapx-resize mapx-resize--left" role="separator" aria-orientation="vertical" title="Drag to resize" @pointerdown="startPanelResize('left', $event)"></div>
         <section class="panel-section">
           <div class="section-title">Workbench controls</div>
           <button class="primary" type="button" :disabled="refreshing" @click="refreshSnapshot">
@@ -232,8 +233,9 @@
       </aside>
 
       <!-- RIGHT floating panel: inspector -->
-      <aside v-show="rightOpen" class="mapx-panel mapx-panel--right">
+      <aside v-show="rightOpen" class="mapx-panel mapx-panel--right" :style="{ width: rightW + 'px' }">
         <button class="mapx-collapse" type="button" title="Collapse inspector" aria-label="Collapse inspector" @click="rightOpen = false">›</button>
+        <div class="mapx-resize mapx-resize--right" role="separator" aria-orientation="vertical" title="Drag to resize" @pointerdown="startPanelResize('right', $event)"></div>
         <section id="runtime-adapter-panel" class="panel-section" data-testid="map-runtime-adapter-panel">
           <div class="section-title">Runtime adapter status</div>
           <div class="tag-row">
@@ -396,6 +398,40 @@ const loading = ref(true);
 const refreshing = ref(false);
 const leftOpen = ref(true);
 const rightOpen = ref(true);
+
+// Resizable overlay panels (persisted). The map is full-bleed underneath, so
+// widening a panel just covers more of it — no map.resize() needed.
+const PW_MIN = 260;
+const PW_MAX = 560;
+const clampPW = (n: number) => Math.max(PW_MIN, Math.min(PW_MAX, n));
+const loadPW = (k: string, d: number) => { try { const v = Number(localStorage.getItem(k)); return v ? clampPW(v) : d; } catch { return d; } };
+const leftW = ref(loadPW('mapx:leftW', 320));
+const rightW = ref(loadPW('mapx:rightW', 372));
+let dragSide: 'left' | 'right' | null = null;
+let dragStartX = 0;
+let dragStartW = 0;
+function onPanelMove(e: PointerEvent) {
+  const dx = e.clientX - dragStartX;
+  if (dragSide === 'left') leftW.value = clampPW(dragStartW + dx);
+  else if (dragSide === 'right') rightW.value = clampPW(dragStartW - dx);
+}
+function endPanelResize() {
+  dragSide = null;
+  window.removeEventListener('pointermove', onPanelMove);
+  window.removeEventListener('pointerup', endPanelResize);
+  document.body.style.userSelect = '';
+  try { localStorage.setItem('mapx:leftW', String(Math.round(leftW.value))); localStorage.setItem('mapx:rightW', String(Math.round(rightW.value))); } catch { /* storage unavailable */ }
+}
+function startPanelResize(side: 'left' | 'right', e: PointerEvent) {
+  if (e.button !== 0) return;
+  dragSide = side;
+  dragStartX = e.clientX;
+  dragStartW = side === 'left' ? leftW.value : rightW.value;
+  document.body.style.userSelect = 'none';
+  window.addEventListener('pointermove', onPanelMove);
+  window.addEventListener('pointerup', endPanelResize);
+  e.preventDefault();
+}
 const basemap = ref<'streets' | 'light' | 'dark'>('streets');
 const BASEMAPS: Record<'streets' | 'light' | 'dark', { url: string; label: string }> = {
   streets: { url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', label: 'Streets' },
@@ -832,6 +868,8 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  window.removeEventListener('pointermove', onPanelMove);
+  window.removeEventListener('pointerup', endPanelResize);
   clearEvents();
   clearListings();
   pinMarker?.remove();
@@ -918,6 +956,13 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.05); color: var(--text-2);
   font-size: 0.8rem; line-height: 1; display: grid; place-items: center;
 }
+/* Drag-to-resize strip on the panel's inner edge (below the collapse button). */
+.mapx-resize { position: absolute; top: 40px; bottom: 10px; width: 10px; z-index: 4; cursor: col-resize; touch-action: none; display: flex; align-items: center; justify-content: center; }
+.mapx-resize--left { right: 0; }
+.mapx-resize--right { left: 0; }
+.mapx-resize::after { content: ''; width: 3px; height: 40px; border-radius: 3px; background: rgba(255, 255, 255, 0.14); transition: background 0.12s ease, height 0.12s ease; }
+.mapx-resize:hover::after { background: var(--accent, #58a6ff); height: 64px; }
+@media (prefers-reduced-motion: reduce) { .mapx-resize::after { transition: none; } }
 .mapx-collapse:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.3); }
 .mapx-panel .section-title { padding-right: 1.6rem; }
 .mapx-reopen {
