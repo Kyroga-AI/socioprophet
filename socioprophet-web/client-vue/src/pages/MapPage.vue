@@ -248,6 +248,35 @@
         </section>
 
         <section class="panel-section">
+          <div class="section-title">Reachability <InfoLabel info="Travel-time isochrone from a point: how far you can get in N minutes on foot, bike, or transit. Bands respect the local walkability / transit field — you reach further where the network is good. Click the map to set the origin." /></div>
+          <label class="mapx-switch">
+            <input type="checkbox" :checked="isoOn" @change="toggleIso" />
+            <span>Isochrone from a point</span>
+          </label>
+          <template v-if="isoOn">
+            <div class="mapx-basemap mapx-ft-day">
+              <button v-for="m in (['walk','bike','transit'] as const)" :key="m" class="mapx-bm sm" :class="{ on: isoMode === m }" type="button" @click="isoMode = m">{{ m === 'walk' ? '🚶 Walk' : m === 'bike' ? '🚲 Bike' : '🚇 Transit' }}</button>
+            </div>
+            <div class="mapx-ft-time">
+              <input v-model.number="isoMax" type="range" min="5" max="30" step="5" aria-label="Minutes" />
+              <span class="mapx-ft-hr">{{ isoMax }} min</span>
+            </div>
+            <div class="mapx-iso-bands">
+              <span v-for="(c, i) in ISO_COLORS.slice(0, 4)" :key="i" class="mapx-iso-band"><i :style="{ background: c }" />≤{{ ISO_BANDS[i] }}</span>
+            </div>
+            <button v-if="!isoOrigin" class="mapx-bm sm" type="button" :class="{ on: isoArm }" @click="isoArm = true">📍 Click the map to set origin{{ isoArm ? '…' : '' }}</button>
+            <template v-else>
+              <div class="mapx-iso-sum">
+                <div><b>{{ isoSummary.population.toLocaleString() }}</b><span>people reachable</span></div>
+                <div><b>{{ Math.round(isoSummary.footTraffic / 1000) }}k</b><span>daily visits</span></div>
+                <div><b>{{ isoSummary.cells }}</b><span>areas</span></div>
+              </div>
+              <button class="mapx-bm sm" type="button" @click="clearIso">Reset origin</button>
+            </template>
+          </template>
+        </section>
+
+        <section class="panel-section">
           <div class="section-title">Legacy map layers</div>
           <button
             v-for="layer in layers"
@@ -583,6 +612,45 @@ function toggleFtPlay() {
   ftPlaying.value = true;
   ftTimer = window.setInterval(() => { ftHour.value = (ftHour.value + 1) % 24; }, 550);
 }
+
+// Reachability (isochrone) — travel-time bands from a point, respecting the local
+// walkability / transit field (you reach further where the network is good).
+const isoOn = ref(false);
+const isoArm = ref(false);
+const isoOrigin = ref<{ lng: number; lat: number } | null>(null);
+const isoMode = ref<'walk' | 'bike' | 'transit'>('walk');
+const isoMax = ref(15);
+let isoMarker: maplibregl.Marker | null = null;
+const ISO_SPEED: Record<'walk' | 'bike' | 'transit', number> = { walk: 4.8, bike: 15, transit: 22 }; // km/h base
+const ISO_BANDS = [5, 10, 15, 20];
+const ISO_COLORS = ['#1a9850', '#66bd63', '#fee08b', '#fdae61', '#f46d43'];
+function haversineKm(lo1: number, la1: number, lo2: number, la2: number): number {
+  const R = 6371; const dLa = (la2 - la1) * Math.PI / 180; const dLo = (lo2 - lo1) * Math.PI / 180;
+  const a = Math.sin(dLa / 2) ** 2 + Math.cos(la1 * Math.PI / 180) * Math.cos(la2 * Math.PI / 180) * Math.sin(dLo / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+function isoSpeedFactor(p: Record<string, number>): number {
+  if (isoMode.value === 'walk') return 0.6 + (Number(p.walkScore ?? 50) / 98) * 0.8;
+  if (isoMode.value === 'transit') return 0.5 + (Number(p.transitAccessIdx ?? 50) / 95) * 1.3;
+  return 0.8 + (Number(p.walkScore ?? 50) / 98) * 0.4; // bike
+}
+function isoTimeMin(p: Record<string, number>): number {
+  if (!isoOrigin.value) return Infinity;
+  const d = haversineKm(isoOrigin.value.lng, isoOrigin.value.lat, Number(p.cLon), Number(p.cLat));
+  return (d / (ISO_SPEED[isoMode.value] * isoSpeedFactor(p))) * 60;
+}
+const isoReached = computed(() => {
+  if (!isoOrigin.value) return [] as Record<string, number>[];
+  return baseGrid.value.features.map((f) => f.properties as Record<string, number>).filter((p) => isoTimeMin(p) <= isoMax.value);
+});
+const isoSummary = computed(() => {
+  const r = isoReached.value;
+  return {
+    cells: r.length,
+    population: r.reduce((s, p) => s + Number(p.population ?? 0), 0),
+    footTraffic: r.reduce((s, p) => s + Number(p.footTrafficDaily ?? 0), 0),
+  };
+});
 const topAreas = computed(() =>
   baseGrid.value.features
     .map((f) => ({ props: f.properties as Record<string, number>, score: scoreCell(f.properties, siteProfile.value) }))
@@ -809,7 +877,7 @@ function initializeMap() {
   map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-right');
   map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }), 'bottom-right');
   // Drop-a-pin: while pin mode is armed, the next map click places a pin.
-  map.on('click', (e) => { if (pinMode.value) placePin(e.lngLat); });
+  map.on('click', (e) => { if (pinMode.value) placePin(e.lngLat); else if (isoArm.value) setIsoOrigin(e.lngLat); });
   // Click a civic cell to inspect it (fires once the choropleth layer exists).
   map.on('click', 'civic-fill', (e) => { selectedCell.value = (e.features?.[0]?.properties ?? null) as Record<string, string | number> | null; });
   // NYT-style read-on-hover: a floating readout follows the cursor over cells.
@@ -916,6 +984,39 @@ function renderFootTraffic() {
   }
 }
 function hideFootTraffic() { if (map?.getLayer('ft-line')) map.setLayoutProperty('ft-line', 'visibility', 'none'); }
+// Isochrone: band the reached hexes by travel time, painted above the choropleth.
+function renderIso() {
+  if (!map || !isoOrigin.value) return;
+  const feats = baseGrid.value.features
+    .map((f) => ({ f, t: isoTimeMin(f.properties as Record<string, number>) }))
+    .filter((x) => x.t <= isoMax.value)
+    .map((x) => ({ ...x.f, properties: { ...x.f.properties, isoBand: ISO_BANDS.findIndex((b) => x.t <= b) === -1 ? ISO_BANDS.length : ISO_BANDS.findIndex((b) => x.t <= b) } }));
+  const data = { type: 'FeatureCollection', features: feats } as unknown as FillData;
+  const src = map.getSource('iso') as maplibregl.GeoJSONSource | undefined;
+  if (src) src.setData(data);
+  else map.addSource('iso', { type: 'geojson', data });
+  const color = ['match', ['get', 'isoBand'], 0, ISO_COLORS[0], 1, ISO_COLORS[1], 2, ISO_COLORS[2], 3, ISO_COLORS[3], ISO_COLORS[4]] as never;
+  if (map.getLayer('iso-fill')) {
+    map.setLayoutProperty('iso-fill', 'visibility', 'visible');
+    map.setPaintProperty('iso-fill', 'fill-color', color);
+  } else {
+    map.addLayer({ id: 'iso-fill', type: 'fill', source: 'iso', paint: { 'fill-color': color, 'fill-opacity': 0.5, 'fill-outline-color': 'rgba(255,255,255,0.25)' } });
+  }
+}
+function hideIso() { if (map?.getLayer('iso-fill')) map.setLayoutProperty('iso-fill', 'visibility', 'none'); }
+function setIsoOrigin(lngLat: { lng: number; lat: number }) {
+  isoOrigin.value = { lng: +lngLat.lng.toFixed(5), lat: +lngLat.lat.toFixed(5) };
+  isoArm.value = false;
+  if (isoMarker) isoMarker.setLngLat([lngLat.lng, lngLat.lat]);
+  else if (map) isoMarker = new maplibregl.Marker({ color: '#22d3ee' }).setLngLat([lngLat.lng, lngLat.lat]).addTo(map);
+  renderIso();
+}
+function toggleIso() {
+  isoOn.value = !isoOn.value;
+  if (isoOn.value) { muteBasemapForData(); if (isoOrigin.value) renderIso(); else isoArm.value = true; }
+  else { isoArm.value = false; hideIso(); isoMarker?.remove(); isoMarker = null; }
+}
+function clearIso() { isoOrigin.value = null; hideIso(); isoMarker?.remove(); isoMarker = null; isoArm.value = isoOn.value; }
 function renderCivic() {
   if (isFootTraffic.value) { hideCivic(); renderFootTraffic(); return; }
   hideFootTraffic();
@@ -939,6 +1040,7 @@ function rebuildGrid() {
   selectedCell.value = null;
   if (siteMode.value) renderSite();
   else if (civicOn.value) renderCivic();
+  if (isoOn.value && isoOrigin.value) renderIso();
 }
 // Beauty: mute the basemap when data goes on top, so the choropleth reads clean.
 function muteBasemapForData() { if (basemap.value === 'streets') setBasemap('light'); }
@@ -1012,6 +1114,7 @@ watch([civicMetricKey, reSegment, classMode, bivariateOn], () => { if (!siteMode
 watch([gridType, hexRes], rebuildGrid);
 watch([ftHour, ftWeekend], () => { if (isFootTraffic.value && civicOn.value && !siteMode.value) renderFootTraffic(); });
 watch(isFootTraffic, (on) => { if (!on) stopFtPlay(); });
+watch([isoMode, isoMax], () => { if (isoOn.value && isoOrigin.value) renderIso(); });
 watch(siteProfile, () => { if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
@@ -1147,6 +1250,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   stopFtPlay();
+  isoMarker?.remove();
   window.removeEventListener('pointermove', onPanelMove);
   window.removeEventListener('pointerup', endPanelResize);
   clearEvents();
@@ -1383,6 +1487,14 @@ onUnmounted(() => {
 .mapx-ft-hr { min-width: 3.2rem; text-align: right; font-size: 0.82rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .mapx-ft-day { margin-top: 0.45rem; }
 .mapx-ft-bar { flex: 1; height: 9px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.14); background: linear-gradient(90deg, #3b4ea8, #7f9bd6, #ffd36b, #ff8a3d, #ff2d2d); }
+/* Isochrone bands + summary */
+.mapx-iso-bands { display: flex; gap: 0.5rem; margin: 0.5rem 0; font-size: 0.64rem; color: var(--text-3); }
+.mapx-iso-bands span { display: inline-flex; align-items: center; gap: 0.2rem; }
+.mapx-iso-bands i { width: 11px; height: 11px; border-radius: 3px; }
+.mapx-iso-sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin: 0.55rem 0; }
+.mapx-iso-sum > div { display: flex; flex-direction: column; padding: 0.4rem 0.5rem; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 9px; background: rgba(255, 255, 255, 0.03); }
+.mapx-iso-sum b { font-size: 0.95rem; color: var(--text); font-variant-numeric: tabular-nums; }
+.mapx-iso-sum span { font-size: 0.6rem; color: var(--text-3); }
 .mapx-cells { margin-bottom: 0.6rem; }
 .mapx-cells-l { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.3rem; }
 .mapx-cells-res { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.35rem; font-size: 0.66rem; color: var(--text-3); }
