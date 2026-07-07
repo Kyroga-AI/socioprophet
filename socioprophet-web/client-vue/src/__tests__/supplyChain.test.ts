@@ -56,9 +56,9 @@ describe('supply-chain spine', () => {
     await router.isReady();
     const wrapper = mount(MarketMonitor, { global: { plugins: [router] } });
     await flushPromises();
-    const link = wrapper.find('.mk-sc-link');
-    expect(link.exists()).toBe(true); // COPPER sits on the copper chain
-    await link.trigger('click');
+    const sc = wrapper.findAll('.xl-link').find((l) => l.text().includes('Supply chain'));
+    expect(sc).toBeTruthy(); // COPPER sits on the copper chain → cross-links into Supply Chain
+    await sc!.trigger('click');
     await flushPromises();
     expect(router.currentRoute.value.path).toBe('/analytics/supply-chain');
     expect(router.currentRoute.value.query.node).toBe('copper');

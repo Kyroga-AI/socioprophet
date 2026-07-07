@@ -83,6 +83,7 @@
         </div>
 
         <div class="mk-d-actions">
+          <ProvenanceBadge :p="quoteProv" />
           <button class="mk-ask" type="button" @click="askNoetica" title="Ask Noetica about this instrument">◇ Ask Noetica</button>
           <span v-if="heldPosition" class="mk-held">◉ Holding {{ heldPosition.qty }} @ {{ num(heldPosition.avgCost) }}</span>
         </div>
@@ -124,11 +125,9 @@
           </div>
         </div>
 
-        <div class="mk-block" v-if="chainNodes.length">
-          <div class="mk-block-h">Supply chain</div>
-          <div class="mk-sc">
-            <button v-for="n in chainNodes" :key="n.id" class="mk-sc-link" @click="openChain(n.id)">⛓ {{ chainName(n.chain) }} chain · {{ n.name }} →</button>
-          </div>
+        <div class="mk-block">
+          <div class="mk-block-h">Trace across surfaces</div>
+          <CrossLinks :links="crossLinks" />
         </div>
 
         <!-- Cross-cutting human spine (capital / labor / supply) -->
@@ -146,17 +145,19 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
 import { indices, watchlist, instruments, SUBDOMAIN_CLASSES, asOf, type Instrument, type AssetClass } from '../data/marketsFixture';
-import { nodesForMarketSymbol, chains } from '../data/supplyChainFixture';
 import HumanNetworks from '../components/HumanNetworks.vue';
 import { arrowRove } from '../utils/listKeys';
 import { usePortfolio } from '../stores/portfolio';
 import { useCockpit } from '../stores/cockpit';
+import ProvenanceBadge from '../components/ProvenanceBadge.vue';
+import { prov } from '../features/provenance/types';
+import CrossLinks from '../components/CrossLinks.vue';
+import { crossLinksForInstrument } from '../features/crosslink/entityLinks';
 
 const route = useRoute();
-const router = useRouter();
 const scope = computed(() => navScopeForPath(route.path));
 const portfolio = usePortfolio();
 const cockpit = useCockpit();
@@ -250,11 +251,8 @@ watch(selected, (s) => cockpit.setContext({
   route: route.path,
 }), { immediate: true });
 
-// Supply-chain integration: instruments that sit on a modeled supply chain link
-// into the Supply Chain surface (which links on to the graph / map / twin).
-const chainNodes = computed(() => nodesForMarketSymbol(selected.value.symbol));
-function chainName(cid: string): string { return chains.find((c) => c.id === cid)?.name ?? cid; }
-function openChain(id: string) { router.push({ path: '/analytics/supply-chain', query: { node: id } }); }
+// Cross-domain: the same instrument, traceable to its supply chain / twin / graph / economy / news.
+const crossLinks = computed(() => crossLinksForInstrument(selected.value.symbol));
 
 // SVG sparkline / area point strings.
 function scale(series: number[], w: number, h: number): Array<[number, number]> {
@@ -273,6 +271,8 @@ function num(v: number): string { return v.toLocaleString('en-US', { minimumFrac
 function fmt(it: Instrument): string { const p = num(it.price); return it.unit === '$' ? `$${p}` : it.unit === '%' ? `${p}%` : p; }
 function fmtPct(pct: number): string { return `${pct > 0 ? '+' : ''}${pct.toFixed(2)}%`; }
 const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+// Honest provenance: raw quotes are deterministic fixtures, NOT verified marks.
+const quoteProv = prov('fixture', { verifier: 'fixture generator', sources: ['deterministic series'], asOf: asOfLabel, note: 'No live quote adapter wired — deterministic fixture, not a verified mark.' });
 
 function onKey(e: KeyboardEvent) {
   if (e.ctrlKey || e.metaKey || e.altKey) return;

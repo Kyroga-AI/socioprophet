@@ -22,7 +22,7 @@
         <span class="pf-s-sub">cash {{ money(portfolio.cash) }}</span>
       </div>
       <div class="pf-stat">
-        <span class="pf-s-label">Total P&amp;L</span>
+        <span class="pf-s-label">Total P&amp;L <ProvenanceBadge :p="pnlProv" compact /></span>
         <span class="pf-s-val" :class="pnlDir(totalPnl)">{{ signed(totalPnl) }}</span>
         <span class="pf-s-sub">{{ (equity ? (totalPnl / portfolio.startingCash) * 100 : 0).toFixed(2) }}% of start</span>
       </div>
@@ -86,6 +86,17 @@ import { useRouter } from 'vue-router';
 import { instruments } from '../data/marketsFixture';
 import { usePortfolio } from '../stores/portfolio';
 import { useCockpit } from '../stores/cockpit';
+import ProvenanceBadge from '../components/ProvenanceBadge.vue';
+import { prov } from '../features/provenance/types';
+
+// P&L is deterministic compute from the blotter + marks — the verified-compute moat.
+const pnlProv = prov('computed', {
+  verifier: 'portfolio engine',
+  formula: 'Σ (last − avgCost)·qty + realized',
+  sources: ['order blotter', 'Market Monitor marks'],
+  receipt: 'sha256:pf-mtm-0x',
+  note: 'Marks use fixture quotes; the P&L computation itself is deterministic and replayable.',
+});
 
 const router = useRouter();
 const portfolio = usePortfolio();
@@ -139,7 +150,7 @@ onMounted(() => cockpit.setContext({
 
 .pf-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.6rem; }
 .pf-stat { display: flex; flex-direction: column; gap: 0.1rem; border: 1px solid var(--line-2); border-radius: 10px; padding: 0.55rem 0.8rem; background: var(--surface); }
-.pf-s-label { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); }
+.pf-s-label { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); }
 .pf-s-val { font-size: 1.2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .pf-s-val.up { color: var(--up); } .pf-s-val.down { color: var(--down); } .pf-s-val.flat { color: var(--text); }
 .pf-s-sub { font-size: 0.66rem; color: var(--text-3); }

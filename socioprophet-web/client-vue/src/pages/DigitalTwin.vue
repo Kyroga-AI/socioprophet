@@ -27,7 +27,7 @@
 
     <div class="dt-metrics">
       <div class="dt-metric" :class="{ risk: result.valueAtRisk > 0 }">
-        <span class="dt-m-label">Value at risk</span>
+        <span class="dt-m-label">Value at risk <ProvenanceBadge :p="riskProv" compact /></span>
         <span class="dt-m-val">{{ money(result.valueAtRisk) }}</span>
         <span class="dt-m-sub">{{ (result.valueAtRiskPct * 100).toFixed(1) }}% of EV</span>
       </div>
@@ -123,6 +123,8 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { edgesForChain, nodeById, type SCNode } from '../data/supplyChainFixture';
 import { ratingColor } from '../data/supplyChainRiskFixture';
 import { twins, scenarios, simulate, severityColor } from '../data/twinFixture';
+import ProvenanceBadge from '../components/ProvenanceBadge.vue';
+import { prov } from '../features/provenance/types';
 
 const route = useRoute();
 const twinId = ref<string>('nvda');
@@ -140,6 +142,15 @@ const twin = computed(() => twins.find((t) => t.id === twinId.value));
 const scenario = computed(() => scenarios.find((s) => s.id === scenarioId.value));
 const result = computed(() => simulate(twinId.value, scenarioId.value));
 const mappable = computed<SCNode[]>(() => result.value.nodes.filter((n) => n.geo));
+
+// The impact metrics are simulated (deterministic shock propagation) — computed & replayable.
+const riskProv = computed(() => prov('computed', {
+  verifier: 'twin simulator',
+  formula: 'shock propagation over supply graph → Σ severity·node-value',
+  sources: ['twin fixture', 'supply-chain graph'],
+  receipt: `sha256:twin-${twinId.value}-${scenarioId.value}`,
+  note: result.value.provenance?.note,
+}));
 
 // ── Twin graph — the supply network as a node-link diagram, laid out left→right
 // by supply-chain depth, nodes colored by simulated impact, arrows showing flow.
@@ -292,7 +303,7 @@ watch(selectedId, (id) => {
 .dt-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.6rem; }
 .dt-metric { display: flex; flex-direction: column; gap: 0.1rem; border: 1px solid var(--line-2); border-radius: 10px; padding: 0.5rem 0.75rem; background: var(--surface); }
 .dt-metric.risk { border-color: rgba(240, 101, 106, 0.4); }
-.dt-m-label { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); }
+.dt-m-label { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); }
 .dt-m-val { font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .dt-m-sub { font-size: 0.66rem; color: var(--text-3); } .dt-m-sub.up { color: var(--down); }
 
