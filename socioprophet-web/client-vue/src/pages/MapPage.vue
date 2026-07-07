@@ -116,8 +116,23 @@
                   <svg viewBox="0 0 100 24" preserveAspectRatio="none"><polyline :points="cellTrendPoints" fill="none" stroke="#2f6bff" stroke-width="1.6" /></svg>
                 </div>
               </template>
+              <button class="mapx-ask mapx-ask-sm" type="button" @click="askAreaNoetica">◇ Ask Noetica about this area</button>
             </div>
           </template>
+        </section>
+
+        <section class="panel-section">
+          <div class="section-title">Community &amp; location</div>
+          <label class="mapx-switch">
+            <input type="checkbox" :checked="eventsOn" @change="toggleEvents" />
+            <span>Community events <span class="mapx-sub2">parades · marches · civic</span></span>
+          </label>
+          <div class="mapx-basemap mapx-tools2">
+            <button class="mapx-bm" :class="{ on: pinMode }" type="button" @click="pinMode = !pinMode">{{ pinMode ? '◎ click map…' : '📍 Drop a pin' }}</button>
+            <button v-if="droppedPin || pinMarker" class="mapx-bm" type="button" @click="clearPin">Clear pin</button>
+          </div>
+          <p v-if="droppedPin" class="lookup-status">Pin · {{ droppedPin.lat }}, {{ droppedPin.lng }}</p>
+          <p class="lookup-status">Use the ⌖ control (bottom-right) to locate your device.</p>
         </section>
 
         <section class="panel-section">
@@ -278,6 +293,16 @@
       <button v-if="!leftOpen" class="mapx-reopen mapx-reopen--left" type="button" @click="leftOpen = true">Controls ›</button>
       <button v-if="!rightOpen" class="mapx-reopen mapx-reopen--right" type="button" @click="rightOpen = true">‹ Inspector</button>
 
+      <!-- Community event detail (floating) -->
+      <div v-if="selectedEvent" class="mapx-event">
+        <button class="mapx-event-x" type="button" @click="selectedEvent = null">✕</button>
+        <div class="mapx-event-type" :style="{ color: EVENT_TYPES[selectedEvent.type].color }">{{ EVENT_TYPES[selectedEvent.type].icon }} {{ EVENT_TYPES[selectedEvent.type].label }}</div>
+        <div class="mapx-event-title">{{ selectedEvent.title }}</div>
+        <div class="mapx-event-when">{{ eventDate(selectedEvent.date) }} · {{ selectedEvent.time }}</div>
+        <div class="mapx-event-org">{{ selectedEvent.organizer }}</div>
+        <p class="mapx-event-desc">{{ selectedEvent.description }}</p>
+      </div>
+
       <!-- NYT-style read-on-hover tooltip -->
       <div v-if="hoverInfo" class="mapx-hover" :style="{ left: hoverInfo.x + 'px', top: hoverInfo.y + 'px' }">
         <span class="mapx-hover-label">{{ hoverInfo.label }}</span>
@@ -308,6 +333,7 @@ import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import { prov } from '../features/provenance/types';
 import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef } from '../data/healthMapFixture';
+import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import {
   fetchFeaturesByH3WithFallback,
   fetchGaiaLayerCatalogWithFallback,
@@ -353,6 +379,11 @@ const selectedCell = ref<Record<string, string | number> | null>(null);
 const siteMode = ref(false);
 const siteProfile = ref<string>('coffee');
 const hoverInfo = ref<{ x: number; y: number; label: string; value: string } | null>(null);
+// Community events + device geolocation
+const eventsOn = ref(false);
+const selectedEvent = ref<CommunityEvent | null>(null);
+const pinMode = ref(false);
+const droppedPin = ref<{ lng: number; lat: number } | null>(null);
 const baseGrid = civicGrid();
 const topAreas = computed(() =>
   baseGrid.features
@@ -419,6 +450,8 @@ const h3Cell = ref('8928308280fffff');
 const mapContainer = ref<HTMLElement | null>(null);
 let map: maplibregl.Map | null = null;
 let marker: maplibregl.Marker | null = null;
+let eventMarkers: maplibregl.Marker[] = [];
+let pinMarker: maplibregl.Marker | null = null;
 
 const mapRuntimeFeatures = computed<RuntimeAdapterFeature[]>(() =>
   runtimeFeatureIdsForPath('/map')
@@ -476,6 +509,9 @@ function initializeMap() {
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right');
   map.addControl(new maplibregl.FullscreenControl(), 'bottom-right');
   map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-right');
+  map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }), 'bottom-right');
+  // Drop-a-pin: while pin mode is armed, the next map click places a pin.
+  map.on('click', (e) => { if (pinMode.value) placePin(e.lngLat); });
   // Click a civic cell to inspect it (fires once the choropleth layer exists).
   map.on('click', 'civic-fill', (e) => { selectedCell.value = (e.features?.[0]?.properties ?? null) as Record<string, string | number> | null; });
   // NYT-style read-on-hover: a floating readout follows the cursor over cells.
@@ -552,6 +588,36 @@ function askSiteNoetica() {
   const top = topAreas.value.slice(0, 3).map((t, i) => `#${i + 1} score ${t.score} (${Math.round(t.props.footTrafficDaily).toLocaleString()} visits/day, $${Math.round(t.props.medianIncome / 1000)}k income, $${Math.round(t.props.reMedianRent)}/mo rent)`).join('; ');
   cockpit.askAbout(`I'm scouting a ${prof?.label} location. The site-selection engine (verified compute) ranks the top areas: ${top}. Which would you open, what's the trade-off, and what would kill the deal?`);
 }
+// Community events (point markers) + Ask-about-area + drop-a-pin.
+function clearEvents() { eventMarkers.forEach((m) => m.remove()); eventMarkers = []; }
+function renderEvents() {
+  if (!map) return;
+  clearEvents();
+  for (const ev of communityEvents) {
+    const t = EVENT_TYPES[ev.type];
+    const el = document.createElement('button');
+    el.className = 'mapx-evmk';
+    el.style.setProperty('--ev', t.color);
+    el.textContent = t.icon;
+    el.title = `${ev.title} · ${t.label}`;
+    el.addEventListener('click', (e) => { e.stopPropagation(); selectedEvent.value = ev; if (map) map.flyTo({ center: [ev.lon, ev.lat], zoom: Math.max(map.getZoom(), 14), duration: 600 }); });
+    eventMarkers.push(new maplibregl.Marker({ element: el }).setLngLat([ev.lon, ev.lat]).addTo(map));
+  }
+}
+function toggleEvents() { eventsOn.value = !eventsOn.value; if (eventsOn.value) renderEvents(); else { clearEvents(); selectedEvent.value = null; } }
+function placePin(lngLat: { lng: number; lat: number }) {
+  droppedPin.value = { lng: +lngLat.lng.toFixed(5), lat: +lngLat.lat.toFixed(5) };
+  if (pinMarker) pinMarker.setLngLat([lngLat.lng, lngLat.lat]);
+  else if (map) pinMarker = new maplibregl.Marker({ color: '#f0656a' }).setLngLat([lngLat.lng, lngLat.lat]).addTo(map);
+  pinMode.value = false;
+}
+function askAreaNoetica() {
+  const c = selectedCell.value; if (!c) return;
+  const stats = activeGroup.value.metrics.map((m) => `${m.label} ${fmtCell(m)}`).join(', ');
+  cockpit.askAbout(`Tell me about this area on the ${activeGroup.value.label} layer: ${stats}. How does it compare to the rest of the city, and what should I know before ${activeGroup.value.id === 'realestate' ? 'investing' : 'opening a business or moving'} here?`);
+}
+function clearPin() { pinMarker?.remove(); pinMarker = null; droppedPin.value = null; }
+function eventDate(iso: string): string { return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
 watch([civicMetricKey, reSegment], () => { if (!siteMode.value && civicOn.value) renderCivic(); });
 watch(siteProfile, () => { if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
@@ -687,9 +753,12 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  clearEvents();
+  pinMarker?.remove();
   marker?.remove();
   map?.remove();
   marker = null;
+  pinMarker = null;
   map = null;
 });
 </script>
@@ -837,6 +906,20 @@ onUnmounted(() => {
 }
 .mapx-hover-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); }
 .mapx-hover-value { font-size: 0.9rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.mapx-ask-sm { width: 100%; margin-top: 0.55rem; }
+.mapx-tools2 { margin-top: 0.5rem; }
+
+/* Community event markers + detail card */
+:deep(.mapx-evmk) { width: 26px; height: 26px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid #fff; background: var(--ev, #38bdf8); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); cursor: pointer; display: grid; place-items: center; padding: 0; }
+:deep(.mapx-evmk) > * { transform: rotate(45deg); }
+:deep(.mapx-evmk) { font-size: 12px; line-height: 1; }
+.mapx-event { position: absolute; z-index: 7; left: 14px; bottom: 60px; width: 17rem; padding: 0.75rem 0.85rem; border-radius: 12px; background: rgba(16, 18, 23, 0.94); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5); }
+.mapx-event-x { position: absolute; top: 8px; right: 10px; border: none; background: transparent; color: var(--text-3); cursor: pointer; font-size: 0.8rem; } .mapx-event-x:hover { color: var(--text); }
+.mapx-event-type { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+.mapx-event-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-top: 0.15rem; }
+.mapx-event-when { font-size: 0.76rem; color: var(--text); margin-top: 0.3rem; font-weight: 600; }
+.mapx-event-org { font-size: 0.72rem; color: var(--text-2); margin-top: 0.1rem; }
+.mapx-event-desc { font-size: 0.74rem; color: var(--text-2); line-height: 1.5; margin: 0.45rem 0 0; }
 .mapx-switch { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text-2); cursor: pointer; }
 .mapx-switch input { accent-color: var(--map-accent); }
 .mapx-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }
