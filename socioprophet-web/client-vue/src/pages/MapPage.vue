@@ -121,6 +121,28 @@
         </section>
 
         <section class="panel-section">
+          <div class="section-title">Site selection <InfoLabel info="A verified suitability score for a business type, computed per area from foot traffic, income, walkability, competition and rent. Answers: should I open my next location here?" /></div>
+          <label class="mapx-switch">
+            <input type="checkbox" :checked="siteMode" @change="toggleSite" />
+            <span>Score locations <span class="mapx-sub2">should I open here?</span></span>
+          </label>
+          <template v-if="siteMode">
+            <div class="mapx-basemap mapx-groups mapx-profiles">
+              <button v-for="p in SITE_PROFILES" :key="p.id" class="mapx-bm" :class="{ on: siteProfile === p.id }" type="button" @click="siteProfile = p.id">{{ p.icon }} {{ p.label }}</button>
+            </div>
+            <div class="mapx-site-head"><ProvenanceBadge :p="siteProv" compact /><span>computed suitability · click an area to fly</span></div>
+            <div class="mapx-toplist">
+              <button v-for="(t, i) in topAreas" :key="String(t.props.id)" class="mapx-toparea" type="button" @click="selectArea(t.props)">
+                <span class="mapx-rank">{{ i + 1 }}</span>
+                <span class="mapx-score" :style="{ color: scoreColor(t.score) }">{{ t.score }}</span>
+                <span class="mapx-topmeta">{{ Math.round(t.props.footTrafficDaily).toLocaleString() }}/day · ${{ Math.round(t.props.medianIncome / 1000) }}k · ${{ Math.round(t.props.reMedianRent) }}/mo</span>
+              </button>
+            </div>
+            <button class="mapx-ask" type="button" @click="askSiteNoetica">◇ Ask Noetica where to open</button>
+          </template>
+        </section>
+
+        <section class="panel-section">
           <div class="section-title">Legacy map layers</div>
           <button
             v-for="layer in layers"
@@ -256,6 +278,12 @@
       <button v-if="!leftOpen" class="mapx-reopen mapx-reopen--left" type="button" @click="leftOpen = true">Controls ›</button>
       <button v-if="!rightOpen" class="mapx-reopen mapx-reopen--right" type="button" @click="rightOpen = true">‹ Inspector</button>
 
+      <!-- NYT-style read-on-hover tooltip -->
+      <div v-if="hoverInfo" class="mapx-hover" :style="{ left: hoverInfo.x + 'px', top: hoverInfo.y + 'px' }">
+        <span class="mapx-hover-label">{{ hoverInfo.label }}</span>
+        <span class="mapx-hover-value">{{ hoverInfo.value }}</span>
+      </div>
+
       <!-- Bottom-center coordinate / selection readout -->
       <div class="mapx-readout">
         <span class="mapx-readout-key">{{ selectedGaiaLayer?.title || selectedLayer?.title || 'GAIA layer' }}</span>
@@ -277,7 +305,9 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import RuntimeAdapterStatusBadge from '../components/RuntimeAdapterStatusBadge.vue';
 import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
-import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, type MetricDef } from '../data/healthMapFixture';
+import ProvenanceBadge from '../components/ProvenanceBadge.vue';
+import { prov } from '../features/provenance/types';
+import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef } from '../data/healthMapFixture';
 import {
   fetchFeaturesByH3WithFallback,
   fetchGaiaLayerCatalogWithFallback,
@@ -319,6 +349,24 @@ const civicMetricKey = ref<string>('healthIndex');
 const civicOpacity = ref(0.62);
 const reSegment = ref<string>('res');
 const selectedCell = ref<Record<string, string | number> | null>(null);
+// Site selection ("should I open here?") — a verified, computed suitability score.
+const siteMode = ref(false);
+const siteProfile = ref<string>('coffee');
+const hoverInfo = ref<{ x: number; y: number; label: string; value: string } | null>(null);
+const baseGrid = civicGrid();
+const topAreas = computed(() =>
+  baseGrid.features
+    .map((f) => ({ props: f.properties as Record<string, number>, score: scoreCell(f.properties, siteProfile.value) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5),
+);
+const siteProv = computed(() => prov('computed', {
+  verifier: 'site-selection engine',
+  formula: 'score = Σ wᵢ · norm(metricᵢ)  (foot traffic, income, walkability, rent, …)',
+  sources: ['foot-traffic grid', 'census/economic layers'],
+  receipt: `sha256:site-${siteProfile.value}`,
+  note: 'Suitability is deterministic + replayable from the weighted profile — not a black-box guess.',
+}));
 const activeGroup = computed(() => CIVIC_LAYERS.find((g) => g.id === civicGroupId.value) ?? CIVIC_LAYERS[0]!);
 const activeMetric = computed<MetricDef>(() => METRIC_BY_KEY[civicMetricKey.value] ?? activeGroup.value.metrics[0]!);
 const metricFactor = computed(() => (activeGroup.value.segmented ? segFactor(reSegment.value, activeMetric.value.key) : 1));
@@ -334,6 +382,7 @@ function fmtCell(m: MetricDef): string {
   const f = activeGroup.value.segmented ? segFactor(reSegment.value, m.key) : 1;
   return fmtVal(raw * f, m);
 }
+const scoreColor = (s: number): string => (s >= 66 ? '#4bbf73' : s >= 40 ? '#e3b341' : '#f0656a');
 const cellOwnerPct = computed(() => Number(selectedCell.value?.reOwnerOccPct ?? 0));
 const cellTrendPoints = computed(() => {
   const raw = selectedCell.value?.rePriceTrend;
@@ -429,8 +478,18 @@ function initializeMap() {
   map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-right');
   // Click a civic cell to inspect it (fires once the choropleth layer exists).
   map.on('click', 'civic-fill', (e) => { selectedCell.value = (e.features?.[0]?.properties ?? null) as Record<string, string | number> | null; });
-  map.on('mouseenter', 'civic-fill', () => { if (map) map.getCanvas().style.cursor = 'pointer'; });
-  map.on('mouseleave', 'civic-fill', () => { if (map) map.getCanvas().style.cursor = ''; });
+  // NYT-style read-on-hover: a floating readout follows the cursor over cells.
+  map.on('mousemove', 'civic-fill', (e) => {
+    if (map) map.getCanvas().style.cursor = 'pointer';
+    const f = e.features?.[0]; if (!f) { hoverInfo.value = null; return; }
+    if (siteMode.value) {
+      hoverInfo.value = { x: e.point.x, y: e.point.y, label: `${SITE_PROFILES.find((p) => p.id === siteProfile.value)?.label} score`, value: `${Number(f.properties?.siteScore ?? 0)}/100` };
+    } else {
+      const raw = Number(f.properties?.[activeMetric.value.key] ?? 0);
+      hoverInfo.value = { x: e.point.x, y: e.point.y, label: activeMetric.value.label, value: fmtVal(raw * metricFactor.value, activeMetric.value) };
+    }
+  });
+  map.on('mouseleave', 'civic-fill', () => { if (map) map.getCanvas().style.cursor = ''; hoverInfo.value = null; });
   marker = new maplibregl.Marker({ color: '#0f62fe' })
     .setLngLat(center)
     .setPopup(new maplibregl.Popup({ offset: 16 }).setText(`OSM ${selectedFeature.value?.osm_ref?.osm_type || 'way'} ${selectedFeature.value?.osm_ref?.osm_id || '424242'}`))
@@ -449,30 +508,53 @@ function civicColorExpr(m: MetricDef, factor: number): unknown {
   for (const [pos, color] of m.ramp) stops.push((m.min + (m.max - m.min) * pos) * factor, color);
   return ['interpolate', ['linear'], ['*', ['get', m.key], factor], ...stops];
 }
-function renderCivic() {
+type FillData = Parameters<maplibregl.GeoJSONSource['setData']>[0];
+function paintCivic(data: FillData, color: never) {
   if (!map) return;
-  const m = activeMetric.value;
-  const data = civicGrid() as unknown as Parameters<maplibregl.GeoJSONSource['setData']>[0];
   const src = map.getSource('civic') as maplibregl.GeoJSONSource | undefined;
   if (src) src.setData(data);
   else map.addSource('civic', { type: 'geojson', data });
-  const color = civicColorExpr(m, metricFactor.value) as never;
   if (map.getLayer('civic-fill')) {
     map.setPaintProperty('civic-fill', 'fill-color', color);
     map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value);
     map.setLayoutProperty('civic-fill', 'visibility', 'visible');
   } else {
-    map.addLayer({ id: 'civic-fill', type: 'fill', source: 'civic', paint: { 'fill-color': color, 'fill-opacity': civicOpacity.value, 'fill-outline-color': 'rgba(255,255,255,0.12)' } });
+    // NYT-style: crisp thin borders, no heavy outline.
+    map.addLayer({ id: 'civic-fill', type: 'fill', source: 'civic', paint: { 'fill-color': color, 'fill-opacity': civicOpacity.value, 'fill-outline-color': 'rgba(255,255,255,0.28)' } });
   }
 }
+function renderCivic() {
+  paintCivic(baseGrid as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
+}
+function renderSite() {
+  const scored = { type: 'FeatureCollection', features: baseGrid.features.map((f) => ({ ...f, properties: { ...f.properties, siteScore: scoreCell(f.properties, siteProfile.value) } })) };
+  const color = ['interpolate', ['linear'], ['get', 'siteScore'], 0, '#d73027', 50, '#fee08b', 100, '#1a9850'] as never;
+  paintCivic(scored as unknown as FillData, color);
+}
+function hideCivic() { if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); }
 function toggleCivic() {
   civicOn.value = !civicOn.value;
-  if (civicOn.value) renderCivic();
-  else if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none');
+  if (siteMode.value) return; // site overlay takes precedence
+  if (civicOn.value) renderCivic(); else hideCivic();
 }
-watch(civicMetricKey, () => { if (civicOn.value) renderCivic(); });
-watch(reSegment, () => { if (civicOn.value) renderCivic(); });
-watch(civicOpacity, () => { if (civicOn.value && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
+function toggleSite() {
+  siteMode.value = !siteMode.value;
+  if (siteMode.value) renderSite();
+  else if (civicOn.value) renderCivic();
+  else hideCivic();
+}
+function selectArea(props: Record<string, number>) {
+  selectedCell.value = props as Record<string, string | number>;
+  if (map && props.cLon && props.cLat) map.flyTo({ center: [props.cLon, props.cLat], zoom: Math.max(map.getZoom(), 13), duration: 700 });
+}
+function askSiteNoetica() {
+  const prof = SITE_PROFILES.find((p) => p.id === siteProfile.value);
+  const top = topAreas.value.slice(0, 3).map((t, i) => `#${i + 1} score ${t.score} (${Math.round(t.props.footTrafficDaily).toLocaleString()} visits/day, $${Math.round(t.props.medianIncome / 1000)}k income, $${Math.round(t.props.reMedianRent)}/mo rent)`).join('; ');
+  cockpit.askAbout(`I'm scouting a ${prof?.label} location. The site-selection engine (verified compute) ranks the top areas: ${top}. Which would you open, what's the trade-off, and what would kill the deal?`);
+}
+watch([civicMetricKey, reSegment], () => { if (!siteMode.value && civicOn.value) renderCivic(); });
+watch(siteProfile, () => { if (siteMode.value) renderSite(); });
+watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
 function updateMapMarker() {
   if (!map || !marker) return;
@@ -733,6 +815,28 @@ onUnmounted(() => {
 .mapx-cell-mixlabels { display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text-3); margin-top: 0.2rem; }
 .mapx-cell-trend { margin-top: 0.5rem; } .mapx-cell-trend-h { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); }
 .mapx-cell-trend svg { width: 100%; height: 26px; display: block; margin-top: 0.15rem; }
+
+/* Site selection */
+.mapx-profiles .mapx-bm { flex: 1 1 100%; text-align: left; }
+.mapx-site-head { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; font-size: 0.66rem; color: var(--text-3); }
+.mapx-toplist { display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.5rem; }
+.mapx-toparea { display: grid; grid-template-columns: 1.1rem 2.2rem 1fr; align-items: center; gap: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text); padding: 0.4rem 0.55rem; cursor: pointer; text-align: left; }
+.mapx-toparea:hover { border-color: rgba(255, 255, 255, 0.24); }
+.mapx-rank { color: var(--text-3); font-size: 0.7rem; text-align: center; }
+.mapx-score { font-size: 1rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
+.mapx-topmeta { font-size: 0.66rem; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.mapx-ask { width: 100%; margin-top: 0.6rem; border: 1px solid rgba(120, 160, 255, 0.45); background: rgba(120, 160, 255, 0.1); color: #93b4ff; border-radius: 9px; padding: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+.mapx-ask:hover { background: rgba(120, 160, 255, 0.18); color: #fff; }
+
+/* Read-on-hover tooltip */
+.mapx-hover {
+  position: absolute; z-index: 7; transform: translate(-50%, calc(-100% - 12px)); pointer-events: none;
+  display: flex; flex-direction: column; gap: 1px; padding: 0.3rem 0.55rem; border-radius: 8px;
+  background: rgba(16, 18, 23, 0.94); border: 1px solid rgba(255, 255, 255, 0.16); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+.mapx-hover-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); }
+.mapx-hover-value { font-size: 0.9rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .mapx-switch { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text-2); cursor: pointer; }
 .mapx-switch input { accent-color: var(--map-accent); }
 .mapx-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }

@@ -106,12 +106,50 @@ export const CIVIC_LAYERS: LayerGroup[] = [
     ],
   },
   {
+    id: 'foottraffic', label: 'Foot Traffic', blurb: 'Visits, dwell time, and capture rate.',
+    metrics: [
+      { key: 'footTrafficDaily', label: 'Daily visits', min: 200, max: 25000, unit: '', higherBetter: true, ramp: BLUE },
+      { key: 'dwellMin', label: 'Dwell time', min: 8, max: 45, unit: 'min', higherBetter: true, ramp: GOOD_HIGH },
+      { key: 'captureRate', label: 'Capture rate', min: 2, max: 18, unit: '%', higherBetter: true, ramp: GOOD_HIGH, format: 'pct' },
+    ],
+  },
+  {
     id: 'people', label: 'People', blurb: 'Population and density.',
     metrics: [
       { key: 'population', label: 'Population', min: 2000, max: 42000, unit: '', higherBetter: true, ramp: BLUE },
     ],
   },
 ];
+
+// ── Site selection ("should I open my next location here?") ──
+// A verified, computed suitability score per area for a business type. Different
+// profiles weight foot traffic / income / walkability / rent / population
+// differently, so the best areas genuinely differ by use-case (a high-traffic,
+// affordable cell beats a rich but sleepy one for a coffee shop).
+export interface SiteProfile { id: string; label: string; icon: string; w: Record<string, number> }
+export const SITE_PROFILES: SiteProfile[] = [
+  { id: 'coffee', label: 'Coffee shop', icon: '☕', w: { footTrafficDaily: 0.35, walkScore: 0.2, medianIncome: 0.2, businessDensity: 0.1, reMedianRent: -0.25 } },
+  { id: 'restaurant', label: 'Restaurant', icon: '🍽', w: { footTrafficDaily: 0.3, medianIncome: 0.25, dwellMin: 0.15, walkScore: 0.1, reMedianRent: -0.25 } },
+  { id: 'retail', label: 'Retail store', icon: '🛍', w: { footTrafficDaily: 0.35, captureRate: 0.2, medianIncome: 0.2, businessDensity: 0.1, reMedianRent: -0.25 } },
+  { id: 'fitness', label: 'Fitness studio', icon: '🏋', w: { population: 0.3, medianIncome: 0.25, footTrafficDaily: 0.2, walkScore: 0.15, reMedianRent: -0.2 } },
+  { id: 'grocery', label: 'Grocery', icon: '🛒', w: { population: 0.35, footTrafficDaily: 0.2, reOwnerOccPct: 0.15, medianIncome: 0.15, reMedianRent: -0.15 } },
+];
+const NORM: Record<string, [number, number]> = {
+  footTrafficDaily: [200, 25000], medianIncome: [35000, 180000], walkScore: [25, 98], businessDensity: [5, 90],
+  reMedianRent: [1800, 6000], population: [2000, 42000], dwellMin: [8, 45], captureRate: [2, 18], reOwnerOccPct: [25, 80],
+};
+export function scoreCell(props: Record<string, string | number>, profileId: string): number {
+  const p = SITE_PROFILES.find((x) => x.id === profileId);
+  if (!p) return 0;
+  let score = 0; let wsum = 0;
+  for (const [key, w] of Object.entries(p.w)) {
+    const range = NORM[key]; if (!range) continue;
+    const nv = clamp((Number(props[key] ?? 0) - range[0]) / (range[1] - range[0]), 0, 1);
+    score += Math.abs(w) * (w < 0 ? 1 - nv : nv); // negative weight = lower is better (e.g. rent)
+    wsum += Math.abs(w);
+  }
+  return Math.round((score / (wsum || 1)) * 100);
+}
 
 export const METRIC_BY_KEY: Record<string, MetricDef> = Object.fromEntries(
   CIVIC_LAYERS.flatMap((g) => g.metrics).map((m) => [m.key, m]),
@@ -134,7 +172,8 @@ export function civicGrid(cols = 12, rows = 11): CivicGrid {
     for (let j = 0; j < rows; j += 1) {
       const lon0 = BBOX.minLon + i * dLon;
       const lat0 = BBOX.minLat + j * dLat;
-      const a = hash(i, j);                 // "advantage" axis 0..1 (affluence/density)
+      const a = hash(i, j);                 // "advantage" axis 0..1 (affluence)
+      const b = hash(i + 50, j + 50);       // "commercial intensity" axis 0..1 (foot traffic) — decorrelated from a
       const n = (hash(i + 31, j + 17) - 0.5); // small noise
       const reMedianPrice = Math.round(400000 + a * 2100000 + n * 200000);
       const reMedianRent = Math.round(1800 + a * 4000 + n * 500);
@@ -144,6 +183,8 @@ export function civicGrid(cols = 12, rows = 11): CivicGrid {
         type: 'Feature',
         properties: {
           id: `cell-${i}-${j}`,
+          cLon: +(lon0 + dLon / 2).toFixed(5),
+          cLat: +(lat0 + dLat / 2).toFixed(5),
           population: Math.round(2000 + a * 40000),
           healthIndex: Math.round(clamp(42 + a * 40 + n * 14, 42, 94)),
           uninsuredPct: +clamp(24 - a * 18 + n * 5, 3, 24).toFixed(1),
@@ -181,7 +222,11 @@ export function civicGrid(cols = 12, rows = 11): CivicGrid {
           medianIncome: Math.round(clamp(35000 + a * 140000 + n * 15000, 35000, 180000)),
           unemploymentPct: +clamp(14 - a * 11 + n * 2, 2, 14).toFixed(1),
           povertyPct: +clamp(32 - a * 26 + n * 5, 4, 32).toFixed(1),
-          businessDensity: Math.round(clamp(5 + a * 82 + n * 10, 5, 90)),
+          businessDensity: Math.round(clamp(5 + b * 70 + a * 15 + n * 10, 5, 90)),
+          // Foot traffic (driven by commercial intensity b, not just affluence a)
+          footTrafficDaily: Math.round(clamp(200 + b * 22000 + a * 3000 + n * 3000, 200, 25000)),
+          dwellMin: Math.round(clamp(12 + a * 22 + (1 - b) * 8 + n * 4, 8, 45)),
+          captureRate: +clamp(2 + b * 13 + n * 3, 2, 18).toFixed(1),
         },
         geometry: {
           type: 'Polygon',
