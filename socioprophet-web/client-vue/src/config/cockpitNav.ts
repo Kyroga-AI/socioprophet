@@ -194,6 +194,7 @@ export const AGENT_COCKPIT: NavGroup[] = [
     label: 'Operator & Infra',
     to: '/operator/data-catalog',
     items: [
+      { label: 'Living Ontology', to: '/ontology' },
       { label: 'Data Catalog', to: '/operator/data-catalog' },
       { label: 'Pipelines (Beam / Ray)', to: '/operator/pipelines' },
       { label: 'Model Labs', to: '/operator/labs' },

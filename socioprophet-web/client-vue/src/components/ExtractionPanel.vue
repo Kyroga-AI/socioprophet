@@ -38,15 +38,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { extract, entityColor, type ExtractedEntity, type ExtractedClaim, type EntityClass } from '../features/extraction/schema';
 import { prov } from '../features/provenance/types';
 import ProvenanceBadge from './ProvenanceBadge.vue';
 import { useCockpit } from '../stores/cockpit';
+import { useOntology } from '../stores/ontology';
 
 const props = defineProps<{ text: string; source?: string }>();
 const cockpit = useCockpit();
+const ontology = useOntology();
 const ex = computed(() => extract(props.text || ''));
+// NLP → ontology induction: what we read grows the living ontology.
+watch(ex, (e) => { if (e.entities.length || e.topics.length) ontology.observe(e.entities, [], e.topics); }, { immediate: true });
 const extractProv = prov('computed', { verifier: 'Holmes (pattern extractor)', sources: [props.source ?? 'current item'], receipt: 'sha256:holmes-fixture', note: 'Schema-defined extraction; a live Holmes adapter swaps in behind the same shape.' });
 const color = (c: EntityClass) => entityColor(c);
 

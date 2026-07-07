@@ -42,18 +42,23 @@ import { reify } from '../features/claims/reify';
 import { STATUS_META, type ReifiedClaim, type ClaimStatus } from '../features/claims/types';
 import { useClaims } from '../stores/claims';
 import { useCockpit } from '../stores/cockpit';
+import { useOntology } from '../stores/ontology';
 import { prov } from '../features/provenance/types';
 import ProvenanceBadge from './ProvenanceBadge.vue';
 
 const props = defineProps<{ text: string; source: string }>();
 const claims = useClaims();
 const cockpit = useCockpit();
+const ontology = useOntology();
 const disputeId = ref('');
 const DISPUTE_REASONS = ['contradicted by source', 'outdated', 'misattributed', 'unverifiable'];
 
-// Reify the current item + assert into the shared registry.
+// Reify the current item + assert into the shared registry; induce relations into the ontology.
 watch(() => [props.text, props.source], () => {
-  if (props.text) claims.assert(reify(props.text, props.source));
+  if (!props.text) return;
+  const reified = reify(props.text, props.source);
+  claims.assert(reified);
+  ontology.observe([], reified.map((c) => c.predicate), []);
 }, { immediate: true });
 
 const rows = computed(() => claims.claims.filter((c) => c.provenance.source === props.source));
