@@ -92,12 +92,39 @@
             <div v-if="activeGroup.segmented" class="mapx-basemap mapx-groups mapx-segments">
               <button v-for="s in SEGMENTS" :key="s.id" class="mapx-bm" :class="{ on: reSegment === s.id }" type="button" @click="reSegment = s.id">{{ s.label }}</button>
             </div>
-            <div class="mapx-basemap mapx-metrics">
+            <div v-show="!bivariateOn" class="mapx-basemap mapx-metrics">
               <button v-for="m in activeGroup.metrics" :key="m.key" class="mapx-bm" :class="{ on: civicMetricKey === m.key }" type="button" @click="civicMetricKey = m.key">{{ m.label }}</button>
             </div>
-            <div class="mapx-legend">
+
+            <!-- Classification method -->
+            <div v-show="!bivariateOn" class="mapx-class">
+              <span class="mapx-class-l">Breaks <InfoLabel info="How cell values are binned into color classes. Equal interval spreads outliers; Quantile makes equal-count classes; Jenks finds natural breaks that minimise within-class variance (the cartographic default)." /></span>
+              <div class="mapx-basemap">
+                <button v-for="c in CLASS_MODES" :key="c.id" class="mapx-bm sm" :class="{ on: classMode === c.id }" type="button" :title="c.title" @click="classMode = c.id">{{ c.label }}</button>
+              </div>
+            </div>
+
+            <!-- Bivariate price × yield (real estate) -->
+            <label v-if="isRealEstate" class="mapx-switch mapx-switch--sm">
+              <input type="checkbox" :checked="bivariateOn" @change="bivariateOn = !bivariateOn" />
+              <span>Bivariate — price × yield <InfoLabel info="Two variables at once: median price (→ magenta) against gross yield (↑ teal). The teal corner is low-price / high-yield — the undervalued areas an investor hunts." /></span>
+            </label>
+
+            <!-- Legend: bivariate 3×3, else stepped classes -->
+            <div v-if="bivariateOn && isRealEstate" class="mapx-biv">
+              <div class="mapx-biv-grid">
+                <span v-for="(row, ri) in bivLegendCells" :key="ri" class="mapx-biv-row">
+                  <i v-for="(c, ci) in row" :key="ci" :style="{ background: c }" />
+                </span>
+              </div>
+              <div class="mapx-biv-ax mapx-biv-ax--x">price →</div>
+              <div class="mapx-biv-ax mapx-biv-ax--y">yield ↑</div>
+            </div>
+            <div v-else class="mapx-legend">
               <span class="mapx-legend-lo">{{ fmtVal(activeMetric.min * metricFactor, activeMetric) }}</span>
-              <span class="mapx-legend-bar" :style="{ background: legendGradient }" />
+              <span class="mapx-legend-steps">
+                <i v-for="(cl, i) in legendClasses" :key="i" :style="{ background: cl.color }" :title="`${fmtVal(cl.lo, activeMetric)} – ${fmtVal(cl.hi, activeMetric)}`" />
+              </span>
               <span class="mapx-legend-hi">{{ fmtVal(activeMetric.max * metricFactor, activeMetric) }}</span>
             </div>
             <label class="mapx-opacity">Opacity <input v-model.number="civicOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
@@ -369,6 +396,7 @@ import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import { prov } from '../features/provenance/types';
 import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef } from '../data/healthMapFixture';
+import { breaksFor, quantileBreaks, classOf, sampleRamp, type ClassMode } from '../data/classify';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
 import {
@@ -475,6 +503,51 @@ const activeGroup = computed(() => CIVIC_LAYERS.find((g) => g.id === civicGroupI
 const activeMetric = computed<MetricDef>(() => METRIC_BY_KEY[civicMetricKey.value] ?? activeGroup.value.metrics[0]!);
 const metricFactor = computed(() => (activeGroup.value.segmented ? segFactor(reSegment.value, activeMetric.value.key) : 1));
 const legendGradient = computed(() => `linear-gradient(90deg, ${activeMetric.value.ramp.map(([p, c]) => `${c} ${Math.round(p * 100)}%`).join(', ')})`);
+
+// ── Choropleth classification (equal / quantile / Jenks natural breaks) ───────
+// Linear/equal-interval lets outliers wash the map out; quantile + Jenks bin the
+// actual cell distribution so classes read cleanly (the NYT/Tufte default).
+const N_CLASSES = 5;
+const CLASS_MODES = [
+  { id: 'equal', label: 'Equal', title: 'Equal interval — even value bands' },
+  { id: 'quantile', label: 'Quantile', title: 'Equal-count classes' },
+  { id: 'jenks', label: 'Jenks', title: 'Natural breaks — minimises within-class variance' },
+] as const;
+const classMode = ref<ClassMode>('quantile');
+const bivariateOn = ref(false);
+const isRealEstate = computed(() => activeGroup.value.id === 'realestate');
+const cellValues = (key: string, factor: number) => baseGrid.features.map((f) => Number((f.properties as Record<string, number>)[key] ?? 0) * factor);
+const classColorsFor = (m: MetricDef) => Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(m.ramp, i / (N_CLASSES - 1)));
+const classBreaks = computed(() => breaksFor(classMode.value, cellValues(activeMetric.value.key, metricFactor.value), activeMetric.value.min * metricFactor.value, activeMetric.value.max * metricFactor.value, N_CLASSES));
+const legendClasses = computed(() => {
+  const cols = classColorsFor(activeMetric.value);
+  const bounds = [activeMetric.value.min * metricFactor.value, ...classBreaks.value, activeMetric.value.max * metricFactor.value];
+  return cols.map((color, i) => ({ color, lo: bounds[i]!, hi: bounds[i + 1] ?? bounds[bounds.length - 1]! }));
+});
+
+// Bivariate price × yield — the investor "undervalued" lens (low price + high yield).
+// 3×3 palette indexed [yieldClass][priceClass]; low-price/high-yield corner pops teal.
+const BIV_PRICE_KEY = 'reMedianPrice';
+const BIV_YIELD_KEY = 'reGrossYield';
+const BIV: string[][] = [
+  ['#e8e8e8', '#dfb0d6', '#be64ac'], // low yield  (pale → magenta as price rises)
+  ['#a5add3', '#8c8dc0', '#5c5fa0'], // mid yield
+  ['#5ac8c8', '#5698b9', '#3b4994'], // high yield (teal = undervalued → indigo = pricey+high-yield)
+];
+function bivFactor(key: string) { return activeGroup.value.segmented ? segFactor(reSegment.value, key) : 1; }
+function bivBreaks() {
+  const pf = bivFactor(BIV_PRICE_KEY);
+  const yf = bivFactor(BIV_YIELD_KEY);
+  return {
+    pf, yf,
+    price: quantileBreaks(cellValues(BIV_PRICE_KEY, pf), 3),
+    yield: quantileBreaks(cellValues(BIV_YIELD_KEY, yf), 3),
+  };
+}
+const bivLegendCells = computed(() => {
+  // rows top→bottom = high→low yield, for a conventional bivariate legend
+  return [2, 1, 0].map((yc) => [0, 1, 2].map((xc) => BIV[yc]![xc]!));
+});
 // Value formatting (money / pct / plain), used by the legend + cell inspector.
 function fmtVal(v: number, def: MetricDef): string {
   if (def.format === 'money') { const s = v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1000 ? `$${Math.round(v / 1000)}k` : `$${Math.round(v)}`; return s + def.unit; }
@@ -635,11 +708,14 @@ function setBasemap(b: 'streets' | 'light' | 'dark') {
   src?.setTiles?.([BASEMAPS[b].url]);
 }
 
-// Data-driven fill color for the active civic metric (interpolate over its ramp).
+// Data-driven fill color for the active civic metric — a stepped classification
+// (equal / quantile / Jenks) so each class is a distinct, honest band.
 function civicColorExpr(m: MetricDef, factor: number): unknown {
-  const stops: Array<number | string> = [];
-  for (const [pos, color] of m.ramp) stops.push((m.min + (m.max - m.min) * pos) * factor, color);
-  return ['interpolate', ['linear'], ['*', ['get', m.key], factor], ...stops];
+  const br = breaksFor(classMode.value, cellValues(m.key, factor), m.min * factor, m.max * factor, N_CLASSES);
+  const cols = classColorsFor(m);
+  const expr: Array<unknown> = ['step', ['*', ['get', m.key], factor], cols[0]];
+  for (let i = 0; i < br.length; i++) { expr.push(br[i], cols[i + 1]); }
+  return expr;
 }
 type FillData = Parameters<maplibregl.GeoJSONSource['setData']>[0];
 function paintCivic(data: FillData, color: never) {
@@ -656,7 +732,22 @@ function paintCivic(data: FillData, color: never) {
     map.addLayer({ id: 'civic-fill', type: 'fill', source: 'civic', paint: { 'fill-color': color, 'fill-opacity': civicOpacity.value, 'fill-outline-color': 'rgba(255,255,255,0.28)' } });
   }
 }
+function renderBivariate() {
+  const { pf, yf, price, yield: yld } = bivBreaks();
+  const features = baseGrid.features.map((f) => {
+    const p = Number((f.properties as Record<string, number>)[BIV_PRICE_KEY] ?? 0) * pf;
+    const y = Number((f.properties as Record<string, number>)[BIV_YIELD_KEY] ?? 0) * yf;
+    const xc = classOf(p, price);
+    const yc = classOf(y, yld);
+    return { ...f, properties: { ...f.properties, bivClass: yc * 3 + xc } };
+  });
+  const match: Array<unknown> = ['match', ['get', 'bivClass']];
+  for (let i = 0; i < 9; i++) match.push(i, BIV[Math.floor(i / 3)]![i % 3]!);
+  match.push('#888888');
+  paintCivic({ type: 'FeatureCollection', features } as unknown as FillData, match as never);
+}
 function renderCivic() {
+  if (bivariateOn.value && isRealEstate.value) { renderBivariate(); return; }
   paintCivic(baseGrid as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
 }
 function renderSite() {
@@ -733,7 +824,7 @@ function renderListings() {
 }
 function toggleListings() { mlsOn.value = !mlsOn.value; if (mlsOn.value) renderListings(); else { clearListings(); selectedListing.value = null; } }
 function eventDate(iso: string): string { return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
-watch([civicMetricKey, reSegment], () => { if (!siteMode.value && civicOn.value) renderCivic(); });
+watch([civicMetricKey, reSegment, classMode, bivariateOn], () => { if (!siteMode.value && civicOn.value) renderCivic(); });
 watch(siteProfile, () => { if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
@@ -1071,6 +1162,21 @@ onUnmounted(() => {
 .mapx-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }
 .mapx-legend-bar { flex: 1; height: 9px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.14); }
 .mapx-legend-lo, .mapx-legend-hi { font-size: 0.62rem; color: var(--text-3); white-space: nowrap; }
+.mapx-legend-steps { flex: 1; display: flex; height: 10px; border-radius: 3px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.14); }
+.mapx-legend-steps i { flex: 1; }
+/* Classification selector */
+.mapx-class { margin-top: 0.55rem; }
+.mapx-class-l { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.3rem; }
+.mapx-bm.sm { font-size: 0.68rem; padding: 0.25rem 0.4rem; }
+/* Bivariate 3×3 legend */
+.mapx-biv { position: relative; margin: 0.6rem 0 0.4rem 1.6rem; width: max-content; }
+.mapx-biv-grid { display: flex; flex-direction: column; gap: 2px; }
+.mapx-biv-row { display: flex; gap: 2px; }
+.mapx-biv-row i { width: 20px; height: 20px; border-radius: 2px; }
+.mapx-biv-ax { position: absolute; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); }
+.mapx-biv-ax--x { bottom: -1rem; left: 0; }
+.mapx-biv-ax--y { transform: rotate(-90deg); transform-origin: left bottom; left: -0.3rem; bottom: 1.4rem; white-space: nowrap; }
+.mapx-switch--sm { font-size: 0.72rem; margin-top: 0.55rem; }
 .mapx-opacity { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.55rem; font-size: 0.68rem; color: var(--text-3); }
 .mapx-opacity input { flex: 1; accent-color: var(--map-accent); }
 .secondary { padding: 0.3rem 0.6rem; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 8px; background: rgba(255, 255, 255, 0.04); color: var(--text-2); font-size: 0.72rem; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
