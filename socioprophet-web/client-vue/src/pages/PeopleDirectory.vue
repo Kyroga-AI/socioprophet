@@ -17,9 +17,10 @@
       </div>
     </header>
 
-    <div class="pd-body">
-      <!-- Directory list -->
-      <div ref="listEl" class="pd-list" aria-label="Results" @keydown="arrowRove($event, listEl, '.pd-row')">
+    <SplitPane storage-key="people-directory" label="results" :initial="380">
+      <template #list>
+        <!-- Directory list -->
+        <div ref="listEl" class="pd-list" aria-label="Results" @keydown="arrowRove($event, listEl, '.pd-row')">
         <p class="pd-count">{{ results.length }} result{{ results.length === 1 ? '' : 's' }}</p>
         <button
           v-for="e in results"
@@ -37,8 +38,10 @@
           <span class="pd-conf" :title="`resolution confidence ${(e.confidence * 100).toFixed(0)}%`">{{ (e.confidence * 100).toFixed(0) }}%</span>
         </button>
         <p v-if="results.length === 0" class="pd-empty">No matches. Clear the search or pick a different type.</p>
-      </div>
+        </div>
+      </template>
 
+      <template #detail>
       <!-- Profile -->
       <article v-if="selected" class="pd-profile" aria-label="Profile">
         <div class="pd-p-head">
@@ -160,13 +163,15 @@
         </div>
       </article>
       <div v-else class="pd-profile empty">Select an entity</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import SplitPane from '../components/SplitPane.vue';
 import { entities, asOf, careers, education as eduMap, newsRefs, type Entity, type EntityKind, type Platform } from '../data/peopleFixture';
 import { newsItems, newsSources } from '../data/newsFeedFixture';
 import { navScopeForPath } from '../config/cockpitNav';

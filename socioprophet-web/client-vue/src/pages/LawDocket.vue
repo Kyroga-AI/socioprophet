@@ -18,9 +18,10 @@
       </div>
     </header>
 
-    <div class="lw-body">
-      <!-- Docket list -->
-      <div ref="listEl" class="lw-list" aria-label="Dockets" @keydown="arrowRove($event, listEl, '.lw-row')">
+    <SplitPane storage-key="law-docket" label="dockets" :initial="360">
+      <template #list>
+        <!-- Docket list -->
+        <div ref="listEl" class="lw-list" aria-label="Dockets" @keydown="arrowRove($event, listEl, '.lw-row')">
         <p class="lw-count">{{ results.length }} item{{ results.length === 1 ? '' : 's' }}</p>
         <button
           v-for="d in results"
@@ -38,8 +39,10 @@
           <div class="lw-row-meta">{{ d.jurisdiction }} · updated {{ relative(d.updated) }}</div>
         </button>
         <p v-if="results.length === 0" class="lw-empty">No items in this scope.</p>
-      </div>
+        </div>
+      </template>
 
+      <template #detail>
       <!-- Detail + redline -->
       <article v-if="selected" class="lw-detail" aria-label="Docket detail">
         <!-- provenance ribbon -->
@@ -108,7 +111,8 @@
         </div>
       </article>
       <div v-else class="lw-detail empty">Select a docket item</div>
-    </div>
+      </template>
+    </SplitPane>
   </section>
 </template>
 
@@ -119,6 +123,7 @@ import { dockets, asOf, type Docket, type DocketStatus } from '../data/lawFixtur
 import { navScopeForPath } from '../config/cockpitNav';
 import { arrowRove } from '../utils/listKeys';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
+import SplitPane from '../components/SplitPane.vue';
 import { prov } from '../features/provenance/types';
 import CrossLinks from '../components/CrossLinks.vue';
 import { crossLinksForDocket } from '../features/crosslink/entityLinks';
