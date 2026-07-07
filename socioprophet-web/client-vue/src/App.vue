@@ -135,6 +135,13 @@
         <RouterLink class="sp-capture-link" to="/research">Research</RouterLink>
         <button
           type="button"
+          class="sp-noetica-toggle"
+          :class="{ on: cockpit.dockOpen }"
+          title="Toggle Noetica assistant (⌘J / Ctrl+J)"
+          @click="cockpit.toggleDock()"
+        >◇ Noetica</button>
+        <button
+          type="button"
           class="sp-term-toggle"
           :class="{ on: termOpen }"
           title="Toggle terminal (Ctrl+`)"
@@ -169,6 +176,9 @@
 
     <!-- Spotlight-style command palette (⌘K / Ctrl+K) -->
     <CommandPalette :open="paletteOpen" @close="paletteOpen = false" />
+
+    <!-- Global Noetica assistant dock — available on every page (⌘J / Ctrl+J) -->
+    <NoeticaDock :open="cockpit.dockOpen" @close="cockpit.closeDock()" />
   </div>
 </template>
 
@@ -177,9 +187,11 @@ import { computed, ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
 import { useAuth } from './stores/auth';
 import { useResearch } from './stores/research';
+import { useCockpit } from './stores/cockpit';
 import RuntimeAdapterStatusBadge from './components/RuntimeAdapterStatusBadge.vue';
 import QuakeTerminal from './components/QuakeTerminal.vue';
 import CommandPalette from './components/CommandPalette.vue';
+import NoeticaDock from './components/NoeticaDock.vue';
 import { useOperatorTerminal } from './composables/useOperatorTerminal';
 import { useNoeticaChat } from './composables/useNoeticaChat';
 import { domainSurfaces, surfaceForRoute, surfacesForDomain } from './config/domainRoutes';
@@ -196,6 +208,7 @@ const route = useRoute();
 const router = useRouter();
 const auth = useAuth();
 const research = useResearch();
+const cockpit = useCockpit();
 
 const logout = async () => {
   await auth.signOut();
@@ -281,7 +294,9 @@ async function onPromptSubmit() {
   if (!v) return;
   cmdBar.value = '';
   if (promptMode.value === 'chat') {
-    if (route.path !== '/noetica') await router.push('/noetica');
+    // Open the assistant dock inline (available on every page) rather than
+    // navigating away to the /noetica surface.
+    cockpit.openDock();
     chat.send(v);
   } else {
     termOpen.value = true;
@@ -297,6 +312,13 @@ function onTermHotkey(e: KeyboardEvent) {
     paletteOpen.value = !paletteOpen.value;
     return;
   }
+  // Cmd/Ctrl+J — toggle the global Noetica assistant dock (chat anywhere).
+  if ((e.metaKey || e.ctrlKey) && (e.key === 'j' || e.key === 'J')) {
+    e.preventDefault();
+    cockpit.toggleDock();
+    return;
+  }
+  if (e.key === 'Escape' && cockpit.dockOpen && !termOpen.value) { cockpit.closeDock(); return; }
   // Ctrl+`  (backquote) — the classic Quake / VS Code terminal toggle.
   if (e.ctrlKey && (e.key === '`' || e.code === 'Backquote')) {
     e.preventDefault();
@@ -427,6 +449,18 @@ const activeRuntimeFeatures = computed<RuntimeAdapterFeature[]>(() => {
   text-decoration: none;
   border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
 }
+.sp-noetica-toggle {
+  border: 1px solid rgba(120, 160, 255, 0.4);
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(150, 180, 255, 0.95);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.76rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sp-noetica-toggle:hover { background: rgba(120, 160, 255, 0.12); }
+.sp-noetica-toggle.on { background: rgba(120, 160, 255, 0.18); color: #fff; }
 
 /* Domain mega-menu (top axis) — faithful to Will's HeaderMenu dropdowns */
 .sp-domain-nav { display: flex; align-items: stretch; gap: 0; }

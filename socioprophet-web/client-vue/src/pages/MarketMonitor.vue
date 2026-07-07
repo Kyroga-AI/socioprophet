@@ -26,16 +26,17 @@
       </button>
     </div>
 
-    <!-- Index tiles -->
-    <div class="mk-tiles" aria-label="Indices">
-      <button v-for="ix in indices" :key="ix.symbol" class="mk-tile" :class="{ on: selected.symbol === ix.symbol }" @click="pick(ix)">
+    <!-- Cross-asset overview — every asset class at a glance -->
+    <div class="mk-tiles" aria-label="Asset classes">
+      <button v-for="t in classTiles" :key="t.meta.klass" class="mk-tile" :class="{ on: activeClass === t.meta.klass }" @click="setClass(t.meta.klass, t.lead)">
         <div class="mk-tile-top">
-          <span class="mk-tile-name">{{ ix.name }}</span>
-          <span class="mk-chg" :class="dir(ix.changePct)">{{ fmtPct(ix.changePct) }}</span>
+          <span class="mk-tile-class">{{ t.meta.label }}</span>
+          <span class="mk-chg" :class="dir(t.avgPct)">{{ fmtPct(t.avgPct) }}</span>
         </div>
-        <div class="mk-tile-val">{{ fmt(ix) }}</div>
+        <div class="mk-tile-name">{{ t.lead.name }} · {{ t.count }} instr.</div>
+        <div class="mk-tile-val">{{ fmt(t.lead) }}</div>
         <svg class="mk-spark" viewBox="0 0 100 26" preserveAspectRatio="none">
-          <polyline :points="points(ix.series, 100, 26)" :stroke="lineColor(ix.changePct)" fill="none" stroke-width="1.4" />
+          <polyline :points="points(t.lead.series, 100, 26)" :stroke="lineColor(t.avgPct)" fill="none" stroke-width="1.4" />
         </svg>
       </button>
     </div>
@@ -45,9 +46,9 @@
       <!-- Watchlist -->
       <div class="mk-watch">
         <div class="mk-watch-head">
-          <span>{{ scope && !scope.isPrimary ? scope.label : 'Watchlist' }}</span>
-          <div v-if="classes.length > 2" class="mk-filter">
-            <button v-for="c in classes" :key="c" class="mk-fbtn" :class="{ on: klass === c }" @click="setKlass(c)">{{ c }}</button>
+          <span>{{ activeClassLabel }} · {{ rows.length }}</span>
+          <div class="mk-filter">
+            <button class="mk-fbtn" :class="{ on: activeClass === 'All' }" @click="setClass('All')">All assets</button>
           </div>
         </div>
         <div ref="listEl" class="mk-rows" @keydown="arrowRove($event, listEl, '.mk-row')">
@@ -81,6 +82,11 @@
           </div>
         </div>
 
+        <div class="mk-d-actions">
+          <button class="mk-ask" type="button" @click="askNoetica" title="Ask Noetica about this instrument">◇ Ask Noetica</button>
+          <span v-if="heldPosition" class="mk-held">◉ Holding {{ heldPosition.qty }} @ {{ num(heldPosition.avgCost) }}</span>
+        </div>
+
         <svg class="mk-area" viewBox="0 0 320 96" preserveAspectRatio="none" role="img" aria-label="price chart">
           <defs>
             <linearGradient :id="`g-${selected.symbol}`" x1="0" y1="0" x2="0" y2="1">
@@ -97,6 +103,18 @@
           <div class="mk-kv"><span>Prev close</span><b>{{ num(selected.prevClose) }}</b></div>
           <div class="mk-kv"><span>Day low</span><b>{{ num(selected.dayLow) }}</b></div>
           <div class="mk-kv"><span>Day high</span><b>{{ num(selected.dayHigh) }}</b></div>
+        </div>
+
+        <div class="mk-block mk-ticket">
+          <div class="mk-block-h">Order ticket</div>
+          <div class="mk-ticket-row">
+            <input class="mk-qty" type="number" min="1" step="1" v-model.number="orderQty" aria-label="Order quantity" />
+            <button class="mk-buy" type="button" @click="trade('buy')">Buy</button>
+            <button class="mk-sell" type="button" @click="trade('sell')">Sell</button>
+            <span class="mk-ticket-est">≈ {{ money(orderQty * selected.price) }}</span>
+          </div>
+          <p v-if="orderMsg" class="mk-ticket-msg">{{ orderMsg }}</p>
+          <p class="mk-ticket-note">Paper trade · risk-gated · posts to your <RouterLink class="mk-link" to="/capability/portfolios">Portfolio →</RouterLink></p>
         </div>
 
         <div class="mk-block" v-if="selected.signals.length">
@@ -130,39 +148,107 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
-import { indices, watchlist, instrumentsForPath, asOf, type Instrument } from '../data/marketsFixture';
+import { indices, watchlist, instruments, SUBDOMAIN_CLASSES, asOf, type Instrument, type AssetClass } from '../data/marketsFixture';
 import { nodesForMarketSymbol, chains } from '../data/supplyChainFixture';
 import HumanNetworks from '../components/HumanNetworks.vue';
 import { arrowRove } from '../utils/listKeys';
+import { usePortfolio } from '../stores/portfolio';
+import { useCockpit } from '../stores/cockpit';
 
 const route = useRoute();
 const router = useRouter();
-// Active DOMAIN-axis sub-domain → the real slice of instruments it surfaces
-// (Equities & Preferreds → equities/preferreds, Crypto/Digital → crypto, …).
 const scope = computed(() => navScopeForPath(route.path));
-const subInstruments = computed<Instrument[]>(() => instrumentsForPath(route.path));
-const classes = computed<string[]>(() => ['All', ...Array.from(new Set(subInstruments.value.map((i) => i.klass)))]);
-const klass = ref<string>('All');
-const selected = ref<Instrument>(subInstruments.value[0] ?? indices[0]!);
+const portfolio = usePortfolio();
+const cockpit = useCockpit();
+const orderQty = ref(100);
+const orderMsg = ref('');
+
+// The full cross-asset taxonomy — every asset class the board can surface.
+const CLASS_META: { klass: AssetClass; label: string; group: string }[] = [
+  { klass: 'index', label: 'Indices', group: 'Equity' },
+  { klass: 'equity', label: 'Equities', group: 'Equity' },
+  { klass: 'preferred', label: 'Preferreds', group: 'Equity' },
+  { klass: 'rate', label: 'Rates', group: 'Fixed income' },
+  { klass: 'bond', label: 'Credit & bonds', group: 'Fixed income' },
+  { klass: 'option', label: 'Futures & options', group: 'Derivatives' },
+  { klass: 'fx', label: 'Currencies (FX)', group: 'Currencies' },
+  { klass: 'crypto', label: 'Digital assets', group: 'Digital' },
+  { klass: 'commodity', label: 'Commodities', group: 'Real assets' },
+  { klass: 'real-asset', label: 'Real assets', group: 'Real assets' },
+  { klass: 'alt', label: 'Alternatives', group: 'Alternatives' },
+];
+const classLabel = (k: AssetClass | 'All'): string => (k === 'All' ? 'All assets' : (CLASS_META.find((m) => m.klass === k)?.label ?? k));
+
+// Default the active class from the current sub-domain path (Crypto/Digital →
+// crypto, Debt & Fixed Income → rate, …); still switchable in-page to any class.
+function pathPrimaryClass(path: string): AssetClass | 'All' {
+  const cs = SUBDOMAIN_CLASSES[path];
+  return cs && cs[0] ? cs[0] : 'All';
+}
+const activeClass = ref<AssetClass | 'All'>(pathPrimaryClass(route.path));
+const activeClassLabel = computed(() => classLabel(activeClass.value));
+const rows = computed<Instrument[]>(() =>
+  activeClass.value === 'All' ? instruments : instruments.filter((i) => i.klass === activeClass.value),
+);
+
+// Cross-asset overview: one tile per class, showing a representative leader and
+// the class-level move — so the full spectrum is visible at a glance.
+const classTiles = computed(() =>
+  CLASS_META.map((meta) => {
+    const members = instruments.filter((i) => i.klass === meta.klass);
+    const lead = members[0];
+    const avgPct = members.reduce((s, i) => s + i.changePct, 0) / (members.length || 1);
+    return { meta, lead, avgPct: +avgPct.toFixed(2), count: members.length };
+  }).filter((t): t is { meta: typeof CLASS_META[number]; lead: Instrument; avgPct: number; count: number } => Boolean(t.lead)),
+);
+
+const selected = ref<Instrument>(rows.value[0] ?? indices[0]!);
 const listEl = ref<HTMLElement | null>(null);
 const cmd = ref('');
 const tape = [...indices, ...watchlist];
-onMounted(() => { const sym = typeof route.query.sym === 'string' ? route.query.sym.toUpperCase() : ''; if (sym) { const hit = tape.find((i) => i.symbol === sym); if (hit) selected.value = hit; } });
+onMounted(() => {
+  const sym = typeof route.query.sym === 'string' ? route.query.sym.toUpperCase() : '';
+  if (sym) { const hit = tape.find((i) => i.symbol === sym); if (hit) { selected.value = hit; activeClass.value = hit.klass; } }
+});
 
-const rows = computed<Instrument[]>(() => (klass.value === 'All' ? subInstruments.value : subInstruments.value.filter((i) => i.klass === klass.value)));
-// Keep a valid selection + reset the class filter as the sub-domain changes.
+// Keep a valid selection as the class filter / sub-domain changes.
 watch(rows, (r) => { if (!r.some((i) => i.symbol === selected.value.symbol) && r[0]) selected.value = r[0]; });
-watch(() => route.path, () => { klass.value = 'All'; });
+watch(() => route.path, (p) => { activeClass.value = pathPrimaryClass(p); });
 
 function pick(it: Instrument) { selected.value = it; }
-// Bloomberg-style command line: type a ticker, <GO> jumps to it.
+function setClass(k: AssetClass | 'All', lead?: Instrument) {
+  activeClass.value = k;
+  if (lead) pick(lead);
+  else if (!rows.value.some((r) => r.symbol === selected.value.symbol) && rows.value[0]) pick(rows.value[0]);
+}
+// Bloomberg-style command line: type a ticker, <GO> jumps to it (any asset class).
 function runCmd() {
   const q = cmd.value.trim().toUpperCase();
   if (!q) return;
   const hit = tape.find((i) => i.symbol === q) ?? tape.find((i) => i.symbol.startsWith(q)) ?? tape.find((i) => i.name.toUpperCase().includes(q));
-  if (hit) { pick(hit); cmd.value = ''; }
+  if (hit) { activeClass.value = hit.klass; pick(hit); cmd.value = ''; }
 }
-function setKlass(c: string) { klass.value = c; if (!rows.value.some((r) => r.symbol === selected.value.symbol) && rows.value[0]) pick(rows.value[0]); }
+
+// ── Integration: order ticket → shared portfolio; context → the assistant ──
+const heldPosition = computed(() => portfolio.positionFor(selected.value.symbol));
+const money = (n: number): string =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(n);
+function trade(side: 'buy' | 'sell') {
+  const s = selected.value;
+  const r = portfolio.placeOrder({ symbol: s.symbol, name: s.name, side, qty: orderQty.value, price: s.price, source: 'manual' });
+  orderMsg.value = r.ok ? `${side === 'buy' ? 'Bought' : 'Sold'} ${orderQty.value} ${s.symbol} @ ${fmt(s)} · posted to Portfolio` : (r.reason ?? 'Order rejected');
+}
+function askNoetica() {
+  const s = selected.value;
+  cockpit.askAbout(`Give me a concise read on ${s.name} (${s.symbol}, ${s.klass}) — currently ${fmt(s)}, ${fmtPct(s.changePct)} today. What matters, key risks, and what would you do?`);
+}
+// Keep the assistant aware of what's selected on this surface.
+watch(selected, (s) => cockpit.setContext({
+  surface: 'Market Monitor',
+  entityLabel: `${s.symbol} · ${s.name}`,
+  detail: `${fmt(s)} · ${fmtPct(s.changePct)}`,
+  route: route.path,
+}), { immediate: true });
 
 // Supply-chain integration: instruments that sit on a modeled supply chain link
 // into the Supply Chain surface (which links on to the graph / map / twin).
@@ -221,7 +307,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .mk-tiles { display: flex; gap: 0.6rem; overflow-x: auto; padding-bottom: 0.15rem; }
 .mk-tile { flex: 0 0 auto; width: 168px; text-align: left; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: inherit; padding: 0.55rem 0.65rem 0.4rem; cursor: pointer; display: grid; gap: 0.25rem; } .mk-tile:hover { border-color: rgba(255, 255, 255, 0.2); } .mk-tile.on { border-color: var(--accent); }
 .mk-tile-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-.mk-tile-name { font-size: 0.72rem; color: rgba(255, 255, 255, 0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mk-tile-class { font-size: 0.78rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.mk-tile-name { font-size: 0.68rem; color: rgba(255, 255, 255, 0.5); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mk-tile-val { font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .mk-spark { width: 100%; height: 26px; } .mk-spark.sm { width: 90px; height: 24px; }
 
@@ -251,4 +338,18 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .mk-sigs { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .mk-sig { font-size: 0.72rem; border-radius: 6px; padding: 0.15rem 0.5rem; border: 1px solid var(--line-2); color: rgba(255, 255, 255, 0.75); } .mk-sig.up { color: var(--up); border-color: rgba(63, 185, 80, 0.4); } .mk-sig.down { color: var(--down); border-color: rgba(248, 81, 73, 0.4); }
 .mk-sc { display: flex; flex-direction: column; gap: 0.4rem; } .mk-sc-link { text-align: left; border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2); border-radius: 8px; padding: 0.4rem 0.6rem; font-size: 0.78rem; cursor: pointer; } .mk-sc-link:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Actions + order ticket (the functional trading seam) */
+.mk-d-actions { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.6rem; }
+.mk-ask { border: 1px solid rgba(120, 160, 255, 0.45); background: rgba(120, 160, 255, 0.08); color: #93b4ff; border-radius: 8px; padding: 0.3rem 0.7rem; font-size: 0.76rem; cursor: pointer; }
+.mk-ask:hover { background: rgba(120, 160, 255, 0.16); color: #fff; }
+.mk-held { font-size: 0.72rem; color: var(--up); }
+.mk-ticket-row { display: flex; align-items: center; gap: 0.45rem; }
+.mk-qty { width: 5rem; background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 8px; color: var(--text); font: inherit; font-size: 0.85rem; padding: 0.4rem 0.55rem; outline: none; } .mk-qty:focus { border-color: var(--accent); }
+.mk-buy, .mk-sell { border: none; border-radius: 8px; padding: 0.4rem 1.1rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; color: #06210f; }
+.mk-buy { background: var(--up); } .mk-sell { background: var(--down); color: #2a0708; }
+.mk-buy:hover, .mk-sell:hover { filter: brightness(1.08); }
+.mk-ticket-est { margin-left: auto; font-size: 0.76rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.mk-ticket-msg { margin: 0.5rem 0 0; font-size: 0.75rem; color: var(--text); }
+.mk-ticket-note { margin: 0.35rem 0 0; font-size: 0.68rem; color: var(--text-3); } .mk-link { color: var(--accent); text-decoration: none; } .mk-link:hover { text-decoration: underline; }
 </style>

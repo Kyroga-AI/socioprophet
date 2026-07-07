@@ -39,8 +39,15 @@
       <article v-if="selected" class="at-detail" aria-label="Strategy detail">
         <div class="at-ribbon">
           <span class="at-ribbon-k">governance</span>
-          <span>risk-gated · order routing disabled (fixture)</span>
+          <span>risk-gated · paper routing to shared book</span>
           <span class="at-ribbon-as">as of {{ asOfLabel }}</span>
+        </div>
+
+        <div class="at-actions">
+          <button class="at-route" type="button" @click="deployToBook">Route fills to book ▸</button>
+          <button class="at-ask" type="button" @click="askNoetica" title="Ask Noetica about this strategy">◇ Ask Noetica</button>
+          <RouterLink class="at-portlink" to="/capability/portfolios">Portfolio →</RouterLink>
+          <span v-if="deployMsg" class="at-deploymsg">{{ deployMsg }}</span>
         </div>
 
         <div class="at-d-head">
@@ -108,10 +115,15 @@ import { strategies, asOf, type Strategy, type StrategyStatus } from '../data/al
 import { sparkPoints, areaPoints } from '../utils/sparkline';
 import { navScopeForPath } from '../config/cockpitNav';
 import { arrowRove } from '../utils/listKeys';
+import { usePortfolio } from '../stores/portfolio';
+import { useCockpit } from '../stores/cockpit';
 
 const router = useRouter();
 const route = useRoute();
 const scope = computed(() => navScopeForPath(route.path));
+const portfolio = usePortfolio();
+const cockpit = useCockpit();
+const deployMsg = ref('');
 
 const statuses = ['all', 'live', 'paper', 'backtest', 'halted'] as const;
 const status = ref<(typeof statuses)[number]>('all');
@@ -138,6 +150,31 @@ function signed(n: number): string { return `${n >= 0 ? '+' : ''}${n}`; }
 function openSymbol(sym: string) { if (!/[/]/.test(sym)) router.push({ path: '/markets/indices-funds', query: { sym } }); }
 
 const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+
+// ── Integration: route a strategy's fills into the SHARED portfolio book ──
+function deployToBook() {
+  const s = selected.value;
+  if (!s) return;
+  let ok = 0;
+  let skipped = 0;
+  for (const f of s.fills) {
+    if (/[/]/.test(f.symbol)) { skipped += 1; continue; } // pairs/baskets don't map to a single position
+    const side = /sell|short/i.test(f.side) ? 'sell' : 'buy';
+    if (portfolio.placeOrder({ symbol: f.symbol, name: f.symbol, side, qty: f.qty, price: f.price, source: `algo:${s.id}` }).ok) ok += 1;
+    else skipped += 1;
+  }
+  deployMsg.value = ok
+    ? `Routed ${ok} fill(s) from ${s.name} to your Portfolio${skipped ? ` · ${skipped} skipped` : ''}.`
+    : 'No routable single-ticker fills (pairs/baskets or risk-gated).';
+}
+function askNoetica() {
+  const s = selected.value;
+  if (!s) return;
+  cockpit.askAbout(`Assess the "${s.name}" strategy (${s.klass}, ${s.status}): return ${signed(s.returnPct)}%, Sharpe ${s.sharpe}, max drawdown ${s.maxDrawdownPct}%, win rate ${s.winRatePct}%. Is the risk acceptable, and would you allocate?`);
+}
+watch(selected, (s) => {
+  if (s) cockpit.setContext({ surface: 'Algorithmic Trading', entityLabel: s.name, detail: `${signed(s.returnPct)}% · ${s.status}`, route: route.path });
+}, { immediate: true });
 </script>
 
 <style scoped>
@@ -163,6 +200,11 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .at-spark { width: 120px; height: 26px; } .at-spark svg { width: 100%; height: 100%; display: block; }
 .at-chg { font-size: 0.82rem; font-variant-numeric: tabular-nums; font-weight: 600; } .at-chg.up { color: var(--up); } .at-chg.down { color: var(--down); }
 
+.at-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 0.6rem 0 0.2rem; }
+.at-route { border: none; border-radius: 8px; padding: 0.4rem 0.9rem; font-size: 0.78rem; font-weight: 700; cursor: pointer; background: var(--up); color: #06210f; } .at-route:hover { filter: brightness(1.08); }
+.at-ask { border: 1px solid rgba(120, 160, 255, 0.45); background: rgba(120, 160, 255, 0.08); color: #93b4ff; border-radius: 8px; padding: 0.4rem 0.7rem; font-size: 0.76rem; cursor: pointer; } .at-ask:hover { background: rgba(120, 160, 255, 0.16); color: #fff; }
+.at-portlink { color: var(--accent); text-decoration: none; font-size: 0.76rem; align-self: center; } .at-portlink:hover { text-decoration: underline; }
+.at-deploymsg { font-size: 0.72rem; color: var(--text-2); }
 .at-klass, .at-status, .at-sig, .at-side { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; border-radius: 4px; padding: 0.05rem 0.35rem; }
 .at-klass { color: #93c5fd; background: rgba(88, 166, 255, 0.14); }
 .at-status { margin-left: auto; }

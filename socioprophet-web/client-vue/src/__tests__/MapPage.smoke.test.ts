@@ -362,7 +362,7 @@ describe('Criterion 7 – backend status is displayed', () => {
 
     const wrapper = await mountMapPage();
 
-    const tags = wrapper.findAll('.tag');
+    const tags = wrapper.findAll('.pill');
     const tagTexts = tags.map((t) => t.text().toLowerCase());
     expect(tagTexts.some((t) => t.includes('demo') || t.includes('fallback'))).toBe(true);
   });
@@ -374,7 +374,7 @@ describe('Criterion 7 – backend status is displayed', () => {
 
     const wrapper = await mountMapPage();
 
-    const tags = wrapper.findAll('.tag');
+    const tags = wrapper.findAll('.pill');
     const tagTexts = tags.map((t) => t.text().toLowerCase());
     expect(tagTexts.some((t) => t.includes('live'))).toBe(true);
   });
@@ -384,9 +384,9 @@ describe('Criterion 7 – backend status is displayed', () => {
 
     const wrapper = await mountMapPage();
 
-    const tags = wrapper.findAll('.tag');
+    const tags = wrapper.findAll('.pill');
     const tagTexts = tags.map((t) => t.text().toLowerCase());
-    expect(tagTexts.some((t) => t.includes('last loaded'))).toBe(true);
+    expect(tagTexts.some((t) => t.includes('updated'))).toBe(true);
   });
 });
 

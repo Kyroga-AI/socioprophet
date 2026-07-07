@@ -38,6 +38,7 @@ import ProfessionalIntelligence from './pages/ProfessionalIntelligence.vue';
 import Reader from './pages/Reader.vue';
 import OperatorDashboard from './pages/OperatorDashboard.vue';
 import AlgoTradingBoard from './pages/AlgoTradingBoard.vue';
+import PortfolioBoard from './pages/PortfolioBoard.vue';
 import NlpExtractionBench from './pages/NlpExtractionBench.vue';
 import ExperimentsBoard from './pages/ExperimentsBoard.vue';
 import BehavioralAnalytics from './pages/BehavioralAnalytics.vue';
@@ -64,7 +65,7 @@ const explicitRoutes = [
   // Capability-rail cells that are realized through an existing surface — the
   // capability keeps its own /capability/* URL + rail highlight, and the host
   // screen shows the capability as its header lens (via navScopeForPath).
-  { path: '/capability/portfolios', component: MarketMonitor },
+  { path: '/capability/portfolios', component: PortfolioBoard },
   { path: '/capability/algorithmic-trading', component: AlgoTradingBoard },
   { path: '/capability/nlp-information-extraction', component: NlpExtractionBench },
   { path: '/capability/experiments-simulations', component: ExperimentsBoard },

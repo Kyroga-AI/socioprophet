@@ -50,12 +50,46 @@
     </div>
 
     <div class="dt-body">
-      <div class="dt-mappanel">
-        <div class="dt-map-h">
-          <span>Twin footprint <span class="dt-hint">facilities · logistics · supply chain across geography · pins colored by simulated impact</span></span>
+      <div class="dt-left">
+        <div class="dt-graphpanel">
+          <div class="dt-map-h">
+            <span>Twin graph <span class="dt-hint">supply network — nodes colored by simulated impact, arrows show flow</span></span>
+          </div>
+          <svg class="dt-graph" :viewBox="`0 0 ${twinGraph.w} ${twinGraph.h}`" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Twin supply network graph">
+            <defs>
+              <marker id="dt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="rgba(255,255,255,0.28)" />
+              </marker>
+            </defs>
+            <line
+              v-for="(e, i) in twinGraph.edges"
+              :key="'e' + i"
+              :x1="e.x1" :y1="e.y1" :x2="e.x2" :y2="e.y2"
+              :class="{ hot: e.from === selectedId || e.to === selectedId }"
+              class="dt-gedge"
+              marker-end="url(#dt-arrow)"
+            />
+            <g
+              v-for="n in twinGraph.nodes"
+              :key="n.id"
+              class="dt-gnode"
+              :class="{ sel: n.id === selectedId }"
+              @click="selectedId = n.id"
+            >
+              <title>{{ n.name }}{{ n.sev > 0 ? ` · impact ${Math.round(n.sev * 100)}` : '' }}</title>
+              <circle :cx="n.px" :cy="n.py" :r="n.id === selectedId ? 8 : 6" :fill="nodeColor(n.sev)" :stroke="n.id === selectedId ? '#58a6ff' : 'rgba(0,0,0,0.45)'" :stroke-width="n.id === selectedId ? 2.5 : 1" />
+              <text :x="n.px" :y="n.py + 15" text-anchor="middle" class="dt-glabel">{{ shortName(n.name) }}</text>
+            </g>
+          </svg>
         </div>
-        <div ref="mapEl" class="dt-map" role="img" aria-label="Corporate twin facilities plotted on an OpenStreetMap basemap"></div>
-        <p v-if="mappable.length === 0" class="dt-empty">No geocoded nodes for this twin.</p>
+
+        <div class="dt-mappanel">
+          <div class="dt-map-h">
+            <span>Twin footprint <span class="dt-hint">facilities · logistics · supply chain across geography · pins colored by simulated impact</span></span>
+          </div>
+          <div ref="mapEl" class="dt-map" role="img" aria-label="Corporate twin facilities plotted on an OpenStreetMap basemap"></div>
+          <p v-if="mappable.length === 0" class="dt-empty">No geocoded nodes for this twin.</p>
+        </div>
       </div>
 
       <div class="dt-panel">
@@ -106,6 +140,59 @@ const twin = computed(() => twins.find((t) => t.id === twinId.value));
 const scenario = computed(() => scenarios.find((s) => s.id === scenarioId.value));
 const result = computed(() => simulate(twinId.value, scenarioId.value));
 const mappable = computed<SCNode[]>(() => result.value.nodes.filter((n) => n.geo));
+
+// ── Twin graph — the supply network as a node-link diagram, laid out left→right
+// by supply-chain depth, nodes colored by simulated impact, arrows showing flow.
+const GW = 340;
+const GH = 200;
+const GPADX = 30;
+const GPADY = 24;
+const twinGraph = computed(() => {
+  const nodes = result.value.nodes;
+  const ids = new Set(nodes.map((n) => n.id));
+  const chainEdges = (twin.value?.chains ?? []).flatMap((c) => edgesForChain(c));
+  // Dedup + keep only edges whose endpoints are in this twin.
+  const seen = new Set<string>();
+  const edges = chainEdges.filter((e) => {
+    const key = `${e.from}|${e.to}`;
+    if (!ids.has(e.from) || !ids.has(e.to) || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  // Longest-path depth (bounded relaxation) → column per node.
+  const depth = new Map<string, number>();
+  nodes.forEach((n) => depth.set(n.id, 0));
+  for (let iter = 0; iter < nodes.length; iter += 1) {
+    let changed = false;
+    for (const e of edges) {
+      const d = (depth.get(e.from) ?? 0) + 1;
+      if (d > (depth.get(e.to) ?? 0)) { depth.set(e.to, d); changed = true; }
+    }
+    if (!changed) break;
+  }
+  const maxDepth = Math.max(0, ...depth.values());
+  const cols = new Map<number, string[]>();
+  nodes.forEach((n) => { const d = depth.get(n.id) ?? 0; const a = cols.get(d) ?? []; a.push(n.id); cols.set(d, a); });
+  const gx = (x: number) => GPADX + (x / 100) * (GW - 2 * GPADX);
+  const gy = (y: number) => GPADY + (y / 100) * (GH - 2 * GPADY);
+  const pos = new Map<string, { px: number; py: number }>();
+  cols.forEach((col, d) => {
+    col.forEach((id, i) => {
+      const x = maxDepth ? (d / maxDepth) * 100 : 50;
+      const y = col.length === 1 ? 50 : (i / (col.length - 1)) * 100;
+      pos.set(id, { px: gx(x), py: gy(y) });
+    });
+  });
+  const sev = result.value.severityById;
+  const gnodes = nodes.map((n) => ({ id: n.id, name: n.name, ...pos.get(n.id)!, sev: sev[n.id] ?? 0 }));
+  const gedges = edges.map((e) => {
+    const a = pos.get(e.from)!; const b = pos.get(e.to)!;
+    return { from: e.from, to: e.to, x1: a.px, y1: a.py, x2: b.px, y2: b.py };
+  });
+  return { nodes: gnodes, edges: gedges, w: GW, h: GH };
+});
+function nodeColor(sev: number): string { return sev > 0.001 ? severityColor(sev) : '#39404d'; }
+function shortName(name: string): string { return name.length > 16 ? `${name.slice(0, 15)}…` : name; }
 
 const money = (n: number): string =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(n);
@@ -211,6 +298,16 @@ watch(selectedId, (id) => {
 
 .dt-body { display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.8rem; }
 @media (max-width: 1000px) { .dt-body { grid-template-columns: 1fr; } }
+.dt-left { display: flex; flex-direction: column; gap: 0.8rem; min-width: 0; }
+.dt-graphpanel { border: 1px solid var(--line-2); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.dt-graph { display: block; width: 100%; height: 300px; background: linear-gradient(180deg, rgba(255,255,255,0.015), transparent); }
+.dt-gedge { stroke: rgba(255, 255, 255, 0.16); stroke-width: 1.2; transition: stroke 0.15s ease; }
+.dt-gedge.hot { stroke: rgba(88, 166, 255, 0.7); stroke-width: 1.8; }
+.dt-gnode { cursor: pointer; }
+.dt-gnode circle { transition: r 0.12s ease; }
+.dt-gnode:hover circle { r: 8; }
+.dt-glabel { font-size: 7px; fill: var(--text-2); pointer-events: none; }
+.dt-gnode.sel .dt-glabel { fill: var(--text); font-weight: 700; }
 .dt-mappanel { border: 1px solid var(--line-2); border-radius: 12px; overflow: hidden; background: var(--surface); }
 .dt-map-h { padding: 0.55rem 0.8rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); border-bottom: 1px solid var(--line-2); }
 .dt-hint { text-transform: none; letter-spacing: 0; color: var(--text-3); font-size: 0.66rem; }

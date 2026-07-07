@@ -58,14 +58,37 @@
 
         <!-- Story rows -->
         <template v-else>
-          <article v-for="it in items" :key="it.id" class="nf-story" :class="{ on: it.id === selectedId }" @click="select(it.id)">
+          <article v-for="it in items" :key="it.id" class="nf-story" :class="{ on: it.id === selectedId, social: !!bskyOf(it) }" @click="select(it.id)">
+            <!-- Bluesky (ATProto) social card -->
+            <div v-if="bskyOf(it)" class="nf-bsky">
+              <div class="nf-bsky-av" aria-hidden="true">{{ initials(bskyOf(it)!.actor.displayName) }}</div>
+              <div class="nf-bsky-main">
+                <div class="nf-bsky-id">
+                  <span class="nf-bsky-name">{{ bskyOf(it)!.actor.displayName }}</span>
+                  <span class="nf-bsky-handle">@{{ bskyOf(it)!.actor.handle }}</span>
+                  <span class="nf-bsky-did" :title="bskyOf(it)!.actor.did">did ✓</span>
+                  <span class="nf-time">· {{ relative(it.publishedAt) }}</span>
+                  <span v-if="it.membraneDecision !== 'admit'" class="nf-mem" :class="it.membraneDecision">{{ it.membraneDecision }}</span>
+                </div>
+                <p v-if="bskyOf(it)!.isReply" class="nf-bsky-reply">↳ reply in thread</p>
+                <p class="nf-bsky-text">{{ bskyOf(it)!.text }}</p>
+                <div class="nf-bsky-eng">
+                  <span title="Replies">💬 {{ bskyOf(it)!.replyCount }}</span>
+                  <span title="Reposts">🔁 {{ bskyOf(it)!.repostCount }}</span>
+                  <span title="Likes">♥ {{ bskyOf(it)!.likeCount }}</span>
+                  <span class="nf-bsky-rail" title="Mirror rail · lane">🦋 mirror · {{ bskyOf(it)!.lane }}</span>
+                  <span class="nf-q" :class="metaOf(it).qualityBand" title="Truth/quality signal">◆ {{ Math.round(metaOf(it).quality * 100) }}</span>
+                </div>
+              </div>
+            </div>
+
             <!-- Vote gutter — upvote only (content is never downvoted) -->
-            <div class="nf-vote" @click.stop>
+            <div v-else class="nf-vote" @click.stop>
               <button class="nf-up" :class="{ on: upvoted.has(it.id) }" :aria-pressed="upvoted.has(it.id)" title="Upvote" @click="toggleUp(it.id)">▲</button>
               <span class="nf-score">{{ scoreOf(it) }}</span>
             </div>
 
-            <div class="nf-story-main">
+            <div v-if="!bskyOf(it)" class="nf-story-main">
               <div class="nf-story-head">
                 <a class="nf-story-title" :href="it.canonicalUrl" target="_blank" rel="noreferrer" @click.stop>{{ it.title }}</a>
                 <span class="nf-domain">{{ domainOf(it.canonicalUrl) }}</span>
@@ -104,13 +127,39 @@
         <div class="nf-reader-tags">
           <button v-for="t in metaOf(selected).tags" :key="t" class="nf-tag" @click="toggleTag(t)">{{ t }}</button>
         </div>
-        <p class="nf-reader-body">{{ selected.summary }}</p>
+        <p v-if="!bskyOf(selected)" class="nf-reader-body">{{ selected.summary }}</p>
 
         <div class="nf-actions">
           <button class="nf-act" :class="{ on: upvoted.has(selected.id) }" @click="toggleUp(selected.id)">▲ Upvote · {{ scoreOf(selected) }}</button>
-          <a class="nf-act primary" :href="selected.canonicalUrl" target="_blank" rel="noreferrer">Open ↗</a>
+          <a class="nf-act primary" :href="selected.canonicalUrl" target="_blank" rel="noreferrer">{{ bskyOf(selected) ? 'Open in Bluesky ↗' : 'Open ↗' }}</a>
+          <button class="nf-act nf-act-ask" @click="askNoeticaNews">◇ Ask Noetica</button>
           <button class="nf-act" :class="{ done: saved.has(selected.id) }" :disabled="saved.has(selected.id)" @click="save(selected)">{{ saved.has(selected.id) ? 'Saved ✓' : 'Save' }}</button>
         </div>
+
+        <!-- Bluesky (ATProto) social block: identity, thread (Live rail), provenance chain -->
+        <template v-if="bskyOf(selected)">
+          <div class="nf-block">
+            <div class="nf-block-h">🦋 Bluesky · thread</div>
+            <div v-for="p in threadFor(bskyOf(selected)!)" :key="p.uri" class="nf-thread" :class="{ on: p.itemId === selected.id }">
+              <div class="nf-bsky-av sm" aria-hidden="true">{{ initials(p.actor.displayName) }}</div>
+              <div class="nf-thread-main">
+                <div class="nf-thread-id"><b>{{ p.actor.displayName }}</b> <span class="nf-bsky-handle">@{{ p.actor.handle }}</span><span v-if="p.isReply" class="nf-thread-reply">reply</span></div>
+                <p class="nf-thread-text">{{ p.text }}</p>
+                <div class="nf-bsky-eng small"><span>💬 {{ p.replyCount }}</span><span>🔁 {{ p.repostCount }}</span><span>♥ {{ p.likeCount }}</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="nf-block">
+            <div class="nf-block-h">ATProto provenance</div>
+            <div class="nf-kv"><span>Actor DID</span><code class="nf-hashcode">{{ bskyOf(selected)!.actor.did }}</code></div>
+            <div class="nf-kv"><span>Post URI</span><code class="nf-hashcode">{{ bskyOf(selected)!.uri }}</code></div>
+            <div class="nf-kv"><span>Record CID</span><code class="nf-hashcode">{{ bskyOf(selected)!.cid }}</code></div>
+            <div class="nf-kv"><span>Rail · lane</span><code>{{ bskyOf(selected)!.rail }} → {{ bskyOf(selected)!.lane }}</code></div>
+            <div class="nf-kv"><span>Root</span><code>bsky / {{ bskyOf(selected)!.rootType }}</code></div>
+            <div class="nf-kv"><span>RootBinding</span><code>{{ bskyOf(selected)!.rootBinding }}</code></div>
+            <div class="nf-kv"><span>Grant</span><code>{{ bskyOf(selected)!.grantRef }}</code></div>
+          </div>
+        </template>
 
         <div v-if="selected.claims.length" class="nf-block">
           <div class="nf-block-h">Claims</div>
@@ -153,17 +202,36 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
 import { newsSources, newsItems } from '../data/newsFeedFixture';
+import { blueskySources, blueskyItems, blueskyMeta, type BskyPost } from '../data/blueskyFixture';
 import type { FeedItem } from '../features/feed-intelligence/types';
 import {
   storyMeta, DOWNVOTE_REASONS, FLAG_REASONS,
   type DownvoteReason, type FlagReason, type Hat,
 } from '../features/feed-intelligence/community';
 import { useResearch } from '../stores/research';
+import { useCockpit } from '../stores/cockpit';
 
-const sources = newsSources;
-const all = newsItems;
+// Bluesky (ATProto) is a first-class social source alongside the RSS/capture feeds.
+const sources = [...newsSources, ...blueskySources];
+const all = [...newsItems, ...blueskyItems];
 const research = useResearch();
+const cockpit = useCockpit();
 const route = useRoute();
+const bskyOf = (it: FeedItem): BskyPost | undefined => blueskyMeta.get(it.id);
+const initials = (name: string): string => name.split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join('');
+// A thread = its root post + every reply pointing at that root (Live-rail context).
+function threadFor(p: BskyPost): BskyPost[] {
+  const rootUri = p.threadUri ?? p.uri;
+  const root = [...blueskyMeta.values()].find((x) => x.uri === rootUri);
+  const replies = [...blueskyMeta.values()].filter((x) => x.threadUri === rootUri);
+  return [...(root ? [root] : []), ...replies];
+}
+function askNoeticaNews() {
+  const it = selected.value; if (!it) return;
+  const b = bskyOf(it);
+  const who = b ? `@${b.actor.handle}` : (sourceOf(it)?.title ?? 'a source');
+  cockpit.askAbout(`About this ${b ? 'Bluesky post' : 'story'} from ${who}: "${it.title}". Membrane decision: ${it.membraneDecision}. Is it credible, what's the provenance, and what matters?`);
+}
 
 // Precompute the derived community layer once (deterministic per id).
 const META = new Map(all.map((it) => [it.id, storyMeta(it)] as const));
@@ -214,7 +282,7 @@ const topTags = computed(() => {
 });
 
 const SRC_COLORS: Record<string, string> = {
-  'src-world': '#58a6ff', 'src-tech': '#c58af9', 'src-markets': 'var(--up)', 'src-reg': '#f0883e', 'src-capture': '#e3b341',
+  'src-world': '#58a6ff', 'src-tech': '#c58af9', 'src-markets': 'var(--up)', 'src-reg': '#f0883e', 'src-capture': '#e3b341', 'src-bsky': '#3b9cff',
 };
 const sourceColor = (sid: string) => SRC_COLORS[sid] ?? '#8b949e';
 function domainOf(url: string): string { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return 'source'; } }
@@ -290,6 +358,11 @@ function onKey(e: KeyboardEvent) {
 
 watch(selectedId, async () => { await nextTick(); listEl.value?.querySelector('.nf-story.on')?.scrollIntoView({ block: 'nearest' }); });
 watch(mode, (m) => { if (m === 'feed' && route.path.endsWith('/recent')) sort.value = 'newest'; }, { immediate: true });
+watch(selected, (it) => {
+  if (!it) return;
+  const b = bskyOf(it);
+  cockpit.setContext({ surface: 'News', entityLabel: b ? `@${b.actor.handle}` : (sourceOf(it)?.title ?? 'story'), detail: it.title.slice(0, 60), route: route.path });
+}, { immediate: true });
 
 onMounted(() => {
   if (route.path.endsWith('/recent')) sort.value = 'newest';
@@ -335,6 +408,34 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .nf-down { border: none; background: transparent; color: rgba(255, 255, 255, 0.3); font-size: 0.9rem; line-height: 1; cursor: pointer; padding: 0.1rem; } .nf-down:hover { color: var(--down); } .nf-down.on { color: var(--down); }
 .nf-score { font-size: 0.82rem; font-weight: 700; color: rgba(255, 255, 255, 0.75); font-variant-numeric: tabular-nums; }
 .nf-story-main { min-width: 0; flex: 1; }
+
+/* Bluesky (ATProto) social card — author-forward, feed-like (not an inbox row) */
+.nf-story.social { padding: 0.8rem 0.95rem; }
+.nf-story.social.on { box-shadow: inset 3px 0 0 #3b9cff; background: rgba(59, 156, 255, 0.08); }
+.nf-bsky { display: flex; gap: 0.7rem; width: 100%; min-width: 0; }
+.nf-bsky-av { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 0.82rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #3b9cff, #7a5cff); }
+.nf-bsky-av.sm { width: 28px; height: 28px; font-size: 0.66rem; }
+.nf-bsky-main { min-width: 0; flex: 1; }
+.nf-bsky-id { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; font-size: 0.8rem; }
+.nf-bsky-name { font-weight: 700; color: #fff; }
+.nf-bsky-handle { color: rgba(255, 255, 255, 0.45); font-size: 0.76rem; }
+.nf-bsky-did { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; color: #3b9cff; background: rgba(59, 156, 255, 0.16); border-radius: 4px; padding: 0.03rem 0.3rem; }
+.nf-bsky-reply { margin: 0.15rem 0 0; font-size: 0.68rem; color: rgba(255, 255, 255, 0.4); }
+.nf-bsky-text { margin: 0.35rem 0 0.5rem; font-size: 0.92rem; line-height: 1.5; color: rgba(255, 255, 255, 0.9); white-space: pre-wrap; }
+.nf-bsky-eng { display: flex; align-items: center; gap: 0.9rem; font-size: 0.74rem; color: rgba(255, 255, 255, 0.5); flex-wrap: wrap; }
+.nf-bsky-eng.small { gap: 0.7rem; font-size: 0.68rem; margin-top: 0.2rem; }
+.nf-bsky-rail { color: #3b9cff; }
+
+/* Thread (Live-rail context) in the reader */
+.nf-thread { display: flex; gap: 0.55rem; padding: 0.5rem 0; border-top: 1px solid var(--line); }
+.nf-thread:first-child { border-top: none; }
+.nf-thread.on { background: rgba(59, 156, 255, 0.07); border-radius: 8px; }
+.nf-thread-main { min-width: 0; flex: 1; }
+.nf-thread-id { font-size: 0.76rem; color: rgba(255, 255, 255, 0.85); } .nf-thread-id b { color: #fff; }
+.nf-thread-reply { margin-left: 0.4rem; font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.05em; color: #3b9cff; background: rgba(59, 156, 255, 0.14); border-radius: 4px; padding: 0.03rem 0.3rem; }
+.nf-thread-text { margin: 0.2rem 0 0; font-size: 0.82rem; line-height: 1.5; color: rgba(255, 255, 255, 0.8); }
+.nf-act-ask { color: #93b4ff !important; border-color: rgba(120, 160, 255, 0.45) !important; }
+.nf-act-ask:hover { background: rgba(120, 160, 255, 0.14); }
 .nf-story-head { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
 .nf-story-title { font-size: 0.95rem; font-weight: 600; line-height: 1.35; color: #fff; text-decoration: none; } .nf-story-title:hover { color: #58a6ff; text-decoration: underline; }
 .nf-domain { font-size: 0.7rem; color: rgba(255, 255, 255, 0.4); }

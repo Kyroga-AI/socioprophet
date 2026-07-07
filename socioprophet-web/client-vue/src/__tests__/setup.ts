@@ -1,9 +1,19 @@
 /**
- * Vitest global setup for the /map smoke-test suite.
+ * Vitest global setup.
  *
- * Stubs maplibre-gl so tests run in happy-dom without WebGL.
+ * - Stubs maplibre-gl so tests run in happy-dom without WebGL.
+ * - Installs a fresh Pinia before each test, so components that use the shared
+ *   stores (portfolio, cockpit, …) mount without each test wiring pinia by hand.
  */
-import { vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
+import { config } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
+
+beforeEach(() => {
+  const pinia = createPinia();
+  setActivePinia(pinia);
+  config.global.plugins = [pinia];
+});
 
 class MapStub {
   addControl() {}
@@ -31,6 +41,7 @@ class PopupStub {
 }
 
 class NavigationControlStub {}
+class ScaleControlStub {}
 
 class LngLatBoundsStub {
   extend() { return this; }
@@ -43,11 +54,13 @@ vi.mock('maplibre-gl', () => ({
     Marker: MarkerStub,
     Popup: PopupStub,
     NavigationControl: NavigationControlStub,
+    ScaleControl: ScaleControlStub,
     LngLatBounds: LngLatBoundsStub,
   },
   Map: MapStub,
   Marker: MarkerStub,
   Popup: PopupStub,
   NavigationControl: NavigationControlStub,
+  ScaleControl: ScaleControlStub,
   LngLatBounds: LngLatBoundsStub,
 }));
