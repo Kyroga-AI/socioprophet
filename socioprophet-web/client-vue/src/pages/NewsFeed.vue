@@ -173,6 +173,9 @@
           <ExtractionPanel :text="`${selected.title}. ${selected.summary}`" :source="sourceOf(selected)?.title" />
         </div>
         <div class="nf-block">
+          <ClaimsPanel :text="`${selected.title}. ${selected.summary}`" :source="sourceOf(selected)?.title ?? 'news'" />
+        </div>
+        <div class="nf-block">
           <div class="nf-block-h">Scope · provenance</div>
           <div class="nf-kv"><span>Topic</span><code>{{ selected.topicScope }}</code></div>
           <div class="nf-kv"><span>Membrane</span><code>{{ selected.membraneDecision }}</code></div>
@@ -218,6 +221,7 @@ import {
 import { useResearch } from '../stores/research';
 import { useCockpit } from '../stores/cockpit';
 import ExtractionPanel from '../components/ExtractionPanel.vue';
+import ClaimsPanel from '../components/ClaimsPanel.vue';
 
 // Bluesky (ATProto) is a first-class social source alongside the RSS/capture feeds.
 const sources = [...newsSources, ...blueskySources];
