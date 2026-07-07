@@ -79,22 +79,25 @@
         </section>
 
         <section class="panel-section">
-          <div class="section-title">Population &amp; health</div>
+          <div class="section-title">Civic layers</div>
           <label class="mapx-switch">
-            <input type="checkbox" :checked="healthOn" @change="toggleHealth" />
-            <span>Choropleth overlay</span>
+            <input type="checkbox" :checked="civicOn" @change="toggleCivic" />
+            <span>Choropleth overlay <span class="mapx-sub2">place-based statistics</span></span>
           </label>
-          <template v-if="healthOn">
+          <template v-if="civicOn">
+            <div class="mapx-basemap mapx-groups">
+              <button v-for="g in CIVIC_LAYERS" :key="g.id" class="mapx-bm" :class="{ on: civicGroupId === g.id }" type="button" @click="setCivicGroup(g.id)">{{ g.label }}</button>
+            </div>
             <div class="mapx-basemap mapx-metrics">
-              <button v-for="m in HEALTH_METRICS" :key="m.key" class="mapx-bm" :class="{ on: healthMetric === m.key }" type="button" @click="healthMetric = m.key">{{ m.label }}</button>
+              <button v-for="m in activeGroup.metrics" :key="m.key" class="mapx-bm" :class="{ on: civicMetricKey === m.key }" type="button" @click="civicMetricKey = m.key">{{ m.label }}</button>
             </div>
             <div class="mapx-legend">
               <span class="mapx-legend-lo">{{ activeMetric.min }}{{ activeMetric.unit }}</span>
               <span class="mapx-legend-bar" :style="{ background: legendGradient }" />
               <span class="mapx-legend-hi">{{ activeMetric.max }}{{ activeMetric.unit }}</span>
             </div>
-            <label class="mapx-opacity">Opacity <input v-model.number="healthOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
-            <p class="lookup-status">Binned aggregation grid over the extent · {{ activeMetric.label }}. Fixture — a census/CDC adapter emits the same shape.</p>
+            <label class="mapx-opacity">Opacity <input v-model.number="civicOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
+            <p class="lookup-status">{{ activeGroup.blurb }} Binned aggregation grid — fixture; a census/DOJ/DOE adapter emits the same GeoJSON shape.</p>
           </template>
         </section>
 
@@ -254,7 +257,7 @@ import maplibregl from 'maplibre-gl';
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import RuntimeAdapterStatusBadge from '../components/RuntimeAdapterStatusBadge.vue';
 import { useCockpit } from '../stores/cockpit';
-import { healthGrid, HEALTH_METRICS, type HealthMetricDef } from '../data/healthMapFixture';
+import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, type MetricDef } from '../data/healthMapFixture';
 import {
   fetchFeaturesByH3WithFallback,
   fetchGaiaLayerCatalogWithFallback,
@@ -289,12 +292,20 @@ const BASEMAPS: Record<'streets' | 'light' | 'dark', { url: string; label: strin
   dark: { url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', label: 'Dark' },
 };
 
-// Population + health choropleth overlay
-const healthOn = ref(false);
-const healthMetric = ref<HealthMetricDef['key']>('healthIndex');
-const healthOpacity = ref(0.62);
-const activeMetric = computed(() => HEALTH_METRICS.find((m) => m.key === healthMetric.value)!);
+// Civic-statistics choropleth overlay (Health / Public Safety / Education / People)
+const civicOn = ref(false);
+const civicGroupId = ref<string>('health');
+const civicMetricKey = ref<string>('healthIndex');
+const civicOpacity = ref(0.62);
+const activeGroup = computed(() => CIVIC_LAYERS.find((g) => g.id === civicGroupId.value) ?? CIVIC_LAYERS[0]!);
+const activeMetric = computed<MetricDef>(() => METRIC_BY_KEY[civicMetricKey.value] ?? activeGroup.value.metrics[0]!);
 const legendGradient = computed(() => `linear-gradient(90deg, ${activeMetric.value.ramp.map(([p, c]) => `${c} ${Math.round(p * 100)}%`).join(', ')})`);
+function setCivicGroup(id: string) {
+  civicGroupId.value = id;
+  const g = CIVIC_LAYERS.find((x) => x.id === id);
+  if (g?.metrics[0]) civicMetricKey.value = g.metrics[0].key;
+  if (civicOn.value) renderCivic();
+}
 const h3Loading = ref(false);
 const tileManifestLoading = ref(false);
 const error = ref<string | null>(null);
@@ -385,35 +396,35 @@ function setBasemap(b: 'streets' | 'light' | 'dark') {
   src?.setTiles?.([BASEMAPS[b].url]);
 }
 
-// Data-driven fill color for the active health metric (interpolate over its ramp).
-function healthColorExpr(m: HealthMetricDef): unknown {
+// Data-driven fill color for the active civic metric (interpolate over its ramp).
+function civicColorExpr(m: MetricDef): unknown {
   const stops: Array<number | string> = [];
   for (const [pos, color] of m.ramp) stops.push(m.min + (m.max - m.min) * pos, color);
   return ['interpolate', ['linear'], ['get', m.key], ...stops];
 }
-function renderHealth() {
+function renderCivic() {
   if (!map) return;
   const m = activeMetric.value;
-  const data = healthGrid() as unknown as Parameters<maplibregl.GeoJSONSource['setData']>[0];
-  const src = map.getSource('health') as maplibregl.GeoJSONSource | undefined;
+  const data = civicGrid() as unknown as Parameters<maplibregl.GeoJSONSource['setData']>[0];
+  const src = map.getSource('civic') as maplibregl.GeoJSONSource | undefined;
   if (src) src.setData(data);
-  else map.addSource('health', { type: 'geojson', data });
-  const color = healthColorExpr(m) as never;
-  if (map.getLayer('health-fill')) {
-    map.setPaintProperty('health-fill', 'fill-color', color);
-    map.setPaintProperty('health-fill', 'fill-opacity', healthOpacity.value);
-    map.setLayoutProperty('health-fill', 'visibility', 'visible');
+  else map.addSource('civic', { type: 'geojson', data });
+  const color = civicColorExpr(m) as never;
+  if (map.getLayer('civic-fill')) {
+    map.setPaintProperty('civic-fill', 'fill-color', color);
+    map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value);
+    map.setLayoutProperty('civic-fill', 'visibility', 'visible');
   } else {
-    map.addLayer({ id: 'health-fill', type: 'fill', source: 'health', paint: { 'fill-color': color, 'fill-opacity': healthOpacity.value, 'fill-outline-color': 'rgba(255,255,255,0.12)' } });
+    map.addLayer({ id: 'civic-fill', type: 'fill', source: 'civic', paint: { 'fill-color': color, 'fill-opacity': civicOpacity.value, 'fill-outline-color': 'rgba(255,255,255,0.12)' } });
   }
 }
-function toggleHealth() {
-  healthOn.value = !healthOn.value;
-  if (healthOn.value) renderHealth();
-  else if (map?.getLayer('health-fill')) map.setLayoutProperty('health-fill', 'visibility', 'none');
+function toggleCivic() {
+  civicOn.value = !civicOn.value;
+  if (civicOn.value) renderCivic();
+  else if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none');
 }
-watch(healthMetric, () => { if (healthOn.value) renderHealth(); });
-watch(healthOpacity, () => { if (healthOn.value && map?.getLayer('health-fill')) map.setPaintProperty('health-fill', 'fill-opacity', healthOpacity.value); });
+watch(civicMetricKey, () => { if (civicOn.value) renderCivic(); });
+watch(civicOpacity, () => { if (civicOn.value && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
 function updateMapMarker() {
   if (!map || !marker) return;
@@ -658,8 +669,9 @@ onUnmounted(() => {
 .mapx-bm { flex: 1; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text-2); padding: 0.35rem 0.5rem; font-size: 0.74rem; cursor: pointer; }
 .mapx-bm:hover { border-color: rgba(255, 255, 255, 0.25); color: var(--text); }
 .mapx-bm.on { border-color: var(--map-accent); background: rgba(47, 107, 255, 0.14); color: #fff; }
-.mapx-metrics { flex-wrap: wrap; margin-top: 0.5rem; }
-.mapx-metrics .mapx-bm { flex: 1 1 45%; }
+.mapx-metrics, .mapx-groups { flex-wrap: wrap; margin-top: 0.5rem; }
+.mapx-metrics .mapx-bm, .mapx-groups .mapx-bm { flex: 1 1 45%; }
+.mapx-sub2 { color: var(--text-3); font-weight: 400; }
 .mapx-switch { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text-2); cursor: pointer; }
 .mapx-switch input { accent-color: var(--map-accent); }
 .mapx-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }

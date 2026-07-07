@@ -58,6 +58,13 @@ code, pre, .mono { font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Men
   margin: 0;
   overflow: hidden;
   background: var(--sp-bg);
+  transition: padding-right 0.24s ease;
+}
+/* Layout contract: when the Noetica dock opens, the shell reflows BESIDE it
+   (padding-right = dock width) instead of being covered. Wide screens only;
+   on narrow the dock overlays. Keep in sync with NoeticaDock width (30rem). */
+@media (min-width: 900px) {
+  .sp-shell.dock-open { padding-right: 30rem; }
 }
 .sp-topbar {
   display: grid;

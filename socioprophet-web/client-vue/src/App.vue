@@ -1,5 +1,5 @@
 <template>
-  <div class="sp-shell">
+  <div class="sp-shell" :class="{ 'dock-open': cockpit.dockOpen }">
     <header class="sp-topbar">
       <RouterLink class="sp-brand" to="/news">SocioProphet</RouterLink>
       <nav ref="domainNavEl" class="sp-domain-nav" aria-label="Primary domains" @focusout="onDomainFocusOut">
