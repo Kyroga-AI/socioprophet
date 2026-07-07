@@ -194,6 +194,15 @@ function sfield(u: number, v: number, seed: number): number {
   return 0.68 * field(u, v, seed, 5) + 0.32 * field(u, v, seed + 7, 12);
 }
 
+// The city bbox + the commercial-intensity field, exposed so the foot-traffic
+// corridor network aligns with the same underlying geography as the cells.
+export const CITY_BBOX = BBOX;
+export function sampleCommercial(lon: number, lat: number): number {
+  const u = (lon - BBOX.minLon) / (BBOX.maxLon - BBOX.minLon);
+  const v = (lat - BBOX.minLat) / (BBOX.maxLat - BBOX.minLat);
+  return sfield(u, v, 2);
+}
+
 interface Cell { type: 'Feature'; properties: Record<string, number | string>; geometry: { type: 'Polygon'; coordinates: number[][][] } }
 export interface CivicGrid { type: 'FeatureCollection'; features: Cell[] }
 

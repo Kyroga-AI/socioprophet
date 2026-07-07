@@ -107,12 +107,12 @@
             <div v-if="activeGroup.segmented" class="mapx-basemap mapx-groups mapx-segments">
               <button v-for="s in SEGMENTS" :key="s.id" class="mapx-bm" :class="{ on: reSegment === s.id }" type="button" @click="reSegment = s.id">{{ s.label }}</button>
             </div>
-            <div v-show="!bivariateOn" class="mapx-basemap mapx-metrics">
+            <div v-show="!bivariateOn && !isFootTraffic" class="mapx-basemap mapx-metrics">
               <button v-for="m in activeGroup.metrics" :key="m.key" class="mapx-bm" :class="{ on: civicMetricKey === m.key }" type="button" @click="civicMetricKey = m.key">{{ m.label }}</button>
             </div>
 
             <!-- Classification method -->
-            <div v-show="!bivariateOn" class="mapx-class">
+            <div v-show="!bivariateOn && !isFootTraffic" class="mapx-class">
               <span class="mapx-class-l">Breaks <InfoLabel info="How cell values are binned into color classes. Equal interval spreads outliers; Quantile makes equal-count classes; Jenks finds natural breaks that minimise within-class variance (the cartographic default)." /></span>
               <div class="mapx-basemap">
                 <button v-for="c in CLASS_MODES" :key="c.id" class="mapx-bm sm" :class="{ on: classMode === c.id }" type="button" :title="c.title" @click="classMode = c.id">{{ c.label }}</button>
@@ -120,7 +120,7 @@
             </div>
 
             <!-- Bivariate price × yield (real estate) -->
-            <label v-if="isRealEstate" class="mapx-switch mapx-switch--sm">
+            <label v-if="isRealEstate && !isFootTraffic" class="mapx-switch mapx-switch--sm">
               <input type="checkbox" :checked="bivariateOn" @change="bivariateOn = !bivariateOn" />
               <span>Bivariate — price × yield <InfoLabel info="Two variables at once: median price (→ magenta) against gross yield (↑ teal). The teal corner is low-price / high-yield — the undervalued areas an investor hunts." /></span>
             </label>
@@ -135,15 +135,33 @@
               <div class="mapx-biv-ax mapx-biv-ax--x">price →</div>
               <div class="mapx-biv-ax mapx-biv-ax--y">yield ↑</div>
             </div>
-            <div v-else class="mapx-legend">
+            <div v-else-if="!isFootTraffic" class="mapx-legend">
               <span class="mapx-legend-lo">{{ fmtVal(activeMetric.min * metricFactor, activeMetric) }}</span>
               <span class="mapx-legend-steps">
                 <i v-for="(cl, i) in legendClasses" :key="i" :style="{ background: cl.color }" :title="`${fmtVal(cl.lo, activeMetric)} – ${fmtVal(cl.hi, activeMetric)}`" />
               </span>
               <span class="mapx-legend-hi">{{ fmtVal(activeMetric.max * metricFactor, activeMetric) }}</span>
             </div>
-            <label class="mapx-opacity">Opacity <input v-model.number="civicOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
-            <p class="lookup-status">{{ activeGroup.blurb }} Click a cell to inspect. Fixture aggregation grid.</p>
+
+            <!-- Foot traffic: corridor network + time-of-day -->
+            <div v-if="isFootTraffic" class="mapx-ft">
+              <div class="mapx-ft-time">
+                <input v-model.number="ftHour" type="range" min="0" max="23" step="1" aria-label="Hour of day" />
+                <span class="mapx-ft-hr">{{ hourLabel(ftHour) }}</span>
+              </div>
+              <div class="mapx-basemap mapx-ft-day">
+                <button class="mapx-bm sm" :class="{ on: !ftWeekend }" type="button" @click="ftWeekend = false">Weekday</button>
+                <button class="mapx-bm sm" :class="{ on: ftWeekend }" type="button" @click="ftWeekend = true">Weekend</button>
+              </div>
+              <div class="mapx-legend">
+                <span class="mapx-legend-lo">quiet</span>
+                <span class="mapx-ft-bar" />
+                <span class="mapx-legend-hi">busy</span>
+              </div>
+            </div>
+
+            <label v-if="!isFootTraffic" class="mapx-opacity">Opacity <input v-model.number="civicOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
+            <p class="lookup-status">{{ isFootTraffic ? 'Foot traffic flows along corridors — thicker & brighter = busier. Scrub the hour: commercial strips peak at lunch & evening, transit at commute.' : activeGroup.blurb + ' Click a cell to inspect. Fixture aggregation grid.' }}</p>
 
             <!-- Cell inspector — click-to-analyze a single area -->
             <div v-if="selectedCell" class="mapx-cell">
@@ -457,6 +475,7 @@ import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef, type CivicGrid } from '../data/healthMapFixture';
 import { breaksFor, quantileBreaks, classOf, sampleRamp, type ClassMode } from '../data/classify';
+import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL } from '../data/footTrafficFixture';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
 import {
@@ -550,6 +569,11 @@ const selectedListing = ref<Listing | null>(null);
 const gridType = ref<'hex' | 'square'>('hex');
 const hexRes = ref(8);
 const baseGrid = ref<CivicGrid>(civicHexGrid(hexRes.value));
+// Foot traffic — a corridor network + time-of-day, not a block choropleth.
+const ftNet = footTrafficNetwork();
+const ftHour = ref(18);
+const ftWeekend = ref(false);
+const isFootTraffic = computed(() => civicGroupId.value === 'foottraffic');
 const topAreas = computed(() =>
   baseGrid.value.features
     .map((f) => ({ props: f.properties as Record<string, number>, score: scoreCell(f.properties, siteProfile.value) }))
@@ -791,6 +815,15 @@ function initializeMap() {
     }
   });
   map.on('mouseleave', 'civic-fill', () => { if (map) map.getCanvas().style.cursor = ''; hoverInfo.value = null; });
+  // Read-on-hover for foot-traffic corridors.
+  map.on('mousemove', 'ft-line', (e) => {
+    if (map) map.getCanvas().style.cursor = 'pointer';
+    const f = e.features?.[0]; if (!f) { hoverInfo.value = null; return; }
+    const int = Number(f.properties?.int ?? 0);
+    const kind = String(f.properties?.kind ?? '') as keyof typeof FT_KIND_LABEL;
+    hoverInfo.value = { x: e.point.x, y: e.point.y, label: `${FT_KIND_LABEL[kind] ?? 'Corridor'} · ${hourLabel(ftHour.value)}`, value: `${Math.round(int * 100)} traffic index` };
+  });
+  map.on('mouseleave', 'ft-line', () => { if (map) map.getCanvas().style.cursor = ''; hoverInfo.value = null; });
   marker = new maplibregl.Marker({ color: '#0f62fe' })
     .setLngLat(center)
     .setPopup(new maplibregl.Popup({ offset: 16 }).setText(`OSM ${selectedFeature.value?.osm_ref?.osm_type || 'way'} ${selectedFeature.value?.osm_ref?.osm_id || '424242'}`))
@@ -855,7 +888,28 @@ function renderBivariate() {
   match.push('#888888');
   paintCivic({ type: 'FeatureCollection', features } as unknown as FillData, match as never);
 }
+// Foot traffic as a corridor network, weighted + colored by time-of-day intensity.
+function renderFootTraffic() {
+  if (!map) return;
+  const feats = ftNet.features.map((s) => ({ ...s, properties: { ...s.properties, int: +(s.properties.base * footTrafficFactor(s.properties.kind, ftHour.value, ftWeekend.value)).toFixed(3) } }));
+  const data = { type: 'FeatureCollection', features: feats } as unknown as FillData;
+  const src = map.getSource('ft') as maplibregl.GeoJSONSource | undefined;
+  if (src) src.setData(data);
+  else map.addSource('ft', { type: 'geojson', data });
+  const widthExpr = ['interpolate', ['linear'], ['get', 'int'], 0, 0.4, 0.3, 1.6, 0.6, 4.5, 1, 10] as never;
+  const colorExpr = ['interpolate', ['linear'], ['get', 'int'], 0, '#3b4ea8', 0.4, '#7f9bd6', 0.6, '#ffd36b', 0.78, '#ff8a3d', 1, '#ff2d2d'] as never;
+  if (map.getLayer('ft-line')) {
+    map.setLayoutProperty('ft-line', 'visibility', 'visible');
+    map.setPaintProperty('ft-line', 'line-width', widthExpr);
+    map.setPaintProperty('ft-line', 'line-color', colorExpr);
+  } else {
+    map.addLayer({ id: 'ft-line', type: 'line', source: 'ft', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-width': widthExpr, 'line-color': colorExpr, 'line-opacity': 0.9, 'line-blur': 0.5 } });
+  }
+}
+function hideFootTraffic() { if (map?.getLayer('ft-line')) map.setLayoutProperty('ft-line', 'visibility', 'none'); }
 function renderCivic() {
+  if (isFootTraffic.value) { hideCivic(); renderFootTraffic(); return; }
+  hideFootTraffic();
   if (bivariateOn.value && isRealEstate.value) { renderBivariate(); return; }
   paintCivic(baseGrid.value as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
 }
@@ -882,13 +936,13 @@ function muteBasemapForData() { if (basemap.value === 'streets') setBasemap('lig
 function toggleCivic() {
   civicOn.value = !civicOn.value;
   if (siteMode.value) return; // site overlay takes precedence
-  if (civicOn.value) { muteBasemapForData(); renderCivic(); } else hideCivic();
+  if (civicOn.value) { muteBasemapForData(); renderCivic(); } else { hideCivic(); hideFootTraffic(); }
 }
 function toggleSite() {
   siteMode.value = !siteMode.value;
-  if (siteMode.value) { muteBasemapForData(); renderSite(); }
+  if (siteMode.value) { muteBasemapForData(); hideFootTraffic(); renderSite(); }
   else if (civicOn.value) renderCivic();
-  else hideCivic();
+  else { hideCivic(); hideFootTraffic(); }
 }
 function selectArea(props: Record<string, number>) {
   selectedCell.value = props as Record<string, string | number>;
@@ -947,6 +1001,7 @@ function toggleListings() { mlsOn.value = !mlsOn.value; if (mlsOn.value) renderL
 function eventDate(iso: string): string { return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
 watch([civicMetricKey, reSegment, classMode, bivariateOn], () => { if (!siteMode.value && civicOn.value) renderCivic(); });
 watch([gridType, hexRes], rebuildGrid);
+watch([ftHour, ftWeekend], () => { if (isFootTraffic.value && civicOn.value && !siteMode.value) renderFootTraffic(); });
 watch(siteProfile, () => { if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
@@ -1308,6 +1363,13 @@ onUnmounted(() => {
 .mapx-legend-steps { flex: 1; display: flex; height: 10px; border-radius: 3px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.14); }
 .mapx-legend-steps i { flex: 1; }
 /* Classification selector */
+/* Foot-traffic time-of-day control */
+.mapx-ft { margin-top: 0.2rem; }
+.mapx-ft-time { display: flex; align-items: center; gap: 0.5rem; }
+.mapx-ft-time input { flex: 1; accent-color: var(--map-accent); }
+.mapx-ft-hr { min-width: 3.2rem; text-align: right; font-size: 0.82rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.mapx-ft-day { margin-top: 0.45rem; }
+.mapx-ft-bar { flex: 1; height: 9px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.14); background: linear-gradient(90deg, #3b4ea8, #7f9bd6, #ffd36b, #ff8a3d, #ff2d2d); }
 .mapx-cells { margin-bottom: 0.6rem; }
 .mapx-cells-l { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.3rem; }
 .mapx-cells-res { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.35rem; font-size: 0.66rem; color: var(--text-3); }
