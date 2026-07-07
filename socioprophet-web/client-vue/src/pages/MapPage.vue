@@ -163,8 +163,14 @@
 
             <!-- Temporal replay -->
             <div v-if="!isFootTraffic && !bivariateOn" class="mapx-time">
-              <div class="mapx-time-head"><span>Time <InfoLabel info="Replay the metric back through time. Each area has a development momentum — gentrifying areas were lower on 'good' metrics (and higher on crime) in the past. Scrub to watch the map change." /></span><b :class="{ past: timeQ > 0 }">{{ quarterLabel(timeQ) }}</b></div>
-              <input v-model.number="timeQ" type="range" min="0" max="7" step="1" aria-label="Quarters ago" />
+              <div class="mapx-time-head">
+                <span>Time <InfoLabel info="Replay the metric back through time. Each area has a development momentum — gentrifying areas were lower on 'good' metrics (and higher on crime) in the past. Scrub or play to watch the map change." /></span>
+                <span class="mapx-time-r">
+                  <button class="mapx-ft-play" type="button" :aria-label="tPlaying ? 'Pause' : 'Play through time'" :title="tPlaying ? 'Pause' : 'Play through time'" @click="toggleTimePlay">{{ tPlaying ? '❚❚' : '▶' }}</button>
+                  <b :class="{ past: timeQ > 0 }">{{ quarterLabel(timeQ) }}</b>
+                </span>
+              </div>
+              <input v-model.number="timeQ" type="range" min="0" max="7" step="1" aria-label="Quarters ago" @pointerdown="stopTimePlay" />
             </div>
 
             <label v-if="!isFootTraffic" class="mapx-opacity">Opacity <input v-model.number="civicOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
@@ -764,6 +770,14 @@ function tFeatures() {
   });
 }
 const quarterLabel = (q: number) => (q === 0 ? 'now' : `−${q}Q (~${q * 3}mo ago)`);
+const tPlaying = ref(false);
+let tTimer: number | null = null;
+function stopTimePlay() { if (tTimer !== null) { clearInterval(tTimer); tTimer = null; } tPlaying.value = false; }
+function toggleTimePlay() {
+  if (tPlaying.value) { stopTimePlay(); return; }
+  tPlaying.value = true;
+  tTimer = window.setInterval(() => { timeQ.value = timeQ.value === 0 ? 7 : timeQ.value - 1; }, 700); // sweep past → present, loop
+}
 const cellValues = (key: string, factor: number) => tFeatures().map((f) => Number((f.properties as Record<string, number>)[key] ?? 0) * factor);
 const classColorsFor = (m: MetricDef) => Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(m.ramp, i / (N_CLASSES - 1)));
 const classBreaks = computed(() => breaksFor(classMode.value, cellValues(activeMetric.value.key, metricFactor.value), activeMetric.value.min * metricFactor.value, activeMetric.value.max * metricFactor.value, N_CLASSES));
@@ -1168,6 +1182,7 @@ watch([ftHour, ftWeekend], () => { if (isFootTraffic.value && civicOn.value && !
 watch(isFootTraffic, (on) => { if (!on) stopFtPlay(); });
 watch([isoMode, isoMax], () => { if (isoOn.value && isoOrigin.value) renderIso(); });
 watch(timeQ, () => { if (civicOn.value && !siteMode.value && !isFootTraffic.value) renderCivic(); });
+watch([isFootTraffic, siteMode, civicOn], ([ft, site, on]) => { if (ft || site || !on) stopTimePlay(); });
 watch(siteProfile, () => { if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
@@ -1303,6 +1318,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   stopFtPlay();
+  stopTimePlay();
   isoMarker?.remove();
   window.removeEventListener('pointermove', onPanelMove);
   window.removeEventListener('pointerup', endPanelResize);
@@ -1576,6 +1592,7 @@ onUnmounted(() => {
 .mapx-time-head { display: flex; align-items: baseline; justify-content: space-between; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 0.2rem; }
 .mapx-time-head b { font-size: 0.72rem; text-transform: none; letter-spacing: 0; color: var(--text-2); font-variant-numeric: tabular-nums; }
 .mapx-time-head b.past { color: #e3b341; }
+.mapx-time-r { display: inline-flex; align-items: center; gap: 0.4rem; }
 .mapx-time input { width: 100%; accent-color: var(--map-accent); }
 .mapx-opacity { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.55rem; font-size: 0.68rem; color: var(--text-3); }
 .mapx-opacity input { flex: 1; accent-color: var(--map-accent); }
