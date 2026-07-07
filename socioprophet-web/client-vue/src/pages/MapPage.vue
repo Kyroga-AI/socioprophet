@@ -197,6 +197,11 @@
               <button v-for="p in SITE_PROFILES" :key="p.id" class="mapx-bm" :class="{ on: siteProfile === p.id }" type="button" @click="siteProfile = p.id">{{ p.icon }} {{ p.label }}</button>
             </div>
             <div class="mapx-site-head"><ProvenanceBadge :p="siteProv" compact /><span>computed suitability · click an area to fly</span></div>
+            <div class="mapx-site-legend">
+              <span>worse</span>
+              <span class="mapx-site-bar" />
+              <span>better</span>
+            </div>
             <div class="mapx-toplist">
               <button v-for="(t, i) in topAreas" :key="String(t.props.id)" class="mapx-toparea" type="button" @click="selectArea(t.props)">
                 <span class="mapx-rank">{{ i + 1 }}</span>
@@ -1123,6 +1128,8 @@ onUnmounted(() => {
 /* Site selection */
 .mapx-profiles .mapx-bm { flex: 1 1 100%; text-align: left; }
 .mapx-site-head { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; font-size: 0.66rem; color: var(--text-3); }
+.mapx-site-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.45rem; font-size: 0.6rem; color: var(--text-3); }
+.mapx-site-bar { flex: 1; height: 8px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.14); background: linear-gradient(90deg, #d73027, #fc8d59, #fee08b, #91cf60, #1a9850); }
 .mapx-toplist { display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.5rem; }
 .mapx-toparea { display: grid; grid-template-columns: 1.1rem 2.2rem 1fr; align-items: center; gap: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text); padding: 0.4rem 0.55rem; cursor: pointer; text-align: left; }
 .mapx-toparea:hover { border-color: rgba(255, 255, 255, 0.24); }
