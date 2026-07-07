@@ -81,6 +81,21 @@
 
         <section class="panel-section">
           <div class="section-title">Civic layers</div>
+
+          <!-- Aggregation tessellation -->
+          <div class="mapx-cells">
+            <span class="mapx-cells-l">Cells <InfoLabel info="The aggregation units. H3 is Uber's global hexagonal grid — the industry-standard atomic tiling; a higher resolution means smaller hexes. Square grid is the classic raster fallback." /></span>
+            <div class="mapx-basemap">
+              <button class="mapx-bm sm" :class="{ on: gridType === 'hex' }" type="button" @click="gridType = 'hex'">⬡ H3 hex</button>
+              <button class="mapx-bm sm" :class="{ on: gridType === 'square' }" type="button" @click="gridType = 'square'">▦ Grid</button>
+            </div>
+            <div v-if="gridType === 'hex'" class="mapx-cells-res">
+              <span>res</span>
+              <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="hexRes = r">{{ r }}</button>
+              <span class="mapx-cells-n">{{ baseGrid.features.length }} cells</span>
+            </div>
+          </div>
+
           <label class="mapx-switch">
             <input type="checkbox" :checked="civicOn" @change="toggleCivic" />
             <span>Choropleth overlay <InfoLabel info="Shades each area by the selected statistic (a choropleth). Areas are binned into an aggregation grid — a fixture stand-in for census / agency data." /></span>
@@ -440,7 +455,7 @@ import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import { prov } from '../features/provenance/types';
-import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef } from '../data/healthMapFixture';
+import { civicGrid, civicHexGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef, type CivicGrid } from '../data/healthMapFixture';
 import { breaksFor, quantileBreaks, classOf, sampleRamp, type ClassMode } from '../data/classify';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
@@ -530,9 +545,13 @@ const pinMode = ref(false);
 const droppedPin = ref<{ lng: number; lat: number } | null>(null);
 const mlsOn = ref(false);
 const selectedListing = ref<Listing | null>(null);
-const baseGrid = civicGrid();
+// Aggregation tessellation — H3 hexagons (atomic, industry-standard) or a square
+// grid. Switchable; rebuilding re-samples the same metric schema.
+const gridType = ref<'hex' | 'square'>('hex');
+const hexRes = ref(8);
+const baseGrid = ref<CivicGrid>(civicHexGrid(hexRes.value));
 const topAreas = computed(() =>
-  baseGrid.features
+  baseGrid.value.features
     .map((f) => ({ props: f.properties as Record<string, number>, score: scoreCell(f.properties, siteProfile.value) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 5),
@@ -554,7 +573,7 @@ const allMetrics = CIVIC_LAYERS.flatMap((g) => g.metrics);
 const selectedSite = computed(() => {
   const c = selectedCell.value; if (!c) return null;
   const score = scoreCell(c, siteProfile.value);
-  const sorted = baseGrid.features.map((f) => scoreCell(f.properties, siteProfile.value)).sort((a, b) => b - a);
+  const sorted = baseGrid.value.features.map((f) => scoreCell(f.properties, siteProfile.value)).sort((a, b) => b - a);
   const rank = sorted.findIndex((s) => s <= score) + 1;
   return { score, rank, total: sorted.length, label: SITE_PROFILES.find((p) => p.id === siteProfile.value)?.label ?? '' };
 });
@@ -592,7 +611,7 @@ const CLASS_MODES = [
 const classMode = ref<ClassMode>('quantile');
 const bivariateOn = ref(false);
 const isRealEstate = computed(() => activeGroup.value.id === 'realestate');
-const cellValues = (key: string, factor: number) => baseGrid.features.map((f) => Number((f.properties as Record<string, number>)[key] ?? 0) * factor);
+const cellValues = (key: string, factor: number) => baseGrid.value.features.map((f) => Number((f.properties as Record<string, number>)[key] ?? 0) * factor);
 const classColorsFor = (m: MetricDef) => Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(m.ramp, i / (N_CLASSES - 1)));
 const classBreaks = computed(() => breaksFor(classMode.value, cellValues(activeMetric.value.key, metricFactor.value), activeMetric.value.min * metricFactor.value, activeMetric.value.max * metricFactor.value, N_CLASSES));
 const legendClasses = computed(() => {
@@ -824,7 +843,7 @@ function paintCivic(data: FillData, color: never) {
 }
 function renderBivariate() {
   const { pf, yf, price, yield: yld } = bivBreaks();
-  const features = baseGrid.features.map((f) => {
+  const features = baseGrid.value.features.map((f) => {
     const p = Number((f.properties as Record<string, number>)[BIV_PRICE_KEY] ?? 0) * pf;
     const y = Number((f.properties as Record<string, number>)[BIV_YIELD_KEY] ?? 0) * yf;
     const xc = classOf(p, price);
@@ -838,19 +857,26 @@ function renderBivariate() {
 }
 function renderCivic() {
   if (bivariateOn.value && isRealEstate.value) { renderBivariate(); return; }
-  paintCivic(baseGrid as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
+  paintCivic(baseGrid.value as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
 }
 function renderSite() {
   // Suitability scores cluster tightly (e.g. 50–60), so a raw 0–100 ramp paints
   // everything the same shade. Classify over the ACTUAL score range so the best
   // areas go green and the worst red — the whole point of a site-selection map.
-  const scores = baseGrid.features.map((f) => scoreCell(f.properties, siteProfile.value));
-  const scored = { type: 'FeatureCollection', features: baseGrid.features.map((f, i) => ({ ...f, properties: { ...f.properties, siteScore: scores[i] } })) };
+  const scores = baseGrid.value.features.map((f) => scoreCell(f.properties, siteProfile.value));
+  const scored = { type: 'FeatureCollection', features: baseGrid.value.features.map((f, i) => ({ ...f, properties: { ...f.properties, siteScore: scores[i] } })) };
   const br = breaksFor('quantile', scores, Math.min(...scores), Math.max(...scores), N_CLASSES);
   const cols = Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(SITE_RAMP, i / (N_CLASSES - 1)));
   paintCivic(scored as unknown as FillData, buildStepExpr(['get', 'siteScore'], br, cols) as never);
 }
 function hideCivic() { if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); }
+// Rebuild the tessellation (hex↔square, or a new H3 resolution) and repaint.
+function rebuildGrid() {
+  baseGrid.value = gridType.value === 'hex' ? civicHexGrid(hexRes.value) : civicGrid();
+  selectedCell.value = null;
+  if (siteMode.value) renderSite();
+  else if (civicOn.value) renderCivic();
+}
 // Beauty: mute the basemap when data goes on top, so the choropleth reads clean.
 function muteBasemapForData() { if (basemap.value === 'streets') setBasemap('light'); }
 function toggleCivic() {
@@ -920,6 +946,7 @@ function renderListings() {
 function toggleListings() { mlsOn.value = !mlsOn.value; if (mlsOn.value) renderListings(); else { clearListings(); selectedListing.value = null; } }
 function eventDate(iso: string): string { return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
 watch([civicMetricKey, reSegment, classMode, bivariateOn], () => { if (!siteMode.value && civicOn.value) renderCivic(); });
+watch([gridType, hexRes], rebuildGrid);
 watch(siteProfile, () => { if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
@@ -1281,6 +1308,11 @@ onUnmounted(() => {
 .mapx-legend-steps { flex: 1; display: flex; height: 10px; border-radius: 3px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.14); }
 .mapx-legend-steps i { flex: 1; }
 /* Classification selector */
+.mapx-cells { margin-bottom: 0.6rem; }
+.mapx-cells-l { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.3rem; }
+.mapx-cells-res { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.35rem; font-size: 0.66rem; color: var(--text-3); }
+.mapx-cells-res .mapx-bm { flex: 0 0 auto; min-width: 1.8rem; }
+.mapx-cells-n { margin-left: auto; font-variant-numeric: tabular-nums; }
 .mapx-class { margin-top: 0.55rem; }
 .mapx-class-l { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.3rem; }
 .mapx-bm.sm { font-size: 0.68rem; padding: 0.25rem 0.4rem; }

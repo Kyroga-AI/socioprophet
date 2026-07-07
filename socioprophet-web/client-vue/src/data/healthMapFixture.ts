@@ -165,6 +165,8 @@ export const METRIC_BY_KEY: Record<string, MetricDef> = Object.fromEntries(
 );
 
 // Map extent around NYC / Hudson (matches the workbench default view).
+import { polygonToCells, cellToBoundary, cellToLatLng } from 'h3-js';
+
 const BBOX = { minLon: -74.09, maxLon: -73.90, minLat: 40.64, maxLat: 40.82 };
 function hash(a: number, b: number): number { let h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) >>> 0; return h / 4294967296; }
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -216,64 +218,9 @@ export function civicGrid(cols = 34, rows = 34): CivicGrid {
       const a = A[i * rows + j]!;             // "advantage" axis 0..1 (affluence) — smooth, full-range
       const b = B[i * rows + j]!;             // "commercial intensity" 0..1 (foot traffic) — decorrelated
       const n = (hash(i + 31, j + 17) - 0.5) * 0.6; // fine per-cell texture
-      const reMedianPrice = Math.round(400000 + a * 2100000 + n * 200000);
-      const reMedianRent = Math.round(1800 + a * 4000 + n * 500);
-      // 8-quarter price trend (index 100 = current), rising faster in advantaged cells.
-      const rePriceTrend = Array.from({ length: 8 }, (_, k) => +(100 - (7 - k) * (1.2 + a * 1.4) + (hash(i + k, j + k * 3) - 0.5) * 1.6).toFixed(1));
       features.push({
         type: 'Feature',
-        properties: {
-          id: `cell-${i}-${j}`,
-          cLon: +(lon0 + dLon / 2).toFixed(5),
-          cLat: +(lat0 + dLat / 2).toFixed(5),
-          population: Math.round(2000 + a * 40000),
-          healthIndex: Math.round(clamp(42 + a * 40 + n * 14, 42, 94)),
-          uninsuredPct: +clamp(24 - a * 18 + n * 5, 3, 24).toFixed(1),
-          lifeExpectancy: +clamp(74 + a * 10 + n * 1.5, 74, 85).toFixed(1),
-          crimeRate: +clamp(85 - a * 70 + n * 18, 5, 85).toFixed(1),
-          propertyCrime: +clamp(120 - a * 95 + n * 24, 10, 120).toFixed(1),
-          response911: +clamp(14 - a * 8 + n * 2.5, 4, 14).toFixed(1),
-          schoolRating: +clamp(3 + a * 6 + n * 1.2, 3, 9.5).toFixed(1),
-          gradRate: Math.round(clamp(62 + a * 34 + n * 6, 62, 98)),
-          studentTeacher: Math.round(clamp(28 - a * 15 + n * 4, 11, 28)),
-          reMedianPrice,
-          reMedianRent,
-          reGrossYield: +clamp((reMedianRent * 12) / reMedianPrice * 100, 2.5, 8).toFixed(2),
-          reTurnoverPct: +clamp(4 + a * 7 + n * 3, 3, 14).toFixed(1),
-          reDefaultPct: +clamp(6 - a * 5 + n * 1.5, 0.5, 6).toFixed(1),
-          reOwnerOccPct: Math.round(clamp(25 + a * 50 + n * 8, 25, 80)),
-          reVacancyPct: +clamp(12 - a * 8 + n * 2.5, 2, 12).toFixed(1),
-          reChurnPct: Math.round(clamp(35 - a * 22 + n * 6, 8, 35)),
-          rePriceTrend: JSON.stringify(rePriceTrend),
-          // Housing
-          rentBurdenPct: Math.round(clamp(55 - a * 35 + n * 6, 18, 55)),
-          costBurdenedPct: Math.round(clamp(60 - a * 38 + n * 6, 20, 60)),
-          evictionPct: +clamp(5 - a * 4.5 + n * 1, 0.3, 5).toFixed(1),
-          housingVacancyPct: +clamp(14 - a * 10 + n * 3, 2, 14).toFixed(1),
-          // Environment
-          airQualityAqi: Math.round(clamp(120 - a * 95 + n * 22, 20, 120)),
-          floodRiskPct: +clamp(2 + (1 - a) * 30 + n * 8, 2, 40).toFixed(1),
-          greenSpacePct: +clamp(3 + a * 40 + n * 6, 3, 45).toFixed(1),
-          // Mobility
-          transitAccessIdx: Math.round(clamp(20 + a * 70 + n * 10, 20, 95)),
-          walkScore: Math.round(clamp(25 + a * 70 + n * 8, 25, 98)),
-          commuteMin: Math.round(clamp(52 - a * 32 + n * 6, 18, 52)),
-          crashRate: +clamp(30 - a * 24 + n * 6, 2, 30).toFixed(1),
-          // Economic
-          medianIncome: Math.round(clamp(35000 + a * 140000 + n * 15000, 35000, 180000)),
-          unemploymentPct: +clamp(14 - a * 11 + n * 2, 2, 14).toFixed(1),
-          povertyPct: +clamp(32 - a * 26 + n * 5, 4, 32).toFixed(1),
-          businessDensity: Math.round(clamp(5 + b * 70 + a * 15 + n * 10, 5, 90)),
-          // Foot traffic (driven by commercial intensity b, not just affluence a)
-          footTrafficDaily: Math.round(clamp(200 + b * 22000 + a * 3000 + n * 3000, 200, 25000)),
-          dwellMin: Math.round(clamp(12 + a * 22 + (1 - b) * 8 + n * 4, 8, 45)),
-          captureRate: +clamp(2 + b * 13 + n * 3, 2, 18).toFixed(1),
-          // News & social by region
-          newsVolume: Math.round(clamp(5 + b * 100 + n * 15, 0, 120)),
-          socialPosts: Math.round(clamp(100 + b * 7000 + a * 800 + n * 800, 100, 8000)),
-          netSentiment: Math.round(clamp((a - 0.5) * 100 + n * 25, -60, 60)),
-          civicEngagement: Math.round(clamp(10 + a * 70 + n * 12, 10, 90)),
-        },
+        properties: buildCellProps(a, b, n, `cell-${i}-${j}`, +(lon0 + dLon / 2).toFixed(5), +(lat0 + dLat / 2).toFixed(5), i * 131 + j),
         geometry: {
           type: 'Polygon',
           coordinates: [[[lon0, lat0], [lon0 + dLon, lat0], [lon0 + dLon, lat0 + dLat], [lon0, lat0 + dLat], [lon0, lat0]]],
@@ -281,5 +228,97 @@ export function civicGrid(cols = 34, rows = 34): CivicGrid {
       });
     }
   }
+  return { type: 'FeatureCollection', features };
+}
+
+// Shared per-cell metric schema — identical for square + hex grids, driven by the
+// affluence (a), commercial-intensity (b), and fine-texture (n) fields.
+function buildCellProps(a: number, b: number, n: number, id: string, cLon: number, cLat: number, seed: number): Record<string, number | string> {
+  const reMedianPrice = Math.round(400000 + a * 2100000 + n * 200000);
+  const reMedianRent = Math.round(1800 + a * 4000 + n * 500);
+  const rePriceTrend = Array.from({ length: 8 }, (_, k) => +(100 - (7 - k) * (1.2 + a * 1.4) + (hash(seed + k, seed + k * 3) - 0.5) * 1.6).toFixed(1));
+  return {
+    id,
+    cLon,
+    cLat,
+    population: Math.round(2000 + a * 40000),
+    healthIndex: Math.round(clamp(42 + a * 40 + n * 14, 42, 94)),
+    uninsuredPct: +clamp(24 - a * 18 + n * 5, 3, 24).toFixed(1),
+    lifeExpectancy: +clamp(74 + a * 10 + n * 1.5, 74, 85).toFixed(1),
+    crimeRate: +clamp(85 - a * 70 + n * 18, 5, 85).toFixed(1),
+    propertyCrime: +clamp(120 - a * 95 + n * 24, 10, 120).toFixed(1),
+    response911: +clamp(14 - a * 8 + n * 2.5, 4, 14).toFixed(1),
+    schoolRating: +clamp(3 + a * 6 + n * 1.2, 3, 9.5).toFixed(1),
+    gradRate: Math.round(clamp(62 + a * 34 + n * 6, 62, 98)),
+    studentTeacher: Math.round(clamp(28 - a * 15 + n * 4, 11, 28)),
+    reMedianPrice,
+    reMedianRent,
+    reGrossYield: +clamp((reMedianRent * 12) / reMedianPrice * 100, 2.5, 8).toFixed(2),
+    reTurnoverPct: +clamp(4 + a * 7 + n * 3, 3, 14).toFixed(1),
+    reDefaultPct: +clamp(6 - a * 5 + n * 1.5, 0.5, 6).toFixed(1),
+    reOwnerOccPct: Math.round(clamp(25 + a * 50 + n * 8, 25, 80)),
+    reVacancyPct: +clamp(12 - a * 8 + n * 2.5, 2, 12).toFixed(1),
+    reChurnPct: Math.round(clamp(35 - a * 22 + n * 6, 8, 35)),
+    rePriceTrend: JSON.stringify(rePriceTrend),
+    // Housing
+    rentBurdenPct: Math.round(clamp(55 - a * 35 + n * 6, 18, 55)),
+    costBurdenedPct: Math.round(clamp(60 - a * 38 + n * 6, 20, 60)),
+    evictionPct: +clamp(5 - a * 4.5 + n * 1, 0.3, 5).toFixed(1),
+    housingVacancyPct: +clamp(14 - a * 10 + n * 3, 2, 14).toFixed(1),
+    // Environment
+    airQualityAqi: Math.round(clamp(120 - a * 95 + n * 22, 20, 120)),
+    floodRiskPct: +clamp(2 + (1 - a) * 30 + n * 8, 2, 40).toFixed(1),
+    greenSpacePct: +clamp(3 + a * 40 + n * 6, 3, 45).toFixed(1),
+    // Mobility
+    transitAccessIdx: Math.round(clamp(20 + a * 70 + n * 10, 20, 95)),
+    walkScore: Math.round(clamp(25 + a * 70 + n * 8, 25, 98)),
+    commuteMin: Math.round(clamp(52 - a * 32 + n * 6, 18, 52)),
+    crashRate: +clamp(30 - a * 24 + n * 6, 2, 30).toFixed(1),
+    // Economic
+    medianIncome: Math.round(clamp(35000 + a * 140000 + n * 15000, 35000, 180000)),
+    unemploymentPct: +clamp(14 - a * 11 + n * 2, 2, 14).toFixed(1),
+    povertyPct: +clamp(32 - a * 26 + n * 5, 4, 32).toFixed(1),
+    businessDensity: Math.round(clamp(5 + b * 70 + a * 15 + n * 10, 5, 90)),
+    // Foot traffic (driven by commercial intensity b, not just affluence a)
+    footTrafficDaily: Math.round(clamp(200 + b * 22000 + a * 3000 + n * 3000, 200, 25000)),
+    dwellMin: Math.round(clamp(12 + a * 22 + (1 - b) * 8 + n * 4, 8, 45)),
+    captureRate: +clamp(2 + b * 13 + n * 3, 2, 18).toFixed(1),
+    // News & social by region
+    newsVolume: Math.round(clamp(5 + b * 100 + n * 15, 0, 120)),
+    socialPosts: Math.round(clamp(100 + b * 7000 + a * 800 + n * 800, 100, 8000)),
+    netSentiment: Math.round(clamp((a - 0.5) * 100 + n * 25, -60, 60)),
+    civicEngagement: Math.round(clamp(10 + a * 70 + n * 12, 10, 90)),
+  };
+}
+
+// H3 hexagon aggregation — the industry-standard atomic tiling (Uber H3, the same
+// index space the GAIA panels reference). Same metric schema as the square grid,
+// sampled at each hex centroid; fields normalised across the tessellation.
+export function civicHexGrid(res = 8): CivicGrid {
+  const poly: number[][] = [[BBOX.minLat, BBOX.minLon], [BBOX.minLat, BBOX.maxLon], [BBOX.maxLat, BBOX.maxLon], [BBOX.maxLat, BBOX.minLon]];
+  const cells = polygonToCells(poly, res);
+  const spanLon = BBOX.maxLon - BBOX.minLon;
+  const spanLat = BBOX.maxLat - BBOX.minLat;
+  const centers = cells.map((h3) => cellToLatLng(h3)); // [lat, lng]
+  const rawA = centers.map(([lat, lon]) => sfield((lon - BBOX.minLon) / spanLon, (lat - BBOX.minLat) / spanLat, 1));
+  const rawB = centers.map(([lat, lon]) => sfield((lon - BBOX.minLon) / spanLon, (lat - BBOX.minLat) / spanLat, 2));
+  const norm = (arr: number[]) => { const mn = Math.min(...arr); const d = (Math.max(...arr) - mn) || 1; return arr.map((x) => (x - mn) / d); };
+  const A = norm(rawA);
+  const B = norm(rawB);
+  const features: Cell[] = cells.map((h3, k) => {
+    const [lat, lon] = centers[k]!;
+    const a = A[k]!;
+    const b = B[k]!;
+    const n = (hash(Math.round(lon * 1e4), Math.round(lat * 1e4)) - 0.5) * 0.6;
+    const ring = cellToBoundary(h3, true) as number[][]; // [lng, lat] pairs (GeoJSON order)
+    const first = ring[0]!;
+    const last = ring[ring.length - 1]!;
+    const closed = first[0] === last[0] && first[1] === last[1] ? ring : [...ring, first];
+    return {
+      type: 'Feature',
+      properties: buildCellProps(a, b, n, h3, +lon.toFixed(5), +lat.toFixed(5), (parseInt(h3.slice(-6), 16) || 0)),
+      geometry: { type: 'Polygon', coordinates: [closed] },
+    };
+  });
   return { type: 'FeatureCollection', features };
 }
