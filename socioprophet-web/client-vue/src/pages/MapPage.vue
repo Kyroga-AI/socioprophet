@@ -88,16 +88,35 @@
             <div class="mapx-basemap mapx-groups">
               <button v-for="g in CIVIC_LAYERS" :key="g.id" class="mapx-bm" :class="{ on: civicGroupId === g.id }" type="button" @click="setCivicGroup(g.id)">{{ g.label }}</button>
             </div>
+            <div v-if="activeGroup.segmented" class="mapx-basemap mapx-groups mapx-segments">
+              <button v-for="s in SEGMENTS" :key="s.id" class="mapx-bm" :class="{ on: reSegment === s.id }" type="button" @click="reSegment = s.id">{{ s.label }}</button>
+            </div>
             <div class="mapx-basemap mapx-metrics">
               <button v-for="m in activeGroup.metrics" :key="m.key" class="mapx-bm" :class="{ on: civicMetricKey === m.key }" type="button" @click="civicMetricKey = m.key">{{ m.label }}</button>
             </div>
             <div class="mapx-legend">
-              <span class="mapx-legend-lo">{{ activeMetric.min }}{{ activeMetric.unit }}</span>
+              <span class="mapx-legend-lo">{{ fmtVal(activeMetric.min * metricFactor, activeMetric) }}</span>
               <span class="mapx-legend-bar" :style="{ background: legendGradient }" />
-              <span class="mapx-legend-hi">{{ activeMetric.max }}{{ activeMetric.unit }}</span>
+              <span class="mapx-legend-hi">{{ fmtVal(activeMetric.max * metricFactor, activeMetric) }}</span>
             </div>
             <label class="mapx-opacity">Opacity <input v-model.number="civicOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
-            <p class="lookup-status">{{ activeGroup.blurb }} Binned aggregation grid — fixture; a census/DOJ/DOE adapter emits the same GeoJSON shape.</p>
+            <p class="lookup-status">{{ activeGroup.blurb }} Click a cell to inspect. Fixture aggregation grid.</p>
+
+            <!-- Cell inspector — click-to-analyze a single area -->
+            <div v-if="selectedCell" class="mapx-cell">
+              <div class="mapx-cell-h"><span>Selected area</span><button class="mapx-cell-x" type="button" @click="selectedCell = null">✕</button></div>
+              <div class="mapx-cell-grid">
+                <div v-for="m in activeGroup.metrics" :key="m.key" class="mapx-cell-kv"><span>{{ m.label }}</span><b>{{ fmtCell(m) }}</b></div>
+              </div>
+              <template v-if="activeGroup.id === 'realestate'">
+                <div class="mapx-cell-mix" :title="`Owner-occupied ${cellOwnerPct}% · renters ${100 - cellOwnerPct}%`"><span class="mapx-cell-mix-own" :style="{ width: cellOwnerPct + '%' }" /></div>
+                <div class="mapx-cell-mixlabels"><span>owners {{ cellOwnerPct }}%</span><span>renters {{ 100 - cellOwnerPct }}%</span></div>
+                <div class="mapx-cell-trend">
+                  <span class="mapx-cell-trend-h">Price trend · 8q</span>
+                  <svg viewBox="0 0 100 24" preserveAspectRatio="none"><polyline :points="cellTrendPoints" fill="none" stroke="#2f6bff" stroke-width="1.6" /></svg>
+                </div>
+              </template>
+            </div>
           </template>
         </section>
 
@@ -257,7 +276,7 @@ import maplibregl from 'maplibre-gl';
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import RuntimeAdapterStatusBadge from '../components/RuntimeAdapterStatusBadge.vue';
 import { useCockpit } from '../stores/cockpit';
-import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, type MetricDef } from '../data/healthMapFixture';
+import { civicGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, type MetricDef } from '../data/healthMapFixture';
 import {
   fetchFeaturesByH3WithFallback,
   fetchGaiaLayerCatalogWithFallback,
@@ -297,9 +316,32 @@ const civicOn = ref(false);
 const civicGroupId = ref<string>('health');
 const civicMetricKey = ref<string>('healthIndex');
 const civicOpacity = ref(0.62);
+const reSegment = ref<string>('res');
+const selectedCell = ref<Record<string, string | number> | null>(null);
 const activeGroup = computed(() => CIVIC_LAYERS.find((g) => g.id === civicGroupId.value) ?? CIVIC_LAYERS[0]!);
 const activeMetric = computed<MetricDef>(() => METRIC_BY_KEY[civicMetricKey.value] ?? activeGroup.value.metrics[0]!);
+const metricFactor = computed(() => (activeGroup.value.segmented ? segFactor(reSegment.value, activeMetric.value.key) : 1));
 const legendGradient = computed(() => `linear-gradient(90deg, ${activeMetric.value.ramp.map(([p, c]) => `${c} ${Math.round(p * 100)}%`).join(', ')})`);
+// Value formatting (money / pct / plain), used by the legend + cell inspector.
+function fmtVal(v: number, def: MetricDef): string {
+  if (def.format === 'money') { const s = v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1000 ? `$${Math.round(v / 1000)}k` : `$${Math.round(v)}`; return s + def.unit; }
+  if (def.format === 'pct') return `${(+v).toFixed(v < 10 ? 1 : 0)}%`;
+  return `${v}${def.unit}`;
+}
+function fmtCell(m: MetricDef): string {
+  const raw = Number(selectedCell.value?.[m.key] ?? 0);
+  const f = activeGroup.value.segmented ? segFactor(reSegment.value, m.key) : 1;
+  return fmtVal(raw * f, m);
+}
+const cellOwnerPct = computed(() => Number(selectedCell.value?.reOwnerOccPct ?? 0));
+const cellTrendPoints = computed(() => {
+  const raw = selectedCell.value?.rePriceTrend;
+  if (typeof raw !== 'string') return '';
+  let arr: number[] = [];
+  try { arr = JSON.parse(raw) as number[]; } catch { return ''; }
+  const min = Math.min(...arr); const max = Math.max(...arr); const span = (max - min) || 1;
+  return arr.map((v, i) => `${(i / (arr.length - 1)) * 100},${24 - ((v - min) / span) * 22}`).join(' ');
+});
 function setCivicGroup(id: string) {
   civicGroupId.value = id;
   const g = CIVIC_LAYERS.find((x) => x.id === id);
@@ -384,6 +426,10 @@ function initializeMap() {
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right');
   map.addControl(new maplibregl.FullscreenControl(), 'bottom-right');
   map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-right');
+  // Click a civic cell to inspect it (fires once the choropleth layer exists).
+  map.on('click', 'civic-fill', (e) => { selectedCell.value = (e.features?.[0]?.properties ?? null) as Record<string, string | number> | null; });
+  map.on('mouseenter', 'civic-fill', () => { if (map) map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', 'civic-fill', () => { if (map) map.getCanvas().style.cursor = ''; });
   marker = new maplibregl.Marker({ color: '#0f62fe' })
     .setLngLat(center)
     .setPopup(new maplibregl.Popup({ offset: 16 }).setText(`OSM ${selectedFeature.value?.osm_ref?.osm_type || 'way'} ${selectedFeature.value?.osm_ref?.osm_id || '424242'}`))
@@ -397,10 +443,10 @@ function setBasemap(b: 'streets' | 'light' | 'dark') {
 }
 
 // Data-driven fill color for the active civic metric (interpolate over its ramp).
-function civicColorExpr(m: MetricDef): unknown {
+function civicColorExpr(m: MetricDef, factor: number): unknown {
   const stops: Array<number | string> = [];
-  for (const [pos, color] of m.ramp) stops.push(m.min + (m.max - m.min) * pos, color);
-  return ['interpolate', ['linear'], ['get', m.key], ...stops];
+  for (const [pos, color] of m.ramp) stops.push((m.min + (m.max - m.min) * pos) * factor, color);
+  return ['interpolate', ['linear'], ['*', ['get', m.key], factor], ...stops];
 }
 function renderCivic() {
   if (!map) return;
@@ -409,7 +455,7 @@ function renderCivic() {
   const src = map.getSource('civic') as maplibregl.GeoJSONSource | undefined;
   if (src) src.setData(data);
   else map.addSource('civic', { type: 'geojson', data });
-  const color = civicColorExpr(m) as never;
+  const color = civicColorExpr(m, metricFactor.value) as never;
   if (map.getLayer('civic-fill')) {
     map.setPaintProperty('civic-fill', 'fill-color', color);
     map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value);
@@ -424,6 +470,7 @@ function toggleCivic() {
   else if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none');
 }
 watch(civicMetricKey, () => { if (civicOn.value) renderCivic(); });
+watch(reSegment, () => { if (civicOn.value) renderCivic(); });
 watch(civicOpacity, () => { if (civicOn.value && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
 function updateMapMarker() {
@@ -672,6 +719,19 @@ onUnmounted(() => {
 .mapx-metrics, .mapx-groups { flex-wrap: wrap; margin-top: 0.5rem; }
 .mapx-metrics .mapx-bm, .mapx-groups .mapx-bm { flex: 1 1 45%; }
 .mapx-sub2 { color: var(--text-3); font-weight: 400; }
+.mapx-segments { margin-top: 0.35rem; }
+.mapx-segments .mapx-bm { font-size: 0.68rem; }
+.mapx-cell { margin-top: 0.7rem; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 0.6rem; background: rgba(255, 255, 255, 0.03); }
+.mapx-cell-h { display: flex; align-items: center; justify-content: space-between; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.5rem; }
+.mapx-cell-x { border: none; background: transparent; color: var(--text-3); cursor: pointer; font-size: 0.8rem; } .mapx-cell-x:hover { color: var(--text); }
+.mapx-cell-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem 0.7rem; }
+.mapx-cell-kv { display: flex; align-items: baseline; justify-content: space-between; gap: 0.4rem; font-size: 0.72rem; }
+.mapx-cell-kv span { color: var(--text-3); } .mapx-cell-kv b { color: var(--text); font-variant-numeric: tabular-nums; }
+.mapx-cell-mix { height: 8px; border-radius: 999px; overflow: hidden; background: #6b7280; margin-top: 0.6rem; }
+.mapx-cell-mix-own { display: block; height: 100%; background: #2f6bff; }
+.mapx-cell-mixlabels { display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text-3); margin-top: 0.2rem; }
+.mapx-cell-trend { margin-top: 0.5rem; } .mapx-cell-trend-h { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); }
+.mapx-cell-trend svg { width: 100%; height: 26px; display: block; margin-top: 0.15rem; }
 .mapx-switch { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text-2); cursor: pointer; }
 .mapx-switch input { accent-color: var(--map-accent); }
 .mapx-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }

@@ -14,8 +14,19 @@ export interface MetricDef {
   unit: string;
   higherBetter: boolean;
   ramp: Array<[number, string]>; // [position 0..1, color]
+  format?: 'money' | 'pct' | 'plain';
 }
-export interface LayerGroup { id: string; label: string; blurb: string; metrics: MetricDef[] }
+export interface LayerGroup { id: string; label: string; blurb: string; metrics: MetricDef[]; segmented?: boolean }
+
+// Real-estate segment multipliers (applied per metric at render): commercial and
+// industrial re-price the same cells so one layer serves all property types.
+export interface Segment { id: string; label: string; f: Record<string, number> }
+export const SEGMENTS: Segment[] = [
+  { id: 'res', label: 'Residential', f: {} },
+  { id: 'com', label: 'Commercial', f: { reMedianPrice: 2.3, reMedianRent: 2.0, reGrossYield: 1.15, reTurnoverPct: 0.8, reDefaultPct: 1.4, reOwnerOccPct: 0.35, reVacancyPct: 1.5, reChurnPct: 1.2 } },
+  { id: 'ind', label: 'Industrial', f: { reMedianPrice: 1.5, reMedianRent: 1.7, reGrossYield: 1.45, reTurnoverPct: 0.6, reDefaultPct: 0.8, reOwnerOccPct: 0.3, reVacancyPct: 0.7, reChurnPct: 0.9 } },
+];
+export const segFactor = (segId: string, key: string): number => (SEGMENTS.find((s) => s.id === segId)?.f[key] ?? 1);
 
 const GOOD_HIGH: Array<[number, string]> = [[0, '#d73027'], [0.5, '#fee08b'], [1, '#1a9850']]; // low=red, high=green
 const BAD_HIGH: Array<[number, string]> = [[0, '#1a9850'], [0.5, '#fee08b'], [1, '#d73027']];  // low=green, high=red
@@ -44,6 +55,19 @@ export const CIVIC_LAYERS: LayerGroup[] = [
       { key: 'schoolRating', label: 'School rating', min: 3, max: 9.5, unit: '/10', higherBetter: true, ramp: GOOD_HIGH },
       { key: 'gradRate', label: 'Graduation', min: 62, max: 98, unit: '%', higherBetter: true, ramp: GOOD_HIGH },
       { key: 'studentTeacher', label: 'Student:teacher', min: 11, max: 28, unit: ':1', higherBetter: false, ramp: BAD_HIGH },
+    ],
+  },
+  {
+    id: 'realestate', label: 'Real Estate', blurb: 'Investment lens — pricing, yield, turnover, defaults, owner/renter mix.', segmented: true,
+    metrics: [
+      { key: 'reMedianPrice', label: 'Median price', min: 400000, max: 2500000, unit: '', higherBetter: true, ramp: BLUE, format: 'money' },
+      { key: 'reMedianRent', label: 'Median rent', min: 1800, max: 6000, unit: '/mo', higherBetter: true, ramp: BLUE, format: 'money' },
+      { key: 'reGrossYield', label: 'Gross yield', min: 2.5, max: 8, unit: '%', higherBetter: true, ramp: GOOD_HIGH, format: 'pct' },
+      { key: 'reTurnoverPct', label: 'Turnover', min: 3, max: 14, unit: '%', higherBetter: true, ramp: BLUE, format: 'pct' },
+      { key: 'reDefaultPct', label: 'Default rate', min: 0.5, max: 6, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
+      { key: 'reOwnerOccPct', label: 'Owner-occupied', min: 25, max: 80, unit: '%', higherBetter: true, ramp: BLUE, format: 'pct' },
+      { key: 'reVacancyPct', label: 'Vacancy', min: 2, max: 12, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
+      { key: 'reChurnPct', label: 'Renter churn', min: 8, max: 35, unit: '%', higherBetter: false, ramp: BAD_HIGH, format: 'pct' },
     ],
   },
   {
@@ -77,6 +101,10 @@ export function civicGrid(cols = 12, rows = 11): CivicGrid {
       const lat0 = BBOX.minLat + j * dLat;
       const a = hash(i, j);                 // "advantage" axis 0..1 (affluence/density)
       const n = (hash(i + 31, j + 17) - 0.5); // small noise
+      const reMedianPrice = Math.round(400000 + a * 2100000 + n * 200000);
+      const reMedianRent = Math.round(1800 + a * 4000 + n * 500);
+      // 8-quarter price trend (index 100 = current), rising faster in advantaged cells.
+      const rePriceTrend = Array.from({ length: 8 }, (_, k) => +(100 - (7 - k) * (1.2 + a * 1.4) + (hash(i + k, j + k * 3) - 0.5) * 1.6).toFixed(1));
       features.push({
         type: 'Feature',
         properties: {
@@ -91,6 +119,15 @@ export function civicGrid(cols = 12, rows = 11): CivicGrid {
           schoolRating: +clamp(3 + a * 6 + n * 1.2, 3, 9.5).toFixed(1),
           gradRate: Math.round(clamp(62 + a * 34 + n * 6, 62, 98)),
           studentTeacher: Math.round(clamp(28 - a * 15 + n * 4, 11, 28)),
+          reMedianPrice,
+          reMedianRent,
+          reGrossYield: +clamp((reMedianRent * 12) / reMedianPrice * 100, 2.5, 8).toFixed(2),
+          reTurnoverPct: +clamp(4 + a * 7 + n * 3, 3, 14).toFixed(1),
+          reDefaultPct: +clamp(6 - a * 5 + n * 1.5, 0.5, 6).toFixed(1),
+          reOwnerOccPct: Math.round(clamp(25 + a * 50 + n * 8, 25, 80)),
+          reVacancyPct: +clamp(12 - a * 8 + n * 2.5, 2, 12).toFixed(1),
+          reChurnPct: Math.round(clamp(35 - a * 22 + n * 6, 8, 35)),
+          rePriceTrend: JSON.stringify(rePriceTrend),
         },
         geometry: {
           type: 'Polygon',
