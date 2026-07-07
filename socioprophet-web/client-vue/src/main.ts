@@ -41,6 +41,7 @@ import AlgoTradingBoard from './pages/AlgoTradingBoard.vue';
 import PortfolioBoard from './pages/PortfolioBoard.vue';
 import OperatorSurface from './pages/OperatorSurface.vue';
 import OntologySurface from './pages/OntologySurface.vue';
+import UniverseViewer from './pages/UniverseViewer.vue';
 import NlpExtractionBench from './pages/NlpExtractionBench.vue';
 import ExperimentsBoard from './pages/ExperimentsBoard.vue';
 import BehavioralAnalytics from './pages/BehavioralAnalytics.vue';
@@ -70,6 +71,7 @@ const explicitRoutes = [
   { path: '/capability/portfolios', component: PortfolioBoard },
   { path: '/operator/:id', component: OperatorSurface },
   { path: '/ontology', component: OntologySurface },
+  { path: '/universe', component: UniverseViewer },
   { path: '/capability/algorithmic-trading', component: AlgoTradingBoard },
   { path: '/capability/nlp-information-extraction', component: NlpExtractionBench },
   { path: '/capability/experiments-simulations', component: ExperimentsBoard },
