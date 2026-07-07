@@ -69,6 +69,10 @@ import SurfaceHeader from '../components/SurfaceHeader.vue';
 import InfoLabel from '../components/InfoLabel.vue';
 import { useOntology } from '../stores/ontology';
 import { useCockpit } from '../stores/cockpit';
+import { extract } from '../features/extraction/schema';
+import { reify } from '../features/claims/reify';
+import { newsItems } from '../data/newsFeedFixture';
+import { dockets } from '../data/lawFixture';
 
 const ontology = useOntology();
 const cockpit = useCockpit();
@@ -81,11 +85,26 @@ const relPct = (n: number) => Math.max(6, (n / maxRel.value) * 100);
 function askNoetica() {
   cockpit.askAbout(`Read the living ontology: ${stats.value.instances} entity instances across ${stats.value.classes} classes, ${stats.value.relations} induced relations. What relations are emerging, and does the schema need new classes or constraints?`);
 }
-onMounted(() => cockpit.setContext({ surface: 'Living Ontology', entityLabel: `${stats.value.instances} instances`, detail: `${stats.value.relations} relations`, route: '/ontology' }));
+// Seed the ontology from the corpus on first visit so the loop is visibly alive
+// (the same observe() that reading News + Law performs). Reading more grows it further.
+function seedFromCorpus() {
+  const feed = (text: string, source: string) => {
+    const ex = extract(text);
+    const claims = reify(text, source, ex);
+    ontology.observe(ex.entities, claims.map((c) => c.predicate), ex.topics);
+  };
+  for (const it of newsItems) feed(`${it.title}. ${it.summary}`, 'news');
+  for (const d of dockets) feed(`${d.title}. ${d.summary} ${d.impact}`, d.cite);
+}
+onMounted(() => {
+  if (stats.value.instances === 0 && stats.value.relations === 0 && stats.value.topics === 0) seedFromCorpus();
+  cockpit.setContext({ surface: 'Living Ontology', entityLabel: `${stats.value.instances} instances`, detail: `${stats.value.relations} relations`, route: '/ontology' });
+});
 </script>
 
 <style scoped>
 .on { height: 100%; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding: 1rem 1.25rem 1.5rem; background: var(--bg); color: var(--text); }
+.on :deep(.sp2) { flex: 1 1 auto; min-height: 24rem; }
 .on-stat { font-size: 0.66rem; color: var(--text-3); }
 .on-ask { border: 1px solid rgba(120, 160, 255, 0.45); background: rgba(120, 160, 255, 0.08); color: #93b4ff; border-radius: 8px; padding: 0.35rem 0.7rem; font-size: 0.76rem; cursor: pointer; } .on-ask:hover { background: rgba(120, 160, 255, 0.16); color: #fff; }
 .on-reset { border: 1px solid var(--line-2); background: transparent; color: var(--text-3); border-radius: 8px; padding: 0.35rem 0.7rem; font-size: 0.76rem; cursor: pointer; } .on-reset:hover { color: var(--text); }
