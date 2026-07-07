@@ -116,9 +116,28 @@
                   <svg viewBox="0 0 100 24" preserveAspectRatio="none"><polyline :points="cellTrendPoints" fill="none" stroke="#2f6bff" stroke-width="1.6" /></svg>
                 </div>
               </template>
+              <div class="mapx-basemap mapx-tools2">
+                <button class="mapx-bm" :class="{ on: isPinned(selectedCell.id) }" type="button" :disabled="pinnedCells.length >= 3 && !isPinned(selectedCell.id)" @click="pinCell">📌 Compare</button>
+              </div>
               <button class="mapx-ask mapx-ask-sm" type="button" @click="askAreaNoetica">◇ Ask Noetica about this area</button>
             </div>
           </template>
+        </section>
+
+        <!-- A/B location compare — the deal-committee diff view -->
+        <section v-if="pinnedCells.length" class="panel-section">
+          <div class="section-title">Compare areas · {{ pinnedCells.length }}/3</div>
+          <div class="mapx-cmp">
+            <div class="mapx-cmp-row mapx-cmp-head" :style="{ gridTemplateColumns: `6rem repeat(${pinnedCells.length}, 1fr)` }">
+              <span></span>
+              <span v-for="(p, i) in pinnedCells" :key="String(p.id)" class="mapx-cmp-col">{{ String.fromCharCode(65 + i) }}<button class="mapx-cmp-x" type="button" @click="unpin(p.id)">✕</button></span>
+            </div>
+            <div v-for="m in activeGroup.metrics" :key="m.key" class="mapx-cmp-row" :style="{ gridTemplateColumns: `6rem repeat(${pinnedCells.length}, 1fr)` }">
+              <span class="mapx-cmp-label">{{ m.label }}</span>
+              <span v-for="(p, i) in pinnedCells" :key="String(p.id)" class="mapx-cmp-val" :class="{ best: bestPinIndex(m) === i }">{{ fmtPin(p, m) }}</span>
+            </div>
+          </div>
+          <p class="lookup-status">Best value per row is highlighted. Click 📌 Compare on a selected area to add.</p>
         </section>
 
         <section class="panel-section">
@@ -415,6 +434,29 @@ function fmtCell(m: MetricDef): string {
 }
 const scoreColor = (s: number): string => (s >= 66 ? '#4bbf73' : s >= 40 ? '#e3b341' : '#f0656a');
 const cellOwnerPct = computed(() => Number(selectedCell.value?.reOwnerOccPct ?? 0));
+// A/B location compare — pin up to 3 areas and diff them side by side.
+const pinnedCells = ref<Record<string, string | number>[]>([]);
+function pinCell() {
+  const c = selectedCell.value; if (!c) return;
+  if (pinnedCells.value.length >= 3 || pinnedCells.value.some((p) => p.id === c.id)) return;
+  pinnedCells.value = [...pinnedCells.value, c];
+}
+function unpin(id: string | number) { pinnedCells.value = pinnedCells.value.filter((p) => p.id !== id); }
+const isPinned = (id?: string | number) => pinnedCells.value.some((p) => p.id === id);
+// The winning pinned column for a metric (higher- or lower-better aware, segment-scaled).
+function bestPinIndex(m: MetricDef): number {
+  const f = activeGroup.value.segmented ? segFactor(reSegment.value, m.key) : 1;
+  let best = -1; let bestVal = m.higherBetter ? -Infinity : Infinity;
+  pinnedCells.value.forEach((p, i) => {
+    const v = Number(p[m.key] ?? 0) * f;
+    if (m.higherBetter ? v > bestVal : v < bestVal) { bestVal = v; best = i; }
+  });
+  return best;
+}
+function fmtPin(p: Record<string, string | number>, m: MetricDef): string {
+  const f = activeGroup.value.segmented ? segFactor(reSegment.value, m.key) : 1;
+  return fmtVal(Number(p[m.key] ?? 0) * f, m);
+}
 const cellTrendPoints = computed(() => {
   const raw = selectedCell.value?.rePriceTrend;
   if (typeof raw !== 'string') return '';
@@ -568,14 +610,16 @@ function renderSite() {
   paintCivic(scored as unknown as FillData, color);
 }
 function hideCivic() { if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); }
+// Beauty: mute the basemap when data goes on top, so the choropleth reads clean.
+function muteBasemapForData() { if (basemap.value === 'streets') setBasemap('light'); }
 function toggleCivic() {
   civicOn.value = !civicOn.value;
   if (siteMode.value) return; // site overlay takes precedence
-  if (civicOn.value) renderCivic(); else hideCivic();
+  if (civicOn.value) { muteBasemapForData(); renderCivic(); } else hideCivic();
 }
 function toggleSite() {
   siteMode.value = !siteMode.value;
-  if (siteMode.value) renderSite();
+  if (siteMode.value) { muteBasemapForData(); renderSite(); }
   else if (civicOn.value) renderCivic();
   else hideCivic();
 }
@@ -908,6 +952,17 @@ onUnmounted(() => {
 .mapx-hover-value { font-size: 0.9rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .mapx-ask-sm { width: 100%; margin-top: 0.55rem; }
 .mapx-tools2 { margin-top: 0.5rem; }
+.mapx-cell-actions { margin-top: 0.5rem; }
+
+/* A/B compare diff table */
+.mapx-cmp { display: flex; flex-direction: column; gap: 0.15rem; }
+.mapx-cmp-row { display: grid; gap: 0.4rem; align-items: center; }
+.mapx-cmp-head { margin-bottom: 0.2rem; }
+.mapx-cmp-col { position: relative; text-align: center; font-size: 0.72rem; font-weight: 800; color: var(--map-accent); }
+.mapx-cmp-x { border: none; background: transparent; color: var(--text-3); cursor: pointer; font-size: 0.6rem; margin-left: 0.2rem; } .mapx-cmp-x:hover { color: var(--down); }
+.mapx-cmp-label { font-size: 0.68rem; color: var(--text-3); }
+.mapx-cmp-val { text-align: center; font-size: 0.74rem; color: var(--text-2); font-variant-numeric: tabular-nums; padding: 0.15rem 0.2rem; border-radius: 5px; }
+.mapx-cmp-val.best { color: #7ee2a8; background: rgba(75, 191, 115, 0.14); font-weight: 700; }
 
 /* Community event markers + detail card */
 :deep(.mapx-evmk) { width: 26px; height: 26px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid #fff; background: var(--ev, #38bdf8); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); cursor: pointer; display: grid; place-items: center; padding: 0; }
