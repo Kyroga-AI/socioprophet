@@ -1,7 +1,7 @@
 <template>
   <section class="ec" aria-label="Economy sector board">
     <SurfaceHeader :title="scope?.label ?? 'Economy'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
-      <template #badge><span class="ec-pill">fixture</span></template>
+      <template #badge><span class="ec-pill" :class="{ live: isLive }">{{ isLive ? 'live · World Bank' : 'fixture' }}</span></template>
       <template #search>
         <form class="term-cmd" @submit.prevent="runCmd">
         <span class="term-cmd-prompt">›</span>
@@ -10,7 +10,8 @@
         </form>
       </template>
       <template #actions>
-        <div class="ec-asof">{{ asOfLabel }}</div>
+        <LiveToggle :state="liveState" label="Go live" live-text="World Bank" title="Pull real macro indicators (GDP growth, inflation, unemployment, labour participation) from the World Bank Open Data API — public, no key." @click="goLive" />
+        <div class="ec-asof">{{ isLive ? 'World Bank · annual' : asOfLabel }}</div>
       </template>
     </SurfaceHeader>
 
@@ -123,6 +124,8 @@
 
 <script setup lang="ts">
 import SurfaceHeader from '../components/SurfaceHeader.vue';
+import LiveToggle from '../components/LiveToggle.vue';
+import { fetchWorldBankIndicators } from '../data/adapters/worldBankLive';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -145,7 +148,19 @@ const route = useRoute();
 // Active Economy & Industry sub-domain → its own real KPI set; the sector-breadth
 // grid stays as shared market context.
 const scope = computed(() => navScopeForPath(route.path));
-const kpis = computed<Indicator[]>(() => indicatorsForPath(route.path));
+// Live macro KPIs from the World Bank (opt-in, fails closed to the fixture set).
+const liveState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const liveIndicators = ref<Indicator[] | null>(null);
+const isLive = computed(() => liveState.value === 'live' && !!liveIndicators.value);
+async function goLive() {
+  if (liveState.value === 'loading') return;
+  if (liveState.value === 'live') { liveState.value = 'idle'; liveIndicators.value = null; return; }
+  liveState.value = 'loading';
+  const r = await fetchWorldBankIndicators();
+  if (r) { liveIndicators.value = r; liveState.value = 'live'; sel.value = { kind: 'indicator', id: r[0]!.id }; }
+  else liveState.value = 'error';
+}
+const kpis = computed<Indicator[]>(() => liveIndicators.value ?? indicatorsForPath(route.path));
 const sel = ref<{ kind: 'sector' | 'indicator'; id: string }>({ kind: 'indicator', id: kpis.value[0]!.id });
 // When the sub-domain (and its KPI set) changes, re-anchor an indicator selection.
 watch(() => route.path, () => { if (sel.value.kind === 'indicator' && kpis.value[0]) sel.value = { kind: 'indicator', id: kpis.value[0].id }; });
@@ -166,7 +181,7 @@ function runCmd() {
 }
 
 const selectedSector = computed(() => (sel.value.kind === 'sector' ? sectors.find((s) => s.id === sel.value.id) : undefined));
-const selectedIndicator = computed(() => (sel.value.kind === 'indicator' ? indicators.find((k) => k.id === sel.value.id) : undefined));
+const selectedIndicator = computed(() => (sel.value.kind === 'indicator' ? (kpis.value.find((k) => k.id === sel.value.id) ?? indicators.find((k) => k.id === sel.value.id)) : undefined));
 const detail = computed<Sector | Indicator | undefined>(() => selectedSector.value ?? selectedIndicator.value);
 watch(detail, () => cockpit.setContext({ surface: 'Economy', entityLabel: detail.value?.name ?? 'sector', detail: sel.value.kind, route: route.path }), { immediate: true });
 
@@ -202,7 +217,8 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .ec-toolbar { display: flex; align-items: center; justify-content: space-between; }
 .ec-title { display: flex; align-items: baseline; gap: 0.6rem; } .ec-title h1 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .ec-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
-.ec-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 5px; padding: 0.1rem 0.35rem; }
+.ec-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); background: var(--amber-soft); border-radius: 5px; padding: 0.1rem 0.35rem; white-space: nowrap; }
+.ec-pill.live { color: var(--live); background: var(--live-soft); }
 .ec-asof { font-size: 0.74rem; color: rgba(255, 255, 255, 0.45); }
 
 .ec-kpis { display: flex; gap: 0.6rem; overflow-x: auto; padding-bottom: 0.15rem; }
