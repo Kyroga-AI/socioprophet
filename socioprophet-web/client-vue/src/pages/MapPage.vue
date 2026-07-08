@@ -180,6 +180,13 @@
               <span v-else-if="crimeState === 'error'" class="mapx-income-note err">⚠ NYC Open Data unreachable or no incidents here — kept illustrative</span>
             </div>
 
+            <!-- Environment layer: swap synthetic air for REAL Open-Meteo US-AQI (global) -->
+            <div v-if="isEnvironment && !isFootTraffic && activeMetric.key === 'airQualityAqi'" class="mapx-income-real">
+              <LiveToggle :state="airState" label="Use real air quality" live-text="Real US-AQI" title="Sample real US Air Quality Index across this view from Open-Meteo (CAMS reanalysis, no key) — works anywhere. Nearest-assigned to each cell." @click="goLiveAir" />
+              <span v-if="useRealAir" class="mapx-income-note">● Real US-AQI · sampled at {{ airSamples }} points, nearest-assigned across the view</span>
+              <span v-else-if="airState === 'error'" class="mapx-income-note err">⚠ Open-Meteo air unreachable — kept illustrative</span>
+            </div>
+
             <!-- Foot traffic: corridor network + time-of-day -->
             <div v-if="isFootTraffic" class="mapx-ft">
               <div class="mapx-ft-time">
@@ -610,7 +617,7 @@ import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import WorldClaimCard from '../components/WorldClaimCard.vue';
-import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, nycCrimeEvidence, type WorldClaim } from '../gaia/worldClaim';
+import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, nycCrimeEvidence, openMeteoAirEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, isLand, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
 import { fetchPois, type Poi } from '../data/adapters/overpassLive';
@@ -622,6 +629,7 @@ import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
 import { prepTracts, tractIncomeAt } from '../data/censusJoin';
 import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
 import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
+import { fetchAirQuality, type AirPoint } from '../data/adapters/airLive';
 import { latLngToCell, cellToLatLng } from 'h3-js';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
@@ -1086,6 +1094,42 @@ async function goLiveCrime() {
   if (civicOn.value && isSafety.value) renderCivic();
 }
 const crimeMatched = computed(() => crimeByCell.value.size);
+
+// ── Real air quality for the Environment layer (GLOBAL — not city-pinned) ─────
+// Sample cell centroids, batch-fetch US-AQI from Open-Meteo (CAMS), and nearest-
+// assign to every cell → a real measured air field anywhere the user pans.
+const airState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const airPoints = ref<AirPoint[]>([]);
+const isEnvironment = computed(() => activeGroup.value.id === 'environment');
+const useRealAir = computed(() => airState.value === 'live' && airPoints.value.length > 0);
+const airByCell = computed<Map<string, number>>(() => {
+  const m = new Map<string, number>();
+  if (!useRealAir.value) return m;
+  const pts = airPoints.value;
+  for (const f of baseGrid.value.features) {
+    const p = f.properties as Record<string, number | string>;
+    const clon = Number(p.cLon); const clat = Number(p.cLat);
+    let best = Infinity; let aqi = -1;
+    for (const a of pts) { const d = haversineKm(clon, clat, a.lon, a.lat); if (d < best) { best = d; aqi = a.aqi; } }
+    if (aqi >= 0) m.set(String(p.id), aqi);
+  }
+  return m;
+});
+async function goLiveAir() {
+  if (!map || airState.value === 'loading') return;
+  if (airState.value === 'live') { airState.value = 'idle'; airPoints.value = []; renderCivic(); return; }
+  airState.value = 'loading';
+  const feats = gridFeatures.value;
+  if (!feats.length) { airState.value = 'error'; return; }
+  const step = Math.max(1, Math.floor(feats.length / 48)); // ≤~48 sample points in one batched call
+  const sample: Array<[number, number]> = [];
+  for (let i = 0; i < feats.length; i += step) { const p = feats[i]!.properties as Record<string, number>; sample.push([Number(p.cLon), Number(p.cLat)]); }
+  const r = await fetchAirQuality(sample);
+  if (!r) { airState.value = 'error'; return; }
+  airPoints.value = r; airState.value = 'live';
+  if (civicOn.value && isEnvironment.value) renderCivic();
+}
+const airSamples = computed(() => airPoints.value.length);
 const topAreas = computed(() => {
   if (!siteMode.value) return []; // only the site panel consumes this — skip the score+sort otherwise
   return gridFeatures.value
@@ -1106,6 +1150,11 @@ const cellRaw = (c: Record<string, string | number>, m: MetricDef) => {
   if (m.key === 'crimeRate' && useRealCrime.value) {
     const n = crimeByCell.value.get(String(c.id));
     if (n != null) return n;
+  }
+  // Prefer real Open-Meteo US-AQI when the air join is live.
+  if (m.key === 'airQualityAqi' && useRealAir.value) {
+    const a = airByCell.value.get(String(c.id));
+    if (a != null) return a;
   }
   return Number(c[m.key] ?? 0) * cellFactor(m.key);
 };
@@ -1181,6 +1230,7 @@ function tFeatures() {
   const realMap =
     useRealIncome.value && m.key === 'medianIncome' ? censusIncomeByCell.value
     : useRealCrime.value && m.key === 'crimeRate' ? crimeByCell.value
+    : useRealAir.value && m.key === 'airQualityAqi' ? airByCell.value
     : null;
   const t = timeQ.value;
   if (!realMap && t === 0) return gridFeatures.value;
@@ -1264,6 +1314,9 @@ const selectedClaim = computed<WorldClaim | null>(() => {
   if (m.key === 'crimeRate' && useRealCrime.value && crimeByCell.value.has(cellId)) {
     const n = crimeByCell.value.get(cellId)!;
     return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { reportedIncidents: n }, source: nycCrimeEvidence(cellId, n) });
+  }
+  if (m.key === 'airQualityAqi' && useRealAir.value && airByCell.value.has(cellId)) {
+    return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { usAqi: airByCell.value.get(cellId) }, source: openMeteoAirEvidence(cellId), confidence: 0.75, uncertaintyClass: 'moderate', uncertaintyNotes: 'CAMS reanalysis sampled across the view, nearest-assigned to this cell.' });
   }
   return syntheticWorldClaim({ cellId, lon, lat, claimType: 'feature_classification', value: { [m.key]: cellRaw(c, m) }, metricLabel: m.label });
 });
@@ -1723,6 +1776,7 @@ watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLay
 // Repaint the choropleth when real ACS income is toggled while the economic layer is showing.
 watch(incomeState, () => { if (civicOn.value && !siteMode.value && isEconomic.value) renderCivic(); });
 watch(crimeState, () => { if (civicOn.value && !siteMode.value && isSafety.value) renderCivic(); });
+watch(airState, () => { if (civicOn.value && !siteMode.value && isEnvironment.value) renderCivic(); });
 
 function updateMapMarker() {
   if (!map || !marker) return;

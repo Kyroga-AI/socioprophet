@@ -99,9 +99,12 @@ function h3Anchor(cellId: string, lon: number, lat: number, observedAt: string):
 }
 
 // A real, admitted claim: e.g. ACS median income joined to a census tract.
+// `confidence`/`uncertaintyClass`/`uncertaintyNotes` default to a direct-measurement
+// profile; pass them to reflect e.g. a spatially-interpolated field.
 export function realWorldClaim(opts: {
   cellId: string; lon: number; lat: number; claimType: ClaimType;
   value: Record<string, unknown>; source: SourceEvidence; staleness?: StalenessClass;
+  confidence?: number; uncertaintyClass?: UncertaintyClass; uncertaintyNotes?: string;
 }): WorldClaim {
   const now = new Date().toISOString();
   const ev = opts.source;
@@ -111,7 +114,7 @@ export function realWorldClaim(opts: {
     source_evidence_refs: [ev.evidence_id], source_evidence: [ev],
     proposed_value: opts.value,
     temporal_validity: { valid_from: ev.temporal.observed_at, staleness_class: opts.staleness ?? 'recent' },
-    uncertainty: { confidence_score: 0.9, uncertainty_class: 'low', uncertainty_notes: 'Direct measurement from an official/open source.' },
+    uncertainty: { confidence_score: opts.confidence ?? 0.9, uncertainty_class: opts.uncertaintyClass ?? 'low', uncertainty_notes: opts.uncertaintyNotes ?? 'Direct measurement from an official/open source.' },
     policy_status: { status: 'admitted' },
     attribution: { primary_source_name: ev.attribution.source_name, license_refs: [ev.attribution.license_ref], attribution_texts: [ev.attribution.attribution_text] },
     provenance: { chain: [ev.source_type, 'gaia:world_claim_ingest'], runtime_ref: 'cockpit/map', created_at: now, content_hash: ev.content_hash },
@@ -158,6 +161,18 @@ export function nycCrimeEvidence(cellId: string, count: number): SourceEvidence 
     attribution: { source_name: 'NYC Open Data — NYPD Complaint Data (YTD)', license_ref: 'nyc:open-data-terms', attribution_text: `NYC Open Data, NYPD Complaint Data (Current YTD). ${count} reported incidents in this area.` },
     temporal: { observed_at: new Date().toISOString() },
     quality: { score: 0.85 },
+  };
+}
+
+// SourceEvidence for Open-Meteo air quality (CAMS reanalysis → GAIA 'weather_reanalysis').
+export function openMeteoAirEvidence(cellId: string): SourceEvidence {
+  return {
+    evidence_id: `ev:air:${cellId}`,
+    source_type: 'weather_reanalysis',
+    source_ref: 'open-meteo://air-quality/us_aqi',
+    attribution: { source_name: 'Open-Meteo Air Quality (CAMS)', license_ref: 'open-meteo:cc-by-4.0', attribution_text: 'Air quality (US AQI) from Open-Meteo, based on the CAMS reanalysis.' },
+    temporal: { observed_at: new Date().toISOString() },
+    quality: { score: 0.75 },
   };
 }
 
