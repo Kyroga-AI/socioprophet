@@ -408,6 +408,7 @@
             <div class="mapx-ap-score-l">
               <b>{{ selectedSite.label }}</b> suitability
               <span class="mapx-ap-rank">rank #{{ selectedSite.rank }} of {{ selectedSite.total }}</span>
+              <span v-if="poiState === 'live' && selectedSite.penalty > 0" class="mapx-ap-rank" style="color:#f0656a">−{{ selectedSite.penalty }} competition (density {{ selectedSite.density }})</span>
             </div>
           </div>
 
@@ -830,25 +831,26 @@ async function goLivePois() {
 // its nearest cell; 1 nearby competitor validates the market (no penalty), each
 // additional one saturates it (−5, capped −20). So "Go live" makes the ranking
 // react to actual on-the-ground competition, not just the fixture proxy.
-const competitorByCell = computed(() => {
+// Competition as a smooth distance-decay DENSITY field, not a hard per-cell count:
+// each competitor influences a cell by a Gaussian of the distance between them, so
+// a cluster next door still weighs on you. density ≈ effective nearby competitors.
+const COMP_SIGMA_KM = 0.4;
+const competitorDensity = computed(() => {
   const m = new Map<string, number>();
   if (poiState.value !== 'live' || !pois.value.length) return m;
-  const cells = gridFeatures.value;
-  for (const p of pois.value) {
-    let best = ''; let bd = Infinity;
-    for (const f of cells) {
-      const pr = f.properties as Record<string, number>;
-      const d = haversineKm(p.lon, p.lat, Number(pr.cLon), Number(pr.cLat));
-      if (d < bd) { bd = d; best = String(pr.id); }
-    }
-    if (best) m.set(best, (m.get(best) ?? 0) + 1);
+  for (const f of gridFeatures.value) {
+    const pr = f.properties as Record<string, number>;
+    const clon = Number(pr.cLon); const clat = Number(pr.cLat);
+    let dens = 0;
+    for (const p of pois.value) { const d = haversineKm(clon, clat, p.lon, p.lat); dens += Math.exp(-((d / COMP_SIGMA_KM) ** 2)); }
+    m.set(String(pr.id), +dens.toFixed(3));
   }
   return m;
 });
-const competitionPenalty = (count: number) => (count <= 1 ? 0 : Math.min(20, (count - 1) * 5));
+const competitionPenalty = (density: number) => (density <= 1 ? 0 : Math.min(22, (density - 1) * 6));
 function siteScoreOf(props: Record<string, string | number>): number {
   const base = scoreCell(props, siteProfile.value);
-  return Math.max(0, Math.round(base - competitionPenalty(competitorByCell.value.get(String(props.id)) ?? 0)));
+  return Math.max(0, Math.round(base - competitionPenalty(competitorDensity.value.get(String(props.id)) ?? 0)));
 }
 const topAreas = computed(() =>
   gridFeatures.value
@@ -875,7 +877,8 @@ const selectedSite = computed(() => {
   const score = siteScoreOf(c);
   const sorted = gridFeatures.value.map((f) => siteScoreOf(f.properties as Record<string, number>)).sort((a, b) => b - a);
   const rank = sorted.findIndex((s) => s <= score) + 1;
-  return { score, rank, total: sorted.length, label: SITE_PROFILES.find((p) => p.id === siteProfile.value)?.label ?? '' };
+  const density = competitorDensity.value.get(String(c.id)) ?? 0;
+  return { score, rank, total: sorted.length, label: SITE_PROFILES.find((p) => p.id === siteProfile.value)?.label ?? '', density: +density.toFixed(1), penalty: Math.round(competitionPenalty(density)) };
 });
 // Top strengths / watch-outs across every domain metric.
 const areaHighlights = computed(() => {
@@ -1291,14 +1294,18 @@ function rebuildGrid() {
 }
 // Beauty: mute the basemap when data goes on top, so the choropleth reads clean.
 function muteBasemapForData() { if (basemap.value === 'streets') setBasemap('light'); }
+// The first time a data layer is shown, silently fetch the real street network so
+// the default land mask + foot traffic are correct — the static mask shows
+// instantly, then refines when Overpass responds (graceful if it doesn't).
+function ensureStreets() { if (streetsState.value === 'idle') void goLiveStreets(); }
 function toggleCivic() {
   civicOn.value = !civicOn.value;
   if (siteMode.value) return; // site overlay takes precedence
-  if (civicOn.value) { muteBasemapForData(); renderCivic(); } else { hideCivic(); hideFootTraffic(); }
+  if (civicOn.value) { muteBasemapForData(); renderCivic(); ensureStreets(); } else { hideCivic(); hideFootTraffic(); }
 }
 function toggleSite() {
   siteMode.value = !siteMode.value;
-  if (siteMode.value) { muteBasemapForData(); hideFootTraffic(); renderSite(); }
+  if (siteMode.value) { muteBasemapForData(); hideFootTraffic(); renderSite(); ensureStreets(); }
   else if (civicOn.value) renderCivic();
   else { hideCivic(); hideFootTraffic(); }
 }
