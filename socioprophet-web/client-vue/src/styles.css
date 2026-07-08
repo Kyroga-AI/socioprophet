@@ -70,6 +70,14 @@ a { color: inherit; }
   outline: 2px solid var(--info); outline-offset: 2px; border-radius: 6px;
 }
 :where(input, textarea, select):focus-visible { outline-offset: 0; }
+/* Low-specificity baseline: interactive controls ease their color/border/shadow changes instead of
+   snapping. Only timing is set — no appearance change — and bespoke transitions still win. Motion off
+   under reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  :where(button, a, summary, [role="button"], [role="tab"], [role="option"]) {
+    transition: background-color 0.13s ease, border-color 0.13s ease, color 0.13s ease, box-shadow 0.13s ease, opacity 0.13s ease;
+  }
+}
 code, pre, .mono { font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
 
 .sp-shell {
