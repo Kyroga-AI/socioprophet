@@ -94,6 +94,7 @@
               <button class="mapx-bm sm" :class="{ on: resAuto }" type="button" title="Hex size follows zoom" @click="resAuto = true">auto</button>
               <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: !resAuto && hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="setRes(r)">{{ r }}</button>
               <button class="mapx-bm sm" :class="{ on: gpuMode }" type="button" title="Render the hex choropleth on the GPU (deck.gl) — scales to 100k+ cells" @click="toggleGpu">⚡ GPU</button>
+              <button class="mapx-bm sm" type="button" title="Download every visible cell as a governed GAIA WorldClaim (GeoJSON + policy status, Ω grade, sources, fingerprint)" @click="exportViewClaims">⭳ Claims</button>
               <span class="mapx-cells-n">{{ gridFeatures.length }} cells</span>
             </div>
             <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live' && !viewTooWide, err: streetsState === 'error' || viewTooWide }" :disabled="streetsState === 'loading' || viewTooWide" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="refreshStreetsForView(true)">
@@ -635,6 +636,7 @@ import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import WorldClaimCard from '../components/WorldClaimCard.vue';
 import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, nycCrimeEvidence, openMeteoAirEvidence, femaFloodEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { crossDomainClaims, crossDomainPrompt, type DomainInput } from '../gaia/crossDomain';
+import { claimBundle, downloadClaimBundle } from '../gaia/exportClaims';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, isLand, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
 import { fetchPois, type Poi } from '../data/adapters/overpassLive';
@@ -1419,9 +1421,9 @@ function fmtCell(m: MetricDef): string {
 // The selected cell's active metric, expressed as a GAIA governed WorldClaim: real
 // ACS income → an ADMITTED claim (real evidence, low uncertainty); everything else →
 // a PROPOSED, display-advisory-only claim. Data as a governed claim, not a coloured cell.
-const selectedClaim = computed<WorldClaim | null>(() => {
-  const c = selectedCell.value; if (!c) return null;
-  const m = activeMetric.value;
+// Build the governed WorldClaim for one cell's active metric (real where a live
+// source covers it, illustrative otherwise). Shared by the inspector + the export.
+function buildCellClaim(c: Record<string, string | number>, m: MetricDef): WorldClaim {
   const cellId = String(c.id); const lon = Number(c.cLon); const lat = Number(c.cLat);
   if (m.key === 'medianIncome' && useRealIncome.value && censusIncomeByCell.value.has(cellId)) {
     return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { medianIncome: censusIncomeByCell.value.get(cellId) }, source: acsIncomeEvidence(cellId) });
@@ -1441,6 +1443,18 @@ const selectedClaim = computed<WorldClaim | null>(() => {
     return realWorldClaim({ cellId, lon, lat, claimType: 'risk', value: { floodRiskPct: floodByCell.value.get(cellId), femaZone: zone }, source: femaFloodEvidence(cellId, zone), confidence: 0.88, uncertaintyClass: 'low' });
   }
   return syntheticWorldClaim({ cellId, lon, lat, claimType: 'feature_classification', value: { [m.key]: cellRaw(c, m) }, metricLabel: m.label });
+}
+// Export every visible cell's governed WorldClaim for the active metric as a
+// self-describing GeoJSON bundle (policy status + Ω + sources + fingerprint).
+function exportViewClaims() {
+  const m = activeMetric.value;
+  const claims = gridFeatures.value.map((f) => buildCellClaim(f.properties as Record<string, string | number>, m));
+  if (!claims.length) return;
+  downloadClaimBundle(claimBundle(claims), `gaia-worldclaims-${m.key}-${Date.now()}.geojson`);
+}
+const selectedClaim = computed<WorldClaim | null>(() => {
+  const c = selectedCell.value; if (!c) return null;
+  return buildCellClaim(c, activeMetric.value);
 });
 const scoreColor = (s: number): string => (s >= 66 ? '#4bbf73' : s >= 40 ? '#e3b341' : '#f0656a');
 const cellOwnerPct = computed(() => Number(selectedCell.value?.reOwnerOccPct ?? 0));
