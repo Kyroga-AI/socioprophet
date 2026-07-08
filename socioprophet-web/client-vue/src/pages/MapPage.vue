@@ -95,8 +95,11 @@
               <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: !resAuto && hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="setRes(r)">{{ r }}</button>
               <button class="mapx-bm sm" :class="{ on: gpuMode }" type="button" title="Render the hex choropleth on the GPU (deck.gl) — scales to 100k+ cells" @click="toggleGpu">⚡ GPU</button>
               <button class="mapx-bm sm" type="button" title="Download every visible cell as a governed GAIA WorldClaim (GeoJSON + policy status, Ω grade, sources, fingerprint)" @click="exportViewClaims">⭳ Claims</button>
+              <button class="mapx-bm sm" type="button" title="Ingest a governed WorldClaim bundle (from the GAIA pipeline or a prior export) — verifies the content fingerprint" @click="ingestInput?.click()">⭱ Ingest</button>
+              <input ref="ingestInput" type="file" accept=".geojson,.json,application/geo+json,application/json" style="display:none" @change="onIngestFile" />
               <span class="mapx-cells-n">{{ gridFeatures.length }} cells</span>
             </div>
+            <p v-if="ingestStatus" class="mapx-land-hint" :class="{ ok: ingestOk }">{{ ingestStatus }}</p>
             <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live' && !viewTooWide, err: streetsState === 'error' || viewTooWide }" :disabled="streetsState === 'loading' || viewTooWide" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="refreshStreetsForView(true)">
               {{ viewTooWide ? '⤢ zoom in to load real land data' : streetsState === 'loading' ? '⟳ fetching streets…' : streetsState === 'live' ? '● On real streets & land' : streetsState === 'error' ? '⚠ streets unavailable — kept last' : '↻ Snap to real streets & land (live)' }}
             </button>
@@ -652,6 +655,8 @@ import WorldClaimCard from '../components/WorldClaimCard.vue';
 import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, nycCrimeEvidence, openMeteoAirEvidence, femaFloodEvidence, osmTransitEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { crossDomainClaims, crossDomainPrompt, type DomainInput } from '../gaia/crossDomain';
 import { claimBundle, downloadClaimBundle } from '../gaia/exportClaims';
+import { ingestClaimBundle, indexIngestedByCell } from '../gaia/claimStore';
+import type { ClaimFeature } from '../gaia/exportClaims';
 import { situationForArea } from '../features/situations/mapSituation';
 import { MEMBER_META } from '../features/situations/situations';
 import { prov } from '../features/provenance/types';
@@ -1505,6 +1510,26 @@ function exportViewClaims() {
   const claims = gridFeatures.value.map((f) => buildCellClaim(f.properties as Record<string, string | number>, m));
   if (!claims.length) return;
   downloadClaimBundle(claimBundle(claims), `gaia-worldclaims-${m.key}-${Date.now()}.geojson`);
+}
+// Ingestion pipe — read a governed claim bundle back in (GAIA pipeline output or a
+// prior export), verify its content fingerprint, and hold the admitted claims.
+const ingestInput = ref<HTMLInputElement | null>(null);
+const ingestStatus = ref('');
+const ingestOk = ref(false);
+const ingestedByCell = ref<Map<string, ClaimFeature>>(new Map());
+function onIngestFile(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const res = ingestClaimBundle(JSON.parse(String(reader.result)));
+      if (!res.ok) { ingestOk.value = false; ingestStatus.value = `⚠ Not a governed claim bundle — ${res.error}`; return; }
+      ingestedByCell.value = indexIngestedByCell(res);
+      ingestOk.value = res.fingerprintValid;
+      ingestStatus.value = `${res.fingerprintValid ? '● verified' : '⚠ FINGERPRINT MISMATCH — do not trust'} · ${res.count} claims, ${res.admitted} admitted, ${res.sources.length} sources`;
+    } catch { ingestOk.value = false; ingestStatus.value = '⚠ Could not parse the file as JSON'; }
+  };
+  reader.readAsText(file);
 }
 const selectedClaim = computed<WorldClaim | null>(() => {
   const c = selectedCell.value; if (!c) return null;
@@ -2461,6 +2486,7 @@ onUnmounted(() => {
 .mapx-cells-n { margin-left: auto; font-variant-numeric: tabular-nums; }
 .mapx-land { width: 100%; margin-top: 0.4rem; text-align: center; }
 .mapx-land-hint { margin: 0.3rem 0 0; font-size: var(--fs-eyebrow, 0.62rem); line-height: 1.4; color: var(--amber); }
+.mapx-land-hint.ok { color: var(--live); }
 .mapx-land.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
 .mapx-land.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; }
 .mapx-class { margin-top: 0.55rem; }
