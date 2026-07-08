@@ -212,6 +212,7 @@
               <div class="mapx-cell-grid">
                 <div v-for="m in activeGroup.metrics" :key="m.key" class="mapx-cell-kv"><span>{{ m.label }}</span><b>{{ fmtCell(m) }}</b></div>
               </div>
+              <WorldClaimCard v-if="selectedClaim" :claim="selectedClaim" />
               <template v-if="activeGroup.id === 'realestate'">
                 <div class="mapx-cell-mix" :title="`Owner-occupied ${cellOwnerPct}% · renters ${100 - cellOwnerPct}%`"><span class="mapx-cell-mix-own" :style="{ width: cellOwnerPct + '%' }" /></div>
                 <div class="mapx-cell-mixlabels"><span>owners {{ cellOwnerPct }}%</span><span>renters {{ 100 - cellOwnerPct }}%</span></div>
@@ -598,6 +599,8 @@ import LiveToggle from '../components/LiveToggle.vue';
 import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
+import WorldClaimCard from '../components/WorldClaimCard.vue';
+import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, isLand, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
 import { fetchPois, type Poi } from '../data/adapters/overpassLive';
@@ -1170,6 +1173,18 @@ function fmtCell(m: MetricDef): string {
   if (!selectedCell.value) return fmtVal(0, m);
   return fmtVal(cellRaw(selectedCell.value, m), m);
 }
+// The selected cell's active metric, expressed as a GAIA governed WorldClaim: real
+// ACS income → an ADMITTED claim (real evidence, low uncertainty); everything else →
+// a PROPOSED, display-advisory-only claim. Data as a governed claim, not a coloured cell.
+const selectedClaim = computed<WorldClaim | null>(() => {
+  const c = selectedCell.value; if (!c) return null;
+  const m = activeMetric.value;
+  const cellId = String(c.id); const lon = Number(c.cLon); const lat = Number(c.cLat);
+  if (m.key === 'medianIncome' && useRealIncome.value && censusIncomeByCell.value.has(cellId)) {
+    return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { medianIncome: censusIncomeByCell.value.get(cellId) }, source: acsIncomeEvidence(cellId) });
+  }
+  return syntheticWorldClaim({ cellId, lon, lat, claimType: 'feature_classification', value: { [m.key]: cellRaw(c, m) }, metricLabel: m.label });
+});
 const scoreColor = (s: number): string => (s >= 66 ? '#4bbf73' : s >= 40 ? '#e3b341' : '#f0656a');
 const cellOwnerPct = computed(() => Number(selectedCell.value?.reOwnerOccPct ?? 0));
 // A/B location compare — pin up to 3 areas and diff them side by side.
