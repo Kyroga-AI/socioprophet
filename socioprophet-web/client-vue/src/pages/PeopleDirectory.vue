@@ -36,7 +36,7 @@
           </div>
           <span class="pd-conf" :title="`resolution confidence ${(e.confidence * 100).toFixed(0)}%`">{{ (e.confidence * 100).toFixed(0) }}%</span>
         </button>
-        <p v-if="results.length === 0" class="pd-empty">No matches. Clear the search or pick a different type.</p>
+        <EmptyState v-if="results.length === 0" title="No matches" hint="Clear the search or pick a different entity type." />
         </div>
       </template>
 
@@ -170,6 +170,7 @@
 <script setup lang="ts">
 import SurfaceHeader from '../components/SurfaceHeader.vue';
 import LiveToggle from '../components/LiveToggle.vue';
+import EmptyState from '../components/EmptyState.vue';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import SplitPane from '../components/SplitPane.vue';
@@ -312,7 +313,6 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .pd-row-name { font-size: 0.86rem; font-weight: 600; } .pd-kind { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 0.35rem; }
 .pd-row-sub { font-size: 0.74rem; color: rgba(255, 255, 255, 0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .pd-row-loc { font-size: 0.68rem; color: rgba(255, 255, 255, 0.4); }
 .pd-conf { font-size: 0.72rem; font-variant-numeric: tabular-nums; color: rgba(255, 255, 255, 0.5); }
-.pd-empty { padding: 1.5rem; color: rgba(255, 255, 255, 0.45); font-size: 0.85rem; }
 
 .pd-profile { min-height: 0; overflow-y: auto; border: 1px solid var(--line-2); border-radius: 12px; padding: 1.1rem 1.2rem; }
 .pd-profile.empty { display: grid; place-items: center; color: rgba(255, 255, 255, 0.35); font-size: 0.85rem; }

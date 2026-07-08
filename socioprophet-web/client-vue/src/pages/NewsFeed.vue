@@ -47,7 +47,7 @@
 
       <!-- Lobsters stream -->
       <div ref="listEl" class="nf-list" :class="{ calendar: mode === 'calendar' }" aria-label="Stories">
-        <p v-if="items.length === 0" class="nf-empty">Nothing here — clear the filters or pick “All feeds”.</p>
+        <EmptyState v-if="items.length === 0" title="No stories match" hint="Clear the filters or pick “All feeds” to see the full stream." />
 
         <!-- Event Calendar lens (grouped by day) -->
         <template v-if="mode === 'calendar'">
@@ -229,6 +229,7 @@ import ExtractionPanel from '../components/ExtractionPanel.vue';
 import ClaimsPanel from '../components/ClaimsPanel.vue';
 import ReputationBadge from '../components/ReputationBadge.vue';
 import LiveToggle from '../components/LiveToggle.vue';
+import EmptyState from '../components/EmptyState.vue';
 
 // Bluesky (ATProto) is a first-class social source alongside the RSS/capture feeds.
 // Live Bluesky adapter — flip the Bluesky source from fixture to the real public
@@ -456,7 +457,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .nf-rail-hint { margin-top: auto; padding: 0.5rem; font-size: 0.64rem; color: rgba(255, 255, 255, 0.35); line-height: 1.5; }
 
 .nf-list { min-height: 0; overflow-y: auto; border: 1px solid var(--line-2); border-radius: 12px; }
-.nf-empty { padding: 1.5rem; color: rgba(255, 255, 255, 0.45); font-size: 0.85rem; }
 
 /* Lobsters story row */
 .nf-story { display: flex; gap: 0.7rem; padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--line); cursor: pointer; } .nf-story:hover { background: rgba(255, 255, 255, 0.03); } .nf-story.on { background: rgba(88, 166, 255, 0.1); box-shadow: inset 3px 0 0 #58a6ff; }
