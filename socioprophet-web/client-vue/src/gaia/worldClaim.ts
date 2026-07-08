@@ -148,6 +148,19 @@ export function syntheticWorldClaim(opts: {
   };
 }
 
+// SourceEvidence for real NYC Open Data (NYPD) reported incidents. Reported
+// incidents from an authority map onto GAIA's 'field_report' source type.
+export function nycCrimeEvidence(cellId: string, count: number): SourceEvidence {
+  return {
+    evidence_id: `ev:nypd:${cellId}`,
+    source_type: 'field_report',
+    source_ref: 'socrata://data.cityofnewyork.us/5uac-w243',
+    attribution: { source_name: 'NYC Open Data — NYPD Complaint Data (YTD)', license_ref: 'nyc:open-data-terms', attribution_text: `NYC Open Data, NYPD Complaint Data (Current YTD). ${count} reported incidents in this area.` },
+    temporal: { observed_at: new Date().toISOString() },
+    quality: { score: 0.85 },
+  };
+}
+
 // Convenience: SourceEvidence for the real ACS × TIGER census income join.
 export function acsIncomeEvidence(cellId: string, observedAt = '2023-01-01T00:00:00Z'): SourceEvidence {
   return {

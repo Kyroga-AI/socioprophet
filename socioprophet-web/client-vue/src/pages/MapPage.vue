@@ -173,6 +173,13 @@
               <span v-else-if="incomeState === 'error'" class="mapx-income-note err">⚠ census unreachable or no tracts for this view — kept illustrative</span>
             </div>
 
+            <!-- Public-Safety layer: swap synthetic crime for REAL NYPD reported incidents (NYC) -->
+            <div v-if="isSafety && !isFootTraffic && activeMetric.key === 'crimeRate'" class="mapx-income-real">
+              <LiveToggle :state="crimeState" label="Use real NYPD crime" live-text="Real NYPD crime" title="Pull real reported incidents for this view from NYC Open Data (NYPD complaints, no key) and bin them to these cells. Only the crime metric becomes real — NYC only." @click="goLiveCrime" />
+              <span v-if="useRealCrime" class="mapx-income-note">● {{ crimeMatched }} cells on real NYPD reported incidents · {{ crimePoints.length }} incidents in view</span>
+              <span v-else-if="crimeState === 'error'" class="mapx-income-note err">⚠ NYC Open Data unreachable or no incidents here — kept illustrative</span>
+            </div>
+
             <!-- Foot traffic: corridor network + time-of-day -->
             <div v-if="isFootTraffic" class="mapx-ft">
               <div class="mapx-ft-time">
@@ -603,7 +610,7 @@ import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import WorldClaimCard from '../components/WorldClaimCard.vue';
-import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, type WorldClaim } from '../gaia/worldClaim';
+import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, nycCrimeEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, isLand, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
 import { fetchPois, type Poi } from '../data/adapters/overpassLive';
@@ -614,6 +621,7 @@ import { fetchStreets } from '../data/adapters/streetsLive';
 import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
 import { prepTracts, tractIncomeAt } from '../data/censusJoin';
 import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
+import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
 import { latLngToCell, cellToLatLng } from 'h3-js';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
@@ -1048,6 +1056,36 @@ async function goLiveIncome() {
   if (civicOn.value && isEconomic.value) renderCivic();
 }
 const incomeMatched = computed(() => censusIncomeByCell.value.size);
+
+// ── Real reported crime for the Public-Safety layer ──────────────────────────
+// Opt-in: pull real NYPD complaint points (NYC Open Data) for the view and bin
+// them to hex cells → real reported-incident intensity replaces the synthetic
+// crime field. Only the crime metric becomes real; the rest of the grid stays
+// illustrative. Fails closed → stays on the fixture safety field.
+const crimeState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const crimePoints = ref<CrimePoint[]>([]);
+const isSafety = computed(() => activeGroup.value.id === 'safety');
+const useRealCrime = computed(() => crimeState.value === 'live' && crimePoints.value.length > 0);
+const crimeByCell = computed<Map<string, number>>(() => {
+  const m = new Map<string, number>();
+  if (!useRealCrime.value || gridType.value !== 'hex') return m;
+  for (const p of crimePoints.value) {
+    const cell = latLngToCell(p.lat, p.lon, hexRes.value);
+    m.set(cell, (m.get(cell) ?? 0) + 1);
+  }
+  return m;
+});
+async function goLiveCrime() {
+  if (!map || crimeState.value === 'loading') return;
+  if (crimeState.value === 'live') { crimeState.value = 'idle'; crimePoints.value = []; renderCivic(); return; } // back to synthetic
+  crimeState.value = 'loading';
+  const b = map.getBounds();
+  const r = await fetchCrime({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() });
+  if (!r) { crimeState.value = 'error'; return; }
+  crimePoints.value = r; crimeState.value = 'live';
+  if (civicOn.value && isSafety.value) renderCivic();
+}
+const crimeMatched = computed(() => crimeByCell.value.size);
 const topAreas = computed(() => {
   if (!siteMode.value) return []; // only the site panel consumes this — skip the score+sort otherwise
   return gridFeatures.value
@@ -1063,6 +1101,11 @@ const cellRaw = (c: Record<string, string | number>, m: MetricDef) => {
   if (m.key === 'medianIncome' && useRealIncome.value) {
     const real = censusIncomeByCell.value.get(String(c.id));
     if (real != null) return real;
+  }
+  // Prefer real NYPD reported-incident count when the crime join is live.
+  if (m.key === 'crimeRate' && useRealCrime.value) {
+    const n = crimeByCell.value.get(String(c.id));
+    if (n != null) return n;
   }
   return Number(c[m.key] ?? 0) * cellFactor(m.key);
 };
@@ -1133,18 +1176,22 @@ const isRealEstate = computed(() => activeGroup.value.id === 'realestate');
 const timeQ = ref(0); // quarters before "now"
 function tFeatures() {
   const m = activeMetric.value;
-  // Real ACS income overrides the synthetic value for the income choropleth.
-  const realIncome = useRealIncome.value && m.key === 'medianIncome' ? censusIncomeByCell.value : null;
+  // A real source overrides the synthetic value for the active metric's choropleth:
+  // ACS income (economic) or NYPD reported incidents (safety).
+  const realMap =
+    useRealIncome.value && m.key === 'medianIncome' ? censusIncomeByCell.value
+    : useRealCrime.value && m.key === 'crimeRate' ? crimeByCell.value
+    : null;
   const t = timeQ.value;
-  if (!realIncome && t === 0) return gridFeatures.value;
+  if (!realMap && t === 0) return gridFeatures.value;
   const dir = m.higherBetter ? 1 : -1;
   return gridFeatures.value.map((f) => {
     const p = f.properties as Record<string, number>;
-    const realInc = realIncome ? realIncome.get(String(p.id)) : undefined;
-    if (realInc == null && t === 0) return f;
-    // Real income wins and is NOT rewound — we don't fabricate history for real data.
-    let val = realInc != null ? realInc : Number(p[m.key] ?? 0);
-    if (t !== 0 && realInc == null) val = Math.max(m.min, Math.min(m.max, val * (1 - Number(p.momentum ?? 0) * dir * t)));
+    const real = realMap ? realMap.get(String(p.id)) : undefined;
+    if (real == null && t === 0) return f;
+    // Real values win and are NOT rewound — we don't fabricate history for real data.
+    let val = real != null ? real : Number(p[m.key] ?? 0);
+    if (t !== 0 && real == null) val = Math.max(m.min, Math.min(m.max, val * (1 - Number(p.momentum ?? 0) * dir * t)));
     return { ...f, properties: { ...p, [m.key]: val } };
   });
 }
@@ -1199,7 +1246,10 @@ function fmtCell(m: MetricDef): string {
   // Route through cellRaw so the compact inspector + Ask-Noetica show the SAME
   // value as the area profile — including real ACS income when the join is live.
   if (!selectedCell.value) return fmtVal(0, m);
-  return fmtVal(cellRaw(selectedCell.value, m), m);
+  const raw = cellRaw(selectedCell.value, m);
+  // Real crime is a reported-incident COUNT, not a "/1k" rate — label it honestly.
+  if (m.key === 'crimeRate' && useRealCrime.value && crimeByCell.value.has(String(selectedCell.value.id))) return `${raw} reported`;
+  return fmtVal(raw, m);
 }
 // The selected cell's active metric, expressed as a GAIA governed WorldClaim: real
 // ACS income → an ADMITTED claim (real evidence, low uncertainty); everything else →
@@ -1210,6 +1260,10 @@ const selectedClaim = computed<WorldClaim | null>(() => {
   const cellId = String(c.id); const lon = Number(c.cLon); const lat = Number(c.cLat);
   if (m.key === 'medianIncome' && useRealIncome.value && censusIncomeByCell.value.has(cellId)) {
     return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { medianIncome: censusIncomeByCell.value.get(cellId) }, source: acsIncomeEvidence(cellId) });
+  }
+  if (m.key === 'crimeRate' && useRealCrime.value && crimeByCell.value.has(cellId)) {
+    const n = crimeByCell.value.get(cellId)!;
+    return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { reportedIncidents: n }, source: nycCrimeEvidence(cellId, n) });
   }
   return syntheticWorldClaim({ cellId, lon, lat, claimType: 'feature_classification', value: { [m.key]: cellRaw(c, m) }, metricLabel: m.label });
 });
@@ -1668,6 +1722,7 @@ watch(siteProfile, () => { if (pois.value.length) { pois.value = []; clearPois()
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 // Repaint the choropleth when real ACS income is toggled while the economic layer is showing.
 watch(incomeState, () => { if (civicOn.value && !siteMode.value && isEconomic.value) renderCivic(); });
+watch(crimeState, () => { if (civicOn.value && !siteMode.value && isSafety.value) renderCivic(); });
 
 function updateMapMarker() {
   if (!map || !marker) return;
