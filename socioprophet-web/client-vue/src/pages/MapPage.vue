@@ -165,6 +165,13 @@
               <div class="mapx-legend-cap">{{ N_CLASSES }} classes · {{ classModeLabel }} breaks</div>
             </div>
 
+            <!-- Economic layer: swap synthetic income for REAL ACS median income -->
+            <div v-if="isEconomic && !isFootTraffic" class="mapx-income-real">
+              <LiveToggle :state="incomeState" label="Use real ACS income" live-text="Real ACS income" title="Join real US Census ACS median household income onto these cells by tract (public data, no key). Only the income metric becomes real — the rest of the grid stays illustrative." @click="goLiveIncome" />
+              <span v-if="useRealIncome" class="mapx-income-note">● {{ incomeMatched }} cells on real ACS median household income · areas outside tract coverage stay illustrative</span>
+              <span v-else-if="incomeState === 'error'" class="mapx-income-note err">⚠ census unreachable or no tracts for this view — kept illustrative</span>
+            </div>
+
             <!-- Foot traffic: corridor network + time-of-day -->
             <div v-if="isFootTraffic" class="mapx-ft">
               <div class="mapx-ft-time">
@@ -196,7 +203,7 @@
             </div>
 
             <label v-if="!isFootTraffic" class="mapx-opacity">Opacity <input v-model.number="civicOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
-            <p class="lookup-status">{{ isFootTraffic ? 'Foot traffic rides the real street network (corridor shapes are real OSM); busyness is an illustrative model. Scrub the hour: commercial strips peak at lunch & evening, transit at commute.' : activeGroup.blurb + ' Click a cell to inspect. Values are illustrative sample statistics (demo data), not a live feed.' }}</p>
+            <p class="lookup-status">{{ isFootTraffic ? 'Foot traffic rides the real street network (corridor shapes are real OSM); busyness is an illustrative model. Scrub the hour: commercial strips peak at lunch & evening, transit at commute.' : activeGroup.blurb + civicBlurbTail }}</p>
 
             <!-- Cell inspector — click-to-analyze a single area -->
             <div v-if="selectedCell" class="mapx-cell">
@@ -586,6 +593,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import maplibregl from 'maplibre-gl';
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import RuntimeAdapterStatusBadge from '../components/RuntimeAdapterStatusBadge.vue';
+import LiveToggle from '../components/LiveToggle.vue';
 import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
@@ -597,6 +605,7 @@ import { minOf, maxOf } from '../utils/arrayMath';
 import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL, type FtNetwork } from '../data/footTrafficFixture';
 import { fetchStreets } from '../data/adapters/streetsLive';
 import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
+import { prepTracts, tractIncomeAt } from '../data/censusJoin';
 import { latLngToCell, cellToLatLng } from 'h3-js';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
@@ -937,11 +946,19 @@ function renderCensus() {
   else map.addLayer({ id: 'census-fill', type: 'fill', source: 'census', paint: { 'fill-color': color, 'fill-opacity': 0.7, 'fill-outline-color': 'rgba(10,12,16,0.5)' } });
 }
 function hideCensus() { if (map?.getLayer('census-fill')) map.setLayoutProperty('census-fill', 'visibility', 'none'); }
+// Fetch the real ACS/TIGER tracts once and cache them; both the census overlay and
+// the economic-income enrichment share this data (fetch it at most once).
+async function loadCensusData(): Promise<boolean> {
+  if (censusFC.value) return true;
+  const r = await fetchCensus();
+  if (r) { censusFC.value = r; return true; }
+  return false;
+}
 async function goLiveCensus() {
   if (censusState.value === 'loading') return;
   censusState.value = 'loading';
-  const r = await fetchCensus();
-  if (r) { censusFC.value = r; censusState.value = 'live'; muteBasemapForData(); hideCivic(); hideFootTraffic(); renderCensus(); }
+  const ok = await loadCensusData();
+  if (ok) { censusState.value = 'live'; muteBasemapForData(); hideCivic(); hideFootTraffic(); renderCensus(); }
   else censusState.value = 'error';
 }
 function toggleCensus() {
@@ -949,6 +966,44 @@ function toggleCensus() {
   if (censusOn.value) { if (censusFC.value) { muteBasemapForData(); hideCivic(); hideFootTraffic(); renderCensus(); } else void goLiveCensus(); }
   else { hideCensus(); if (siteMode.value) renderSite(); else if (civicOn.value) renderCivic(); }
 }
+
+// ── Real median income for the Economic layer ────────────────────────────────
+// Opt-in: pull real ACS income and join it onto the cells by point-in-polygon, so
+// the income choropleth + cell inspector show sourced data instead of the synthetic
+// field. Only the income metric becomes real; the rest of the grid stays illustrative.
+const incomeState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const isEconomic = computed(() => activeGroup.value.id === 'economic');
+const useRealIncome = computed(() => incomeState.value === 'live' && !!censusFC.value);
+const censusIncomeByCell = computed<Map<string, number>>(() => {
+  const m = new Map<string, number>();
+  if (!useRealIncome.value || !censusFC.value) return m;
+  const tracts = prepTracts(censusFC.value);
+  if (!tracts.length) return m;
+  for (const f of baseGrid.value.features) {
+    const p = f.properties as Record<string, number | string>;
+    const inc = tractIncomeAt(Number(p.cLon), Number(p.cLat), tracts);
+    if (inc > 0) m.set(String(p.id), inc);
+  }
+  return m;
+});
+async function goLiveIncome() {
+  if (incomeState.value === 'loading') return;
+  if (incomeState.value === 'live') { incomeState.value = 'idle'; renderCivic(); return; } // toggle back to synthetic
+  incomeState.value = 'loading';
+  const ok = await loadCensusData();
+  if (!ok || !censusFC.value) { incomeState.value = 'error'; return; }
+  // Confirm the join actually lands on our cells (right county / extent) before claiming live.
+  const tracts = prepTracts(censusFC.value);
+  let matched = 0;
+  for (const f of baseGrid.value.features) {
+    const p = f.properties as Record<string, number | string>;
+    if (tractIncomeAt(Number(p.cLon), Number(p.cLat), tracts) > 0) { matched += 1; if (matched >= 3) break; }
+  }
+  if (matched === 0) { incomeState.value = 'error'; return; }
+  incomeState.value = 'live';
+  if (civicOn.value && isEconomic.value) renderCivic();
+}
+const incomeMatched = computed(() => censusIncomeByCell.value.size);
 const topAreas = computed(() =>
   gridFeatures.value
     .map((f) => ({ props: f.properties as Record<string, number>, score: siteScoreOf(f.properties as Record<string, number>) }))
@@ -958,7 +1013,14 @@ const topAreas = computed(() =>
 // ── Area profile — real stats for a selected cell (replaces demo plumbing) ────
 const areaLabel = (c: Record<string, string | number>) => `Area ${String(c.id ?? '').replace('cell-', '')} · ${c.cLat}, ${c.cLon}`;
 const cellFactor = (key: string) => segFactor(reSegment.value, key); // 1 for non-real-estate keys
-const cellRaw = (c: Record<string, string | number>, m: MetricDef) => Number(c[m.key] ?? 0) * cellFactor(m.key);
+const cellRaw = (c: Record<string, string | number>, m: MetricDef) => {
+  // Prefer the real ACS income (absolute, unscaled) when the join is live.
+  if (m.key === 'medianIncome' && useRealIncome.value) {
+    const real = censusIncomeByCell.value.get(String(c.id));
+    if (real != null) return real;
+  }
+  return Number(c[m.key] ?? 0) * cellFactor(m.key);
+};
 // Normalized 0..1 goodness for a metric (higher-better aware), for bars + ranking.
 function cellGood(c: Record<string, string | number>, m: MetricDef): number {
   const lo = m.min * cellFactor(m.key);
@@ -1000,6 +1062,11 @@ const siteProv = computed(() => prov('fixture', {
 }));
 const activeGroup = computed(() => CIVIC_LAYERS.find((g) => g.id === civicGroupId.value) ?? CIVIC_LAYERS[0]!);
 const activeMetric = computed<MetricDef>(() => METRIC_BY_KEY[civicMetricKey.value] ?? activeGroup.value.metrics[0]!);
+// Honest provenance tail for the choropleth caption — real when ACS income is on.
+const civicBlurbTail = computed(() =>
+  useRealIncome.value && activeMetric.value.key === 'medianIncome'
+    ? ' Click a cell to inspect. Median income is REAL US Census ACS data; the other metrics stay illustrative.'
+    : ' Click a cell to inspect. Values are illustrative sample statistics (demo data), not a live feed.');
 const metricFactor = computed(() => (activeGroup.value.segmented ? segFactor(reSegment.value, activeMetric.value.key) : 1));
 const legendGradient = computed(() => `linear-gradient(90deg, ${activeMetric.value.ramp.map(([p, c]) => `${c} ${Math.round(p * 100)}%`).join(', ')})`);
 
@@ -1020,13 +1087,20 @@ const isRealEstate = computed(() => activeGroup.value.id === 'realestate');
 // metrics fall into the past where momentum is positive (gentrifying) and vice versa.
 const timeQ = ref(0); // quarters before "now"
 function tFeatures() {
-  if (timeQ.value === 0) return gridFeatures.value;
   const m = activeMetric.value;
+  // Real ACS income overrides the synthetic value for the income choropleth.
+  const realIncome = useRealIncome.value && m.key === 'medianIncome' ? censusIncomeByCell.value : null;
+  const t = timeQ.value;
+  if (!realIncome && t === 0) return gridFeatures.value;
   const dir = m.higherBetter ? 1 : -1;
   return gridFeatures.value.map((f) => {
     const p = f.properties as Record<string, number>;
-    const adj = Math.max(m.min, Math.min(m.max, Number(p[m.key] ?? 0) * (1 - Number(p.momentum ?? 0) * dir * timeQ.value)));
-    return { ...f, properties: { ...p, [m.key]: adj } };
+    const realInc = realIncome ? realIncome.get(String(p.id)) : undefined;
+    if (realInc == null && t === 0) return f;
+    // Real income wins and is NOT rewound — we don't fabricate history for real data.
+    let val = realInc != null ? realInc : Number(p[m.key] ?? 0);
+    if (t !== 0 && realInc == null) val = Math.max(m.min, Math.min(m.max, val * (1 - Number(p.momentum ?? 0) * dir * t)));
+    return { ...f, properties: { ...p, [m.key]: val } };
   });
 }
 const quarterLabel = (q: number) => (q === 0 ? 'now' : `−${q}Q (~${q * 3}mo ago)`);
@@ -1903,6 +1977,9 @@ onUnmounted(() => {
 .mapx-legend-ticks b { position: absolute; top: 0; transform: translateX(-50%); font-size: 0.5rem; font-weight: 600; color: var(--text-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .mapx-legend-ticks b::before { content: ''; position: absolute; top: -3px; left: 50%; width: 1px; height: 2px; background: var(--line-2); }
 .mapx-legend-cap { margin-top: 0.35rem; font-size: var(--fs-eyebrow, 0.62rem); letter-spacing: var(--ls-eyebrow, 0.1em); text-transform: uppercase; color: var(--text-3); }
+.mapx-income-real { display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; margin-top: 0.6rem; }
+.mapx-income-note { font-size: var(--fs-eyebrow, 0.62rem); line-height: 1.4; color: var(--live); }
+.mapx-income-note.err { color: var(--down); }
 /* Classification selector */
 /* Foot-traffic time-of-day control */
 .mapx-ft { margin-top: 0.2rem; }
