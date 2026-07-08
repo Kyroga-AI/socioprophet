@@ -16,6 +16,10 @@
   "dependencies": {
     "@carbon/styles": "^1.89.0",
     "@carbon/vue": "^3.0.27",
+    "@deck.gl/core": "9.3.6",
+    "@deck.gl/geo-layers": "9.3.6",
+    "@deck.gl/layers": "9.3.6",
+    "@deck.gl/mapbox": "9.3.6",
     "d3": "^7.9.0",
     "firebase": "10.14.1",
     "h3-js": "4.5.0",

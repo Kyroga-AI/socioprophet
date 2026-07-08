@@ -93,6 +93,7 @@
               <span>res</span>
               <button class="mapx-bm sm" :class="{ on: resAuto }" type="button" title="Hex size follows zoom" @click="resAuto = true">auto</button>
               <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: !resAuto && hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="setRes(r)">{{ r }}</button>
+              <button class="mapx-bm sm" :class="{ on: gpuMode }" type="button" title="Render the hex choropleth on the GPU (deck.gl) — scales to 100k+ cells" @click="toggleGpu">⚡ GPU</button>
               <span class="mapx-cells-n">{{ gridFeatures.length }} cells</span>
             </div>
             <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live' && !viewTooWide, err: streetsState === 'error' || viewTooWide }" :disabled="streetsState === 'loading' || viewTooWide" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="refreshStreetsForView(true)">
@@ -631,6 +632,8 @@ import { fetchCountyFips } from '../data/adapters/fipsLive';
 import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
 import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
 import { fetchAirQuality, type AirPoint } from '../data/adapters/airLive';
+import { renderDeckHexes, clearDeckHexes } from '../map/deckHexLayer';
+import { hexColorData } from '../map/deckHexColors';
 import { latLngToCell, cellToLatLng } from 'h3-js';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
@@ -725,6 +728,7 @@ const selectedListing = ref<Listing | null>(null);
 const gridType = ref<'hex' | 'square'>('hex');
 const hexRes = ref(8);
 const resAuto = ref(true); // hex size follows zoom for a consistent crisp screen-size
+const gpuMode = ref(false); // render the hex choropleth via deck.gl (GPU) for scale
 function resForZoom(z: number): number { return z >= 14.3 ? 9 : z >= 12.3 ? 8 : 7; }
 function setRes(r: number) { resAuto.value = false; hexRes.value = r; }
 // The grid follows the viewport (clamped so hex counts stay bounded). Field stays
@@ -1645,13 +1649,23 @@ function clearIso() {
 }
 function renderCivic() {
   hideCensus(); // one base data layer at a time — census is its own overlay
-  if (isFootTraffic.value) { hideCivic(); renderFootTraffic(); return; }
+  if (isFootTraffic.value) { hideCivic(); clearDeckHexes(); renderFootTraffic(); return; }
   hideFootTraffic();
-  if (bivariateOn.value && isRealEstate.value) { renderBivariate(); return; }
+  if (bivariateOn.value && isRealEstate.value) { clearDeckHexes(); renderBivariate(); return; }
+  // GPU path: render the choropleth as a deck.gl H3HexagonLayer (hex mode only) so
+  // it scales to 100k+ cells on the GPU. Same class colours as the MapLibre fill.
+  if (gpuMode.value && gridType.value === 'hex' && map) {
+    hideCivic();
+    const m = activeMetric.value; const f = metricFactor.value;
+    const cells = tFeatures().map((ft) => { const p = ft.properties as Record<string, number>; return { id: String(p.id), value: Number(p[m.key] ?? 0) * f }; });
+    renderDeckHexes(map, hexColorData(cells, classBreaks.value, classColorsFor(m), Math.round(civicOpacity.value * 255)), civicOpacity.value);
+    return;
+  }
+  clearDeckHexes();
   paintCivic({ type: 'FeatureCollection', features: tFeatures() } as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
 }
 function renderSite() {
-  hideCensus(); // one base data layer at a time
+  hideCensus(); clearDeckHexes(); // one base data layer at a time (site uses the MapLibre civic-fill)
   // Nothing to classify when the view is too wide (gridFeatures is empty) — bail
   // before Math over an empty array yields Infinity breaks and a broken step expr.
   if (!gridFeatures.value.length) { hideCivic(); return; }
@@ -1664,7 +1678,7 @@ function renderSite() {
   const cols = Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(SITE_RAMP, i / (N_CLASSES - 1)));
   paintCivic(scored as unknown as FillData, buildStepExpr(['get', 'siteScore'], br, cols) as never);
 }
-function hideCivic() { if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); }
+function hideCivic() { clearDeckHexes(); if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); }
 // Rebuild the tessellation (hex↔square, new H3 resolution, or a new viewport) and repaint.
 function rebuildGrid() {
   baseGrid.value = gridType.value === 'hex' ? civicHexGrid(hexRes.value, gridBox.value) : civicGrid(34, 34, gridBox.value);
@@ -1802,6 +1816,7 @@ watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLay
 watch(incomeState, () => { if (civicOn.value && !siteMode.value && isEconomic.value) renderCivic(); });
 watch(crimeState, () => { if (civicOn.value && !siteMode.value && isSafety.value) renderCivic(); });
 watch(airState, () => { if (civicOn.value && !siteMode.value && isEnvironment.value) renderCivic(); });
+function toggleGpu() { gpuMode.value = !gpuMode.value; if (civicOn.value && !siteMode.value) renderCivic(); }
 
 function updateMapMarker() {
   if (!map || !marker) return;
