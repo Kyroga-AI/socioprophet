@@ -753,7 +753,14 @@ const gridFeatures = computed(() => {
   const feats = baseGrid.value.features;
   if (viewTooWide.value) return [] as typeof feats; // too wide for a real land mask — hide rather than leak over water
   const ids = landCellIds.value;
-  return ids ? feats.filter((f) => ids.has(String((f.properties as Record<string, unknown>).id))) : feats;
+  if (ids) return feats.filter((f) => ids.has(String((f.properties as Record<string, unknown>).id)));
+  // No live streets yet (first load / fetch in flight): fall back to the coarse
+  // water-polygon mask so we never paint over major open water before streets arrive.
+  if (gridType.value === 'hex') return feats.filter((f) => {
+    const p = f.properties as Record<string, number>;
+    return isLand(Number(p.cLon), Number(p.cLat));
+  });
+  return feats;
 });
 const ftHour = ref(18);
 const ftWeekend = ref(false);
@@ -876,11 +883,15 @@ function renderPois() {
     poiMarkers.push(new maplibregl.Marker({ element: el }).setLngLat([p.lon, p.lat]).addTo(map));
   }
 }
+let poiReq = 0;
 async function goLivePois() {
   if (!map || poiState.value === 'loading') return;
   poiState.value = 'loading';
+  const req = ++poiReq;
+  const prof = siteProfile.value; // capture — a mid-flight profile switch must not fold A's competitors into B's scores
   const b = map.getBounds();
-  const r = await fetchPois({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() }, siteProfile.value);
+  const r = await fetchPois({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() }, prof);
+  if (req !== poiReq || prof !== siteProfile.value) return; // superseded by a newer fetch or a profile change — drop
   if (r) { pois.value = r; poiState.value = 'live'; renderPois(); if (siteMode.value) renderSite(); if (compHeatOn.value) renderCompHeat(); }
   else poiState.value = 'error';
 }
@@ -1379,6 +1390,7 @@ function renderBivariate() {
 // Foot traffic as a corridor network, weighted + colored by time-of-day intensity.
 function renderFootTraffic() {
   if (!map) return;
+  hideCensus(); // one base data layer at a time
   const feats = activeFtNet.value.features.map((s) => ({ ...s, properties: { ...s.properties, int: +(s.properties.base * footTrafficFactor(s.properties.kind, ftHour.value, ftWeekend.value)).toFixed(3) } }));
   const data = { type: 'FeatureCollection', features: feats } as unknown as FillData;
   const src = map.getSource('ft') as maplibregl.GeoJSONSource | undefined;
@@ -1495,10 +1507,14 @@ async function refreshStreetsForView(force = false) {
   if (viewTooWide.value) { streetsState.value = 'idle'; return; } // too big to fetch reliably — overlay hides with a zoom-in hint
   if (!force && streetsBox.value && boxCovers(streetsBox.value, gridBox.value)) return; // cached: already have streets covering this view
   streetsState.value = 'loading';
-  const b = { s: gridBox.value.minLat, w: gridBox.value.minLon, n: gridBox.value.maxLat, e: gridBox.value.maxLon };
-  const r = await fetchStreets(b);
-  if (r) { liveStreets.value = r.network; streetPoints.value = r.points; streetsBox.value = { ...gridBox.value }; streetsState.value = 'live'; rebuildGrid(); if (isFootTraffic.value && civicOn.value) renderFootTraffic(); }
-  else { streetsState.value = 'error'; } // KEEP the last-good streets — never revert to the leaky static mask
+  const box = { ...gridBox.value }; // the exact view we're fetching for — record it, don't read gridBox again at resolve
+  const r = await fetchStreets({ s: box.minLat, w: box.minLon, n: box.maxLat, e: box.maxLon });
+  if (r) {
+    liveStreets.value = r.network; streetPoints.value = r.points; streetsBox.value = box; streetsState.value = 'live';
+    rebuildGrid(); if (isFootTraffic.value && civicOn.value) renderFootTraffic();
+    // The viewport moved on while we were fetching → chase the current view (bounded by the coverage cache).
+    if (!boxCovers(box, gridBox.value)) void refreshStreetsForView();
+  } else { streetsState.value = 'error'; } // KEEP the last-good streets — never revert to the leaky static mask
 }
 // When the map settles after a zoom/pan, follow the viewport (debounced).
 let moveTimer: number | null = null;
@@ -1604,6 +1620,8 @@ watch(timeQ, () => { if (civicOn.value && !siteMode.value && !isFootTraffic.valu
 watch([isFootTraffic, siteMode, civicOn], ([ft, site, on]) => { if (ft || site || !on) stopTimePlay(); });
 watch(siteProfile, () => { if (pois.value.length) { pois.value = []; clearPois(); poiState.value = 'idle'; } if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
+// Repaint the choropleth when real ACS income is toggled while the economic layer is showing.
+watch(incomeState, () => { if (civicOn.value && !siteMode.value && isEconomic.value) renderCivic(); });
 
 function updateMapMarker() {
   if (!map || !marker) return;
