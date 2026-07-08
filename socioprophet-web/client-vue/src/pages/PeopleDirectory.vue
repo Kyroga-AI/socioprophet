@@ -315,7 +315,7 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .pd-conf { font-size: 0.72rem; font-variant-numeric: tabular-nums; color: rgba(255, 255, 255, 0.5); }
 
 .pd-profile { min-height: 0; overflow-y: auto; border: 1px solid var(--line-2); border-radius: 12px; padding: 1.1rem 1.2rem; }
-.pd-profile.empty { display: grid; place-items: center; color: rgba(255, 255, 255, 0.35); font-size: 0.85rem; }
+.pd-profile.empty { display: grid; place-items: center; color: var(--text-3); font-size: 0.85rem; }
 .pd-p-head { display: flex; align-items: center; gap: 0.9rem; }
 .pd-p-name { font-size: 1.25rem; font-weight: 700; } .pd-p-role { font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); margin-top: 0.15rem; } .pd-p-loc { font-size: 0.75rem; color: rgba(255, 255, 255, 0.45); }
 .pd-p-summary { margin: 0.9rem 0 0.6rem; font-size: 0.9rem; line-height: 1.6; color: rgba(255, 255, 255, 0.82); }

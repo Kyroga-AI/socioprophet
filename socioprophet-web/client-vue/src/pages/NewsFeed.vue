@@ -523,7 +523,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 
 /* Reader */
 .nf-reader { min-height: 0; overflow-y: auto; border: 1px solid var(--line-2); border-radius: 12px; padding: 1.1rem 1.25rem; }
-.nf-reader.empty { display: grid; place-items: center; color: rgba(255, 255, 255, 0.35); font-size: 0.85rem; }
+.nf-reader.empty { display: grid; place-items: center; color: var(--text-3); font-size: 0.85rem; }
 .nf-reader-meta { display: flex; align-items: center; gap: 0.6rem; font-size: 0.72rem; }
 .nf-reader-close { margin-left: auto; display: grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 8px; border: 1px solid var(--line-2); background: transparent; color: var(--text-2); font-size: 0.8rem; cursor: pointer; transition: background 0.12s ease, color 0.12s ease; }
 .nf-reader-close:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }

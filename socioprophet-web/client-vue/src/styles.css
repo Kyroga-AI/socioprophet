@@ -11,7 +11,7 @@
   --line-2: rgba(255, 255, 255, 0.13);
   --text: #edeef2;
   --text-2: rgba(237, 238, 242, 0.6);
-  --text-3: rgba(237, 238, 242, 0.34);
+  --text-3: rgba(237, 238, 242, 0.46);   /* muted caption text — raised from 0.34 to clear WCAG-ish contrast on the near-black bg */
   --accent: #d8a250;                       /* refined muted gold */
   --accent-2: #e7bd7e;
   --accent-soft: rgba(216, 162, 80, 0.14);
