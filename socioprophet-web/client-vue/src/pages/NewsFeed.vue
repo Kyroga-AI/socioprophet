@@ -7,7 +7,7 @@
           <p v-if="scope && !scope.isPrimary" class="nf-eyebrow">{{ scope.domain }}</p>
           <h1>{{ scope && !scope.isPrimary ? scope.label : 'News' }}</h1>
         </div>
-        <span class="nf-pill">fixture</span>
+        <span class="nf-pill" :class="{ live: liveState === 'live' }">{{ liveState === 'live' ? `live · ${liveItems.length}` : 'fixture' }}</span>
       </div>
       <div class="nf-tools">
         <label class="nf-search">
@@ -20,6 +20,9 @@
           <button role="tab" :class="{ on: sort === 'active' }" @click="sort = 'active'">Active</button>
         </div>
         <button class="nf-btn" :class="{ on: governedOnly }" title="Only items the membrane held / quarantined / rejected" @click="governedOnly = !governedOnly">Governed</button>
+        <button class="nf-btn nf-live" :class="{ on: liveState === 'live', err: liveState === 'error' }" :disabled="liveState === 'loading'" :title="liveState === 'live' ? 'Live Bluesky posts from the public AppView (real DIDs/CIDs)' : 'Pull real Bluesky posts from the public network — no key'" @click="goLive">
+          {{ liveState === 'loading' ? '⟳ live…' : liveState === 'live' ? '● Live' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
+        </button>
       </div>
     </header>
 
@@ -215,6 +218,7 @@ import { useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
 import { newsSources, newsItems } from '../data/newsFeedFixture';
 import { blueskySources, blueskyItems, blueskyMeta, type BskyPost } from '../data/blueskyFixture';
+import { fetchBlueskyLive, BSKY_LIVE_SOURCE } from '../data/adapters/blueskyLive';
 import type { FeedItem } from '../features/feed-intelligence/types';
 import {
   storyMeta, DOWNVOTE_REASONS, FLAG_REASONS,
@@ -227,18 +231,31 @@ import ClaimsPanel from '../components/ClaimsPanel.vue';
 import ReputationBadge from '../components/ReputationBadge.vue';
 
 // Bluesky (ATProto) is a first-class social source alongside the RSS/capture feeds.
-const sources = [...newsSources, ...blueskySources];
-const all = [...newsItems, ...blueskyItems];
+// Live Bluesky adapter — flip the Bluesky source from fixture to the real public
+// AppView feed (no key). Fails closed: on error we stay on fixture.
+const liveItems = ref<FeedItem[]>([]);
+const liveMeta = ref<Map<string, BskyPost>>(new Map());
+const liveState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+async function goLive() {
+  if (liveState.value === 'loading') return;
+  liveState.value = 'loading';
+  const r = await fetchBlueskyLive();
+  if (r && r.items.length) { liveItems.value = r.items; liveMeta.value = r.meta; liveState.value = 'live'; }
+  else liveState.value = 'error';
+}
+const sources = computed(() => (liveItems.value.length ? [...newsSources, ...blueskySources, BSKY_LIVE_SOURCE] : [...newsSources, ...blueskySources]));
+const all = computed(() => [...newsItems, ...blueskyItems, ...liveItems.value]);
 const research = useResearch();
 const cockpit = useCockpit();
 const route = useRoute();
-const bskyOf = (it: FeedItem): BskyPost | undefined => blueskyMeta.get(it.id);
+const bskyOf = (it: FeedItem): BskyPost | undefined => blueskyMeta.get(it.id) ?? liveMeta.value.get(it.id);
 const initials = (name: string): string => name.split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join('');
 // A thread = its root post + every reply pointing at that root (Live-rail context).
 function threadFor(p: BskyPost): BskyPost[] {
   const rootUri = p.threadUri ?? p.uri;
-  const root = [...blueskyMeta.values()].find((x) => x.uri === rootUri);
-  const replies = [...blueskyMeta.values()].filter((x) => x.threadUri === rootUri);
+  const pool = [...blueskyMeta.values(), ...liveMeta.value.values()];
+  const root = pool.find((x) => x.uri === rootUri);
+  const replies = pool.filter((x) => x.threadUri === rootUri);
   return [...(root ? [root] : []), ...replies];
 }
 function askNoeticaNews() {
@@ -249,8 +266,8 @@ function askNoeticaNews() {
 }
 
 // Precompute the derived community layer once (deterministic per id).
-const META = new Map(all.map((it) => [it.id, storyMeta(it)] as const));
-const metaOf = (it: FeedItem) => META.get(it.id)!;
+const META = computed(() => new Map(all.value.map((it) => [it.id, storyMeta(it)] as const)));
+const metaOf = (it: FeedItem) => META.value.get(it.id)!;
 
 const activeSourceId = ref<'all' | string>('all');
 const activeTag = ref<string>('');
@@ -273,7 +290,7 @@ const mode = computed<'feed' | 'calendar'>(() => (route.path.endsWith('/calendar
 const scoreOf = (it: FeedItem) => metaOf(it).score + (upvoted.value.has(it.id) ? 1 : 0);
 
 const items = computed<FeedItem[]>(() => {
-  let list = all;
+  let list = all.value;
   if (activeSourceId.value !== 'all') list = list.filter((i) => i.sourceId === activeSourceId.value);
   if (activeTag.value) list = list.filter((i) => metaOf(i).tags.includes(activeTag.value));
   if (governedOnly.value) list = list.filter((i) => i.membraneDecision !== 'admit');
@@ -293,15 +310,15 @@ const items = computed<FeedItem[]>(() => {
   return s;
 });
 const readerClosed = ref(false);
-const selected = computed<FeedItem | undefined>(() => (readerClosed.value ? undefined : (all.find((i) => i.id === selectedId.value) ?? items.value[0])));
+const selected = computed<FeedItem | undefined>(() => (readerClosed.value ? undefined : (all.value.find((i) => i.id === selectedId.value) ?? items.value[0])));
 
-const sourceById = new Map(sources.map((s) => [s.id, s]));
-const sourceOf = (it: FeedItem) => sourceById.get(it.sourceId);
-const countFor = (sid: string) => all.filter((i) => i.sourceId === sid).length;
+const sourceById = computed(() => new Map(sources.value.map((s) => [s.id, s])));
+const sourceOf = (it: FeedItem) => sourceById.value.get(it.sourceId);
+const countFor = (sid: string) => all.value.filter((i) => i.sourceId === sid).length;
 
 const topTags = computed(() => {
   const c = new Map<string, number>();
-  for (const it of all) for (const t of metaOf(it).tags) c.set(t, (c.get(t) ?? 0) + 1);
+  for (const it of all.value) for (const t of metaOf(it).tags) c.set(t, (c.get(t) ?? 0) + 1);
   return [...c.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([t]) => t);
 });
 
@@ -393,7 +410,7 @@ watch(selected, (it) => {
 onMounted(() => {
   if (route.path.endsWith('/recent')) sort.value = 'newest';
   const deep = typeof route.query.item === 'string' ? route.query.item : '';
-  selectedId.value = (deep && all.some((i) => i.id === deep)) ? deep : (items.value[0]?.id ?? '');
+  selectedId.value = (deep && all.value.some((i) => i.id === deep)) ? deep : (items.value[0]?.id ?? '');
   window.addEventListener('keydown', onKey);
 });
 onUnmounted(() => window.removeEventListener('keydown', onKey));
@@ -405,6 +422,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .nf-title { display: flex; align-items: baseline; gap: 0.6rem; } .nf-title h1 { margin: 0; font-size: 1.3rem; }
 .nf-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
 .nf-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 5px; padding: 0.1rem 0.35rem; }
+.nf-pill.live { color: #4bbf73; background: rgba(75, 191, 115, 0.16); }
+.nf-live.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
+.nf-live.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; }
+.nf-btn:disabled { opacity: 0.6; cursor: default; }
 .nf-tools { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .nf-search { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid var(--line-2); border-radius: 8px; padding: 0.25rem 0.6rem; background: var(--surface-2); min-width: 15rem; }
 .nf-search:focus-within { border-color: #58a6ff; }
