@@ -252,6 +252,10 @@
               </button>
               <span v-if="poiState === 'live'" class="mapx-poi-n">{{ pois.length }} found<span v-if="isoOn && isoOrigin"> · <b>{{ poiReachCount }}</b> in reach</span> · <b>folded into scores</b></span>
             </div>
+            <label v-if="poiState === 'live'" class="mapx-switch mapx-switch--sm">
+              <input type="checkbox" :checked="compHeatOn" @change="toggleCompHeat" />
+              <span>Competition density heat</span>
+            </label>
             <div class="mapx-site-head"><ProvenanceBadge :p="siteProv" compact /><span>computed suitability · click an area to fly</span></div>
             <div class="mapx-site-legend">
               <span>worse</span>
@@ -824,7 +828,7 @@ async function goLivePois() {
   poiState.value = 'loading';
   const b = map.getBounds();
   const r = await fetchPois({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() }, siteProfile.value);
-  if (r) { pois.value = r; poiState.value = 'live'; renderPois(); if (siteMode.value) renderSite(); }
+  if (r) { pois.value = r; poiState.value = 'live'; renderPois(); if (siteMode.value) renderSite(); if (compHeatOn.value) renderCompHeat(); }
   else poiState.value = 'error';
 }
 // Fold REAL competitor density into the suitability score: assign each live POI to
@@ -852,6 +856,22 @@ function siteScoreOf(props: Record<string, string | number>): number {
   const base = scoreCell(props, siteProfile.value);
   return Math.max(0, Math.round(base - competitionPenalty(competitorDensity.value.get(String(props.id)) ?? 0)));
 }
+// Standalone competition-density heat overlay (independent of the metric layer).
+const compHeatOn = ref(false);
+function renderCompHeat() {
+  if (!map) return;
+  if (!compHeatOn.value || poiState.value !== 'live') { hideCompHeat(); return; }
+  const dens = competitorDensity.value;
+  const feats = gridFeatures.value.map((f) => ({ ...f, properties: { ...f.properties, dens: dens.get(String((f.properties as Record<string, unknown>).id)) ?? 0 } }));
+  const data = { type: 'FeatureCollection', features: feats } as unknown as FillData;
+  const src = map.getSource('comp') as maplibregl.GeoJSONSource | undefined;
+  if (src) src.setData(data); else map.addSource('comp', { type: 'geojson', data });
+  const color = ['interpolate', ['linear'], ['get', 'dens'], 0, 'rgba(0,0,0,0)', 0.3, '#1a9850', 1, '#fee08b', 3, '#fdae61', 6, '#d73027'] as never;
+  if (map.getLayer('comp-fill')) { map.setLayoutProperty('comp-fill', 'visibility', 'visible'); map.setPaintProperty('comp-fill', 'fill-color', color); }
+  else map.addLayer({ id: 'comp-fill', type: 'fill', source: 'comp', paint: { 'fill-color': color, 'fill-opacity': 0.55, 'fill-outline-color': 'rgba(255,255,255,0.15)' } });
+}
+function hideCompHeat() { if (map?.getLayer('comp-fill')) map.setLayoutProperty('comp-fill', 'visibility', 'none'); }
+function toggleCompHeat() { compHeatOn.value = !compHeatOn.value; renderCompHeat(); }
 const topAreas = computed(() =>
   gridFeatures.value
     .map((f) => ({ props: f.properties as Record<string, number>, score: siteScoreOf(f.properties as Record<string, number>) }))
