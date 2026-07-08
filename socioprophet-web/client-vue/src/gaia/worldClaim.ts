@@ -27,7 +27,7 @@ export interface GeoAnchor {
 export type GaiaSourceType =
   | 'osm' | 'eo_stac' | 'dem_lidar' | 'weather_reanalysis' | 'field_report'
   | 'generated_manifest' | 'sensor_observation' | 'synthetic_fixture'
-  | 'census_acs';
+  | 'census_acs' | 'fema_nfhl'; // last two are LOCAL extensions pending upstream (no gov-dataset type in v1)
 export const GAIA_V1_SOURCE_TYPES: readonly GaiaSourceType[] = [
   'osm', 'eo_stac', 'dem_lidar', 'weather_reanalysis', 'field_report', 'generated_manifest', 'sensor_observation', 'synthetic_fixture',
 ];
@@ -161,6 +161,18 @@ export function nycCrimeEvidence(cellId: string, count: number): SourceEvidence 
     attribution: { source_name: 'NYC Open Data — NYPD Complaint Data (YTD)', license_ref: 'nyc:open-data-terms', attribution_text: `NYC Open Data, NYPD Complaint Data (Current YTD). ${count} reported incidents in this area.` },
     temporal: { observed_at: new Date().toISOString() },
     quality: { score: 0.85 },
+  };
+}
+
+// SourceEvidence for FEMA National Flood Hazard Layer designations.
+export function femaFloodEvidence(cellId: string, zone: string): SourceEvidence {
+  return {
+    evidence_id: `ev:fema:${cellId}`,
+    source_type: 'fema_nfhl',
+    source_ref: 'fema-nfhl://flood-hazard-zones',
+    attribution: { source_name: 'FEMA National Flood Hazard Layer', license_ref: 'us-gov:public-domain', attribution_text: `FEMA NFHL flood-hazard zone ${zone || 'n/a'}.` },
+    temporal: { observed_at: new Date().toISOString() },
+    quality: { score: 0.88 },
   };
 }
 

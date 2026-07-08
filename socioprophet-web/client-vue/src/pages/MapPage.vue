@@ -195,6 +195,13 @@
               <span v-else-if="airState === 'error'" class="mapx-income-note err">⚠ Open-Meteo air unreachable — kept illustrative</span>
             </div>
 
+            <!-- Environment layer: swap synthetic flood risk for REAL FEMA flood zones (US) -->
+            <div v-if="isEnvironment && !isFootTraffic && activeMetric.key === 'floodRiskPct'" class="mapx-income-real">
+              <LiveToggle :state="floodState" label="Use real FEMA flood" live-text="Real FEMA flood" title="Pull real FEMA National Flood Hazard Layer zones for this view (no key) and assign each cell its flood-zone risk. US only." @click="goLiveFlood" />
+              <span v-if="useRealFlood" class="mapx-income-note">● {{ floodMatched }} cells on real FEMA flood-hazard zones · {{ floodZones.length }} zones in view</span>
+              <span v-else-if="floodState === 'error'" class="mapx-income-note err">⚠ FEMA NFHL unreachable or no zones here — kept illustrative</span>
+            </div>
+
             <!-- Foot traffic: corridor network + time-of-day -->
             <div v-if="isFootTraffic" class="mapx-ft">
               <div class="mapx-ft-time">
@@ -626,7 +633,7 @@ import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import WorldClaimCard from '../components/WorldClaimCard.vue';
-import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, nycCrimeEvidence, openMeteoAirEvidence, type WorldClaim } from '../gaia/worldClaim';
+import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, nycCrimeEvidence, openMeteoAirEvidence, femaFloodEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { crossDomainClaims, crossDomainPrompt, type DomainInput } from '../gaia/crossDomain';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, isLand, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
@@ -641,6 +648,7 @@ import { fetchCountyFips } from '../data/adapters/fipsLive';
 import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
 import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
 import { fetchAirQuality, type AirPoint } from '../data/adapters/airLive';
+import { fetchFloodZones, floodRiskAt, type FloodZone } from '../data/adapters/floodLive';
 import { renderDeckHexes, clearDeckHexes } from '../map/deckHexLayer';
 import { hexColorData } from '../map/deckHexColors';
 import { latLngToCell, cellToLatLng } from 'h3-js';
@@ -1199,6 +1207,32 @@ async function goLiveAir() {
   if (civicOn.value && isEnvironment.value) renderCivic();
 }
 const airSamples = computed(() => airPoints.value.length);
+
+// ── Real flood risk for the Environment layer (FEMA NFHL, US-wide) ───────────
+const floodState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const floodZones = ref<FloodZone[]>([]);
+const useRealFlood = computed(() => floodState.value === 'live' && floodZones.value.length > 0);
+const floodByCell = computed<Map<string, number>>(() => {
+  const m = new Map<string, number>();
+  if (!useRealFlood.value) return m;
+  for (const f of baseGrid.value.features) {
+    const p = f.properties as Record<string, number | string>;
+    const risk = floodRiskAt(Number(p.cLon), Number(p.cLat), floodZones.value);
+    if (risk >= 0) m.set(String(p.id), risk);
+  }
+  return m;
+});
+async function goLiveFlood() {
+  if (!map || floodState.value === 'loading') return;
+  if (floodState.value === 'live') { floodState.value = 'idle'; floodZones.value = []; renderCivic(); return; }
+  floodState.value = 'loading';
+  const b = map.getBounds();
+  const r = await fetchFloodZones({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() });
+  if (!r) { floodState.value = 'error'; return; }
+  floodZones.value = r; floodState.value = 'live';
+  if (civicOn.value && isEnvironment.value) renderCivic();
+}
+const floodMatched = computed(() => floodByCell.value.size);
 const topAreas = computed(() => {
   if (!siteMode.value) return []; // only the site panel consumes this — skip the score+sort otherwise
   return gridFeatures.value
@@ -1229,6 +1263,11 @@ const cellRaw = (c: Record<string, string | number>, m: MetricDef) => {
   if (m.key === 'population' && useRealPop.value) {
     const pop = censusPopByCell.value.get(String(c.id));
     if (pop != null) return pop;
+  }
+  // Prefer real FEMA flood risk when the flood join is live.
+  if (m.key === 'floodRiskPct' && useRealFlood.value) {
+    const fr = floodByCell.value.get(String(c.id));
+    if (fr != null) return fr;
   }
   return Number(c[m.key] ?? 0) * cellFactor(m.key);
 };
@@ -1306,6 +1345,7 @@ function tFeatures() {
     : useRealCrime.value && m.key === 'crimeRate' ? crimeByCell.value
     : useRealAir.value && m.key === 'airQualityAqi' ? airByCell.value
     : useRealPop.value && m.key === 'population' ? censusPopByCell.value
+    : useRealFlood.value && m.key === 'floodRiskPct' ? floodByCell.value
     : null;
   const t = timeQ.value;
   if (!realMap && t === 0) return gridFeatures.value;
@@ -1395,6 +1435,10 @@ const selectedClaim = computed<WorldClaim | null>(() => {
   }
   if (m.key === 'population' && useRealPop.value && censusPopByCell.value.has(cellId)) {
     return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { population: censusPopByCell.value.get(cellId) }, source: acsPopulationEvidence(cellId) });
+  }
+  if (m.key === 'floodRiskPct' && useRealFlood.value && floodByCell.value.has(cellId)) {
+    const zone = floodZones.value.find((z) => floodRiskAt(lon, lat, [z]) >= 0)?.zone ?? '';
+    return realWorldClaim({ cellId, lon, lat, claimType: 'risk', value: { floodRiskPct: floodByCell.value.get(cellId), femaZone: zone }, source: femaFloodEvidence(cellId, zone), confidence: 0.88, uncertaintyClass: 'low' });
   }
   return syntheticWorldClaim({ cellId, lon, lat, claimType: 'feature_classification', value: { [m.key]: cellRaw(c, m) }, metricLabel: m.label });
 });
@@ -1848,7 +1892,7 @@ function askAreaNoetica() {
 // THE cross-domain move: assemble a governed WorldClaim per domain for this area
 // (real where a live source covers the cell, illustrative otherwise) and ask Noetica
 // to reason across all of them with each fact's truth grade attached.
-const CROSS_DOMAIN_KEYS = ['medianIncome', 'population', 'crimeRate', 'airQualityAqi', 'walkScore', 'reMedianRent', 'greenSpacePct'];
+const CROSS_DOMAIN_KEYS = ['medianIncome', 'population', 'crimeRate', 'airQualityAqi', 'floodRiskPct', 'walkScore', 'reMedianRent', 'greenSpacePct'];
 const crossDomainInputs = computed<DomainInput[]>(() => {
   const c = selectedCell.value; if (!c) return [];
   const cellId = String(c.id);
@@ -1861,6 +1905,7 @@ const crossDomainInputs = computed<DomainInput[]>(() => {
     else if (key === 'crimeRate' && useRealCrime.value && crimeByCell.value.has(cellId)) { value = crimeByCell.value.get(cellId)!; real = { source: nycCrimeEvidence(cellId, value), confidence: 0.85, uncertaintyClass: 'low' }; }
     else if (key === 'airQualityAqi' && useRealAir.value && airByCell.value.has(cellId)) { value = airByCell.value.get(cellId)!; real = { source: openMeteoAirEvidence(cellId), confidence: 0.75, uncertaintyClass: 'moderate' }; }
     else if (key === 'population' && useRealPop.value && censusPopByCell.value.has(cellId)) { value = censusPopByCell.value.get(cellId)!; real = { source: acsPopulationEvidence(cellId), confidence: 0.9, uncertaintyClass: 'low' }; }
+    else if (key === 'floodRiskPct' && useRealFlood.value && floodByCell.value.has(cellId)) { value = floodByCell.value.get(cellId)!; real = { source: femaFloodEvidence(cellId, ''), confidence: 0.88, uncertaintyClass: 'low' }; }
     out.push({ key, label: def.label, value, format: (v) => fmtVal(v, def), real });
   }
   return out;
@@ -1903,6 +1948,7 @@ watch(incomeState, () => { if (civicOn.value && !siteMode.value && isEconomic.va
 watch(crimeState, () => { if (civicOn.value && !siteMode.value && isSafety.value) renderCivic(); });
 watch(airState, () => { if (civicOn.value && !siteMode.value && isEnvironment.value) renderCivic(); });
 watch(popState, () => { if (civicOn.value && !siteMode.value && isPeople.value) renderCivic(); });
+watch(floodState, () => { if (civicOn.value && !siteMode.value && isEnvironment.value) renderCivic(); });
 function toggleGpu() { gpuMode.value = !gpuMode.value; if (civicOn.value && !siteMode.value) renderCivic(); }
 
 function updateMapMarker() {
