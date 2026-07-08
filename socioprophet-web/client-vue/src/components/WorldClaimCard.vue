@@ -7,6 +7,14 @@
       <span class="wc-status">{{ statusLabel }}</span>
       <span class="wc-type">WorldClaim · {{ claim.claim_type.replace(/_/g, ' ') }}</span>
     </div>
+    <!-- Ontogenesis Ω ladder: where this datum sits on the governed path to truth. -->
+    <div class="wc-omega" :title="`Ontogenesis Ω ladder — ${conf.stepsToActionable} rung(s) to ACTIONABLE`">
+      <span class="wc-omega-k">Ω</span>
+      <span class="wc-omega-track">
+        <i v-for="r in OMEGA_LADDER" :key="r.id" class="wc-omega-rung" :class="{ on: r.notation <= conf.notation, here: r.notation === conf.notation }" />
+      </span>
+      <span class="wc-omega-v">{{ conf.omega }} · {{ conf.notation }}/6</span>
+    </div>
     <div class="wc-unc">
       <span class="wc-unc-label">confidence</span>
       <span class="wc-unc-bar"><i :style="{ width: Math.round(claim.uncertainty.confidence_score * 100) + '%' }" /></span>
@@ -25,7 +33,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { WorldClaim } from '../gaia/worldClaim';
+import { omegaConformance, OMEGA_LADDER } from '../ontology/ontogenesis';
 const props = defineProps<{ claim: WorldClaim }>();
+const conf = computed(() => omegaConformance(props.claim));
 const LABELS: Record<string, string> = { admitted: '◆ Admitted world state', provisional: '◐ Provisional', proposed: '○ Proposed (illustrative)', review: '⚠ Flagged for review', rejected: '✕ Rejected' };
 const statusLabel = computed(() => LABELS[props.claim.policy_status.status] ?? props.claim.policy_status.status);
 const advisory = computed(() => props.claim.map_display?.advisory_label || (props.claim.policy_status.constraints?.length ? props.claim.policy_status.constraints.join(' · ') : ''));
@@ -42,6 +52,14 @@ const advisory = computed(() => props.claim.map_display?.advisory_label || (prop
 .wc.proposed .wc-status, .wc.provisional .wc-status, .wc.review .wc-status { color: var(--amber); }
 .wc.rejected .wc-status { color: var(--down); }
 .wc-type { font-family: var(--mono, ui-monospace); font-size: 0.54rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+.wc-omega { display: flex; align-items: center; gap: 0.4rem; font-size: 0.6rem; color: var(--text-3); }
+.wc-omega-k { font-weight: 700; color: var(--text-2); }
+.wc-omega-track { flex: 1; display: flex; gap: 2px; }
+.wc-omega-rung { flex: 1; height: 5px; border-radius: 2px; background: rgba(255,255,255,0.1); }
+.wc-omega-rung.on { background: var(--amber); }
+.wc.admitted .wc-omega-rung.on { background: var(--live); }
+.wc-omega-rung.here { box-shadow: 0 0 0 1px var(--text); }
+.wc-omega-v { white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; text-transform: uppercase; }
 .wc-unc { display: flex; align-items: center; gap: 0.4rem; font-size: 0.6rem; color: var(--text-3); }
 .wc-unc-label { text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
 .wc-unc-bar { flex: 1; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.1); overflow: hidden; }
