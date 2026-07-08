@@ -242,6 +242,13 @@
             <div class="mapx-basemap mapx-groups mapx-profiles">
               <button v-for="p in SITE_PROFILES" :key="p.id" class="mapx-bm" :class="{ on: siteProfile === p.id }" type="button" @click="siteProfile = p.id">{{ p.icon }} {{ p.label }}</button>
             </div>
+            <!-- Live competitors from OpenStreetMap (real places of this type in view) -->
+            <div class="mapx-poi">
+              <button class="mapx-bm sm" :class="{ on: poiState === 'live', err: poiState === 'error' }" :disabled="poiState === 'loading'" type="button" :title="`Real ${profileLabel} locations from OpenStreetMap in the current view — the actual competitors`" @click="goLivePois">
+                {{ poiState === 'loading' ? '⟳ finding…' : poiState === 'error' ? '⚠ offline' : `↻ Real ${profileLabel.toLowerCase()} nearby (live)` }}
+              </button>
+              <span v-if="poiState === 'live'" class="mapx-poi-n">{{ pois.length }} found<span v-if="isoOn && isoOrigin"> · <b>{{ poiReachCount }}</b> in reach</span></span>
+            </div>
             <div class="mapx-site-head"><ProvenanceBadge :p="siteProv" compact /><span>computed suitability · click an area to fly</span></div>
             <div class="mapx-site-legend">
               <span>worse</span>
@@ -557,6 +564,7 @@ import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef, type CivicGrid } from '../data/healthMapFixture';
+import { fetchPois, type Poi } from '../data/adapters/overpassLive';
 import { breaksFor, quantileBreaks, classOf, sampleRamp, type ClassMode } from '../data/classify';
 import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL } from '../data/footTrafficFixture';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
@@ -748,6 +756,37 @@ function askIsoNoetica() {
   }
   const s = catchmentStats.value.map((x) => `${x.label} ${x.value} (${x.delta >= 0 ? '+' : ''}${x.delta}% vs city)`).join(', ');
   cockpit.askAbout(`Reachability catchment: within a ${isoMax.value}-min ${isoMode.value} of this point are ${isoSummary.value.population.toLocaleString()} people across ${isoSummary.value.cells} areas — ${s}. Is this a strong catchment for a new location, and what does the profile favor?`);
+}
+
+// Live POIs (OSM Overpass) — the real businesses of the active site-profile type in
+// view, and how many fall inside the isochrone catchment. Falls back silently.
+const poiState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const pois = ref<Poi[]>([]);
+let poiMarkers: maplibregl.Marker[] = [];
+const profileLabel = computed(() => SITE_PROFILES.find((p) => p.id === siteProfile.value)?.label ?? 'place');
+const poiReachCount = computed(() => {
+  if (!isoOrigin.value || !pois.value.length) return 0;
+  const reachKm = (isoMax.value / 60) * ISO_SPEED[isoMode.value] * 0.9; // straight-line approx of the band
+  return pois.value.filter((p) => haversineKm(isoOrigin.value!.lng, isoOrigin.value!.lat, p.lon, p.lat) <= reachKm).length;
+});
+function clearPois() { poiMarkers.forEach((m) => m.remove()); poiMarkers = []; }
+function renderPois() {
+  if (!map) return;
+  clearPois();
+  for (const p of pois.value) {
+    const el = document.createElement('div');
+    el.className = 'mapx-poi-mk';
+    el.title = `${p.name} · ${p.category}`;
+    poiMarkers.push(new maplibregl.Marker({ element: el }).setLngLat([p.lon, p.lat]).addTo(map));
+  }
+}
+async function goLivePois() {
+  if (!map || poiState.value === 'loading') return;
+  poiState.value = 'loading';
+  const b = map.getBounds();
+  const r = await fetchPois({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() }, siteProfile.value);
+  if (r) { pois.value = r; poiState.value = 'live'; renderPois(); }
+  else poiState.value = 'error';
 }
 const topAreas = computed(() =>
   baseGrid.value.features
@@ -1263,7 +1302,7 @@ watch(isFootTraffic, (on) => { if (!on) stopFtPlay(); });
 watch([isoMode, isoMax], () => { if (isoOn.value && isoOrigin.value) renderIso(); });
 watch(timeQ, () => { if (civicOn.value && !siteMode.value && !isFootTraffic.value) renderCivic(); });
 watch([isFootTraffic, siteMode, civicOn], ([ft, site, on]) => { if (ft || site || !on) stopTimePlay(); });
-watch(siteProfile, () => { if (siteMode.value) renderSite(); });
+watch(siteProfile, () => { if (siteMode.value) renderSite(); if (pois.value.length) { pois.value = []; clearPois(); poiState.value = 'idle'; } });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
 function updateMapMarker() {
@@ -1401,6 +1440,7 @@ onUnmounted(() => {
   stopTimePlay();
   isoMarker?.remove();
   isoMarkerB?.remove();
+  clearPois();
   window.removeEventListener('pointermove', onPanelMove);
   window.removeEventListener('pointerup', endPanelResize);
   clearEvents();
@@ -1545,6 +1585,11 @@ onUnmounted(() => {
 
 /* Site selection */
 .mapx-profiles .mapx-bm { flex: 1 1 100%; text-align: left; }
+/* Live POIs (real competitors) */
+.mapx-poi { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+.mapx-poi .mapx-bm.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; }
+.mapx-poi-n { font-size: 0.68rem; color: var(--text-2); } .mapx-poi-n b { color: #4bbf73; }
+:deep(.mapx-poi-mk) { width: 11px; height: 11px; border-radius: 50%; background: #ff6b3d; border: 1.5px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); cursor: pointer; }
 .mapx-site-head { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; font-size: 0.66rem; color: var(--text-3); }
 .mapx-site-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.45rem; font-size: 0.6rem; color: var(--text-3); }
 .mapx-site-bar { flex: 1; height: 8px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.14); background: linear-gradient(90deg, #d73027, #fc8d59, #fee08b, #91cf60, #1a9850); }
