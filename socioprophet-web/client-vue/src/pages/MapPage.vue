@@ -1007,6 +1007,7 @@ const censusFC = ref<CensusFC | null>(null);
 const censusState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
 function renderCensus() {
   if (!map || !censusFC.value) return;
+  hideBaseLayersExcept('census'); // one base data layer at a time
   const feats = censusFC.value.features.filter((f) => f.properties.medianIncome > 0);
   if (!feats.length) return;
   const incomes = feats.map((f) => f.properties.medianIncome);
@@ -1620,7 +1621,7 @@ function renderBivariate() {
 // Foot traffic as a corridor network, weighted + colored by time-of-day intensity.
 function renderFootTraffic() {
   if (!map) return;
-  hideCensus(); // one base data layer at a time
+  hideBaseLayersExcept('ft'); // one base data layer at a time
   const feats = activeFtNet.value.features.map((s) => ({ ...s, properties: { ...s.properties, int: +(s.properties.base * footTrafficFactor(s.properties.kind, ftHour.value, ftWeekend.value)).toFixed(3) } }));
   const data = { type: 'FeatureCollection', features: feats } as unknown as FillData;
   const src = map.getSource('ft') as maplibregl.GeoJSONSource | undefined;
@@ -1696,15 +1697,25 @@ function clearIso() {
   isoMarker?.remove(); isoMarker = null; isoMarkerB?.remove(); isoMarkerB = null;
   if (isoOn.value) armIso(compareOn.value ? 'a' : 'a');
 }
+// Single chokepoint for base-layer mutual exclusion — at most ONE of the base data
+// layers is visible at a time: civic-fill (incl. its deck.gl hex variant), census-fill,
+// or ft-line. Every base render routes through this so a future layer can't forget a
+// hide call (the desync the audit kept finding).
+function hideBaseLayersExcept(keep: 'civic' | 'census' | 'ft') {
+  if (!map) return;
+  if (keep !== 'civic') { if (map.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); clearDeckHexes(); }
+  if (keep !== 'census' && map.getLayer('census-fill')) map.setLayoutProperty('census-fill', 'visibility', 'none');
+  if (keep !== 'ft' && map.getLayer('ft-line')) map.setLayoutProperty('ft-line', 'visibility', 'none');
+}
+function hideCivicFill() { if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); } // MapLibre fill only, deck untouched
 function renderCivic() {
-  hideCensus(); // one base data layer at a time — census is its own overlay
-  if (isFootTraffic.value) { hideCivic(); clearDeckHexes(); renderFootTraffic(); return; }
-  hideFootTraffic();
+  if (isFootTraffic.value) { renderFootTraffic(); return; } // renderFootTraffic owns base exclusion
+  hideBaseLayersExcept('civic');
   if (bivariateOn.value && isRealEstate.value) { clearDeckHexes(); renderBivariate(); return; }
   // GPU path: render the choropleth as a deck.gl H3HexagonLayer (hex mode only) so
   // it scales to 100k+ cells on the GPU. Same class colours as the MapLibre fill.
   if (gpuMode.value && gridType.value === 'hex' && map) {
-    hideCivic();
+    hideCivicFill(); // deck hexes replace the MapLibre fill
     const m = activeMetric.value; const f = metricFactor.value;
     const cells = tFeatures().map((ft) => { const p = ft.properties as Record<string, number>; return { id: String(p.id), value: Number(p[m.key] ?? 0) * f }; });
     renderDeckHexes(map, hexColorData(cells, classBreaks.value, classColorsFor(m), Math.round(civicOpacity.value * 255)), civicOpacity.value);
@@ -1714,7 +1725,7 @@ function renderCivic() {
   paintCivic({ type: 'FeatureCollection', features: tFeatures() } as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
 }
 function renderSite() {
-  hideCensus(); clearDeckHexes(); // one base data layer at a time (site uses the MapLibre civic-fill)
+  hideBaseLayersExcept('civic'); clearDeckHexes(); // site uses the MapLibre civic-fill, not deck
   // Nothing to classify when the view is too wide (gridFeatures is empty) — bail
   // before Math over an empty array yields Infinity breaks and a broken step expr.
   if (!gridFeatures.value.length) { hideCivic(); return; }
