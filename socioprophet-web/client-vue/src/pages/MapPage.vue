@@ -256,6 +256,14 @@
               </div>
               <button class="mapx-ask mapx-ask-sm" type="button" @click="askAreaNoetica">◇ Ask Noetica about this area</button>
               <button class="mapx-ask mapx-ask-sm mapx-ask-cd" type="button" :title="`Reason across income, crime, air, walkability, rent & green space at once — ${crossDomainRealCount} of ${CROSS_DOMAIN_KEYS.length} governed as real for this area`" @click="crossDomainBrief">⬡ Brief across all domains<span class="mapx-cd-grade">{{ crossDomainRealCount }}/{{ CROSS_DOMAIN_KEYS.length }} real</span></button>
+              <!-- The n-ary moat: this area's cross-domain claims bound as ONE situation hyperedge -->
+              <div v-if="areaSituation" class="mapx-situation">
+                <div class="mapx-sit-h">⬡ Situation · <b>{{ areaSituation.members.length }}</b> members bound as one n-ary edge <span class="mapx-sit-conf">{{ Math.round(areaSituation.provenance.confidence * 100) }}% real</span></div>
+                <div class="mapx-sit-members">
+                  <span v-for="(mem, i) in areaSituation.members" :key="i" class="mapx-sit-mem" :style="{ color: MEMBER_META[mem.type].color, borderColor: MEMBER_META[mem.type].color }" :title="`${MEMBER_META[mem.type].label} · ${mem.role}`">{{ MEMBER_META[mem.type].icon }} {{ mem.label }}</span>
+                </div>
+                <p class="mapx-sit-note">One hyperedge, not {{ areaSituation.members.length - 1 }} disconnected links — the representation a binary graph can't hold.</p>
+              </div>
             </div>
           </template>
         </section>
@@ -637,6 +645,8 @@ import WorldClaimCard from '../components/WorldClaimCard.vue';
 import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, nycCrimeEvidence, openMeteoAirEvidence, femaFloodEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { crossDomainClaims, crossDomainPrompt, type DomainInput } from '../gaia/crossDomain';
 import { claimBundle, downloadClaimBundle } from '../gaia/exportClaims';
+import { situationForArea } from '../features/situations/mapSituation';
+import { MEMBER_META } from '../features/situations/situations';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, isLand, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
 import { fetchPois, type Poi } from '../data/adapters/overpassLive';
@@ -1925,6 +1935,12 @@ const crossDomainInputs = computed<DomainInput[]>(() => {
   return out;
 });
 const crossDomainRealCount = computed(() => crossDomainInputs.value.filter((i) => i.real).length);
+// The selected area's cross-domain claims bound into ONE n-ary Situation hyperedge.
+const areaSituation = computed(() => {
+  const c = selectedCell.value; if (!c) return null;
+  const claims = crossDomainClaims(String(c.id), Number(c.cLon), Number(c.cLat), crossDomainInputs.value);
+  return situationForArea(areaLabel(c), String(c.id), claims, { competitors: siteMode.value && poiState.value === 'live' ? pois.value.length : undefined });
+});
 function crossDomainBrief() {
   const c = selectedCell.value; if (!c) return;
   const claims = crossDomainClaims(String(c.id), Number(c.cLon), Number(c.cLat), crossDomainInputs.value);
@@ -2294,6 +2310,13 @@ onUnmounted(() => {
 .mapx-ask-sm { width: 100%; margin-top: 0.55rem; }
 .mapx-ask-cd { display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-color: var(--accent); background: var(--accent-soft); color: var(--accent-2); }
 .mapx-cd-grade { font-family: var(--mono, ui-monospace); font-size: 0.56rem; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid currentColor; border-radius: 999px; padding: 0.05rem 0.4rem; opacity: 0.85; }
+.mapx-situation { margin-top: 0.6rem; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface-2, #1b1e25); padding: 0.6rem 0.7rem; }
+.mapx-sit-h { font-size: 0.68rem; color: var(--text-2); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.mapx-sit-h b { color: var(--text); }
+.mapx-sit-conf { margin-left: auto; font-family: var(--mono, ui-monospace); font-size: 0.54rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--live); }
+.mapx-sit-members { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.5rem; }
+.mapx-sit-mem { font-size: 0.6rem; border: 1px solid; border-radius: 6px; padding: 0.1rem 0.4rem; opacity: 0.9; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.mapx-sit-note { margin: 0.5rem 0 0; font-size: var(--fs-eyebrow, 0.62rem); line-height: 1.4; color: var(--text-3); }
 .mapx-tools2 { margin-top: 0.5rem; }
 .mapx-cell-actions { margin-top: 0.5rem; }
 
