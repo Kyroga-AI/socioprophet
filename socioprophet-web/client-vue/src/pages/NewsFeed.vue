@@ -20,9 +20,7 @@
           <button role="tab" :class="{ on: sort === 'active' }" @click="sort = 'active'">Active</button>
         </div>
         <button class="nf-btn" :class="{ on: governedOnly }" title="Only items the membrane held / quarantined / rejected" @click="governedOnly = !governedOnly">Governed</button>
-        <button class="nf-btn nf-live" :class="{ on: liveState === 'live', err: liveState === 'error' }" :disabled="liveState === 'loading'" :title="liveState === 'live' ? 'Live Bluesky posts from the public AppView (real DIDs/CIDs)' : 'Pull real Bluesky posts from the public network — no key'" @click="goLive">
-          {{ liveState === 'loading' ? '⟳ live…' : liveState === 'live' ? '● Live' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
-        </button>
+        <LiveToggle :state="liveState" :title="liveState === 'live' ? 'Live Bluesky posts from the public AppView (real DIDs/CIDs)' : 'Pull real Bluesky posts from the public network — no key'" @click="goLive" />
       </div>
     </header>
 
@@ -230,6 +228,7 @@ import { useCockpit } from '../stores/cockpit';
 import ExtractionPanel from '../components/ExtractionPanel.vue';
 import ClaimsPanel from '../components/ClaimsPanel.vue';
 import ReputationBadge from '../components/ReputationBadge.vue';
+import LiveToggle from '../components/LiveToggle.vue';
 
 // Bluesky (ATProto) is a first-class social source alongside the RSS/capture feeds.
 // Live Bluesky adapter — flip the Bluesky source from fixture to the real public

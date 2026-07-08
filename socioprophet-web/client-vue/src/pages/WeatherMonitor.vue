@@ -10,9 +10,7 @@
         </form>
       </template>
       <template #actions>
-        <button class="wx-live" :class="{ on: liveState === 'live', err: liveState === 'error' }" :disabled="liveState === 'loading'" type="button" title="Real current conditions + 6-day forecast via Open-Meteo — free, no key" @click="goLive">
-          {{ liveState === 'loading' ? '⟳ live…' : liveState === 'live' ? '● Live' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
-        </button>
+        <LiveToggle :state="liveState" title="Real current conditions + 6-day forecast via Open-Meteo — free, no key" @click="goLive" />
         <div class="wx-asof">{{ liveState === 'live' ? 'Open-Meteo · now' : asOfLabel }}</div>
       </template>
     </SurfaceHeader>
@@ -96,6 +94,7 @@
 
 <script setup lang="ts">
 import SurfaceHeader from '../components/SurfaceHeader.vue';
+import LiveToggle from '../components/LiveToggle.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { regions, alerts, asOf, type Region, type Condition } from '../data/weatherFixture';

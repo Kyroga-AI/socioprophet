@@ -11,9 +11,7 @@
         </form>
       </template>
       <template #actions>
-        <button class="mk-live" :class="{ on: liveState === 'live', err: liveState === 'error' }" :disabled="liveState === 'loading'" type="button" title="Real crypto prices via CoinGecko — no key" @click="goLive">
-          {{ liveState === 'loading' ? '⟳ live…' : liveState === 'live' ? '● Live' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
-        </button>
+        <LiveToggle :state="liveState" title="Real crypto prices via CoinGecko — no key" @click="goLive" />
         <div class="mk-asof">{{ liveState === 'live' ? 'CoinGecko · now' : asOfLabel }}</div>
       </template>
     </SurfaceHeader>
@@ -151,6 +149,7 @@
 
 <script setup lang="ts">
 import SurfaceHeader from '../components/SurfaceHeader.vue';
+import LiveToggle from '../components/LiveToggle.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';

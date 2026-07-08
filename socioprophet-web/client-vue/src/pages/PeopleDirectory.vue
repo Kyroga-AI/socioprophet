@@ -12,9 +12,7 @@
         <div class="pd-kinds">
         <button v-for="k in kinds" :key="k" class="pd-kbtn" :class="{ on: kind === k }" @click="setKind(k)">{{ k }}</button>
         </div>
-        <button class="pd-kbtn pd-live" :class="{ on: liveState === 'live', err: liveState === 'error' }" :disabled="liveState === 'loading'" type="button" :title="`Resolve real people/orgs from Wikidata for your search — no key`" @click="goLive">
-          {{ liveState === 'loading' ? '⟳ …' : liveState === 'live' ? '● Live' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
-        </button>
+        <LiveToggle :state="liveState" title="Resolve real people/orgs from Wikidata for your search — no key" @click="goLive" />
       </template>
     </SurfaceHeader>
 
@@ -171,6 +169,7 @@
 
 <script setup lang="ts">
 import SurfaceHeader from '../components/SurfaceHeader.vue';
+import LiveToggle from '../components/LiveToggle.vue';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import SplitPane from '../components/SplitPane.vue';

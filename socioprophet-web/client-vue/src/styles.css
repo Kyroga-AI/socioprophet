@@ -17,6 +17,16 @@
   --accent-soft: rgba(216, 162, 80, 0.14);
   --up: #4bbf73;
   --down: #f0656a;
+  /* Semantic status/data colors — one source of truth (shared components use these). */
+  --info: #58a6ff;            /* info / links / selection */
+  --info-soft: rgba(88, 166, 255, 0.14);
+  --live: #4bbf73;            /* live-data on */
+  --live-soft: rgba(75, 191, 115, 0.16);
+  --ask: #93b4ff;             /* Ask Noetica / assistant */
+  --ask-soft: rgba(120, 160, 255, 0.1);
+  --amber: #e3b341;           /* fixture / pending / warning */
+  --violet: #a855f7;
+  --cyan: #22d3ee;
   --radius: 14px;
   --radius-sm: 10px;
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
