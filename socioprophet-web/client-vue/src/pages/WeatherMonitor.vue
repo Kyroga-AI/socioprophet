@@ -1,7 +1,7 @@
 <template>
   <section class="wx" aria-label="Weather monitor">
     <SurfaceHeader :title="scope?.label ?? 'Weather'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
-      <template #badge><span class="wx-pill">fixture</span></template>
+      <template #badge><span class="wx-pill" :class="{ live: liveState === 'live' }">{{ liveState === 'live' ? 'live' : 'fixture' }}</span></template>
       <template #search>
         <form class="term-cmd" @submit.prevent="runCmd">
         <span class="term-cmd-prompt">›</span>
@@ -10,13 +10,16 @@
         </form>
       </template>
       <template #actions>
-        <div class="wx-asof">{{ asOfLabel }}</div>
+        <button class="wx-live" :class="{ on: liveState === 'live', err: liveState === 'error' }" :disabled="liveState === 'loading'" type="button" title="Real current conditions + 6-day forecast via Open-Meteo — free, no key" @click="goLive">
+          {{ liveState === 'loading' ? '⟳ live…' : liveState === 'live' ? '● Live' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
+        </button>
+        <div class="wx-asof">{{ liveState === 'live' ? 'Open-Meteo · now' : asOfLabel }}</div>
       </template>
     </SurfaceHeader>
 
     <!-- Region tiles -->
     <div class="wx-tiles" aria-label="Regions" @keydown="arrowRove($event, $event.currentTarget, '.wx-tile', 'h')">
-      <button v-for="r in regions" :key="r.id" class="wx-tile" :class="{ on: selected.id === r.id }" @click="selected = r">
+      <button v-for="r in displayRegions" :key="r.id" class="wx-tile" :class="{ on: selected.id === r.id }" @click="selected = r">
         <div class="wx-tile-top"><span class="wx-glyph" :style="{ color: cm(r.cond).color }">{{ cm(r.cond).glyph }}</span><span class="wx-tile-name">{{ r.name }}</span></div>
         <div class="wx-tile-temp">{{ r.tempF }}°<span class="wx-chg" :class="r.changeF >= 0 ? 'up' : 'down'">{{ r.changeF >= 0 ? '+' : '' }}{{ r.changeF }}°</span></div>
         <div class="wx-tile-cond">{{ cm(r.cond).label }}</div>
@@ -96,12 +99,24 @@ import SurfaceHeader from '../components/SurfaceHeader.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { regions, alerts, asOf, type Region, type Condition } from '../data/weatherFixture';
+import { fetchWeatherLive } from '../data/adapters/weatherLive';
 import { nodesForWeatherRegion, chains } from '../data/supplyChainFixture';
 import { sparkPoints, areaPoints } from '../utils/sparkline';
 import { navScopeForPath } from '../config/cockpitNav';
 import { arrowRove } from '../utils/listKeys';
 
 const selected = ref<Region>(regions[0]!);
+// Live weather adapter — real conditions/forecast via Open-Meteo; falls back to fixture.
+const liveRegions = ref<Region[]>([]);
+const liveState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const displayRegions = computed(() => (liveRegions.value.length ? liveRegions.value : regions));
+async function goLive() {
+  if (liveState.value === 'loading') return;
+  liveState.value = 'loading';
+  const r = await fetchWeatherLive();
+  if (r && r.length) { liveRegions.value = r; liveState.value = 'live'; selected.value = r.find((x) => x.id === selected.value.id) ?? r[0]!; }
+  else liveState.value = 'error';
+}
 const cmd = ref('');
 const route = useRoute();
 const router = useRouter();
@@ -118,13 +133,13 @@ const regionAlerts = computed(() => alerts.filter((a) => a.regionId === selected
 const sev = { warning: 0, watch: 1, advisory: 2 } as const;
 const sortedAlerts = computed(() => [...alerts].sort((a, b) => (a.regionId === selected.value.id ? -1 : b.regionId === selected.value.id ? 1 : sev[a.severity] - sev[b.severity])));
 
-const byId = new Map(regions.map((r) => [r.id, r]));
-const regionName = (id: string) => byId.get(id)?.name ?? id;
-function jumpTo(id: string) { const r = byId.get(id); if (r) selected.value = r; }
+const byId = computed(() => new Map(displayRegions.value.map((r) => [r.id, r])));
+const regionName = (id: string) => byId.value.get(id)?.name ?? id;
+function jumpTo(id: string) { const r = byId.value.get(id); if (r) selected.value = r; }
 function runCmd() {
   const q = cmd.value.trim().toLowerCase();
   if (!q) return;
-  const hit = regions.find((r) => r.name.toLowerCase() === q) ?? regions.find((r) => r.name.toLowerCase().includes(q));
+  const hit = displayRegions.value.find((r) => r.name.toLowerCase() === q) ?? displayRegions.value.find((r) => r.name.toLowerCase().includes(q));
   if (hit) { selected.value = hit; cmd.value = ''; }
 }
 
@@ -146,7 +161,11 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .wx-title { display: flex; align-items: baseline; gap: 0.5rem; } .wx-title h1 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .wx-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
 .wx-pill { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 4px; padding: 0.08rem 0.3rem; }
-.wx-asof { margin-left: auto; font-size: 0.72rem; color: rgba(255, 255, 255, 0.4); }
+.wx-pill.live { color: #4bbf73; background: rgba(75, 191, 115, 0.16); }
+.wx-live { border: 1px solid var(--line-2); background: transparent; color: rgba(255, 255, 255, 0.72); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.74rem; cursor: pointer; }
+.wx-live.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
+.wx-live.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; } .wx-live:disabled { opacity: 0.6; cursor: default; }
+.wx-asof { font-size: 0.72rem; color: rgba(255, 255, 255, 0.4); }
 
 .wx-tiles { display: flex; gap: 0.6rem; overflow-x: auto; padding-bottom: 0.15rem; }
 .wx-tile { flex: 0 0 auto; width: 150px; text-align: left; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: inherit; padding: 0.55rem 0.7rem; cursor: pointer; display: grid; gap: 0.2rem; } .wx-tile:hover { border-color: rgba(255, 255, 255, 0.2); } .wx-tile.on { border-color: var(--accent); }
