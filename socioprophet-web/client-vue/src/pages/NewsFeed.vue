@@ -428,8 +428,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .nf-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .nf-title { display: flex; align-items: baseline; gap: 0.6rem; } .nf-title h1 { margin: 0; font-size: 1.3rem; }
 .nf-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
-.nf-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 5px; padding: 0.1rem 0.35rem; }
-.nf-pill.live { color: #4bbf73; background: rgba(75, 191, 115, 0.16); }
+.nf-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); background: var(--amber-soft); border-radius: 5px; padding: 0.1rem 0.35rem; }
+.nf-pill.live { color: var(--live); background: var(--live-soft); }
 .nf-live.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
 .nf-live.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; }
 .nf-btn:disabled { opacity: 0.6; cursor: default; }

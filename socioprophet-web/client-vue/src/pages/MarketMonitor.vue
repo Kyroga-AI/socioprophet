@@ -315,8 +315,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .mk-toolbar { display: flex; align-items: center; gap: 1rem; }
 .mk-title { display: flex; align-items: baseline; gap: 0.5rem; } .mk-title h1 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .mk-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
-.mk-pill { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 4px; padding: 0.08rem 0.3rem; }
-.mk-pill.live { color: #4bbf73; background: rgba(75, 191, 115, 0.16); }
+.mk-pill { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); background: var(--amber-soft); border-radius: 4px; padding: 0.08rem 0.3rem; }
+.mk-pill.live { color: var(--live); background: var(--live-soft); }
 .mk-live { border: 1px solid var(--line-2); background: transparent; color: rgba(255, 255, 255, 0.72); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.74rem; cursor: pointer; }
 .mk-live.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
 .mk-live.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; } .mk-live:disabled { opacity: 0.6; cursor: default; }

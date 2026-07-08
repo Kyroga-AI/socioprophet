@@ -37,12 +37,12 @@ const tier = computed(() => tierOf(props.p));
   line-height: 1.4;
 }
 .pv-glyph { font-size: 0.7rem; }
-/* Verdict colors */
-.pv.verified .pv-badge { color: #4bbf73; background: rgba(75, 191, 115, 0.1); }
-.pv.reasoned .pv-badge { color: #58a6ff; background: rgba(88, 166, 255, 0.1); }
-.pv.grounded .pv-badge { color: #2dd4bf; background: rgba(45, 212, 191, 0.1); }
-.pv.unassayed .pv-badge { color: #e3b341; background: rgba(227, 179, 65, 0.1); }
-.pv.unverified .pv-badge { color: #8b949e; background: rgba(139, 148, 158, 0.1); }
+/* Verdict colors — sourced from the shared semantic tokens (one source of truth). */
+.pv.verified .pv-badge { color: var(--live); background: rgba(75, 191, 115, 0.1); }
+.pv.reasoned .pv-badge { color: var(--info); background: rgba(88, 166, 255, 0.1); }
+.pv.grounded .pv-badge { color: var(--teal); background: rgba(45, 212, 191, 0.1); }
+.pv.unassayed .pv-badge { color: var(--amber); background: rgba(227, 179, 65, 0.1); }
+.pv.unverified .pv-badge { color: var(--neutral); background: rgba(139, 148, 158, 0.1); }
 
 /* Popover — revealed on hover/focus */
 .pv-pop {

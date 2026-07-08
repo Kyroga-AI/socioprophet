@@ -24,9 +24,12 @@
   --live-soft: rgba(75, 191, 115, 0.16);
   --ask: #93b4ff;             /* Ask Noetica / assistant */
   --ask-soft: rgba(120, 160, 255, 0.1);
-  --amber: #e3b341;           /* fixture / pending / warning */
+  --amber: #e3b341;           /* fixture / pending / warning / unassayed */
+  --amber-soft: rgba(227, 179, 65, 0.14);
   --violet: #a855f7;
   --cyan: #22d3ee;
+  --teal: #2dd4bf;            /* provenance: grounded */
+  --neutral: #8b949e;         /* provenance: unverified / no signal */
   /* Type scale — one modular ramp the shared scaffolding converges on. */
   --fs-eyebrow: 0.62rem;   /* uppercase kickers / captions */
   --fs-xs: 0.68rem;

@@ -159,8 +159,8 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .wx-toolbar { display: flex; align-items: center; gap: 1rem; }
 .wx-title { display: flex; align-items: baseline; gap: 0.5rem; } .wx-title h1 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .wx-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
-.wx-pill { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 4px; padding: 0.08rem 0.3rem; }
-.wx-pill.live { color: #4bbf73; background: rgba(75, 191, 115, 0.16); }
+.wx-pill { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); background: var(--amber-soft); border-radius: 4px; padding: 0.08rem 0.3rem; }
+.wx-pill.live { color: var(--live); background: var(--live-soft); }
 .wx-live { border: 1px solid var(--line-2); background: transparent; color: rgba(255, 255, 255, 0.72); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.74rem; cursor: pointer; }
 .wx-live.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
 .wx-live.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; } .wx-live:disabled { opacity: 0.6; cursor: default; }

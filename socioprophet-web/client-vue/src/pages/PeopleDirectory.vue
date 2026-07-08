@@ -293,8 +293,8 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .pd-toolbar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .pd-title { display: flex; align-items: baseline; gap: 0.6rem; } .pd-title h1 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .pd-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
-.pd-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 5px; padding: 0.1rem 0.35rem; }
-.pd-pill.live { color: #4bbf73; background: rgba(75, 191, 115, 0.16); }
+.pd-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); background: var(--amber-soft); border-radius: 5px; padding: 0.1rem 0.35rem; }
+.pd-pill.live { color: var(--live); background: var(--live-soft); }
 .pd-live.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
 .pd-live.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; } .pd-live:disabled { opacity: 0.6; cursor: default; } .pd-live { text-transform: none; }
 .pd-search { flex: 1 1 260px; display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); padding: 0.4rem 0.7rem; } .pd-search:focus-within { border-color: var(--accent); } .pd-search-ic { color: rgba(255, 255, 255, 0.4); }
