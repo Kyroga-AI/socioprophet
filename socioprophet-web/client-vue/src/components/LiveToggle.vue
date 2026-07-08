@@ -17,7 +17,7 @@ defineEmits<{ (e: 'click'): void }>();
 <style scoped>
 .lt {
   border: 1px solid var(--line-2); background: transparent; color: var(--text-2);
-  border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.74rem; cursor: pointer;
+  border-radius: 8px; padding: 0.3rem 0.6rem; font-size: var(--fs-sm, 0.78rem); cursor: pointer;
   white-space: nowrap; transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
 }
 .lt:hover:not(:disabled) { border-color: var(--live); color: var(--live); }

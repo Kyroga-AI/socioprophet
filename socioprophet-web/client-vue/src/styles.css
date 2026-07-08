@@ -27,6 +27,15 @@
   --amber: #e3b341;           /* fixture / pending / warning */
   --violet: #a855f7;
   --cyan: #22d3ee;
+  /* Type scale — one modular ramp the shared scaffolding converges on. */
+  --fs-eyebrow: 0.62rem;   /* uppercase kickers / captions */
+  --fs-xs: 0.68rem;
+  --fs-sm: 0.78rem;
+  --fs-base: 0.86rem;
+  --fs-md: 0.95rem;
+  --fs-lg: 1.05rem;
+  --fs-xl: 1.25rem;        /* surface title */
+  --ls-eyebrow: 0.1em;
   --radius: 14px;
   --radius-sm: 10px;
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);

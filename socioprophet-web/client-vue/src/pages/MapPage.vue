@@ -1873,7 +1873,7 @@ onUnmounted(() => {
 .mapx-legend-ticks { position: relative; display: block; height: 0.8rem; margin-top: 3px; }
 .mapx-legend-ticks b { position: absolute; top: 0; transform: translateX(-50%); font-size: 0.5rem; font-weight: 600; color: var(--text-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .mapx-legend-ticks b::before { content: ''; position: absolute; top: -3px; left: 50%; width: 1px; height: 2px; background: var(--line-2); }
-.mapx-legend-cap { margin-top: 0.35rem; font-size: 0.56rem; letter-spacing: 0.03em; text-transform: uppercase; color: var(--text-3); }
+.mapx-legend-cap { margin-top: 0.35rem; font-size: var(--fs-eyebrow, 0.62rem); letter-spacing: var(--ls-eyebrow, 0.1em); text-transform: uppercase; color: var(--text-3); }
 /* Classification selector */
 /* Foot-traffic time-of-day control */
 .mapx-ft { margin-top: 0.2rem; }

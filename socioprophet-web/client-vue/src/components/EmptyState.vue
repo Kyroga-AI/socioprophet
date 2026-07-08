@@ -15,7 +15,7 @@ defineProps<{ title: string; hint?: string; icon?: string }>();
 <style scoped>
 .es { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 2rem 1.25rem; text-align: center; color: var(--text-2, #a8a29e); }
 .es-icon { font-size: 1.8rem; opacity: 0.5; }
-.es-title { font-size: 0.95rem; font-weight: 600; color: var(--text, #ece9e3); }
-.es-hint { margin: 0; max-width: 26rem; font-size: 0.82rem; line-height: 1.55; color: var(--text-3, #78716c); }
+.es-title { font-size: var(--fs-md, 0.95rem); font-weight: 600; color: var(--text, #ece9e3); }
+.es-hint { margin: 0; max-width: 26rem; font-size: var(--fs-base, 0.86rem); line-height: 1.55; color: var(--text-3, #78716c); }
 .es-action { margin-top: 0.35rem; }
 </style>
