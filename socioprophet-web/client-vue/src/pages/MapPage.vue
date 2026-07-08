@@ -394,6 +394,7 @@
 
             <!-- Routed vs straight-line honesty indicator -->
             <p v-if="isoOrigin" class="mapx-iso-mode" :class="{ routed: isoRouted }">{{ isoRouted ? '● Routed on the real street network' : '◇ Straight-line estimate — load real streets to route' }}</p>
+            <p v-if="isoOrigin && tradeArea" class="mapx-iso-mode routed">◆ Drive-time trade area<span v-if="poiState === 'live'"> · {{ tradeArea.poisInside }} competitors inside</span></p>
 
             <!-- Single-point catchment -->
             <template v-if="!compareOn && isoOrigin">
@@ -681,6 +682,7 @@ import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
 import { prepTracts, tractIncomeAt, tractPopulationAt } from '../data/censusJoin';
 import { fetchCountyFips } from '../data/adapters/fipsLive';
 import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
+import { convexHull, hullToPolygon, pointInPolygon } from '../data/hull';
 import { fetchCrime, crimeCityForPoint, type CrimePoint } from '../data/adapters/crimeLive';
 import { fetchAirQuality, type AirPoint } from '../data/adapters/airLive';
 import { fetchFloodZones, floodRiskAt, floodInfoAt, type FloodZone } from '../data/adapters/floodLive';
@@ -913,6 +915,33 @@ function routedCellTimes(origin: { lng: number; lat: number } | null): Map<strin
 }
 // Whether the primary isochrone is routed on the real network (vs straight-line estimate).
 const isoRouted = computed(() => isoOrigin.value != null && routedCellTimes(isoOrigin.value) != null);
+// Drive-time TRADE AREA — the convex hull of the reachable street-graph nodes → an
+// actual catchment polygon (Placer/CoStar site-selection turf), plus how many real
+// competitors (live POIs) fall inside it. Only meaningful when routed (hex mode).
+const tradeArea = computed<{ poly: number[][][]; poisInside: number } | null>(() => {
+  const g = routeGraph.value; const o = isoOrigin.value;
+  if (!g || !o || gridType.value !== 'hex') return null;
+  const times = reachableMinutes(g, o.lng, o.lat, ISO_SPEED[isoMode.value], isoMax.value);
+  if (times.size < 3) return null;
+  const coords: Array<[number, number]> = [];
+  for (const k of times.keys()) { const n = g.nodes.get(k); if (n) coords.push([n[0], n[1]]); }
+  const poly = hullToPolygon(convexHull(coords));
+  if (!poly.length) return null;
+  const ring = poly[0] as Array<[number, number]>;
+  const poisInside = poiState.value === 'live' ? pois.value.filter((p) => pointInPolygon(p.lon, p.lat, ring)).length : 0;
+  return { poly, poisInside };
+});
+function renderTradeArea() {
+  if (!map) return;
+  const ta = tradeArea.value;
+  if (!ta) { hideTradeArea(); return; }
+  const data = { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: { type: 'Polygon', coordinates: ta.poly }, properties: {} }] } as unknown as FillData;
+  const src = map.getSource('trade-area') as maplibregl.GeoJSONSource | undefined;
+  if (src) src.setData(data); else map.addSource('trade-area', { type: 'geojson', data });
+  if (map.getLayer('trade-area-line')) map.setLayoutProperty('trade-area-line', 'visibility', 'visible');
+  else map.addLayer({ id: 'trade-area-line', type: 'line', source: 'trade-area', paint: { 'line-color': '#22d3ee', 'line-width': 2, 'line-dasharray': [2, 1] } });
+}
+function hideTradeArea() { if (map?.getLayer('trade-area-line')) map.setLayoutProperty('trade-area-line', 'visibility', 'none'); }
 function reachedFor(origin: { lng: number; lat: number } | null): Record<string, number>[] {
   if (!origin) return [];
   const routed = routedCellTimes(origin);
@@ -1859,8 +1888,9 @@ function renderIso() {
   paintIsoLayer(isoOrigin.value, 'iso', 'iso-fill', ISO_COLORS);
   if (compareOn.value) paintIsoLayer(isoOriginB.value, 'isoB', 'iso-fill-b', ISO_COLORS_B);
   else if (map?.getLayer('iso-fill-b')) map.setLayoutProperty('iso-fill-b', 'visibility', 'none');
+  renderTradeArea(); // routed drive-time catchment polygon on top of the bands
 }
-function hideIso() { for (const l of ['iso-fill', 'iso-fill-b']) if (map?.getLayer(l)) map.setLayoutProperty(l, 'visibility', 'none'); }
+function hideIso() { hideTradeArea(); for (const l of ['iso-fill', 'iso-fill-b']) if (map?.getLayer(l)) map.setLayoutProperty(l, 'visibility', 'none'); }
 function setIsoOrigin(lngLat: { lng: number; lat: number }) {
   const pt = { lng: +lngLat.lng.toFixed(5), lat: +lngLat.lat.toFixed(5) };
   if (compareOn.value && isoArmTarget.value === 'b') {
