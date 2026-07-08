@@ -196,6 +196,13 @@
               <span v-else-if="airState === 'error'" class="mapx-income-note err">⚠ Open-Meteo air unreachable — kept illustrative</span>
             </div>
 
+            <!-- Mobility layer: swap synthetic transit access for REAL OSM transit stops -->
+            <div v-if="isMobility && !isFootTraffic && activeMetric.key === 'transitAccessIdx'" class="mapx-income-real">
+              <LiveToggle :state="transitState" label="Use real transit stops" live-text="Real OSM transit" title="Pull real public-transit stops (stations, subway entrances, bus stops) for this view from OpenStreetMap (no key) and bin them to cells. Works anywhere." @click="goLiveTransit" />
+              <span v-if="useRealTransit" class="mapx-income-note">● {{ transitMatched }} cells on real OSM transit stops · {{ transitStops.length }} stops in view</span>
+              <span v-else-if="transitState === 'error'" class="mapx-income-note err">⚠ OSM Overpass unreachable or no stops here — kept illustrative</span>
+            </div>
+
             <!-- Environment layer: swap synthetic flood risk for REAL FEMA flood zones (US) -->
             <div v-if="isEnvironment && !isFootTraffic && activeMetric.key === 'floodRiskPct'" class="mapx-income-real">
               <LiveToggle :state="floodState" label="Use real FEMA flood" live-text="Real FEMA flood" title="Pull real FEMA National Flood Hazard Layer zones for this view (no key) and assign each cell its flood-zone risk. US only." @click="goLiveFlood" />
@@ -642,7 +649,7 @@ import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import WorldClaimCard from '../components/WorldClaimCard.vue';
-import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, nycCrimeEvidence, openMeteoAirEvidence, femaFloodEvidence, type WorldClaim } from '../gaia/worldClaim';
+import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, nycCrimeEvidence, openMeteoAirEvidence, femaFloodEvidence, osmTransitEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { crossDomainClaims, crossDomainPrompt, type DomainInput } from '../gaia/crossDomain';
 import { claimBundle, downloadClaimBundle } from '../gaia/exportClaims';
 import { situationForArea } from '../features/situations/mapSituation';
@@ -661,6 +668,7 @@ import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/rout
 import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
 import { fetchAirQuality, type AirPoint } from '../data/adapters/airLive';
 import { fetchFloodZones, floodRiskAt, type FloodZone } from '../data/adapters/floodLive';
+import { fetchTransitStops, type TransitStop } from '../data/adapters/transitLive';
 import { renderDeckHexes, clearDeckHexes } from '../map/deckHexLayer';
 import { hexColorData } from '../map/deckHexColors';
 import { latLngToCell, cellToLatLng } from 'h3-js';
@@ -1245,6 +1253,32 @@ async function goLiveFlood() {
   if (civicOn.value && isEnvironment.value) renderCivic();
 }
 const floodMatched = computed(() => floodByCell.value.size);
+
+// ── Real transit access for the Mobility layer (OSM Overpass, GLOBAL) ────────
+const transitState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const transitStops = ref<TransitStop[]>([]);
+const isMobility = computed(() => activeGroup.value.id === 'mobility');
+const useRealTransit = computed(() => transitState.value === 'live' && transitStops.value.length > 0);
+const transitByCell = computed<Map<string, number>>(() => {
+  const m = new Map<string, number>();
+  if (!useRealTransit.value || gridType.value !== 'hex') return m;
+  for (const s of transitStops.value) {
+    const cell = latLngToCell(s.lat, s.lon, hexRes.value);
+    m.set(cell, (m.get(cell) ?? 0) + 1);
+  }
+  return m;
+});
+async function goLiveTransit() {
+  if (!map || transitState.value === 'loading') return;
+  if (transitState.value === 'live') { transitState.value = 'idle'; transitStops.value = []; renderCivic(); return; }
+  transitState.value = 'loading';
+  const b = map.getBounds();
+  const r = await fetchTransitStops({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() });
+  if (!r) { transitState.value = 'error'; return; }
+  transitStops.value = r; transitState.value = 'live';
+  if (civicOn.value && isMobility.value) renderCivic();
+}
+const transitMatched = computed(() => transitByCell.value.size);
 const topAreas = computed(() => {
   if (!siteMode.value) return []; // only the site panel consumes this — skip the score+sort otherwise
   return gridFeatures.value
@@ -1280,6 +1314,11 @@ const cellRaw = (c: Record<string, string | number>, m: MetricDef) => {
   if (m.key === 'floodRiskPct' && useRealFlood.value) {
     const fr = floodByCell.value.get(String(c.id));
     if (fr != null) return fr;
+  }
+  // Prefer real OSM transit-stop count when the transit join is live.
+  if (m.key === 'transitAccessIdx' && useRealTransit.value) {
+    const t = transitByCell.value.get(String(c.id));
+    if (t != null) return t;
   }
   return Number(c[m.key] ?? 0) * cellFactor(m.key);
 };
@@ -1358,6 +1397,7 @@ function tFeatures() {
     : useRealAir.value && m.key === 'airQualityAqi' ? airByCell.value
     : useRealPop.value && m.key === 'population' ? censusPopByCell.value
     : useRealFlood.value && m.key === 'floodRiskPct' ? floodByCell.value
+    : useRealTransit.value && m.key === 'transitAccessIdx' ? transitByCell.value
     : null;
   const t = timeQ.value;
   if (!realMap && t === 0) return gridFeatures.value;
@@ -1451,6 +1491,10 @@ function buildCellClaim(c: Record<string, string | number>, m: MetricDef): World
   if (m.key === 'floodRiskPct' && useRealFlood.value && floodByCell.value.has(cellId)) {
     const zone = floodZones.value.find((z) => floodRiskAt(lon, lat, [z]) >= 0)?.zone ?? '';
     return realWorldClaim({ cellId, lon, lat, claimType: 'risk', value: { floodRiskPct: floodByCell.value.get(cellId), femaZone: zone }, source: femaFloodEvidence(cellId, zone), confidence: 0.88, uncertaintyClass: 'low' });
+  }
+  if (m.key === 'transitAccessIdx' && useRealTransit.value && transitByCell.value.has(cellId)) {
+    const n = transitByCell.value.get(cellId)!;
+    return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { transitStops: n }, source: osmTransitEvidence(cellId, n), confidence: 0.8, uncertaintyClass: 'low' });
   }
   return syntheticWorldClaim({ cellId, lon, lat, claimType: 'feature_classification', value: { [m.key]: cellRaw(c, m) }, metricLabel: m.label });
 }
@@ -1916,7 +1960,7 @@ function askAreaNoetica() {
 // THE cross-domain move: assemble a governed WorldClaim per domain for this area
 // (real where a live source covers the cell, illustrative otherwise) and ask Noetica
 // to reason across all of them with each fact's truth grade attached.
-const CROSS_DOMAIN_KEYS = ['medianIncome', 'population', 'crimeRate', 'airQualityAqi', 'floodRiskPct', 'walkScore', 'reMedianRent', 'greenSpacePct'];
+const CROSS_DOMAIN_KEYS = ['medianIncome', 'population', 'crimeRate', 'airQualityAqi', 'floodRiskPct', 'transitAccessIdx', 'walkScore', 'reMedianRent', 'greenSpacePct'];
 const crossDomainInputs = computed<DomainInput[]>(() => {
   const c = selectedCell.value; if (!c) return [];
   const cellId = String(c.id);
@@ -1930,6 +1974,7 @@ const crossDomainInputs = computed<DomainInput[]>(() => {
     else if (key === 'airQualityAqi' && useRealAir.value && airByCell.value.has(cellId)) { value = airByCell.value.get(cellId)!; real = { source: openMeteoAirEvidence(cellId), confidence: 0.75, uncertaintyClass: 'moderate' }; }
     else if (key === 'population' && useRealPop.value && censusPopByCell.value.has(cellId)) { value = censusPopByCell.value.get(cellId)!; real = { source: acsPopulationEvidence(cellId), confidence: 0.9, uncertaintyClass: 'low' }; }
     else if (key === 'floodRiskPct' && useRealFlood.value && floodByCell.value.has(cellId)) { value = floodByCell.value.get(cellId)!; real = { source: femaFloodEvidence(cellId, ''), confidence: 0.88, uncertaintyClass: 'low' }; }
+    else if (key === 'transitAccessIdx' && useRealTransit.value && transitByCell.value.has(cellId)) { value = transitByCell.value.get(cellId)!; real = { source: osmTransitEvidence(cellId, value), confidence: 0.8, uncertaintyClass: 'low' }; }
     out.push({ key, label: def.label, value, format: (v) => fmtVal(v, def), real });
   }
   return out;
@@ -1979,6 +2024,7 @@ watch(crimeState, () => { if (civicOn.value && !siteMode.value && isSafety.value
 watch(airState, () => { if (civicOn.value && !siteMode.value && isEnvironment.value) renderCivic(); });
 watch(popState, () => { if (civicOn.value && !siteMode.value && isPeople.value) renderCivic(); });
 watch(floodState, () => { if (civicOn.value && !siteMode.value && isEnvironment.value) renderCivic(); });
+watch(transitState, () => { if (civicOn.value && !siteMode.value && isMobility.value) renderCivic(); });
 function toggleGpu() { gpuMode.value = !gpuMode.value; if (civicOn.value && !siteMode.value) renderCivic(); }
 
 function updateMapMarker() {

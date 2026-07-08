@@ -164,6 +164,18 @@ export function nycCrimeEvidence(cellId: string, count: number): SourceEvidence 
   };
 }
 
+// SourceEvidence for OSM public-transit stops — a canonical GAIA 'osm' source.
+export function osmTransitEvidence(cellId: string, count: number): SourceEvidence {
+  return {
+    evidence_id: `ev:osmtransit:${cellId}`,
+    source_type: 'osm',
+    source_ref: 'osm://overpass/public_transport',
+    attribution: { source_name: 'OpenStreetMap (Overpass)', license_ref: 'osm:odbl', attribution_text: `${count} OSM public-transit stops. © OpenStreetMap contributors.` },
+    temporal: { observed_at: new Date().toISOString() },
+    quality: { score: 0.8 },
+  };
+}
+
 // SourceEvidence for FEMA National Flood Hazard Layer designations.
 export function femaFloodEvidence(cellId: string, zone: string): SourceEvidence {
   return {
