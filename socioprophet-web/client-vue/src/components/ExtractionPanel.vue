@@ -71,7 +71,7 @@ function onClaim(c: ExtractedClaim) {
 .xp-title { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.5); font-weight: 700; }
 .xp-schema { margin-left: auto; font-size: 0.66rem; color: rgba(255, 255, 255, 0.4); }
 .xp-block-h { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.4); margin-bottom: 0.3rem; }
-.xp-hint { text-transform: none; letter-spacing: 0; color: rgba(255, 255, 255, 0.35); }
+.xp-hint { text-transform: none; letter-spacing: 0; color: var(--text-3); }
 .xp-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .xp-topic { font-size: 0.7rem; color: #a3e635; background: rgba(163, 230, 53, 0.12); border: 1px solid rgba(163, 230, 53, 0.3); border-radius: 999px; padding: 0.08rem 0.5rem; }
 .xp-ent { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; color: var(--ec); background: color-mix(in srgb, var(--ec) 12%, transparent); border: 1px solid color-mix(in srgb, var(--ec) 40%, transparent); border-radius: 6px; padding: 0.08rem 0.45rem; cursor: pointer; }

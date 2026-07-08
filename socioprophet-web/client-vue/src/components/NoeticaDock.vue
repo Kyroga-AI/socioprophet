@@ -64,7 +64,7 @@ function askContext() {
   border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.05);
   color: #a8a29e; font-size: 0.78rem; cursor: pointer;
 }
-.ndock-close:hover { color: #ece9e3; border-color: rgba(255, 255, 255, 0.28); }
+.ndock-close:hover { color: #ece9e3; border-color: var(--text-3); }
 .ndock-enter-active, .ndock-leave-active { transition: transform 0.24s ease; }
 .ndock-enter-from, .ndock-leave-to { transform: translateX(100%); }
 </style>

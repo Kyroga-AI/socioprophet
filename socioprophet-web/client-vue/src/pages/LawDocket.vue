@@ -228,7 +228,7 @@ function deadlineSoon(iso: string): boolean { const days = (new Date(iso).getTim
 .lw-status { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; border-radius: 999px; padding: 0.05rem 0.4rem; margin-left: auto; } .lw-status.comment { color: #58a6ff; background: rgba(88, 166, 255, 0.14); } .lw-status.pending { color: #e3b341; background: rgba(227, 179, 65, 0.16); } .lw-status.enacted { color: var(--up); background: rgba(63, 185, 80, 0.16); } .lw-status.open { color: #8b949e; background: rgba(139, 148, 158, 0.16); }
 
 .lw-detail { min-height: 0; overflow-y: auto; border: 1px solid var(--line-2); border-radius: 12px; padding: 0 1.1rem 1.1rem; }
-.lw-detail.empty { display: grid; place-items: center; color: rgba(255, 255, 255, 0.35); font-size: 0.85rem; padding: 1.1rem; }
+.lw-detail.empty { display: grid; place-items: center; color: var(--text-3); font-size: 0.85rem; padding: 1.1rem; }
 .lw-ribbon { display: flex; align-items: center; gap: 0.6rem; margin: 0 -1.1rem 0.9rem; padding: 0.4rem 1.1rem; background: var(--accent-soft); border-bottom: 1px solid var(--line-2); font-size: 0.7rem; }
 .lw-ribbon-k { text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; font-size: 0.6rem; } .lw-ribbon code { color: rgba(255, 255, 255, 0.6); font-family: ui-monospace, monospace; } .lw-ribbon-as { margin-left: auto; color: rgba(255, 255, 255, 0.4); }
 .lw-d-head { display: flex; gap: 0.5rem; margin-top: 1rem; }

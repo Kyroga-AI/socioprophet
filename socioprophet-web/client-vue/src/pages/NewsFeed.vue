@@ -454,16 +454,16 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .nf-src-n { font-size: 0.66rem; color: rgba(255, 255, 255, 0.4); }
 .nf-tagrow { display: flex; align-items: center; gap: 0.15rem; border: none; background: transparent; color: rgba(255, 255, 255, 0.7); border-radius: 8px; padding: 0.28rem 0.5rem; font-size: 0.8rem; cursor: pointer; text-align: left; } .nf-tagrow:hover { background: rgba(255, 255, 255, 0.05); } .nf-tagrow.on { background: rgba(88, 166, 255, 0.14); color: #58a6ff; }
 .nf-hash { color: var(--text-3); }
-.nf-rail-hint { margin-top: auto; padding: 0.5rem; font-size: 0.64rem; color: rgba(255, 255, 255, 0.35); line-height: 1.5; }
+.nf-rail-hint { margin-top: auto; padding: 0.5rem; font-size: 0.64rem; color: var(--text-3); line-height: 1.5; }
 
 .nf-list { min-height: 0; overflow-y: auto; border: 1px solid var(--line-2); border-radius: 12px; }
 
 /* Lobsters story row */
 .nf-story { display: flex; gap: 0.7rem; padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--line); cursor: pointer; } .nf-story:hover { background: rgba(255, 255, 255, 0.03); } .nf-story.on { background: rgba(88, 166, 255, 0.1); box-shadow: inset 3px 0 0 #58a6ff; }
 .nf-vote { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; flex: 0 0 2rem; padding-top: 0.1rem; }
-.nf-up { border: none; background: transparent; color: rgba(255, 255, 255, 0.35); font-size: 0.9rem; line-height: 1; cursor: pointer; padding: 0.1rem; } .nf-up:hover { color: rgba(255, 255, 255, 0.7); } .nf-up.on { color: var(--up); }
+.nf-up { border: none; background: transparent; color: var(--text-3); font-size: 0.9rem; line-height: 1; cursor: pointer; padding: 0.1rem; } .nf-up:hover { color: var(--text-2); } .nf-up.on { color: var(--up); }
 .nf-up.sm, .nf-down.sm { font-size: 0.72rem; }
-.nf-down { border: none; background: transparent; color: rgba(255, 255, 255, 0.3); font-size: 0.9rem; line-height: 1; cursor: pointer; padding: 0.1rem; } .nf-down:hover { color: var(--down); } .nf-down.on { color: var(--down); }
+.nf-down { border: none; background: transparent; color: var(--text-3); font-size: 0.9rem; line-height: 1; cursor: pointer; padding: 0.1rem; } .nf-down:hover { color: var(--down); } .nf-down.on { color: var(--down); }
 .nf-score { font-size: 0.82rem; font-weight: 700; color: rgba(255, 255, 255, 0.75); font-variant-numeric: tabular-nums; }
 .nf-story-main { min-width: 0; flex: 1; }
 
@@ -531,7 +531,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .nf-reader-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.8rem; }
 .nf-reader-body { margin: 0 0 1rem; font-size: 0.95rem; line-height: 1.6; color: rgba(255, 255, 255, 0.82); }
 .nf-actions { display: flex; gap: 0.5rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
-.nf-act { border: 1px solid var(--line-2); background: transparent; color: rgba(255, 255, 255, 0.8); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.8rem; cursor: pointer; text-decoration: none; } .nf-act:hover { border-color: rgba(255, 255, 255, 0.3); } .nf-act.on { color: var(--up); border-color: rgba(63, 185, 80, 0.4); } .nf-act.primary { background: #1f6feb; border-color: #1f6feb; color: #fff; } .nf-act.done { color: var(--up); border-color: rgba(63, 185, 80, 0.4); cursor: default; }
+.nf-act { border: 1px solid var(--line-2); background: transparent; color: rgba(255, 255, 255, 0.8); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.8rem; cursor: pointer; text-decoration: none; } .nf-act:hover { border-color: var(--text-3); } .nf-act.on { color: var(--up); border-color: rgba(63, 185, 80, 0.4); } .nf-act.primary { background: #1f6feb; border-color: #1f6feb; color: #fff; } .nf-act.done { color: var(--up); border-color: rgba(63, 185, 80, 0.4); cursor: default; }
 .nf-block { border-top: 1px solid var(--line-2); padding: 0.8rem 0; }
 .nf-block-h { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.4); margin-bottom: 0.5rem; }
 .nf-claims { margin: 0; padding-left: 1.1rem; color: rgba(255, 255, 255, 0.72); font-size: 0.82rem; line-height: 1.6; }

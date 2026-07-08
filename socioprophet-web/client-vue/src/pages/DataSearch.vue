@@ -5,7 +5,7 @@
       <p>Local (<b>lampstand</b> desktop index) vs platform (<b>sherlock</b> evidence-answer) — side by side.</p>
     </header>
     <form class="bar" @submit.prevent="run">
-      <input v-model="query" placeholder="Search files + knowledge…" />
+      <input v-model="query" aria-label="Search files and knowledge" placeholder="Search files + knowledge…" />
       <button type="submit" :disabled="loading || !query.trim()">{{ loading ? '…' : 'Search' }}</button>
       <span class="scopes">
         <button v-for="sc in (['all', 'local', 'platform'] as const)" :key="sc" type="button" class="sc" :class="{ on: scope === sc }" @click="scope = sc">{{ sc }}</button>

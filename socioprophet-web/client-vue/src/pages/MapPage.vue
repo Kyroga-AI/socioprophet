@@ -200,7 +200,7 @@
 
             <!-- Cell inspector — click-to-analyze a single area -->
             <div v-if="selectedCell" class="mapx-cell">
-              <div class="mapx-cell-h"><span>Selected area</span><button class="mapx-cell-x" type="button" @click="selectedCell = null">✕</button></div>
+              <div class="mapx-cell-h"><span>Selected area</span><button class="mapx-cell-x" type="button" aria-label="Close area inspector" @click="selectedCell = null">✕</button></div>
               <div class="mapx-cell-grid">
                 <div v-for="m in activeGroup.metrics" :key="m.key" class="mapx-cell-kv"><span>{{ m.label }}</span><b>{{ fmtCell(m) }}</b></div>
               </div>
@@ -226,7 +226,7 @@
           <div class="mapx-cmp">
             <div class="mapx-cmp-row mapx-cmp-head" :style="{ gridTemplateColumns: `6rem repeat(${pinnedCells.length}, 1fr)` }">
               <span></span>
-              <span v-for="(p, i) in pinnedCells" :key="String(p.id)" class="mapx-cmp-col">{{ String.fromCharCode(65 + i) }}<button class="mapx-cmp-x" type="button" @click="unpin(p.id)">✕</button></span>
+              <span v-for="(p, i) in pinnedCells" :key="String(p.id)" class="mapx-cmp-col">{{ String.fromCharCode(65 + i) }}<button class="mapx-cmp-x" type="button" aria-label="Remove from comparison" @click="unpin(p.id)">✕</button></span>
             </div>
             <div v-for="m in activeGroup.metrics" :key="m.key" class="mapx-cmp-row" :style="{ gridTemplateColumns: `6rem repeat(${pinnedCells.length}, 1fr)` }">
               <span class="mapx-cmp-label">{{ m.label }}</span>
@@ -542,7 +542,7 @@
 
       <!-- MLS listing detail (floating) -->
       <div v-if="selectedListing" class="mapx-listing">
-        <button class="mapx-event-x" type="button" @click="selectedListing = null">✕</button>
+        <button class="mapx-event-x" type="button" aria-label="Close listing" @click="selectedListing = null">✕</button>
         <div class="mapx-listing-type" :class="selectedListing.type">{{ selectedListing.type === 'sale' ? 'For sale' : 'For rent' }} · {{ selectedListing.status }}</div>
         <div class="mapx-listing-price">{{ listingLabel(selectedListing) }}</div>
         <div class="mapx-listing-addr">{{ selectedListing.address }}</div>
@@ -553,7 +553,7 @@
 
       <!-- Community event detail (floating) -->
       <div v-if="selectedEvent" class="mapx-event">
-        <button class="mapx-event-x" type="button" @click="selectedEvent = null">✕</button>
+        <button class="mapx-event-x" type="button" aria-label="Close event" @click="selectedEvent = null">✕</button>
         <div class="mapx-event-type" :style="{ color: EVENT_TYPES[selectedEvent.type].color }">{{ EVENT_TYPES[selectedEvent.type].icon }} {{ EVENT_TYPES[selectedEvent.type].label }}</div>
         <div class="mapx-event-title">{{ selectedEvent.title }}</div>
         <div class="mapx-event-when">{{ eventDate(selectedEvent.date) }} · {{ selectedEvent.time }}</div>
@@ -1760,7 +1760,7 @@ onUnmounted(() => {
 .mapx-resize::after { content: ''; width: 3px; height: 40px; border-radius: 3px; background: rgba(255, 255, 255, 0.14); transition: background 0.12s ease, height 0.12s ease; }
 .mapx-resize:hover::after { background: var(--accent, #58a6ff); height: 64px; }
 @media (prefers-reduced-motion: reduce) { .mapx-resize::after { transition: none; } }
-.mapx-collapse:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.3); }
+.mapx-collapse:hover { color: var(--text); border-color: var(--text-3); }
 .mapx-panel .section-title { padding-right: 1.6rem; }
 .mapx-reopen {
   position: absolute; z-index: 5; top: 14px;
@@ -1788,7 +1788,7 @@ onUnmounted(() => {
 .control-actions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0; }
 .mapx-basemap { display: flex; gap: 0.35rem; }
 .mapx-bm { flex: 1; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text-2); padding: 0.35rem 0.5rem; font-size: 0.74rem; cursor: pointer; }
-.mapx-bm:hover { border-color: rgba(255, 255, 255, 0.25); color: var(--text); }
+.mapx-bm:hover { border-color: var(--text-3); color: var(--text); }
 .mapx-bm.on { border-color: var(--map-accent); background: rgba(47, 107, 255, 0.14); color: #fff; }
 .mapx-metrics, .mapx-groups { flex-wrap: wrap; margin-top: 0.5rem; }
 .mapx-metrics .mapx-bm, .mapx-groups .mapx-bm { flex: 1 1 45%; }
@@ -1838,7 +1838,7 @@ onUnmounted(() => {
 .mapx-ap-m-v { text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
 .mapx-toplist { display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.5rem; }
 .mapx-toparea { display: grid; grid-template-columns: 1.1rem 2.2rem 1fr; align-items: center; gap: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text); padding: 0.4rem 0.55rem; cursor: pointer; text-align: left; }
-.mapx-toparea:hover { border-color: rgba(255, 255, 255, 0.24); }
+.mapx-toparea:hover { border-color: var(--text-3); }
 .mapx-rank { color: var(--text-3); font-size: 0.7rem; text-align: center; }
 .mapx-score { font-size: 1rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
 .mapx-topmeta { font-size: 0.66rem; color: var(--text-2); font-variant-numeric: tabular-nums; }
@@ -1970,7 +1970,7 @@ onUnmounted(() => {
 .mapx-opacity { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.55rem; font-size: 0.68rem; color: var(--text-3); }
 .mapx-opacity input { flex: 1; accent-color: var(--map-accent); }
 .secondary { padding: 0.3rem 0.6rem; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 8px; background: rgba(255, 255, 255, 0.04); color: var(--text-2); font-size: 0.72rem; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
-.secondary:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.3); }
+.secondary:hover { color: var(--text); border-color: var(--text-3); }
 .lookup-status { margin: 0.45rem 0 0; font-size: 0.7rem; color: var(--text-3); line-height: 1.45; }
 
 /* Input */
@@ -1980,7 +1980,7 @@ onUnmounted(() => {
 
 /* Layer cards */
 .layer-card { display: block; width: 100%; margin-bottom: 0.4rem; padding: 0.6rem 0.7rem; text-align: left; border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 10px; background: rgba(255, 255, 255, 0.03); color: var(--text); cursor: pointer; transition: border-color 0.15s, background 0.15s; }
-.layer-card:hover { border-color: rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.06); }
+.layer-card:hover { border-color: var(--text-3); background: rgba(255, 255, 255, 0.06); }
 .layer-card.selected { border-color: var(--map-accent); background: rgba(47, 107, 255, 0.14); box-shadow: none; }
 .layer-title { font-size: 0.8rem; font-weight: 600; }
 .layer-meta { margin-top: 0.15rem; font-size: 0.68rem; color: var(--text-2); font-family: ui-monospace, monospace; word-break: break-all; }

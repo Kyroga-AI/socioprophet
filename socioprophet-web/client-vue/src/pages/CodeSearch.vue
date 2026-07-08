@@ -13,7 +13,7 @@
     </header>
 
     <section class="adapter-card search-row">
-      <input v-model="query" placeholder="query" @keyup.enter="run" />
+      <input v-model="query" aria-label="Search code" placeholder="query" @keyup.enter="run" />
       <button type="button" :disabled="isLoading" @click="run">{{ isLoading ? 'Searching…' : 'Search' }}</button>
     </section>
 

@@ -206,7 +206,7 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .ec-asof { font-size: 0.74rem; color: rgba(255, 255, 255, 0.45); }
 
 .ec-kpis { display: flex; gap: 0.6rem; overflow-x: auto; padding-bottom: 0.15rem; }
-.ec-kpi { flex: 0 0 auto; width: 176px; text-align: left; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: inherit; padding: 0.55rem 0.65rem 0.4rem; cursor: pointer; display: grid; gap: 0.2rem; } .ec-kpi:hover { border-color: rgba(255, 255, 255, 0.2); } .ec-kpi.on { border-color: var(--accent); }
+.ec-kpi { flex: 0 0 auto; width: 176px; text-align: left; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: inherit; padding: 0.55rem 0.65rem 0.4rem; cursor: pointer; display: grid; gap: 0.2rem; } .ec-kpi:hover { border-color: var(--text-3); } .ec-kpi.on { border-color: var(--accent); }
 .ec-kpi-top { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; }
 .ec-kpi-name { font-size: 0.68rem; color: rgba(255, 255, 255, 0.55); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ec-kpi-val { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; } .ec-unit { font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-left: 1px; }
@@ -217,9 +217,9 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 @media (max-width: 1080px) { .ec-body { grid-template-columns: 1fr; } .ec-detail { display: none; } }
 
 .ec-board { min-height: 0; display: flex; flex-direction: column; border: 1px solid var(--line-2); border-radius: 12px; overflow: hidden; }
-.ec-board-head { display: flex; align-items: baseline; justify-content: space-between; padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--line-2); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.5); } .ec-board-head span { font-size: 0.6rem; color: rgba(255, 255, 255, 0.35); }
+.ec-board-head { display: flex; align-items: baseline; justify-content: space-between; padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--line-2); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); } .ec-board-head span { font-size: 0.6rem; color: var(--text-3); }
 .ec-grid { min-height: 0; overflow-y: auto; padding: 0.6rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5rem; align-content: start; }
-.ec-sector { text-align: left; border: 1px solid var(--line-2); border-left: 3px solid #8b949e; border-radius: 8px; background: var(--surface); color: inherit; padding: 0.5rem 0.6rem; cursor: pointer; display: grid; gap: 0.3rem; } .ec-sector:hover { border-top-color: rgba(255, 255, 255, 0.2); } .ec-sector.on { box-shadow: 0 0 0 1px var(--accent); }
+.ec-sector { text-align: left; border: 1px solid var(--line-2); border-left: 3px solid #8b949e; border-radius: 8px; background: var(--surface); color: inherit; padding: 0.5rem 0.6rem; cursor: pointer; display: grid; gap: 0.3rem; } .ec-sector:hover { border-top-color: var(--text-3); } .ec-sector.on { box-shadow: 0 0 0 1px var(--accent); }
 .ec-sec-top { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; } .ec-sec-name { font-size: 0.8rem; font-weight: 600; }
 .ec-breadth { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; } .ec-breadth.big { height: 9px; }
 .ec-breadth-fill { height: 100%; border-radius: 3px; }

@@ -332,7 +332,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .mk-tape-sym { color: var(--accent); font-weight: 700; font-size: 0.72rem; } .mk-tape-px { font-size: 0.72rem; font-variant-numeric: tabular-nums; } .mk-tape .mk-chg { font-size: 0.68rem; }
 
 .mk-tiles { display: flex; gap: 0.6rem; overflow-x: auto; padding-bottom: 0.15rem; }
-.mk-tile { flex: 0 0 auto; width: 168px; text-align: left; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: inherit; padding: 0.55rem 0.65rem 0.4rem; cursor: pointer; display: grid; gap: 0.25rem; } .mk-tile:hover { border-color: rgba(255, 255, 255, 0.2); } .mk-tile.on { border-color: var(--accent); }
+.mk-tile { flex: 0 0 auto; width: 168px; text-align: left; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: inherit; padding: 0.55rem 0.65rem 0.4rem; cursor: pointer; display: grid; gap: 0.25rem; } .mk-tile:hover { border-color: var(--text-3); } .mk-tile.on { border-color: var(--accent); }
 .mk-tile-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .mk-tile-class { font-size: 0.78rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
 .mk-tile-name { font-size: 0.68rem; color: rgba(255, 255, 255, 0.5); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

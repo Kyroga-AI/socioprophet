@@ -53,7 +53,7 @@
         <button class="sco-compose" type="button" :disabled="sc.chosen.length === 0" @click="sc.composeContracts()">Compile governed contracts ▸</button>
         <p class="sco-side-note">Each stage becomes a membrane-admitted, sealed-receipt contract.</p>
         <div v-if="sc.contracts.length" class="sco-contracts">
-          <div v-for="c in sc.contracts" :key="c.id" class="sco-ct" @click="sc.advance(c.id)">
+          <div v-for="c in sc.contracts" :key="c.id" class="sco-ct" role="button" tabindex="0" :aria-label="`Advance ${stageLabel(c.stage)} contract with ${c.providerName}`" @click="sc.advance(c.id)" @keydown.enter.prevent="sc.advance(c.id)" @keydown.space.prevent="sc.advance(c.id)">
             <div class="sco-ct-h"><span class="sco-ct-stage">{{ stageLabel(c.stage) }}</span><span class="sco-ct-status" :class="c.status">{{ c.status }}</span></div>
             <div class="sco-ct-prov">{{ c.providerName }}</div>
             <div class="sco-ct-refs"><code>{{ c.grantRef }}</code><code>{{ c.receipt }}</code></div>
@@ -127,7 +127,7 @@ onMounted(() => cockpit.setContext({ surface: 'Supply-Chain Orchestrator', entit
 .sco-stage-sel { font-size: 0.82rem; font-weight: 600; color: var(--text); }
 .sco-cands { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.5rem; }
 .sco-cand { text-align: left; border: 1px solid var(--line-2); border-radius: 10px; padding: 0.55rem 0.6rem; background: var(--surface-2); color: var(--text); cursor: pointer; }
-.sco-cand:hover { border-color: rgba(255, 255, 255, 0.25); }
+.sco-cand:hover { border-color: var(--text-3); }
 .sco-cand.on { border-color: var(--accent); background: var(--accent-soft); }
 .sco-cand.rec { box-shadow: inset 0 0 0 1px rgba(75, 191, 115, 0.4); }
 .sco-cand-top { display: flex; align-items: center; gap: 0.35rem; }
@@ -140,7 +140,7 @@ onMounted(() => cockpit.setContext({ surface: 'Supply-Chain Orchestrator', entit
 .sco-compose { border: none; border-radius: 9px; padding: 0.6rem; font-size: 0.85rem; font-weight: 700; cursor: pointer; background: var(--up); color: #06210f; } .sco-compose:disabled { opacity: 0.4; cursor: default; }
 .sco-side-note { margin: 0; font-size: 0.68rem; color: var(--text-3); }
 .sco-contracts { display: flex; flex-direction: column; gap: 0.4rem; }
-.sco-ct { border: 1px solid var(--line-2); border-radius: 9px; padding: 0.5rem 0.6rem; background: var(--surface); cursor: pointer; } .sco-ct:hover { border-color: rgba(255, 255, 255, 0.24); }
+.sco-ct { border: 1px solid var(--line-2); border-radius: 9px; padding: 0.5rem 0.6rem; background: var(--surface); cursor: pointer; } .sco-ct:hover { border-color: var(--text-3); }
 .sco-ct-h { display: flex; align-items: center; justify-content: space-between; }
 .sco-ct-stage { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); }
 .sco-ct-status { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; border-radius: 4px; padding: 0.03rem 0.35rem; }
