@@ -153,12 +153,13 @@ const result = computed(() => simulate(twinId.value, scenarioId.value));
 const mappable = computed<SCNode[]>(() => result.value.nodes.filter((n) => n.geo));
 
 // The impact metrics are simulated (deterministic shock propagation) — computed & replayable.
-const riskProv = computed(() => prov('computed', {
+// Deterministic shock-propagation math, but over a fixture twin/graph — so the
+// result is 'fixture'/unassayed, not 'verified' (mirrors the MapPage site-score fix).
+const riskProv = computed(() => prov('fixture', {
   verifier: 'twin simulator',
   formula: 'shock propagation over supply graph → Σ severity·node-value',
-  sources: ['twin fixture', 'supply-chain graph'],
-  receipt: `sha256:twin-${twinId.value}-${scenarioId.value}`,
-  note: result.value.provenance?.note,
+  sources: ['illustrative twin (sample data)', 'supply-chain graph fixture'],
+  note: result.value.provenance?.note ?? 'Deterministic simulation, but over an illustrative twin — inputs are sample data, not a live feed.',
 }));
 
 const cockpit = useCockpit();
@@ -224,7 +225,7 @@ const money = (n: number): string =>
 function askNoetica() {
   const t = twin.value; const s = scenario.value; const r = result.value;
   if (!t) return;
-  cockpit.askAbout(`Read the ${t.name} digital twin under "${s?.name}": ${r.impacted.length} of ${r.nodes.length} facilities impacted, value-at-risk ${money(r.valueAtRisk)} (${(r.valueAtRiskPct * 100).toFixed(1)}% of EV). Where's the concentration and what should I hedge?`);
+  cockpit.askAbout(`Read the ${t.name} digital twin under "${s?.name}": ${r.impacted.length} of ${r.nodes.length} facilities impacted, value-at-risk ${money(r.valueAtRisk)} (${(r.valueAtRiskPct * 100).toFixed(1)}% of EV). Where's the concentration and what should I hedge? Note: the twin's facilities and values are illustrative sample data for a demo, not a live model — reason about the concentration/hedging logic, not the specific figures as fact.`);
 }
 watch([twin, scenario], () => cockpit.setContext({
   surface: 'Digital Twin',

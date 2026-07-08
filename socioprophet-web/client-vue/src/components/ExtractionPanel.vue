@@ -51,7 +51,9 @@ const ontology = useOntology();
 const ex = computed(() => extract(props.text || ''));
 // NLP → ontology induction: what we read grows the living ontology.
 watch(ex, (e) => { if (e.entities.length || e.topics.length) ontology.observe(e.entities, [], e.topics); }, { immediate: true });
-const extractProv = prov('computed', { verifier: 'Holmes (pattern extractor)', sources: [props.source ?? 'current item'], receipt: 'sha256:holmes-fixture', note: 'Schema-defined extraction; a live Holmes adapter swaps in behind the same shape.' });
+// Local regex/pattern stand-in, not the real Holmes adapter — so 'fixture'/unassayed,
+// not 'verified'. Flips to 'computed' when a live Holmes adapter swaps in behind the shape.
+const extractProv = prov('fixture', { verifier: 'Holmes (local pattern stand-in)', sources: [props.source ?? 'current item'], note: 'Schema-defined extraction by a local pattern stand-in — not yet the live Holmes adapter; treat entities/claims as illustrative.' });
 const color = (c: EntityClass) => entityColor(c);
 
 // Entity → surface it in the graph (open the contextual graph dock).

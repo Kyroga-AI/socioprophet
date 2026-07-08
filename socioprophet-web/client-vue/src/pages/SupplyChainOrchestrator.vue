@@ -89,12 +89,14 @@ const sel = (s: Stage) => sc.selectedProviders.find((x) => x.stage.id === s)?.pr
 const recId = (s: Stage) => [...providersForStage(s)].sort((a, b) => scoreProvider(b) - scoreProvider(a))[0]?.id;
 const stageLabel = (s: Stage) => STAGES.find((x) => x.id === s)?.label ?? s;
 const riskColor = (r: number) => (r >= 60 ? '#f0656a' : r >= 40 ? '#e3b341' : '#4bbf73');
-const chainProv = computed(() => prov('computed', {
+// Deterministic cost/lead/risk arithmetic, but the provider directory is a fixture
+// (data/providersFixture.ts, UI-only) and the "sealed receipts" don't exist client-side
+// — so 'fixture'/unassayed, not 'verified' (mirrors the MapPage site-score fix).
+const chainProv = computed(() => prov('fixture', {
   verifier: 'orchestration engine',
   formula: 'landed cost = Σ stage unit-cost; lead = Σ stage lead; risk = f(capacity, rating, reputation)',
-  sources: ['provider directory', 'capability membrane'],
-  receipt: 'sha256:chain',
-  note: 'The chain and its cost/lead/risk are computed; contracts are membrane-admitted with sealed receipts.',
+  sources: ['illustrative provider directory (sample data)'],
+  note: 'Cost/lead/risk are computed deterministically, but over an illustrative provider directory — not a live marketplace; contracts here are a demo of membrane-admitted sealed receipts.',
 }));
 const traceLinks = computed(() => [
   { label: 'Supply chain map', surface: 'Supply Chain', icon: '⛓', to: { path: '/analytics/supply-chain' } },
@@ -103,7 +105,7 @@ const traceLinks = computed(() => [
 ]);
 function askNoetica() {
   const stages = sc.selectedProviders.filter((x) => x.provider).map((x) => `${x.stage.label}: ${x.provider!.name}`).join(', ');
-  cockpit.askAbout(`Review this supply chain for "${sc.goal}": ${stages || 'nothing selected yet'}. Landed cost ${money(sc.totalCost)}, lead ${sc.totalLeadDays}d, risk ${sc.riskScore}/100. What would you change to cut risk or cost, and where's the single point of failure?`);
+  cockpit.askAbout(`Review this supply chain for "${sc.goal}": ${stages || 'nothing selected yet'}. Landed cost ${money(sc.totalCost)}, lead ${sc.totalLeadDays}d, risk ${sc.riskScore}/100. What would you change to cut risk or cost, and where's the single point of failure? Note: providers and their costs/lead/ratings are illustrative sample data for a demo, not a live marketplace — reason about the structure and trade-offs, not the specific figures as fact.`);
 }
 onMounted(() => cockpit.setContext({ surface: 'Supply-Chain Orchestrator', entityLabel: sc.goal, detail: `${sc.chosen.length}/${STAGES.length} stages`, route: '/marketplace/orchestrate' }));
 </script>

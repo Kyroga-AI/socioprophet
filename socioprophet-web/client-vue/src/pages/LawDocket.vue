@@ -46,7 +46,6 @@
         <!-- provenance ribbon -->
         <div class="lw-ribbon">
           <ProvenanceBadge :p="docketProv" />
-          <code>{{ selected.provenanceHash }}</code>
           <button class="lw-ask" type="button" @click="askNoetica" title="Ask Noetica about this docket">◇ Ask Noetica</button>
           <span class="lw-ribbon-as">as of {{ asOfLabel }}</span>
         </div>
@@ -173,17 +172,19 @@ function setStatus(s: (typeof statuses)[number]) { status.value = s; }
 
 // Moat + integration: provenance verdict, affected-entity cross-links, assistant.
 const crossLinks = computed(() => (selected.value ? crossLinksForDocket(selected.value.affects) : []));
-const docketProv = computed(() => prov('retrieved', {
+// Illustrative docket corpus (data/lawFixture.ts is UI-only) — NOT retrieved from a
+// live regulatory source, so it's 'fixture'/unassayed, not 'grounded'. The
+// provenanceHash literals are placeholders, not real content hashes, so no receipt.
+const docketProv = computed(() => prov('fixture', {
   verifier: selected.value?.agency ?? 'issuing body',
   sources: [selected.value?.cite ?? 'docket'],
-  receipt: selected.value?.provenanceHash,
   asOf: asOfLabel,
-  note: 'Sourced regulatory document; redline diffed against the prior text.',
+  note: 'Illustrative docket for the demo — not retrieved from a live regulatory source; the citation, reference and redline are sample data.',
 }));
 function goDocket(id?: string) { if (id) { deepLinked.value = true; selectedId.value = id; } }
 function askNoetica() {
   const d = selected.value; if (!d) return;
-  cockpit.askAbout(`Explain ${d.cite} — "${d.title}" (${d.type}, ${d.status}, ${d.jurisdiction}, issued by ${d.agency}). ${d.impact} Who is most affected, and what is the concrete compliance ask?`);
+  cockpit.askAbout(`Explain ${d.cite} — "${d.title}" (${d.type}, ${d.status}, ${d.jurisdiction}, issued by ${d.agency}). ${d.impact} Who is most affected, and what is the concrete compliance ask? Note: this is an illustrative sample docket for a demo, not a real retrieved filing — reason about the type of matter, not the specific citation as fact.`);
 }
 watch(selected, (d) => { if (d) cockpit.setContext({ surface: 'Law & Regulation', entityLabel: `${d.cite} · ${d.title}`, detail: `${d.type} · ${d.status}`, route: route.path }); }, { immediate: true });
 // Keep a valid selection as the scope/status narrows the visible set.
