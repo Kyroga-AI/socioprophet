@@ -80,6 +80,15 @@
         </section>
 
         <section class="panel-section">
+          <div class="section-title">Find a place <InfoLabel info="Search any place by name (OpenStreetMap geocoder, no key) and fly the map there. Real data layers then load for that view — the cockpit isn't pinned to one city." /></div>
+          <form class="mapx-geo" @submit.prevent="goGeocode">
+            <input v-model="geoQuery" class="mapx-geo-in" type="search" placeholder="City, address, place…" aria-label="Search for a place" />
+            <button class="mapx-bm sm" type="submit" :disabled="geoState === 'loading'">{{ geoState === 'loading' ? '⟳' : '⌕ Go' }}</button>
+          </form>
+          <p v-if="geoState === 'error'" class="mapx-land-hint">No match — try a city or full address.</p>
+        </section>
+
+        <section class="panel-section">
           <div class="section-title">Civic layers</div>
 
           <!-- Aggregation tessellation -->
@@ -676,6 +685,7 @@ import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
 import { fetchAirQuality, type AirPoint } from '../data/adapters/airLive';
 import { fetchFloodZones, floodRiskAt, floodInfoAt, type FloodZone } from '../data/adapters/floodLive';
 import { fetchTransitStops, type TransitStop } from '../data/adapters/transitLive';
+import { fetchGeocode } from '../data/adapters/geocodeLive';
 import { renderDeckHexes, clearDeckHexes } from '../map/deckHexLayer';
 import { hexColorData } from '../map/deckHexColors';
 import { latLngToCell, cellToLatLng, gridDisk } from 'h3-js';
@@ -2112,6 +2122,19 @@ watch(airState, () => { if (civicOn.value && !siteMode.value && isEnvironment.va
 watch(popState, () => { if (civicOn.value && !siteMode.value && isPeople.value) renderCivic(); });
 watch(floodState, () => { if (civicOn.value && !siteMode.value && isEnvironment.value) renderCivic(); });
 watch(transitState, () => { if (civicOn.value && !siteMode.value && isMobility.value) renderCivic(); });
+// Place search — geocode + fly the map there (fitBounds → moveend rebuilds the grid
+// + reloads real layers for the new view). Unpins the cockpit from the default city.
+const geoQuery = ref('');
+const geoState = ref<'idle' | 'loading' | 'error'>('idle');
+async function goGeocode() {
+  if (!map || !geoQuery.value.trim()) return;
+  geoState.value = 'loading';
+  const hits = await fetchGeocode(geoQuery.value);
+  if (!hits || !hits[0]) { geoState.value = 'error'; return; }
+  geoState.value = 'idle';
+  const [s, w, n, e] = hits[0].bbox;
+  map.fitBounds([[w, s], [e, n]], { padding: 40, duration: 800, maxZoom: 15 });
+}
 function toggleGpu() { gpuMode.value = !gpuMode.value; if (civicOn.value && !siteMode.value) renderCivic(); }
 function toggleHotspots() { hotspotsOn.value = !hotspotsOn.value; if (civicOn.value && !siteMode.value) renderCivic(); }
 const selectedHotZ = computed(() => (hotspotsOn.value && selectedCell.value) ? (hotResults.value.get(String(selectedCell.value.id)) ?? null) : null);
@@ -2551,6 +2574,9 @@ onUnmounted(() => {
 .mapx-land { width: 100%; margin-top: 0.4rem; text-align: center; }
 .mapx-land-hint { margin: 0.3rem 0 0; font-size: var(--fs-eyebrow, 0.62rem); line-height: 1.4; color: var(--amber); }
 .mapx-land-hint.ok { color: var(--live); }
+.mapx-geo { display: flex; gap: 0.4rem; }
+.mapx-geo-in { flex: 1; min-width: 0; background: var(--surface-2, #1b1e25); border: 1px solid var(--line-2); border-radius: 8px; color: var(--text); padding: 0.35rem 0.55rem; font-size: 0.78rem; }
+.mapx-geo-in:focus-visible { outline: 2px solid var(--info); outline-offset: 1px; }
 .mapx-land.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
 .mapx-land.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; }
 .mapx-class { margin-top: 0.55rem; }
