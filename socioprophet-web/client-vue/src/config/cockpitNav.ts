@@ -204,8 +204,9 @@ export const AGENT_COCKPIT: NavGroup[] = [
   },
   {
     label: 'Operator & Infra',
-    to: '/operator/data-catalog',
+    to: '/control-plane/org',
     items: [
+      { label: 'Control Plane', to: '/control-plane/org' },
       { label: 'Universe Viewer', to: '/universe' },
       { label: 'Situations (n-ary)', to: '/situations' },
       { label: 'Living Ontology', to: '/ontology' },

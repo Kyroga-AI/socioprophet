@@ -1,0 +1,70 @@
+// Organization Control Plane — the management console for an org fielding Noetica to
+// its employees/users. Surfaces the governance stack operationally: seats & autonomy
+// levels, the GOVERNANCE QUEUE (what Noetica proposed, pending human admission — the
+// WorldClaim policy_status review inbox), per-role policy (autonomy caps + capability
+// membrane), and the audit trail. UI-only fixture; a real deployment wires the queue +
+// seats to the live agent-machine / capability-membrane receipts.
+import type { OmegaState } from '../ontology/ontogenesis';
+
+// Autonomy ladder an org grants per role (L0 observe → L5 autonomous).
+export type AutonomyLevel = 0 | 1 | 2 | 3 | 4 | 5;
+export const AUTONOMY_LEVELS: Array<{ level: AutonomyLevel; label: string; blurb: string }> = [
+  { level: 0, label: 'Observe', blurb: 'Reads only; no suggestions.' },
+  { level: 1, label: 'Suggest', blurb: 'Proposes; human does everything.' },
+  { level: 2, label: 'Draft', blurb: 'Drafts actions; human approves each.' },
+  { level: 3, label: 'Act · review', blurb: 'Acts, every action queued for review.' },
+  { level: 4, label: 'Act · notify', blurb: 'Acts within policy; notifies after.' },
+  { level: 5, label: 'Autonomous', blurb: 'Acts within membrane; audited only.' },
+];
+
+export type SeatStatus = 'active' | 'idle' | 'suspended';
+export interface Seat {
+  id: string; name: string; role: string; dept: string;
+  autonomy: AutonomyLevel; status: SeatStatus; lastActive: string;
+  claims30d: number; admitRate: number; // % of this seat's proposed claims admitted
+}
+
+export type QueueKind = 'world-claim' | 'action' | 'canon-edit';
+export type QueuePolicy = 'proposed' | 'provisional' | 'review';
+export interface QueueItem {
+  id: string; kind: QueueKind; summary: string; subject: string;
+  policy: QueuePolicy; omega: OmegaState; confidence: number;
+  seatId: string; at: string;
+}
+
+export interface RolePolicy { role: string; autonomyCap: AutonomyLevel; membrane: string[] } // allowed capability surfaces
+export type AuditDecision = 'admitted' | 'rejected' | 'held-for-review' | 'executed';
+export interface AuditEntry { id: string; at: string; actor: string; decision: AuditDecision; subject: string; omega: OmegaState; receipt: string }
+
+export const SEATS: Seat[] = [
+  { id: 's1', name: 'A. Rivera', role: 'Analyst', dept: 'Research', autonomy: 3, status: 'active', lastActive: '2m ago', claims30d: 412, admitRate: 91 },
+  { id: 's2', name: 'B. Okafor', role: 'Ops Lead', dept: 'Operations', autonomy: 4, status: 'active', lastActive: 'just now', claims30d: 688, admitRate: 87 },
+  { id: 's3', name: 'C. Nguyen', role: 'Compliance', dept: 'Risk', autonomy: 2, status: 'active', lastActive: '11m ago', claims30d: 133, admitRate: 98 },
+  { id: 's4', name: 'D. Sokolov', role: 'Trader', dept: 'Markets', autonomy: 4, status: 'idle', lastActive: '1h ago', claims30d: 921, admitRate: 82 },
+  { id: 's5', name: 'E. Haddad', role: 'Field Agent', dept: 'Field', autonomy: 5, status: 'active', lastActive: '4m ago', claims30d: 1503, admitRate: 79 },
+  { id: 's6', name: 'F. Lindqvist', role: 'Intern', dept: 'Research', autonomy: 1, status: 'suspended', lastActive: '3d ago', claims30d: 27, admitRate: 74 },
+];
+
+export const QUEUE: QueueItem[] = [
+  { id: 'q1', kind: 'world-claim', summary: 'Median income for Tract 61 (Manhattan) → $128k', subject: 'map · economic', policy: 'review', omega: 'TRUSTED', confidence: 0.9, seatId: 's1', at: '3m ago' },
+  { id: 'q2', kind: 'action', summary: 'Rebalance copper-major hedge −4% (supply-risk trigger)', subject: 'markets · algo', policy: 'review', omega: 'LINKED', confidence: 0.71, seatId: 's4', at: '6m ago' },
+  { id: 'q3', kind: 'canon-edit', summary: 'Add SKOS term “audit-trail guidance” to legal canon', subject: 'law · ontology', policy: 'provisional', omega: 'NORMALIZED', confidence: 0.64, seatId: 's3', at: '18m ago' },
+  { id: 'q4', kind: 'world-claim', summary: 'Flood-risk reclass for 12 cells (FEMA AE) → high', subject: 'map · environment', policy: 'review', omega: 'ACTIONABLE', confidence: 0.88, seatId: 's5', at: '22m ago' },
+  { id: 'q5', kind: 'action', summary: 'Open supplier contract · Meridian Logistics (stage 3)', subject: 'marketplace · orchestrate', policy: 'proposed', omega: 'SEEDED', confidence: 0.55, seatId: 's2', at: '31m ago' },
+];
+
+export const ROLE_POLICY: RolePolicy[] = [
+  { role: 'Analyst', autonomyCap: 3, membrane: ['map', 'news', 'people', 'knowledge'] },
+  { role: 'Ops Lead', autonomyCap: 4, membrane: ['map', 'marketplace', 'supply-chain', 'operator'] },
+  { role: 'Compliance', autonomyCap: 2, membrane: ['law', 'audit', 'governance'] },
+  { role: 'Trader', autonomyCap: 4, membrane: ['markets', 'portfolio', 'algo'] },
+  { role: 'Field Agent', autonomyCap: 5, membrane: ['map', 'situations', 'news'] },
+  { role: 'Intern', autonomyCap: 1, membrane: ['knowledge'] },
+];
+
+export const AUDIT: AuditEntry[] = [
+  { id: 'a1', at: '1m ago', actor: 'C. Nguyen', decision: 'admitted', subject: 'ACS income · Tract 44', omega: 'ACTIONABLE', receipt: 'sha256:ac…91' },
+  { id: 'a2', at: '9m ago', actor: 'membrane', decision: 'held-for-review', subject: 'algo rebalance · copper', omega: 'LINKED', receipt: 'sha256:7f…c2' },
+  { id: 'a3', at: '14m ago', actor: 'B. Okafor', decision: 'executed', subject: 'supplier admit · stage 2', omega: 'TRUSTED', receipt: 'sha256:1b…4e' },
+  { id: 'a4', at: '27m ago', actor: 'C. Nguyen', decision: 'rejected', subject: 'canon edit · unsourced', omega: 'SEEDED', receipt: 'sha256:d3…08' },
+];

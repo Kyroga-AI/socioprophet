@@ -28,6 +28,7 @@ import LawDocket from './pages/LawDocket.vue';
 import NoeticaChat from './pages/NoeticaChat.vue';
 import WeatherMonitor from './pages/WeatherMonitor.vue';
 import ControlPlaneLifecycle from './pages/ControlPlaneLifecycle.vue';
+import NoeticaControlPlane from './pages/NoeticaControlPlane.vue';
 import DomainSurfacePage from './pages/DomainSurfacePage.vue';
 import FeedPage from './pages/FeedPage.vue';
 import Journal from './pages/Journal.vue';
@@ -100,6 +101,7 @@ const explicitRoutes = [
   { path: '/research', component: ResearchList },
   { path: '/professional-intelligence', component: ProfessionalIntelligence },
   { path: '/control-plane', component: ControlPlaneLifecycle },
+  { path: '/control-plane/org', component: NoeticaControlPlane },
   { path: '/nlboot', component: NLBootEvidence },
   { path: '/reader', component: Reader },
   { path: '/journal', component: Journal },
