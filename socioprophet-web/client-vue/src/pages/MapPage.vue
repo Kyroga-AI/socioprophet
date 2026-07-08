@@ -186,7 +186,7 @@
             <!-- Temporal replay -->
             <div v-if="!isFootTraffic && !bivariateOn" class="mapx-time">
               <div class="mapx-time-head">
-                <span>Time <InfoLabel info="Replay the metric back through time. Each area has a development momentum — gentrifying areas were lower on 'good' metrics (and higher on crime) in the past. Scrub or play to watch the map change." /></span>
+                <span>Time <InfoLabel info="Replay the metric through time. This is an ILLUSTRATIVE projection from a synthetic momentum model (gentrifying areas trend up on 'good' metrics), NOT recorded history — it shows the shape of change, not real past values. Scrub or play to watch the map move." /></span>
                 <span class="mapx-time-r">
                   <button class="mapx-ft-play" type="button" :aria-label="tPlaying ? 'Pause' : 'Play through time'" :title="tPlaying ? 'Pause' : 'Play through time'" @click="toggleTimePlay">{{ tPlaying ? '❚❚' : '▶' }}</button>
                   <b :class="{ past: timeQ > 0 }">{{ quarterLabel(timeQ) }}</b>
@@ -196,7 +196,7 @@
             </div>
 
             <label v-if="!isFootTraffic" class="mapx-opacity">Opacity <input v-model.number="civicOpacity" type="range" min="0.2" max="0.9" step="0.05" /></label>
-            <p class="lookup-status">{{ isFootTraffic ? 'Foot traffic flows along corridors — thicker & brighter = busier. Scrub the hour: commercial strips peak at lunch & evening, transit at commute.' : activeGroup.blurb + ' Click a cell to inspect. Fixture aggregation grid.' }}</p>
+            <p class="lookup-status">{{ isFootTraffic ? 'Foot traffic rides the real street network (corridor shapes are real OSM); busyness is an illustrative model. Scrub the hour: commercial strips peak at lunch & evening, transit at commute.' : activeGroup.blurb + ' Click a cell to inspect. Values are illustrative sample statistics (demo data), not a live feed.' }}</p>
 
             <!-- Cell inspector — click-to-analyze a single area -->
             <div v-if="selectedCell" class="mapx-cell">
@@ -255,7 +255,7 @@
         </section>
 
         <section class="panel-section">
-          <div class="section-title">Site selection <InfoLabel info="A verified suitability score for a business type, computed per area from foot traffic, income, walkability, competition and rent. Answers: should I open my next location here?" /></div>
+          <div class="section-title">Site selection <InfoLabel info="A deterministic suitability score for a business type, computed per area from foot traffic, income, walkability, competition and rent. The area statistics are illustrative sample data (competitors are real OSM), so treat scores as directional. Answers: should I open my next location here?" /></div>
           <label class="mapx-switch">
             <input type="checkbox" :checked="siteMode" @change="toggleSite" />
             <span>Score locations <span class="mapx-sub2">should I open here?</span></span>
@@ -275,7 +275,7 @@
               <input type="checkbox" :checked="compHeatOn" @change="toggleCompHeat" />
               <span>Competition density heat</span>
             </label>
-            <div class="mapx-site-head"><ProvenanceBadge :p="siteProv" compact /><span>computed suitability · click an area to fly</span></div>
+            <div class="mapx-site-head"><ProvenanceBadge :p="siteProv" compact /><span>suitability (illustrative inputs) · click an area to fly</span></div>
             <div class="mapx-site-legend">
               <span>worse</span>
               <span class="mapx-site-bar" />
@@ -293,7 +293,7 @@
         </section>
 
         <section class="panel-section">
-          <div class="section-title">Reachability <InfoLabel info="Travel-time isochrone from a point: how far you can get in N minutes on foot, bike, or transit. Bands respect the local walkability / transit field — you reach further where the network is good. Click the map to set the origin." /></div>
+          <div class="section-title">Reachability <InfoLabel info="Travel-time estimate from a point: roughly how far you can get in N minutes on foot, bike, or transit. Bands are a straight-line (as-the-crow-flies) estimate scaled by a local mobility factor — NOT turn-by-turn network routing, so real travel time varies (a river or highway can cut it off). Click the map to set the origin." /></div>
           <label class="mapx-switch">
             <input type="checkbox" :checked="isoOn" @change="toggleIso" />
             <span>Isochrone from a point</span>
@@ -832,14 +832,17 @@ const compareRows = computed(() => {
     return { label: m.label, a: m.fmt(a), b: m.fmt(b), winner };
   });
 });
+// Illustrative-data qualifier appended to Noetica prompts so the model treats the
+// synthetic area statistics as directional sample data, not real figures.
+const SYNTH_QUALIFIER = 'Note: these area statistics (income, rent, foot traffic, walkability) are illustrative sample data for the demo, not a live feed — treat them as directional. Competitor locations, where shown, are real OpenStreetMap data.';
 function askIsoNoetica() {
   if (compareOn.value && isoOriginB.value) {
     const rows = compareRows.value.map((x) => `${x.label} A=${x.a} B=${x.b}${x.winner ? ` (${x.winner.toUpperCase()} better)` : ''}`).join('; ');
-    cockpit.askAbout(`Compare two catchments for a ${isoMax.value}-min ${isoMode.value}: A reaches ${isoSummary.value.population.toLocaleString()} people, B reaches ${isoSummaryB.value.population.toLocaleString()}. Profiles — ${rows}. Which site is the better bet and why?`);
+    cockpit.askAbout(`Compare two catchments for a ${isoMax.value}-min ${isoMode.value} (straight-line reach estimate): A reaches ${isoSummary.value.population.toLocaleString()} people, B reaches ${isoSummaryB.value.population.toLocaleString()}. Profiles — ${rows}. Which site is the better bet and why? ${SYNTH_QUALIFIER}`);
     return;
   }
   const s = catchmentStats.value.map((x) => `${x.label} ${x.value} (${x.delta >= 0 ? '+' : ''}${x.delta}% vs city)`).join(', ');
-  cockpit.askAbout(`Reachability catchment: within a ${isoMax.value}-min ${isoMode.value} of this point are ${isoSummary.value.population.toLocaleString()} people across ${isoSummary.value.cells} areas — ${s}. Is this a strong catchment for a new location, and what does the profile favor?`);
+  cockpit.askAbout(`Reachability catchment (straight-line reach estimate): within a ${isoMax.value}-min ${isoMode.value} of this point are ~${isoSummary.value.population.toLocaleString()} people across ${isoSummary.value.cells} areas — ${s}. Is this a strong catchment for a new location, and what does the profile favor? ${SYNTH_QUALIFIER}`);
 }
 
 // Live POIs (OSM Overpass) — the real businesses of the active site-profile type in
@@ -984,12 +987,16 @@ const areaHighlights = computed(() => {
   };
 });
 
-const siteProv = computed(() => prov('computed', {
+// Honest provenance: the score is a real deterministic computation, but its INPUTS
+// (income, rent, foot traffic, walkability) are illustrative sample data, not a live
+// feed — so it is 'unassayed', not 'verified'. Only competitor density is real (OSM).
+// Flips to 'computed'/verified once the inputs are backed by real sources.
+const siteProv = computed(() => prov('fixture', {
   verifier: 'site-selection engine',
   formula: 'score = Σ wᵢ · norm(metricᵢ)  (foot traffic, income, walkability, rent, …)',
-  sources: ['foot-traffic grid', 'census/economic layers'],
+  sources: ['illustrative civic grid (sample data)', 'real OSM competitor density'],
   receipt: `sha256:site-${siteProfile.value}`,
-  note: 'Suitability is deterministic + replayable from the weighted profile — not a black-box guess.',
+  note: 'Deterministic + replayable from the weighted profile — but computed over ILLUSTRATIVE sample statistics, not yet assayed against real income / rent / foot-traffic sources. Competitor density is real OpenStreetMap.',
 }));
 const activeGroup = computed(() => CIVIC_LAYERS.find((g) => g.id === civicGroupId.value) ?? CIVIC_LAYERS[0]!);
 const activeMetric = computed<MetricDef>(() => METRIC_BY_KEY[civicMetricKey.value] ?? activeGroup.value.metrics[0]!);
@@ -1463,7 +1470,7 @@ function selectArea(props: Record<string, number>) {
 function askSiteNoetica() {
   const prof = SITE_PROFILES.find((p) => p.id === siteProfile.value);
   const top = topAreas.value.slice(0, 3).map((t, i) => `#${i + 1} score ${t.score} (${Math.round(t.props.footTrafficDaily).toLocaleString()} visits/day, $${Math.round(t.props.medianIncome / 1000)}k income, $${Math.round(t.props.reMedianRent)}/mo rent)`).join('; ');
-  cockpit.askAbout(`I'm scouting a ${prof?.label} location. The site-selection engine (verified compute) ranks the top areas: ${top}. Which would you open, what's the trade-off, and what would kill the deal?`);
+  cockpit.askAbout(`I'm scouting a ${prof?.label} location. The site-selection engine ranks the top areas by a deterministic weighted score: ${top}. Which would you open, what's the trade-off, and what would kill the deal? ${SYNTH_QUALIFIER}`);
 }
 // Community events (point markers) + Ask-about-area + drop-a-pin.
 function clearEvents() { eventMarkers.forEach((m) => m.remove()); eventMarkers = []; }
@@ -1491,7 +1498,7 @@ function placePin(lngLat: { lng: number; lat: number }) {
 function askAreaNoetica() {
   const c = selectedCell.value; if (!c) return;
   const stats = activeGroup.value.metrics.map((m) => `${m.label} ${fmtCell(m)}`).join(', ');
-  cockpit.askAbout(`Tell me about this area on the ${activeGroup.value.label} layer: ${stats}. How does it compare to the rest of the city, and what should I know before ${activeGroup.value.id === 'realestate' ? 'investing' : 'opening a business or moving'} here?`);
+  cockpit.askAbout(`Tell me about this area on the ${activeGroup.value.label} layer: ${stats}. How does it compare to the rest of the city, and what should I know before ${activeGroup.value.id === 'realestate' ? 'investing' : 'opening a business or moving'} here? ${SYNTH_QUALIFIER}`);
 }
 function clearPin() { pinMarker?.remove(); pinMarker = null; droppedPin.value = null; }
 // MLS listings — individual inventory over the aggregate choropleth.
