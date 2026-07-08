@@ -1,27 +1,23 @@
 <template>
   <section class="dt" aria-label="Digital twin simulation">
-    <header class="dt-top">
-      <div class="dt-title">
-        <div>
-          <p class="dt-eyebrow">Maps &amp; Analytics</p>
-          <h1>Digital Twin</h1>
-        </div>
-        <span class="dt-pill">fixture</span>
-      </div>
-      <div class="dt-controls">
+    <SurfaceHeader title='Digital Twin' eyebrow="Maps &amp; Analytics">
+      <template #badge><span class="dt-pill">fixture</span></template>
+      <template #actions>
+        <div class="dt-controls">
         <label class="dt-ctl"><span>Corporate twin</span>
-          <select v-model="twinId">
-            <option v-for="t in twins" :key="t.id" :value="t.id">{{ t.name }}</option>
-          </select>
+        <select v-model="twinId">
+        <option v-for="t in twins" :key="t.id" :value="t.id">{{ t.name }}</option>
+        </select>
         </label>
         <label class="dt-ctl"><span>Scenario</span>
-          <select v-model="scenarioId">
-            <option v-for="s in scenarios" :key="s.id" :value="s.id">{{ s.name }}</option>
-          </select>
+        <select v-model="scenarioId">
+        <option v-for="s in scenarios" :key="s.id" :value="s.id">{{ s.name }}</option>
+        </select>
         </label>
         <button class="dt-ask" type="button" @click="askNoetica" title="Ask Noetica about this twin">◇ Ask Noetica</button>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
 
     <p class="dt-note">{{ twin?.note }}</p>
     <p v-if="scenario && scenario.id !== 'baseline'" class="dt-scn">Scenario · {{ scenario.note }}</p>
@@ -124,6 +120,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';

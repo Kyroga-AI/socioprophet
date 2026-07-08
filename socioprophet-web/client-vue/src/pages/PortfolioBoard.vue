@@ -1,18 +1,14 @@
 <template>
   <section class="pf" aria-label="Portfolio">
-    <header class="pf-top">
-      <div class="pf-title">
-        <div>
-          <p class="pf-eyebrow">Capital &amp; Markets</p>
-          <h1>Portfolio</h1>
-        </div>
-        <span class="pf-pill">paper</span>
-      </div>
-      <div class="pf-actions">
+    <SurfaceHeader title='Portfolio' eyebrow="Capital &amp; Markets">
+      <template #badge><span class="pf-pill">paper</span></template>
+      <template #actions>
+        <div class="pf-actions">
         <button class="pf-ask" type="button" @click="askNoetica">◇ Ask Noetica</button>
         <button class="pf-reset" type="button" @click="portfolio.reset()" title="Clear the paper book">Reset book</button>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
 
     <!-- Account summary -->
     <div class="pf-summary">
@@ -86,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
