@@ -590,13 +590,14 @@ import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import { prov } from '../features/provenance/types';
-import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
+import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, isLand, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
 import { fetchPois, type Poi } from '../data/adapters/overpassLive';
 import { breaksFor, quantileBreaks, classOf, sampleRamp, type ClassMode } from '../data/classify';
+import { minOf, maxOf } from '../utils/arrayMath';
 import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL, type FtNetwork } from '../data/footTrafficFixture';
 import { fetchStreets } from '../data/adapters/streetsLive';
 import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
-import { latLngToCell } from 'h3-js';
+import { latLngToCell, cellToLatLng } from 'h3-js';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
 import {
@@ -718,10 +719,25 @@ const streetsBox = ref<GeoBox | null>(null);
 const STREET_MAX_SPAN = (CITY_BBOX.maxLon - CITY_BBOX.minLon) * 1.7; // beyond this the Overpass query is too big to be reliable
 const viewTooWide = computed(() => (gridBox.value.maxLon - gridBox.value.minLon) > STREET_MAX_SPAN);
 const landReady = computed(() => gridType.value === 'hex' && streetPoints.value.length > 0);
+// A hex counts as developable land only if it holds SEVERAL real street nodes AND
+// its centre isn't in known open water. The node floor kills shoreline bleed from a
+// lone waterfront/pier node; the water-polygon gate catches the bridge case (a bridge
+// is one way with many nodes, so a node count alone would keep the river hex it spans).
+const MIN_STREET_NODES = 2;
 const landCellIds = computed<Set<string> | null>(() => {
   if (!landReady.value) return null;
+  const counts = new Map<string, number>();
+  for (const [lon, lat] of streetPoints.value) {
+    const id = latLngToCell(lat, lon, hexRes.value);
+    counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
   const set = new Set<string>();
-  for (const [lon, lat] of streetPoints.value) set.add(latLngToCell(lat, lon, hexRes.value));
+  for (const [id, n] of counts) {
+    if (n < MIN_STREET_NODES) continue;
+    const [clat, clon] = cellToLatLng(id);
+    if (!isLand(clon, clat)) continue;
+    set.add(id);
+  }
   return set;
 });
 const gridFeatures = computed(() => {
@@ -908,7 +924,7 @@ function renderCensus() {
   const feats = censusFC.value.features.filter((f) => f.properties.medianIncome > 0);
   if (!feats.length) return;
   const incomes = feats.map((f) => f.properties.medianIncome);
-  const br = breaksFor('quantile', incomes, Math.min(...incomes), Math.max(...incomes), 5);
+  const br = breaksFor('quantile', incomes, minOf(incomes), maxOf(incomes), 5);
   const cols = Array.from({ length: 5 }, (_, i) => sampleRamp([[0, '#edf8e9'], [0.5, '#74c476'], [1, '#005a32']], i / 4));
   const color = buildStepExpr(['get', 'medianIncome'], br, cols) as never;
   const data = { type: 'FeatureCollection', features: feats } as unknown as FillData;
@@ -1363,12 +1379,15 @@ function renderCivic() {
   paintCivic({ type: 'FeatureCollection', features: tFeatures() } as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
 }
 function renderSite() {
+  // Nothing to classify when the view is too wide (gridFeatures is empty) — bail
+  // before Math over an empty array yields Infinity breaks and a broken step expr.
+  if (!gridFeatures.value.length) { hideCivic(); return; }
   // Suitability scores cluster tightly (e.g. 50–60), so a raw 0–100 ramp paints
   // everything the same shade. Classify over the ACTUAL score range so the best
   // areas go green and the worst red — the whole point of a site-selection map.
   const scores = gridFeatures.value.map((f) => siteScoreOf(f.properties as Record<string, number>));
   const scored = { type: 'FeatureCollection', features: gridFeatures.value.map((f, i) => ({ ...f, properties: { ...f.properties, siteScore: scores[i] } })) };
-  const br = breaksFor('quantile', scores, Math.min(...scores), Math.max(...scores), N_CLASSES);
+  const br = breaksFor('quantile', scores, minOf(scores), maxOf(scores), N_CLASSES);
   const cols = Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(SITE_RAMP, i / (N_CLASSES - 1)));
   paintCivic(scored as unknown as FillData, buildStepExpr(['get', 'siteScore'], br, cols) as never);
 }
@@ -1388,6 +1407,7 @@ function boxCovers(outer: GeoBox, inner: GeoBox): boolean {
 }
 async function refreshStreetsForView(force = false) {
   if (!map) return;
+  if (streetsState.value === 'loading') return; // a fetch is already in flight — never stack Overpass requests (rate-limit ban risk)
   if (viewTooWide.value) { streetsState.value = 'idle'; return; } // too big to fetch reliably — overlay hides with a zoom-in hint
   if (!force && streetsBox.value && boxCovers(streetsBox.value, gridBox.value)) return; // cached: already have streets covering this view
   streetsState.value = 'loading';
@@ -1410,10 +1430,12 @@ function onMapMoved() {
     const targetRes = resAuto.value ? resForZoom(map.getZoom()) : hexRes.value;
     if (moved < span * 0.15 && targetRes === hexRes.value) return; // negligible move + same res — don't thrash
     gridBox.value = nb;
-    if (targetRes !== hexRes.value) hexRes.value = targetRes; // triggers rebuild via its watcher too, but rebuild is idempotent
-    rebuildGrid();
+    // Changing hexRes rebuilds via its watcher; only rebuild explicitly when res is
+    // unchanged (box moved) so we don't do the heavy tessellation twice.
+    if (targetRes !== hexRes.value) hexRes.value = targetRes;
+    else rebuildGrid();
     if (civicOn.value || siteMode.value) void refreshStreetsForView(); // real land mask for the new view
-  }, 450);
+  }, 1200); // generous debounce: Overpass rate-limits hard, so settle well before refetching
 }
 // Beauty: mute the basemap when data goes on top, so the choropleth reads clean.
 // Data-forward: put choropleth/heat data on a DARK basemap so the colored cells

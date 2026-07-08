@@ -1,3 +1,4 @@
+import { fetchT } from './http';
 // Live weather adapter — flips WeatherMonitor's regions from FIXTURE to real
 // current conditions + forecast via Open-Meteo (open-meteo.com): free, no API
 // key, CORS-enabled. One batched request for all regions. Maps into the same
@@ -45,7 +46,7 @@ export async function fetchWeatherLive(): Promise<Region[] | null> {
       + '&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m'
       + '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code'
       + '&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&past_days=1&forecast_days=6';
-    const res = await fetch(url, { headers: { accept: 'application/json' } });
+    const res = await fetchT(url, { headers: { accept: 'application/json' } });
     if (!res.ok) return null;
     const j = (await res.json()) as RawLoc | RawLoc[];
     const arr = Array.isArray(j) ? j : [j];

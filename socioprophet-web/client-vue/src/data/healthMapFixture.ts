@@ -166,6 +166,7 @@ export const METRIC_BY_KEY: Record<string, MetricDef> = Object.fromEntries(
 
 // Map extent around NYC / Hudson (matches the workbench default view).
 import { polygonToCells, cellToBoundary, cellToLatLng } from 'h3-js';
+import { minOf, maxOf } from '../utils/arrayMath';
 
 const BBOX = { minLon: -74.09, maxLon: -73.90, minLat: 40.64, maxLat: 40.82 };
 function hash(a: number, b: number): number { let h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) >>> 0; return h / 4294967296; }
@@ -240,7 +241,7 @@ export function civicGrid(cols = 34, rows = 34, box: GeoBox = BBOX): CivicGrid {
   const rawA: number[] = [];
   const rawB: number[] = [];
   for (let i = 0; i < cols; i += 1) for (let j = 0; j < rows; j += 1) { const [u, v] = uv(box.minLon + (i + 0.5) * dLon, box.minLat + (j + 0.5) * dLat); rawA.push(sfield(u, v, 1)); rawB.push(sfield(u, v, 2)); }
-  const norm = (arr: number[]) => { const mn = Math.min(...arr); const d = (Math.max(...arr) - mn) || 1; return arr.map((x) => (x - mn) / d); };
+  const norm = (arr: number[]) => { const mn = minOf(arr); const d = (maxOf(arr) - mn) || 1; return arr.map((x) => (x - mn) / d); };
   const A = norm(rawA);
   const B = norm(rawB);
   const features: Cell[] = [];
@@ -344,7 +345,7 @@ export function civicHexGrid(res = 8, box: GeoBox = BBOX): CivicGrid {
   const centers = cells.map((h3) => cellToLatLng(h3)); // [lat, lng]
   const rawA = centers.map(([lat, lon]) => sfield((lon - BBOX.minLon) / spanLon, (lat - BBOX.minLat) / spanLat, 1));
   const rawB = centers.map(([lat, lon]) => sfield((lon - BBOX.minLon) / spanLon, (lat - BBOX.minLat) / spanLat, 2));
-  const norm = (arr: number[]) => { const mn = Math.min(...arr); const d = (Math.max(...arr) - mn) || 1; return arr.map((x) => (x - mn) / d); };
+  const norm = (arr: number[]) => { const mn = minOf(arr); const d = (maxOf(arr) - mn) || 1; return arr.map((x) => (x - mn) / d); };
   const A = norm(rawA);
   const B = norm(rawB);
   const features: Cell[] = cells.map((h3, k) => {

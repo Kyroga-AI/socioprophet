@@ -1,3 +1,4 @@
+import { fetchT } from './http';
 // Live news adapter — flips a tech news source off FIXTURE using the Algolia
 // Hacker News API (hn.algolia.com): public, no key, CORS-enabled. (Raw RSS can't
 // be fetched from the browser — no CORS — so HN's JSON firehose is the clean
@@ -31,7 +32,7 @@ export async function fetchHackerNews(query = '', limit = 20): Promise<FeedItem[
   try {
     const q = query ? `&query=${encodeURIComponent(query)}` : '';
     const url = `https://hn.algolia.com/api/v1/search_by_date?tags=story${q}&hitsPerPage=${limit}`;
-    const res = await fetch(url, { headers: { accept: 'application/json' } });
+    const res = await fetchT(url, { headers: { accept: 'application/json' } });
     if (!res.ok) return null;
     const j = (await res.json()) as { hits?: HnHit[] };
     const hits = (j.hits ?? []).filter((h) => h.title && h.objectID);

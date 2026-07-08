@@ -1,3 +1,4 @@
+import { fetchT } from './http';
 // Live civic data — real demographics from the US Census ACS 5-year API joined to
 // real census-tract polygons from TIGERweb, both public + no key. ACS returns
 // values keyed by GEOID (no geometry); TIGER returns tract polygons with GEOID; we
@@ -48,7 +49,7 @@ export async function fetchCensus(state = '36', county = '061'): Promise<CensusF
   try {
     const acsUrl = `${ACS}?get=NAME,B19013_001E,B01003_001E&for=tract:*&in=state:${state}&in=county:${county}`;
     const tigerUrl = `${TIGER}?where=${encodeURIComponent(`STATE='${state}' AND COUNTY='${county}'`)}&outFields=GEOID&returnGeometry=true&outSR=4326&f=geojson`;
-    const [acsRes, tigerRes] = await Promise.all([fetch(acsUrl, { headers: { accept: 'application/json' } }), fetch(tigerUrl, { headers: { accept: 'application/json' } })]);
+    const [acsRes, tigerRes] = await Promise.all([fetchT(acsUrl, { headers: { accept: 'application/json' } }, 12000), fetchT(tigerUrl, { headers: { accept: 'application/json' } }, 12000)]);
     if (!acsRes.ok || !tigerRes.ok) return null;
     const acs = (await acsRes.json()) as AcsRows;
     const tiger = (await tigerRes.json()) as { features?: TigerFeature[] };

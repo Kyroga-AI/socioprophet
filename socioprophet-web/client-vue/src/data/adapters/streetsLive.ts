@@ -7,6 +7,12 @@
 // closed (null) → fall back to the synthetic corridors.
 import { CITY_BBOX, sampleCommercial } from '../healthMapFixture';
 import type { FtNetwork, FtSeg, FtKind } from '../footTrafficFixture';
+import { minOf, maxOf } from '../../utils/arrayMath';
+import { fetchT } from './http';
+
+// Whether the last fetch hit the way cap (i.e. Overpass truncated the result and
+// the returned network may have coverage holes). Callers can surface this.
+export let streetsTruncated = false;
 
 export interface BBox { s: number; w: number; n: number; e: number }
 export interface LiveStreets { network: FtNetwork; points: Array<[number, number]> } // points = [lon, lat]
@@ -20,18 +26,23 @@ function highwayKind(hw: string): FtKind {
 
 const ENDPOINT = 'https://overpass-api.de/api/interpreter';
 
-export async function fetchStreets(bbox: BBox, limit = 1500): Promise<LiveStreets | null> {
+// Way cap. `out geom N` limits the number of WAYS (not spatially), so too low a
+// cap makes dense views drop whole neighbourhoods → the land mask reads them as
+// water and the choropleth punches holes in solid land. Overpass handles 10k+
+// ways within the 25s timeout, so cap high and clamp the fetched span elsewhere.
+export async function fetchStreets(bbox: BBox, limit = 12000): Promise<LiveStreets | null> {
   try {
     const ql = `[out:json][timeout:25];way["highway"~"^(motorway|trunk|primary|secondary|tertiary|residential|living_street|unclassified|pedestrian|footway)$"](${bbox.s},${bbox.w},${bbox.n},${bbox.e});out geom ${limit};`;
-    const res = await fetch(ENDPOINT, {
+    const res = await fetchT(ENDPOINT, {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: 'data=' + encodeURIComponent(ql),
-    });
+    }, 15000);
     if (!res.ok) return null;
     const j = (await res.json()) as { elements?: Array<{ id: number; tags?: Record<string, string>; geometry?: Array<{ lat: number; lon: number }> }> };
     const ways = (j.elements ?? []).filter((w) => Array.isArray(w.geometry) && w.geometry.length >= 2);
     if (!ways.length) return null;
+    streetsTruncated = ways.length >= limit;
     const raw: FtSeg[] = [];
     const points: Array<[number, number]> = [];
     for (const w of ways) {
@@ -54,8 +65,8 @@ export async function fetchStreets(bbox: BBox, limit = 1500): Promise<LiveStreet
     }
     // Normalise base 0..1 across the network, lifting commercial/transit spines.
     const bases = raw.map((s) => s.properties.base);
-    const mn = Math.min(...bases);
-    const d = (Math.max(...bases) - mn) || 1;
+    const mn = minOf(bases);
+    const d = (maxOf(bases) - mn) || 1;
     for (const s of raw) {
       let nb = (s.properties.base - mn) / d;
       if (s.properties.kind === 'commercial') nb = Math.min(1, nb * 1.15 + 0.15);

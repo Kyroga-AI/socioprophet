@@ -1,3 +1,4 @@
+import { fetchT } from './http';
 // Live Bluesky adapter — flips the News feed's Bluesky source from FIXTURE to a
 // real public AppView feed. No auth / API key: public.api.bsky.app is
 // unauthenticated and CORS-enabled. Each real post is mapped into the SAME
@@ -46,7 +47,7 @@ export async function fetchBlueskyLive(
 ): Promise<LiveBsky | null> {
   try {
     const url = `${ENDPOINT}?q=${encodeURIComponent(query)}&limit=${limit}&sort=latest`;
-    const res = await fetch(url, { headers: { accept: 'application/json' } });
+    const res = await fetchT(url, { headers: { accept: 'application/json' } });
     if (!res.ok) return null;
     const j = (await res.json()) as { posts?: RawPost[] };
     const posts = (j.posts ?? []).filter((p) => p && p.uri && p.cid && p.author?.handle && p.record?.text);

@@ -4,6 +4,7 @@
 // the commercial field) and a kind whose time-of-day profile scales it. UI-only;
 // a real mobility adapter (Placer/SafeGraph-style) emits the same segment shape.
 import { CITY_BBOX, sampleCommercial, isLand } from './healthMapFixture';
+import { minOf, maxOf } from '../utils/arrayMath';
 
 export type FtKind = 'commercial' | 'transit' | 'residential';
 export interface FtSeg {
@@ -51,8 +52,8 @@ export function footTrafficNetwork(): FtNetwork {
   }
   // Normalise base to 0..1 across the network, then lift commercial/transit spines.
   const bases = raw.map((s) => s.properties.base);
-  const mn = Math.min(...bases);
-  const d = (Math.max(...bases) - mn) || 1;
+  const mn = minOf(bases);
+  const d = (maxOf(bases) - mn) || 1;
   for (const s of raw) {
     let nb = (s.properties.base - mn) / d;
     if (s.properties.kind === 'commercial') nb = Math.min(1, nb * 1.15 + 0.15);

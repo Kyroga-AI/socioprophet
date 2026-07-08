@@ -1,3 +1,4 @@
+import { fetchT } from './http';
 // Live People/OSINT adapter — real people & organizations from Wikidata (no key,
 // CORS via origin=*). Search resolves candidate entities; a details call pulls the
 // claims we can map to the directory's Entity shape (kind, description, website,
@@ -29,7 +30,7 @@ export async function fetchPeopleLive(query: string, limit = 12): Promise<Entity
   try {
     const q = (query || 'economist').trim();
     const searchUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(q)}&language=en&type=item&limit=${limit}&format=json&origin=*`;
-    const sres = await fetch(searchUrl);
+    const sres = await fetchT(searchUrl);
     if (!sres.ok) return null;
     const sj = (await sres.json()) as { search?: SearchHit[] };
     const hits = (sj.search ?? []).filter((h) => h.id && h.label);
@@ -39,7 +40,7 @@ export async function fetchPeopleLive(query: string, limit = 12): Promise<Entity
     const dUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${ids}&props=claims|descriptions|labels&languages=en&format=json&origin=*`;
     let details: Record<string, WdEntity> = {};
     try {
-      const dres = await fetch(dUrl);
+      const dres = await fetchT(dUrl);
       if (dres.ok) details = ((await dres.json()) as { entities?: Record<string, WdEntity> }).entities ?? {};
     } catch { /* details are best-effort */ }
     return hits.map((h): Entity => {

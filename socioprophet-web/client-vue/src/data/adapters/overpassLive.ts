@@ -1,3 +1,4 @@
+import { fetchT } from './http';
 // Live POI adapter — real businesses/amenities from OpenStreetMap via the public
 // Overpass API (overpass-api.de, no key, CORS-enabled). Given the current map
 // bounds + a business category (aligned to the site-selection profiles), it
@@ -22,11 +23,11 @@ export async function fetchPois(bbox: BBox, category: string, limit = 250): Prom
   try {
     const q = CATEGORY_QUERY[category] ?? CATEGORY_QUERY.coffee;
     const ql = `[out:json][timeout:20];(${q}(${bbox.s},${bbox.w},${bbox.n},${bbox.e}););out ${limit};`;
-    const res = await fetch(ENDPOINT, {
+    const res = await fetchT(ENDPOINT, {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: 'data=' + encodeURIComponent(ql),
-    });
+    }, 15000);
     if (!res.ok) return null;
     const j = (await res.json()) as { elements?: Array<{ id: number; lat?: number; lon?: number; tags?: Record<string, string> }> };
     return (j.elements ?? [])
