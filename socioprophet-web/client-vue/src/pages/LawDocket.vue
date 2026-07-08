@@ -1,22 +1,20 @@
 <template>
   <section class="lw" aria-label="Legal docket">
-    <header class="lw-toolbar">
-      <div class="lw-title">
-        <div>
-          <p v-if="scope" class="lw-eyebrow">{{ scope.domain }}</p>
-          <h1>{{ scope?.label ?? 'Docket' }}</h1>
-        </div>
-        <span class="lw-pill">fixture</span>
-      </div>
-      <form class="term-cmd" @submit.prevent="runCmd">
+    <SurfaceHeader :title="scope?.label ?? 'Docket'" :eyebrow="(scope) ? (scope.domain) : ''">
+      <template #badge><span class="lw-pill">fixture</span></template>
+      <template #search>
+        <form class="term-cmd" @submit.prevent="runCmd">
         <span class="term-cmd-prompt">⌕</span>
         <input v-model="cmd" spellcheck="false" placeholder="Search cite, title, agency, #tag…" aria-label="Search dockets" />
         <button type="submit" class="term-cmd-go">&lt;GO&gt;</button>
-      </form>
-      <div class="lw-filters">
+        </form>
+      </template>
+      <template #actions>
+        <div class="lw-filters">
         <button v-for="s in statuses" :key="s" class="lw-fbtn" :class="{ on: status === s }" @click="setStatus(s)">{{ s }}</button>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
 
     <SplitPane storage-key="law-docket" label="dockets" :initial="360">
       <template #list>
@@ -117,6 +115,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { dockets, asOf, type Docket, type DocketStatus } from '../data/lawFixture';

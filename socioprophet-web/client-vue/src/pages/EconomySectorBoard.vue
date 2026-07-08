@@ -1,21 +1,18 @@
 <template>
   <section class="ec" aria-label="Economy sector board">
-    <header class="ec-toolbar">
-      <div class="ec-title">
-        <div>
-          <p v-if="scope && !scope.isPrimary" class="ec-eyebrow">{{ scope.domain }}</p>
-          <h1 v-if="scope && !scope.isPrimary">{{ scope.label }}</h1>
-          <h1 v-else>Macro &amp; Sectors</h1>
-        </div>
-        <span class="ec-pill">fixture</span>
-      </div>
-      <form class="term-cmd" @submit.prevent="runCmd">
+    <SurfaceHeader :title="scope?.label ?? 'Economy'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
+      <template #badge><span class="ec-pill">fixture</span></template>
+      <template #search>
+        <form class="term-cmd" @submit.prevent="runCmd">
         <span class="term-cmd-prompt">›</span>
         <input v-model="cmd" spellcheck="false" placeholder="Jump to indicator or sector (e.g. CPI, Energy)" />
         <button type="submit" class="term-cmd-go">&lt;GO&gt;</button>
-      </form>
-      <div class="ec-asof">{{ asOfLabel }}</div>
-    </header>
+        </form>
+      </template>
+      <template #actions>
+        <div class="ec-asof">{{ asOfLabel }}</div>
+      </template>
+    </SurfaceHeader>
 
     <!-- KPI indicator tiles -->
     <div class="ec-kpis" aria-label="Indicators" @keydown="arrowRove($event, $event.currentTarget, '.ec-kpi', 'h')">
@@ -125,6 +122,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

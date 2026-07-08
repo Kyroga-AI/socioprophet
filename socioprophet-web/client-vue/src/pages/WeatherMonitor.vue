@@ -1,21 +1,18 @@
 <template>
   <section class="wx" aria-label="Weather monitor">
-    <header class="wx-toolbar">
-      <div class="wx-title">
-        <div>
-          <p v-if="scope && !scope.isPrimary" class="wx-eyebrow">{{ scope.domain }}</p>
-          <h1 v-if="scope && !scope.isPrimary">{{ scope.label }}</h1>
-          <h1 v-else>Weather &amp; Resources</h1>
-        </div>
-        <span class="wx-pill">fixture</span>
-      </div>
-      <form class="term-cmd" @submit.prevent="runCmd">
+    <SurfaceHeader :title="scope?.label ?? 'Weather'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
+      <template #badge><span class="wx-pill">fixture</span></template>
+      <template #search>
+        <form class="term-cmd" @submit.prevent="runCmd">
         <span class="term-cmd-prompt">›</span>
         <input v-model="cmd" spellcheck="false" placeholder="Jump to a region (e.g. Stockholm)" />
         <button type="submit" class="term-cmd-go">&lt;GO&gt;</button>
-      </form>
-      <div class="wx-asof">{{ asOfLabel }}</div>
-    </header>
+        </form>
+      </template>
+      <template #actions>
+        <div class="wx-asof">{{ asOfLabel }}</div>
+      </template>
+    </SurfaceHeader>
 
     <!-- Region tiles -->
     <div class="wx-tiles" aria-label="Regions" @keydown="arrowRove($event, $event.currentTarget, '.wx-tile', 'h')">
@@ -95,6 +92,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { regions, alerts, asOf, type Region, type Condition } from '../data/weatherFixture';

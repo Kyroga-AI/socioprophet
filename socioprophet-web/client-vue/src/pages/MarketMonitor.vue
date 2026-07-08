@@ -1,21 +1,19 @@
 <template>
   <section class="mk" aria-label="Market monitor">
     <!-- Toolbar + command line -->
-    <header class="mk-toolbar">
-      <div class="mk-title">
-        <div>
-          <p v-if="scope && !scope.isPrimary" class="mk-eyebrow">{{ scope.domain }}</p>
-          <h1>{{ scope && !scope.isPrimary ? scope.label : 'Market Monitor' }}</h1>
-        </div>
-        <span class="mk-pill">fixture</span>
-      </div>
-      <form class="mk-cmd" @submit.prevent="runCmd">
+    <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Market Monitor'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
+      <template #badge><span class="mk-pill">fixture</span></template>
+      <template #search>
+        <form class="mk-cmd" @submit.prevent="runCmd">
         <span class="mk-cmd-prompt">›</span>
         <input v-model="cmd" spellcheck="false" placeholder="Type a ticker  (e.g. NVDA)" />
         <button type="submit" class="mk-cmd-go">&lt;GO&gt;</button>
-      </form>
-      <div class="mk-asof">{{ asOfLabel }}</div>
-    </header>
+        </form>
+      </template>
+      <template #actions>
+        <div class="mk-asof">{{ asOfLabel }}</div>
+      </template>
+    </SurfaceHeader>
 
     <!-- Ticker tape -->
     <div class="mk-tape" aria-label="Ticker tape">
@@ -149,6 +147,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';

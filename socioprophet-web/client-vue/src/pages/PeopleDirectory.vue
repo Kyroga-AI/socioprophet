@@ -1,21 +1,19 @@
 <template>
   <section class="pd" aria-label="People directory">
-    <header class="pd-toolbar">
-      <div class="pd-title">
-        <div>
-          <p v-if="scope && !scope.isPrimary" class="pd-eyebrow">{{ scope.domain }}</p>
-          <h1>{{ scope && !scope.isPrimary ? scope.label : 'Directory' }}</h1>
-        </div>
-        <span class="pd-pill">fixture</span>
-      </div>
-      <form class="pd-search" @submit.prevent="jump">
+    <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Directory'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
+      <template #badge><span class="pd-pill">fixture</span></template>
+      <template #search>
+        <form class="pd-search" @submit.prevent="jump">
         <span class="pd-search-ic">⌕</span>
         <input v-model="query" type="text" placeholder="Search or type a name + ⏎ to open…" spellcheck="false" />
-      </form>
-      <div class="pd-kinds">
+        </form>
+      </template>
+      <template #actions>
+        <div class="pd-kinds">
         <button v-for="k in kinds" :key="k" class="pd-kbtn" :class="{ on: kind === k }" @click="setKind(k)">{{ k }}</button>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
 
     <SplitPane storage-key="people-directory" label="results" :initial="380">
       <template #list>
@@ -169,6 +167,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import SplitPane from '../components/SplitPane.vue';

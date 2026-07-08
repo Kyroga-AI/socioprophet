@@ -1,20 +1,18 @@
 <template>
   <section class="ss" aria-label="Social signals">
-    <header class="ss-toolbar">
-      <div class="ss-title">
-        <div>
-          <p v-if="scope && !scope.isPrimary" class="ss-eyebrow">{{ scope.domain }}</p>
-          <h1>{{ scope && !scope.isPrimary ? scope.label : 'Social Signals' }}</h1>
-        </div>
-        <span class="ss-pill">fixture</span>
-      </div>
-      <form class="term-cmd" @submit.prevent>
+    <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Social Signals'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
+      <template #badge><span class="ss-pill">fixture</span></template>
+      <template #search>
+        <form class="term-cmd" @submit.prevent>
         <span class="term-cmd-prompt">›</span>
         <input v-model="query" spellcheck="false" placeholder="Filter by @handle, name or #topic" />
         <button type="button" class="term-cmd-go" @click="query = ''">CLR</button>
-      </form>
-      <div class="ss-asof">{{ asOfLabel }}</div>
-    </header>
+        </form>
+      </template>
+      <template #actions>
+        <div class="ss-asof">{{ asOfLabel }}</div>
+      </template>
+    </SurfaceHeader>
 
     <div class="ss-filters">
       <div class="ss-fgroup">
@@ -72,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
