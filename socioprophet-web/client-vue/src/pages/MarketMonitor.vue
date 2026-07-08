@@ -2,7 +2,7 @@
   <section class="mk" aria-label="Market monitor">
     <!-- Toolbar + command line -->
     <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Market Monitor'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
-      <template #badge><span class="mk-pill" :class="{ live: liveState === 'live' }">{{ liveState === 'live' ? 'live · crypto' : 'fixture' }}</span></template>
+      <template #badge><span class="mk-pill" :class="{ live: liveState === 'live' }">{{ liveState === 'live' ? 'live · crypto + fx' : 'fixture' }}</span></template>
       <template #search>
         <form class="mk-cmd" @submit.prevent="runCmd">
         <span class="mk-cmd-prompt">›</span>
@@ -12,7 +12,7 @@
       </template>
       <template #actions>
         <button class="mk-live" :class="{ on: liveState === 'live', err: liveState === 'error' }" :disabled="liveState === 'loading'" type="button" title="Real crypto prices via CoinGecko — no key" @click="goLive">
-          {{ liveState === 'loading' ? '⟳ live…' : liveState === 'live' ? '● Live crypto' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
+          {{ liveState === 'loading' ? '⟳ live…' : liveState === 'live' ? '● Live' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
         </button>
         <div class="mk-asof">{{ liveState === 'live' ? 'CoinGecko · now' : asOfLabel }}</div>
       </template>
@@ -156,7 +156,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
 import { indices, watchlist, instruments, SUBDOMAIN_CLASSES, asOf, type Instrument, type AssetClass } from '../data/marketsFixture';
-import { fetchCryptoLive } from '../data/adapters/marketsLive';
+import { fetchCryptoLive, fetchFxLive } from '../data/adapters/marketsLive';
 import HumanNetworks from '../components/HumanNetworks.vue';
 import { arrowRove } from '../utils/listKeys';
 import { usePortfolio } from '../stores/portfolio';
@@ -207,8 +207,9 @@ const displayInstruments = computed<Instrument[]>(() => instruments.map((i) => {
 async function goLive() {
   if (liveState.value === 'loading') return;
   liveState.value = 'loading';
-  const m = await fetchCryptoLive();
-  if (m && m.size) { liveQuotes.value = m; liveState.value = 'live'; selected.value = displayInstruments.value.find((i) => i.symbol === selected.value.symbol) ?? selected.value; }
+  const [c, f] = await Promise.all([fetchCryptoLive(), fetchFxLive()]);
+  const merged = new Map([...(c ?? new Map()), ...(f ?? new Map())]);
+  if (merged.size) { liveQuotes.value = merged; liveState.value = 'live'; selected.value = displayInstruments.value.find((i) => i.symbol === selected.value.symbol) ?? selected.value; }
   else liveState.value = 'error';
 }
 const rows = computed<Instrument[]>(() =>
