@@ -219,6 +219,7 @@ import { navScopeForPath } from '../config/cockpitNav';
 import { newsSources, newsItems } from '../data/newsFeedFixture';
 import { blueskySources, blueskyItems, blueskyMeta, type BskyPost } from '../data/blueskyFixture';
 import { fetchBlueskyLive, BSKY_LIVE_SOURCE } from '../data/adapters/blueskyLive';
+import { fetchHackerNews, HN_LIVE_SOURCE } from '../data/adapters/newsLive';
 import type { FeedItem } from '../features/feed-intelligence/types';
 import {
   storyMeta, DOWNVOTE_REASONS, FLAG_REASONS,
@@ -236,14 +237,20 @@ import ReputationBadge from '../components/ReputationBadge.vue';
 const liveItems = ref<FeedItem[]>([]);
 const liveMeta = ref<Map<string, BskyPost>>(new Map());
 const liveState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const liveSources = ref<typeof newsSources>([]);
 async function goLive() {
   if (liveState.value === 'loading') return;
   liveState.value = 'loading';
-  const r = await fetchBlueskyLive();
-  if (r && r.items.length) { liveItems.value = r.items; liveMeta.value = r.meta; liveState.value = 'live'; }
-  else liveState.value = 'error';
+  const [bsky, hn] = await Promise.all([fetchBlueskyLive(), fetchHackerNews()]);
+  const items = [...(bsky?.items ?? []), ...(hn ?? [])];
+  if (items.length) {
+    liveItems.value = items;
+    liveMeta.value = bsky?.meta ?? new Map();
+    liveSources.value = [...(bsky?.items.length ? [BSKY_LIVE_SOURCE] : []), ...(hn?.length ? [HN_LIVE_SOURCE] : [])];
+    liveState.value = 'live';
+  } else liveState.value = 'error';
 }
-const sources = computed(() => (liveItems.value.length ? [...newsSources, ...blueskySources, BSKY_LIVE_SOURCE] : [...newsSources, ...blueskySources]));
+const sources = computed(() => [...newsSources, ...blueskySources, ...liveSources.value]);
 const all = computed(() => [...newsItems, ...blueskyItems, ...liveItems.value]);
 const research = useResearch();
 const cockpit = useCockpit();
@@ -323,7 +330,7 @@ const topTags = computed(() => {
 });
 
 const SRC_COLORS: Record<string, string> = {
-  'src-world': '#58a6ff', 'src-tech': '#c58af9', 'src-markets': 'var(--up)', 'src-reg': '#f0883e', 'src-capture': '#e3b341', 'src-bsky': '#3b9cff',
+  'src-world': '#58a6ff', 'src-tech': '#c58af9', 'src-markets': 'var(--up)', 'src-reg': '#f0883e', 'src-capture': '#e3b341', 'src-bsky': '#3b9cff', 'src-bsky-live': '#3b9cff', 'src-hn-live': '#ff6600',
 };
 const sourceColor = (sid: string) => SRC_COLORS[sid] ?? '#8b949e';
 function domainOf(url: string): string { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return 'source'; } }
