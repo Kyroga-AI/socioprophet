@@ -149,12 +149,20 @@
               <div class="mapx-biv-ax mapx-biv-ax--x">price →</div>
               <div class="mapx-biv-ax mapx-biv-ax--y">yield ↑</div>
             </div>
-            <div v-else-if="!isFootTraffic" class="mapx-legend">
-              <span class="mapx-legend-lo">{{ fmtVal(activeMetric.min * metricFactor, activeMetric) }}</span>
-              <span class="mapx-legend-steps">
-                <i v-for="(cl, i) in legendClasses" :key="i" :style="{ background: cl.color }" :title="`${fmtVal(cl.lo, activeMetric)} – ${fmtVal(cl.hi, activeMetric)}`" />
-              </span>
-              <span class="mapx-legend-hi">{{ fmtVal(activeMetric.max * metricFactor, activeMetric) }}</span>
+            <div v-else-if="!isFootTraffic" class="mapx-legend-block">
+              <div class="mapx-legend">
+                <span class="mapx-legend-lo">{{ fmtVal(activeMetric.min * metricFactor, activeMetric) }}</span>
+                <span class="mapx-legend-mid">
+                  <span class="mapx-legend-steps">
+                    <i v-for="(cl, i) in legendClasses" :key="i" :style="{ background: cl.color }" :title="`${fmtVal(cl.lo, activeMetric)} – ${fmtVal(cl.hi, activeMetric)}`" />
+                  </span>
+                  <span class="mapx-legend-ticks" aria-hidden="true">
+                    <b v-for="(bk, i) in classBreaks" :key="i" :style="{ left: ((i + 1) / N_CLASSES * 100) + '%' }">{{ fmtVal(bk, activeMetric) }}</b>
+                  </span>
+                </span>
+                <span class="mapx-legend-hi">{{ fmtVal(activeMetric.max * metricFactor, activeMetric) }}</span>
+              </div>
+              <div class="mapx-legend-cap">{{ N_CLASSES }} classes · {{ classModeLabel }} breaks</div>
             </div>
 
             <!-- Foot traffic: corridor network + time-of-day -->
@@ -982,6 +990,7 @@ const CLASS_MODES = [
   { id: 'jenks', label: 'Jenks', title: 'Natural breaks — minimises within-class variance' },
 ] as const;
 const classMode = ref<ClassMode>('quantile');
+const classModeLabel = computed(() => CLASS_MODES.find((c) => c.id === classMode.value)?.label ?? '');
 const bivariateOn = ref(false);
 const isRealEstate = computed(() => activeGroup.value.id === 'realestate');
 // Temporal replay — scrub the active metric back through quarters. "Better"
@@ -1853,11 +1862,18 @@ onUnmounted(() => {
 .mapx-listing-yield { color: var(--up); font-weight: 600; }
 .mapx-switch { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text-2); cursor: pointer; }
 .mapx-switch input { accent-color: var(--map-accent); }
-.mapx-legend { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }
+.mapx-legend-block { margin-top: 0.6rem; }
+.mapx-legend { display: flex; align-items: flex-start; gap: 0.4rem; }
 .mapx-legend-bar { flex: 1; height: 9px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.14); }
-.mapx-legend-lo, .mapx-legend-hi { font-size: 0.62rem; color: var(--text-3); white-space: nowrap; }
-.mapx-legend-steps { flex: 1; display: flex; height: 10px; border-radius: 3px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.14); }
+.mapx-legend-lo, .mapx-legend-hi { font-size: 0.62rem; color: var(--text-3); white-space: nowrap; line-height: 10px; font-variant-numeric: tabular-nums; }
+.mapx-legend-mid { position: relative; flex: 1; }
+.mapx-legend-steps { display: flex; height: 10px; border-radius: 3px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.14); }
 .mapx-legend-steps i { flex: 1; }
+.mapx-legend-steps i + i { border-left: 1px solid rgba(10, 12, 16, 0.45); }
+.mapx-legend-ticks { position: relative; display: block; height: 0.8rem; margin-top: 3px; }
+.mapx-legend-ticks b { position: absolute; top: 0; transform: translateX(-50%); font-size: 0.5rem; font-weight: 600; color: var(--text-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.mapx-legend-ticks b::before { content: ''; position: absolute; top: -3px; left: 50%; width: 1px; height: 2px; background: var(--line-2); }
+.mapx-legend-cap { margin-top: 0.35rem; font-size: 0.56rem; letter-spacing: 0.03em; text-transform: uppercase; color: var(--text-3); }
 /* Classification selector */
 /* Foot-traffic time-of-day control */
 .mapx-ft { margin-top: 0.2rem; }
