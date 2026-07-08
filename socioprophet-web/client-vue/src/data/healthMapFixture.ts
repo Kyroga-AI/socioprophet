@@ -230,22 +230,24 @@ export interface CivicGrid { type: 'FeatureCollection'; features: Cell[] }
 
 // Build the aggregation grid; deterministic + spatially coherent. Fine-grained by
 // default (a ~1k-cell neighborhood lattice); pass cols/rows to change resolution.
-export function civicGrid(cols = 34, rows = 34): CivicGrid {
-  const dLon = (BBOX.maxLon - BBOX.minLon) / cols;
-  const dLat = (BBOX.maxLat - BBOX.minLat) / rows;
-  // Pass 1: raw smooth fields, then normalise each to full 0..1 so districts span
-  // the metrics' whole design range (keeps Equal-interval + quantile both honest).
+export function civicGrid(cols = 34, rows = 34, box: GeoBox = BBOX): CivicGrid {
+  const dLon = (box.maxLon - box.minLon) / cols;
+  const dLat = (box.maxLat - box.minLat) / rows;
+  const refLon = BBOX.maxLon - BBOX.minLon; // fixed reference span so the field is stable across pans
+  const refLat = BBOX.maxLat - BBOX.minLat;
+  const uv = (lon: number, lat: number): [number, number] => [(lon - BBOX.minLon) / refLon, (lat - BBOX.minLat) / refLat];
+  // Pass 1: raw smooth fields (sampled in absolute space), normalised to full 0..1.
   const rawA: number[] = [];
   const rawB: number[] = [];
-  for (let i = 0; i < cols; i += 1) for (let j = 0; j < rows; j += 1) { rawA.push(sfield((i + 0.5) / cols, (j + 0.5) / rows, 1)); rawB.push(sfield((i + 0.5) / cols, (j + 0.5) / rows, 2)); }
+  for (let i = 0; i < cols; i += 1) for (let j = 0; j < rows; j += 1) { const [u, v] = uv(box.minLon + (i + 0.5) * dLon, box.minLat + (j + 0.5) * dLat); rawA.push(sfield(u, v, 1)); rawB.push(sfield(u, v, 2)); }
   const norm = (arr: number[]) => { const mn = Math.min(...arr); const d = (Math.max(...arr) - mn) || 1; return arr.map((x) => (x - mn) / d); };
   const A = norm(rawA);
   const B = norm(rawB);
   const features: Cell[] = [];
   for (let i = 0; i < cols; i += 1) {
     for (let j = 0; j < rows; j += 1) {
-      const lon0 = BBOX.minLon + i * dLon;
-      const lat0 = BBOX.minLat + j * dLat;
+      const lon0 = box.minLon + i * dLon;
+      const lat0 = box.minLat + j * dLat;
       const a = A[i * rows + j]!;             // "advantage" axis 0..1 (affluence) — smooth, full-range
       const b = B[i * rows + j]!;             // "commercial intensity" 0..1 (foot traffic) — decorrelated
       const n = (hash(i + 31, j + 17) - 0.5) * 0.6; // fine per-cell texture
@@ -331,9 +333,12 @@ function buildCellProps(a: number, b: number, n: number, id: string, cLon: numbe
 // H3 hexagon aggregation — the industry-standard atomic tiling (Uber H3, the same
 // index space the GAIA panels reference). Same metric schema as the square grid,
 // sampled at each hex centroid; fields normalised across the tessellation.
-export function civicHexGrid(res = 8): CivicGrid {
-  const poly: number[][] = [[BBOX.minLat, BBOX.minLon], [BBOX.minLat, BBOX.maxLon], [BBOX.maxLat, BBOX.maxLon], [BBOX.maxLat, BBOX.minLon]];
+export interface GeoBox { minLon: number; maxLon: number; minLat: number; maxLat: number }
+export function civicHexGrid(res = 8, box: GeoBox = BBOX): CivicGrid {
+  const poly: number[][] = [[box.minLat, box.minLon], [box.minLat, box.maxLon], [box.maxLat, box.maxLon], [box.maxLat, box.minLon]];
   const cells = polygonToCells(poly, res).filter((h3) => { const [lat, lon] = cellToLatLng(h3); return isLand(lon, lat); }); // land only
+  // Field is sampled relative to the FIXED reference bbox, so neighborhoods stay
+  // put as you pan/zoom — only the cells shown change with the viewport.
   const spanLon = BBOX.maxLon - BBOX.minLon;
   const spanLat = BBOX.maxLat - BBOX.minLat;
   const centers = cells.map((h3) => cellToLatLng(h3)); // [lat, lng]

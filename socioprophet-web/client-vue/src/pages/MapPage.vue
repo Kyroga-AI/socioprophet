@@ -94,7 +94,7 @@
               <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="hexRes = r">{{ r }}</button>
               <span class="mapx-cells-n">{{ gridFeatures.length }} cells</span>
             </div>
-            <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live', err: streetsState === 'error' }" :disabled="streetsState === 'loading'" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="goLiveStreets">
+            <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live', err: streetsState === 'error' }" :disabled="streetsState === 'loading'" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="refreshStreetsForView">
               {{ streetsState === 'loading' ? '⟳ fetching streets…' : streetsState === 'live' ? '● On real streets & land' : streetsState === 'error' ? '⚠ offline — synthetic' : '↻ Snap to real streets & land (live)' }}
             </button>
           </div>
@@ -581,7 +581,7 @@ import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import { prov } from '../features/provenance/types';
-import { civicGrid, civicHexGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef, type CivicGrid } from '../data/healthMapFixture';
+import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
 import { fetchPois, type Poi } from '../data/adapters/overpassLive';
 import { breaksFor, quantileBreaks, classOf, sampleRamp, type ClassMode } from '../data/classify';
 import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL, type FtNetwork } from '../data/footTrafficFixture';
@@ -680,7 +680,18 @@ const selectedListing = ref<Listing | null>(null);
 // grid. Switchable; rebuilding re-samples the same metric schema.
 const gridType = ref<'hex' | 'square'>('hex');
 const hexRes = ref(8);
-const baseGrid = ref<CivicGrid>(civicHexGrid(hexRes.value));
+// The grid follows the viewport (clamped so hex counts stay bounded). Field stays
+// stable across pans; only the cells shown change.
+const gridBox = ref<GeoBox>({ ...CITY_BBOX });
+const MAX_SPAN_LON = (CITY_BBOX.maxLon - CITY_BBOX.minLon) * 2.6;
+const MAX_SPAN_LAT = (CITY_BBOX.maxLat - CITY_BBOX.minLat) * 2.6;
+function clampBox(b: maplibregl.LngLatBounds): GeoBox {
+  const cx = (b.getWest() + b.getEast()) / 2; const cy = (b.getSouth() + b.getNorth()) / 2;
+  const hw = Math.min((b.getEast() - b.getWest()) / 2, MAX_SPAN_LON / 2);
+  const hh = Math.min((b.getNorth() - b.getSouth()) / 2, MAX_SPAN_LAT / 2);
+  return { minLon: cx - hw, maxLon: cx + hw, minLat: cy - hh, maxLat: cy + hh };
+}
+const baseGrid = ref<CivicGrid>(civicHexGrid(hexRes.value, gridBox.value));
 // Foot traffic — a corridor network + time-of-day, not a block choropleth.
 const ftNet = footTrafficNetwork();
 // Real OSM street network (Overpass) — foot traffic rides this instead of the
@@ -702,20 +713,6 @@ const gridFeatures = computed(() => {
   const ids = landCellIds.value;
   return ids ? feats.filter((f) => ids.has(String((f.properties as Record<string, unknown>).id))) : feats;
 });
-async function goLiveStreets() {
-  if (!map || streetsState.value === 'loading') return;
-  streetsState.value = 'loading';
-  const b = map.getBounds();
-  const r = await fetchStreets({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() });
-  if (r) {
-    liveStreets.value = r.network;
-    streetPoints.value = r.points;
-    streetsState.value = 'live';
-    if (isFootTraffic.value && civicOn.value) renderFootTraffic();
-    // real streets ⇒ real land mask for the hex choropleth
-    if (siteMode.value) renderSite(); else if (civicOn.value && !isFootTraffic.value) renderCivic();
-  } else streetsState.value = 'error';
-}
 const ftHour = ref(18);
 const ftWeekend = ref(false);
 const ftPlaying = ref(false);
@@ -1200,6 +1197,9 @@ function initializeMap() {
     .setLngLat(center)
     .setPopup(new maplibregl.Popup({ offset: 16 }).setText(`OSM ${selectedFeature.value?.osm_ref?.osm_type || 'way'} ${selectedFeature.value?.osm_ref?.osm_id || '424242'}`))
     .addTo(map);
+  // Grid follows the viewport: seed the box from the initial view + track moves.
+  map.on('load', () => { if (map) { gridBox.value = clampBox(map.getBounds()); rebuildGrid(); } });
+  map.on('moveend', onMapMoved);
 }
 
 function setBasemap(b: 'streets' | 'light' | 'dark') {
@@ -1355,20 +1355,46 @@ function renderSite() {
   paintCivic(scored as unknown as FillData, buildStepExpr(['get', 'siteScore'], br, cols) as never);
 }
 function hideCivic() { if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); }
-// Rebuild the tessellation (hex↔square, or a new H3 resolution) and repaint.
+// Rebuild the tessellation (hex↔square, new H3 resolution, or a new viewport) and repaint.
 function rebuildGrid() {
-  baseGrid.value = gridType.value === 'hex' ? civicHexGrid(hexRes.value) : civicGrid();
-  selectedCell.value = null;
+  baseGrid.value = gridType.value === 'hex' ? civicHexGrid(hexRes.value, gridBox.value) : civicGrid(34, 34, gridBox.value);
   if (siteMode.value) renderSite();
-  else if (civicOn.value) renderCivic();
+  else if (civicOn.value && !isFootTraffic.value) renderCivic();
   if (isoOn.value && isoOrigin.value) renderIso();
+  if (compHeatOn.value) renderCompHeat();
+}
+// Re-fetch streets (land mask + real-street foot traffic) for the current box.
+async function refreshStreetsForView() {
+  if (!map) return;
+  streetsState.value = 'loading';
+  const b = { s: gridBox.value.minLat, w: gridBox.value.minLon, n: gridBox.value.maxLat, e: gridBox.value.maxLon };
+  const r = await fetchStreets(b);
+  if (r) { liveStreets.value = r.network; streetPoints.value = r.points; streetsState.value = 'live'; rebuildGrid(); if (isFootTraffic.value && civicOn.value) renderFootTraffic(); }
+  else { streetsState.value = 'error'; }
+}
+// When the map settles after a zoom/pan, follow the viewport (debounced).
+let moveTimer: number | null = null;
+function onMapMoved() {
+  if (!map) return;
+  if (moveTimer !== null) clearTimeout(moveTimer);
+  moveTimer = window.setTimeout(() => {
+    if (!map) return;
+    const nb = clampBox(map.getBounds());
+    const old = gridBox.value;
+    const moved = Math.abs(nb.minLon - old.minLon) + Math.abs(nb.maxLon - old.maxLon) + Math.abs(nb.minLat - old.minLat) + Math.abs(nb.maxLat - old.maxLat);
+    const span = (old.maxLon - old.minLon) + (old.maxLat - old.minLat);
+    if (moved < span * 0.15) return; // negligible move (e.g. a fly-to) — don't thrash the grid / Overpass
+    gridBox.value = nb;
+    rebuildGrid();
+    if (civicOn.value || siteMode.value) void refreshStreetsForView(); // real land mask for the new view
+  }, 450);
 }
 // Beauty: mute the basemap when data goes on top, so the choropleth reads clean.
 function muteBasemapForData() { if (basemap.value === 'streets') setBasemap('light'); }
 // The first time a data layer is shown, silently fetch the real street network so
 // the default land mask + foot traffic are correct — the static mask shows
 // instantly, then refines when Overpass responds (graceful if it doesn't).
-function ensureStreets() { if (streetsState.value === 'idle') void goLiveStreets(); }
+function ensureStreets() { if (streetsState.value === 'idle') void refreshStreetsForView(); }
 function toggleCivic() {
   civicOn.value = !civicOn.value;
   if (siteMode.value) return; // site overlay takes precedence
@@ -1578,6 +1604,7 @@ onMounted(async () => {
 onUnmounted(() => {
   stopFtPlay();
   stopTimePlay();
+  if (moveTimer !== null) clearTimeout(moveTimer);
   isoMarker?.remove();
   isoMarkerB?.remove();
   clearPois();
