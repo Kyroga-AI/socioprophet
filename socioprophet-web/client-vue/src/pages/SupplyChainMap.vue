@@ -1,17 +1,13 @@
 <template>
   <section class="sc" aria-label="Supply chain">
-    <header class="sc-toolbar">
-      <div class="sc-title">
-        <div>
-          <p class="sc-eyebrow">{{ scope?.domain ?? 'Maps & Analytics' }}</p>
-          <h1>{{ scope?.label ?? 'Supply Chain' }}</h1>
-        </div>
-        <span class="sc-pill">fixture</span>
-      </div>
-      <div class="sc-chaintabs">
+    <SurfaceHeader :title="scope?.label ?? 'Supply Chain'" :eyebrow="scope?.domain ?? 'Maps & Analytics'">
+      <template #badge><span class="sc-pill">fixture</span></template>
+      <template #actions>
+        <div class="sc-chaintabs">
         <button v-for="c in chains" :key="c.id" class="sc-chain" :class="{ on: c.id === chainId }" @click="setChain(c.id)">{{ c.name }}</button>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
 
     <p class="sc-note">{{ chain?.note }}</p>
     <div v-if="chainR" class="sc-chainrisk">
@@ -112,6 +108,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';

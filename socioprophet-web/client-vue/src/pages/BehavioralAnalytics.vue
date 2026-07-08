@@ -1,18 +1,14 @@
 <template>
   <section class="ba" aria-label="Behavioral analytics">
-    <header class="ba-toolbar">
-      <div class="ba-title">
-        <div>
-          <p v-if="scope && !scope.isPrimary" class="ba-eyebrow">{{ scope.domain }}</p>
-          <h1>{{ scope && !scope.isPrimary ? scope.label : 'Behavioral Analytics' }}</h1>
-        </div>
-        <span class="ba-pill">fixture</span>
-      </div>
-      <div class="ba-agg">
+    <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Behavioral Analytics'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
+      <template #badge><span class="ba-pill">fixture</span></template>
+      <template #actions>
+        <div class="ba-agg">
         <span class="ba-agg-k">Tracked</span><span class="ba-num">{{ totalUsers.toLocaleString() }}</span>
         <span class="ba-agg-k">Cohorts</span><span class="ba-num">{{ cohorts.length }}</span>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
 
     <SplitPane storage-key="behavioral" label="cohorts" :initial="360">
       <template #list>
@@ -91,6 +87,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';

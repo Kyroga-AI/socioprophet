@@ -1,15 +1,11 @@
 <template>
   <section class="an" aria-label="Analytics studio">
-    <header class="an-toolbar">
-      <div class="an-title">
-        <div>
-          <p class="an-eyebrow">{{ scope?.domain ?? 'Maps & Analytics' }}</p>
-          <h1>{{ scope?.label ?? 'Analytics' }}</h1>
-        </div>
-        <span class="an-pill">fixture</span>
-      </div>
-      <p class="an-sub">Charts drawn over live platform data — markets, economy, social, and behavioral fixtures. No fabricated series.</p>
-    </header>
+    <SurfaceHeader :title="scope?.label ?? 'Analytics'" :eyebrow="scope?.domain ?? 'Maps & Analytics'">
+      <template #badge><span class="an-pill">fixture</span></template>
+      <template #actions>
+        <p class="an-sub">Charts drawn over live platform data — markets, economy, social, and behavioral fixtures. No fabricated series.</p>
+      </template>
+    </SurfaceHeader>
 
     <!-- Trending infographics: big-stat callouts -->
     <div v-if="mode === 'trending'" class="an-cards">
@@ -91,6 +87,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';

@@ -1,18 +1,14 @@
 <template>
   <section class="mp" aria-label="Governed triparty marketplace">
-    <header class="mp-toolbar">
-      <div class="mp-title">
-        <div>
-          <p class="mp-eyebrow">{{ scope?.domain ?? 'Operations' }}</p>
-          <h1>{{ scope?.label ?? 'Marketplace' }}</h1>
-        </div>
-        <span class="mp-pill">fixture</span>
-      </div>
-      <div class="mp-agg">
+    <SurfaceHeader :title="scope?.label ?? 'Marketplace'" :eyebrow="scope?.domain ?? 'Operations'">
+      <template #badge><span class="mp-pill">fixture</span></template>
+      <template #actions>
+        <div class="mp-agg">
         <span class="mp-agg-k">Cells</span><span class="mp-num">{{ cells.length }}</span>
         <span class="mp-agg-k">Cleared</span><span class="mp-num">{{ fmtAsset(clearedValue) }}</span>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
     <p class="mp-note">Governed triparty netting cells — the smallest local clearing object coupling value + proof + authority + disclosure. Release/refund/export is disposed by policy, not confidence; export is stricter than local validity. Cells can clear supply-chain trades.</p>
 
     <SplitPane storage-key="marketplace" label="cells" :initial="360">
@@ -100,6 +96,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';

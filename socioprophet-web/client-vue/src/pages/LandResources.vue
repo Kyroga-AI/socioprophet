@@ -1,18 +1,14 @@
 <template>
   <section class="lr" aria-label="Land and natural resources">
-    <header class="lr-toolbar">
-      <div class="lr-title">
-        <div>
-          <p class="lr-eyebrow">{{ scope?.domain ?? 'Weather & Natural Resources' }}</p>
-          <h1>{{ scope?.label ?? 'Land & Resources' }}</h1>
-        </div>
-        <span class="lr-pill">Layer 0 · fixture</span>
-      </div>
-      <div class="lr-kinds">
+    <SurfaceHeader :title="scope?.label ?? 'Land & Resources'" :eyebrow="scope?.domain ?? 'Weather & Natural Resources'">
+      <template #badge><span class="lr-pill">Layer 0 · fixture</span></template>
+      <template #actions>
+        <div class="lr-kinds">
         <button class="lr-kbtn" :class="{ on: kind === 'all' }" @click="kind = 'all'">all</button>
         <button v-for="k in kinds" :key="k" class="lr-kbtn" :class="{ on: kind === k }" @click="kind = k">{{ k }}</button>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
     <p class="lr-note">The base layer of the economy: land, minerals, water, energy, forests, and fisheries — with reserves, renewability, and tenure. Everything upstream (extraction → commodities → markets → trade) is built on these.</p>
 
     <SplitPane storage-key="land-resources" label="endowments" :initial="360">
@@ -96,6 +92,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';

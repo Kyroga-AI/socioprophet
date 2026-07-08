@@ -1,22 +1,18 @@
 <template>
   <section class="at" aria-label="Algorithmic trading">
-    <header class="at-toolbar">
-      <div class="at-title">
-        <div>
-          <p v-if="scope && !scope.isPrimary" class="at-eyebrow">{{ scope.domain }}</p>
-          <h1>{{ scope && !scope.isPrimary ? scope.label : 'Strategies' }}</h1>
-        </div>
-        <span class="at-pill">fixture</span>
-      </div>
-      <div class="at-agg">
+    <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Strategies'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
+      <template #badge><span class="at-pill">fixture</span></template>
+      <template #actions>
+        <div class="at-agg">
         <span class="at-agg-k">Live NAV Δ</span><span class="at-num" :class="navClass">{{ signed(navDelta) }}%</span>
         <span class="at-agg-k">Strategies</span><span class="at-num">{{ strategies.length }}</span>
         <span class="at-agg-k">Live</span><span class="at-num">{{ liveCount }}</span>
-      </div>
-      <div class="at-filters">
+        </div>
+        <div class="at-filters">
         <button v-for="s in statuses" :key="s" class="at-fbtn" :class="{ on: status === s }" @click="status = s">{{ s }}</button>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
 
     <SplitPane storage-key="algo-trading" label="strategies" :initial="360">
       <template #list>
@@ -114,6 +110,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';

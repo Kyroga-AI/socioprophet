@@ -1,17 +1,13 @@
 <template>
   <section class="xp" aria-label="Experiments and simulations">
-    <header class="xp-toolbar">
-      <div class="xp-title">
-        <div>
-          <p v-if="scope && !scope.isPrimary" class="xp-eyebrow">{{ scope.domain }}</p>
-          <h1>{{ scope && !scope.isPrimary ? scope.label : 'Experiments' }}</h1>
-        </div>
-        <span class="xp-pill">fixture</span>
-      </div>
-      <div class="xp-filters">
+    <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Experiments'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
+      <template #badge><span class="xp-pill">fixture</span></template>
+      <template #actions>
+        <div class="xp-filters">
         <button v-for="k in kinds" :key="k" class="xp-fbtn" :class="{ on: kind === k }" @click="kind = k">{{ k }}</button>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
 
     <SplitPane storage-key="experiments" label="experiments" :initial="360">
       <template #list>
@@ -74,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';

@@ -1,17 +1,13 @@
 <template>
   <section class="ie" aria-label="Information extraction">
-    <header class="ie-toolbar">
-      <div class="ie-title">
-        <div>
-          <p v-if="scope && !scope.isPrimary" class="ie-eyebrow">{{ scope.domain }}</p>
-          <h1>{{ scope && !scope.isPrimary ? scope.label : 'Extraction Bench' }}</h1>
-        </div>
-        <span class="ie-pill">fixture</span>
-      </div>
-      <div class="ie-docpick">
+    <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Extraction Bench'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
+      <template #badge><span class="ie-pill">fixture</span></template>
+      <template #actions>
+        <div class="ie-docpick">
         <button v-for="d in docs" :key="d.id" class="ie-doc" :class="{ on: d.id === selectedId }" @click="selectedId = d.id">{{ d.source }}</button>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
 
     <SplitPane v-if="selected" storage-key="nlp-extraction" label="document" :initial="420">
       <template #list>
@@ -75,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';

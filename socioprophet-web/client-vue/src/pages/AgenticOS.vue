@@ -1,19 +1,15 @@
 <template>
   <section class="aos" aria-label="Agentic operating system">
-    <header class="aos-toolbar">
-      <div class="aos-title">
-        <div>
-          <p class="aos-eyebrow">{{ scope?.domain ?? 'Operations' }}</p>
-          <h1>{{ scope?.label ?? 'Agentic Operating System' }}</h1>
-        </div>
-        <span class="aos-pill">fixture</span>
-      </div>
-      <div class="aos-agg">
+    <SurfaceHeader :title="scope?.label ?? 'Agentic Operating System'" :eyebrow="scope?.domain ?? 'Operations'">
+      <template #badge><span class="aos-pill">fixture</span></template>
+      <template #actions>
+        <div class="aos-agg">
         <span class="aos-agg-k">Objectives</span><span class="aos-num">{{ opportunities.length }}</span>
         <span class="aos-agg-k">Active</span><span class="aos-num">{{ activeCount }}</span>
         <span class="aos-agg-k">Avg readiness</span><span class="aos-num">{{ avgReadiness }}%</span>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
     <p class="aos-note">Agent pods pursue objectives across the stack under a governed capture cadence, delta-control SLAs, shared libraries, and a readiness scorecard. Each object anchors to real repos in the estate.</p>
 
     <!-- Capture cadence strip -->
@@ -115,6 +111,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';

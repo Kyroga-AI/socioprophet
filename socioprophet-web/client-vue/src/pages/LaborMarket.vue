@@ -1,18 +1,14 @@
 <template>
   <section class="lm" aria-label="Labor market">
-    <header class="lm-toolbar">
-      <div class="lm-title">
-        <div>
-          <p class="lm-eyebrow">{{ scope?.domain ?? 'People & Society' }}</p>
-          <h1>{{ scope && !scope.isPrimary ? scope.label : 'Labor Market' }}</h1>
-        </div>
-        <span class="lm-pill">fixture</span>
-      </div>
-      <div class="lm-agg">
+    <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Labor Market'" :eyebrow="scope?.domain ?? 'People & Society'">
+      <template #badge><span class="lm-pill">fixture</span></template>
+      <template #actions>
+        <div class="lm-agg">
         <span class="lm-agg-k">Requests</span><span class="lm-num">{{ requests.length }}</span>
         <span class="lm-agg-k">Open</span><span class="lm-num">{{ openCount }}</span>
-      </div>
-    </header>
+        </div>
+      </template>
+    </SurfaceHeader>
     <p class="lm-note">Labor as <b>request + response + evidence + fulfillment + trust</b> — not identity, feed, or attention. The unit is a structured request; fit is scored <b>request ↔ response</b>. There is no global human-worth score.</p>
 
     <SplitPane storage-key="labor-market" label="requests" :initial="360">
@@ -108,6 +104,7 @@
 </template>
 
 <script setup lang="ts">
+import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
