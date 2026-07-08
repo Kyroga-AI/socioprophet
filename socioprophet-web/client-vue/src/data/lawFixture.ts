@@ -28,6 +28,7 @@ export interface Docket {
   citations: Citation[];
   commentDeadline?: string;
   effectiveDate?: string;
+  url?: string; // real source link when the docket is live (e.g. federalregister.gov)
 }
 
 export const dockets: Docket[] = [

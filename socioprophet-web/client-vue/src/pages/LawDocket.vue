@@ -1,7 +1,7 @@
 <template>
   <section class="lw" aria-label="Legal docket">
     <SurfaceHeader :title="scope?.label ?? 'Docket'" :eyebrow="(scope) ? (scope.domain) : ''">
-      <template #badge><span class="lw-pill">fixture</span></template>
+      <template #badge><span class="lw-pill" :class="{ live: isLive }">{{ isLive ? `live · ${liveDockets?.length} filings` : 'fixture' }}</span></template>
       <template #search>
         <form class="term-cmd" @submit.prevent="runCmd">
         <span class="term-cmd-prompt">⌕</span>
@@ -13,6 +13,7 @@
         <div class="lw-filters">
         <button v-for="s in statuses" :key="s" class="lw-fbtn" :class="{ on: status === s }" @click="setStatus(s)">{{ s }}</button>
         </div>
+        <LiveToggle :state="liveState" label="Go live" live-text="Federal Register" title="Pull real recent filings from the U.S. Federal Register (public, no key). Live dockets are genuinely retrieved — grounded, with real citations." @click="goLive" />
       </template>
     </SurfaceHeader>
 
@@ -115,6 +116,8 @@
 
 <script setup lang="ts">
 import SurfaceHeader from '../components/SurfaceHeader.vue';
+import LiveToggle from '../components/LiveToggle.vue';
+import { fetchFederalRegister } from '../data/adapters/federalRegisterLive';
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { dockets, asOf, type Docket, type DocketStatus } from '../data/lawFixture';
@@ -160,31 +163,55 @@ onMounted(() => { const d = typeof route.query.d === 'string' ? route.query.d : 
 const cmd = ref('');
 function runCmd() { if (results.value[0]) selectedId.value = results.value[0].id; }
 
+// Live dockets from the real U.S. Federal Register (opt-in, fails closed to fixture).
+const liveState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const liveDockets = ref<Docket[] | null>(null);
+const isLive = computed(() => liveState.value === 'live' && !!liveDockets.value);
+const activeDockets = computed<Docket[]>(() => liveDockets.value ?? dockets);
+async function goLive() {
+  if (liveState.value === 'loading') return;
+  if (liveState.value === 'live') { liveState.value = 'idle'; liveDockets.value = null; return; }
+  liveState.value = 'loading';
+  const r = await fetchFederalRegister();
+  if (r) { liveDockets.value = r; liveState.value = 'live'; }
+  else liveState.value = 'error';
+}
 const results = computed<Docket[]>(() => {
   const needle = cmd.value.trim().toLowerCase();
-  return dockets.filter((d) => inScope(d)
+  return activeDockets.value.filter((d) => (isLive.value || inScope(d))
     && (status.value === 'all' || d.status === (status.value as DocketStatus))
     && (!needle || d.title.toLowerCase().includes(needle) || d.cite.toLowerCase().includes(needle)
       || d.agency.toLowerCase().includes(needle) || d.tags.some((t) => t.includes(needle))));
 });
-const selected = computed<Docket | undefined>(() => dockets.find((d) => d.id === selectedId.value));
+const selected = computed<Docket | undefined>(() => activeDockets.value.find((d) => d.id === selectedId.value));
 function setStatus(s: (typeof statuses)[number]) { status.value = s; }
 
 // Moat + integration: provenance verdict, affected-entity cross-links, assistant.
 const crossLinks = computed(() => (selected.value ? crossLinksForDocket(selected.value.affects) : []));
-// Illustrative docket corpus (data/lawFixture.ts is UI-only) — NOT retrieved from a
-// live regulatory source, so it's 'fixture'/unassayed, not 'grounded'. The
-// provenanceHash literals are placeholders, not real content hashes, so no receipt.
-const docketProv = computed(() => prov('fixture', {
-  verifier: selected.value?.agency ?? 'issuing body',
-  sources: [selected.value?.cite ?? 'docket'],
-  asOf: asOfLabel,
-  note: 'Illustrative docket for the demo — not retrieved from a live regulatory source; the citation, reference and redline are sample data.',
-}));
+// When live, the docket is genuinely RETRIEVED from the Federal Register — it earns
+// 'grounded' with a real citation (document number) as the receipt + a real source
+// link. When on the illustrative corpus it stays 'fixture'/unassayed (no fake hash).
+const docketProv = computed(() => (isLive.value
+  ? prov('retrieved', {
+      verifier: selected.value?.agency ?? 'U.S. Federal Register',
+      sources: [`Federal Register · ${selected.value?.cite ?? ''}`],
+      receipt: selected.value?.cite,
+      asOf: asOfLabel,
+      note: `Retrieved from the U.S. Federal Register${selected.value?.url ? ` — ${selected.value.url}` : ''}.`,
+    })
+  : prov('fixture', {
+      verifier: selected.value?.agency ?? 'issuing body',
+      sources: [selected.value?.cite ?? 'docket'],
+      asOf: asOfLabel,
+      note: 'Illustrative docket for the demo — not retrieved from a live regulatory source; the citation, reference and redline are sample data.',
+    })));
 function goDocket(id?: string) { if (id) { deepLinked.value = true; selectedId.value = id; } }
 function askNoetica() {
   const d = selected.value; if (!d) return;
-  cockpit.askAbout(`Explain ${d.cite} — "${d.title}" (${d.type}, ${d.status}, ${d.jurisdiction}, issued by ${d.agency}). ${d.impact} Who is most affected, and what is the concrete compliance ask? Note: this is an illustrative sample docket for a demo, not a real retrieved filing — reason about the type of matter, not the specific citation as fact.`);
+  const tail = isLive.value
+    ? 'This is a real, retrieved Federal Register filing — you may reason about the specific citation.'
+    : 'Note: this is an illustrative sample docket for a demo, not a real retrieved filing — reason about the type of matter, not the specific citation as fact.';
+  cockpit.askAbout(`Explain ${d.cite} — "${d.title}" (${d.type}, ${d.status}, ${d.jurisdiction}, issued by ${d.agency}). ${d.impact} Who is most affected, and what is the concrete compliance ask? ${tail}`);
 }
 watch(selected, (d) => { if (d) cockpit.setContext({ surface: 'Law & Regulation', entityLabel: `${d.cite} · ${d.title}`, detail: `${d.type} · ${d.status}`, route: route.path }); }, { immediate: true });
 // Keep a valid selection as the scope/status narrows the visible set.
@@ -210,7 +237,8 @@ function deadlineSoon(iso: string): boolean { const days = (new Date(iso).getTim
 .lw-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .lw-title { display: flex; align-items: baseline; gap: 0.6rem; } .lw-title h1 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .lw-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
-.lw-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 5px; padding: 0.1rem 0.35rem; }
+.lw-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); background: var(--amber-soft); border-radius: 5px; padding: 0.1rem 0.35rem; white-space: nowrap; }
+.lw-pill.live { color: var(--live); background: var(--live-soft); }
 .lw-filters { display: flex; gap: 0.25rem; }
 .lw-fbtn { border: 1px solid var(--line-2); background: transparent; color: rgba(255, 255, 255, 0.6); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.74rem; text-transform: capitalize; cursor: pointer; } .lw-fbtn.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 
