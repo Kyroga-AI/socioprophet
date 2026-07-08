@@ -1,7 +1,7 @@
 <template>
   <section class="pd" aria-label="People directory">
     <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Directory'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
-      <template #badge><span class="pd-pill">fixture</span></template>
+      <template #badge><span class="pd-pill" :class="{ live: liveState === 'live' }">{{ liveState === 'live' ? 'live · wikidata' : 'fixture' }}</span></template>
       <template #search>
         <form class="pd-search" @submit.prevent="jump">
         <span class="pd-search-ic">⌕</span>
@@ -12,6 +12,9 @@
         <div class="pd-kinds">
         <button v-for="k in kinds" :key="k" class="pd-kbtn" :class="{ on: kind === k }" @click="setKind(k)">{{ k }}</button>
         </div>
+        <button class="pd-kbtn pd-live" :class="{ on: liveState === 'live', err: liveState === 'error' }" :disabled="liveState === 'loading'" type="button" :title="`Resolve real people/orgs from Wikidata for your search — no key`" @click="goLive">
+          {{ liveState === 'loading' ? '⟳ …' : liveState === 'live' ? '● Live' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
+        </button>
       </template>
     </SurfaceHeader>
 
@@ -172,6 +175,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import SplitPane from '../components/SplitPane.vue';
 import { entities, asOf, careers, education as eduMap, newsRefs, type Entity, type EntityKind, type Platform } from '../data/peopleFixture';
+import { fetchPeopleLive } from '../data/adapters/wikidataLive';
 import { newsItems, newsSources } from '../data/newsFeedFixture';
 import { navScopeForPath } from '../config/cockpitNav';
 import { arrowRove } from '../utils/listKeys';
@@ -196,6 +200,17 @@ const kinds = ['All', 'person', 'org', 'gov'] as const;
 const kind = ref<(typeof kinds)[number]>('All');
 const query = ref('');
 const selectedId = ref<string>(entities[0]!.id);
+// Live People/OSINT adapter — real people/orgs from Wikidata; falls back to fixture.
+const liveEntities = ref<Entity[]>([]);
+const liveState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const displayEntities = computed<Entity[]>(() => (liveEntities.value.length ? liveEntities.value : entities));
+async function goLive() {
+  if (liveState.value === 'loading') return;
+  liveState.value = 'loading';
+  const r = await fetchPeopleLive(query.value);
+  if (r && r.length) { liveEntities.value = r; liveState.value = 'live'; selectedId.value = r[0]!.id; }
+  else liveState.value = 'error';
+}
 const route = useRoute();
 const deepLinked = ref(false);
 onMounted(() => { const id = typeof route.query.id === 'string' ? route.query.id : ''; if (id && entities.some((e) => e.id === id)) { deepLinked.value = true; selectedId.value = id; } });
@@ -219,10 +234,10 @@ function inScope(e: Entity): boolean {
   const hay = [e.role, e.affiliation, e.summary, ...e.tags].join(' ').toLowerCase();
   return kws.some((k) => hay.includes(k));
 }
-const byId = new Map(entities.map((e) => [e.id, e]));
+const byId = computed(() => new Map(displayEntities.value.map((e) => [e.id, e])));
 const results = computed<Entity[]>(() => {
   const q = query.value.trim().toLowerCase();
-  return entities.filter((e) => {
+  return displayEntities.value.filter((e) => {
     if (!inScope(e)) return false;
     if (kind.value !== 'All' && e.kind !== kind.value) return false;
     if (!q) return true;
@@ -234,7 +249,7 @@ const results = computed<Entity[]>(() => {
 function jump() { if (results.value[0]) selectedId.value = results.value[0].id; }
 // OSINT pivot: re-query the directory on a selector (finds entities sharing it).
 function pivot(value: string) { kind.value = 'All'; query.value = value; }
-const selected = computed<Entity | undefined>(() => byId.get(selectedId.value));
+const selected = computed<Entity | undefined>(() => byId.value.get(selectedId.value));
 const career = computed(() => careers[selectedId.value] ?? []);
 const edu = computed(() => eduMap[selectedId.value] ?? []);
 const relatedNews = computed(() => (newsRefs[selectedId.value] ?? []).map((id) => newsItems.find((n) => n.id === id)).filter((x): x is NonNullable<typeof x> => !!x));
@@ -255,7 +270,7 @@ const egoNodes = computed(() => {
   const cx = 150, cy = 105, r = 78;
   return rels.map((rel, i) => {
     const ang = (i / Math.max(1, rels.length)) * Math.PI * 2 - Math.PI / 2;
-    const target = byId.get(rel.to);
+    const target = byId.value.get(rel.to);
     const name = target?.name ?? rel.to;
     return {
       id: rel.to,
@@ -279,6 +294,9 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .pd-title { display: flex; align-items: baseline; gap: 0.6rem; } .pd-title h1 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .pd-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
 .pd-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 5px; padding: 0.1rem 0.35rem; }
+.pd-pill.live { color: #4bbf73; background: rgba(75, 191, 115, 0.16); }
+.pd-live.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
+.pd-live.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; } .pd-live:disabled { opacity: 0.6; cursor: default; } .pd-live { text-transform: none; }
 .pd-search { flex: 1 1 260px; display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); padding: 0.4rem 0.7rem; } .pd-search:focus-within { border-color: var(--accent); } .pd-search-ic { color: rgba(255, 255, 255, 0.4); }
 .pd-search input { flex: 1; min-width: 0; background: transparent; border: none; outline: none; color: #fff; font-size: 0.9rem; }
 .pd-kinds { display: flex; gap: 0.25rem; }
