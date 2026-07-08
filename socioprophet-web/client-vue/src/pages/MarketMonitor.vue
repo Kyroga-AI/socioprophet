@@ -2,7 +2,7 @@
   <section class="mk" aria-label="Market monitor">
     <!-- Toolbar + command line -->
     <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Market Monitor'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
-      <template #badge><span class="mk-pill">fixture</span></template>
+      <template #badge><span class="mk-pill" :class="{ live: liveState === 'live' }">{{ liveState === 'live' ? 'live · crypto' : 'fixture' }}</span></template>
       <template #search>
         <form class="mk-cmd" @submit.prevent="runCmd">
         <span class="mk-cmd-prompt">›</span>
@@ -11,7 +11,10 @@
         </form>
       </template>
       <template #actions>
-        <div class="mk-asof">{{ asOfLabel }}</div>
+        <button class="mk-live" :class="{ on: liveState === 'live', err: liveState === 'error' }" :disabled="liveState === 'loading'" type="button" title="Real crypto prices via CoinGecko — no key" @click="goLive">
+          {{ liveState === 'loading' ? '⟳ live…' : liveState === 'live' ? '● Live crypto' : liveState === 'error' ? '⚠ offline' : '↻ Go live' }}
+        </button>
+        <div class="mk-asof">{{ liveState === 'live' ? 'CoinGecko · now' : asOfLabel }}</div>
       </template>
     </SurfaceHeader>
 
@@ -153,6 +156,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
 import { indices, watchlist, instruments, SUBDOMAIN_CLASSES, asOf, type Instrument, type AssetClass } from '../data/marketsFixture';
+import { fetchCryptoLive } from '../data/adapters/marketsLive';
 import HumanNetworks from '../components/HumanNetworks.vue';
 import { arrowRove } from '../utils/listKeys';
 import { usePortfolio } from '../stores/portfolio';
@@ -193,15 +197,29 @@ function pathPrimaryClass(path: string): AssetClass | 'All' {
 }
 const activeClass = ref<AssetClass | 'All'>(pathPrimaryClass(route.path));
 const activeClassLabel = computed(() => classLabel(activeClass.value));
+// Live crypto adapter — overlay real CoinGecko prices onto the fixture instruments.
+const liveQuotes = ref<Map<string, { price: number; changePct: number }>>(new Map());
+const liveState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const displayInstruments = computed<Instrument[]>(() => instruments.map((i) => {
+  const q = liveQuotes.value.get(i.symbol);
+  return q ? { ...i, price: q.price, changePct: q.changePct } : i;
+}));
+async function goLive() {
+  if (liveState.value === 'loading') return;
+  liveState.value = 'loading';
+  const m = await fetchCryptoLive();
+  if (m && m.size) { liveQuotes.value = m; liveState.value = 'live'; selected.value = displayInstruments.value.find((i) => i.symbol === selected.value.symbol) ?? selected.value; }
+  else liveState.value = 'error';
+}
 const rows = computed<Instrument[]>(() =>
-  activeClass.value === 'All' ? instruments : instruments.filter((i) => i.klass === activeClass.value),
+  activeClass.value === 'All' ? displayInstruments.value : displayInstruments.value.filter((i) => i.klass === activeClass.value),
 );
 
 // Cross-asset overview: one tile per class, showing a representative leader and
 // the class-level move — so the full spectrum is visible at a glance.
 const classTiles = computed(() =>
   CLASS_META.map((meta) => {
-    const members = instruments.filter((i) => i.klass === meta.klass);
+    const members = displayInstruments.value.filter((i) => i.klass === meta.klass);
     const lead = members[0];
     const avgPct = members.reduce((s, i) => s + i.changePct, 0) / (members.length || 1);
     return { meta, lead, avgPct: +avgPct.toFixed(2), count: members.length };
@@ -298,6 +316,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .mk-title { display: flex; align-items: baseline; gap: 0.5rem; } .mk-title h1 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .mk-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
 .mk-pill { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 4px; padding: 0.08rem 0.3rem; }
+.mk-pill.live { color: #4bbf73; background: rgba(75, 191, 115, 0.16); }
+.mk-live { border: 1px solid var(--line-2); background: transparent; color: rgba(255, 255, 255, 0.72); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.74rem; cursor: pointer; }
+.mk-live.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
+.mk-live.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; } .mk-live:disabled { opacity: 0.6; cursor: default; }
 .mk-asof { margin-left: auto; font-size: 0.72rem; color: rgba(255, 255, 255, 0.4); }
 /* command line */
 .mk-cmd { flex: 0 1 320px; display: flex; align-items: center; gap: 0.4rem; border: 1px solid var(--accent); border-radius: 4px; background: var(--accent-soft); padding: 0.2rem 0.5rem; }
