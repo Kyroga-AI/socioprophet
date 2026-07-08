@@ -94,6 +94,7 @@
               <button class="mapx-bm sm" :class="{ on: resAuto }" type="button" title="Hex size follows zoom" @click="resAuto = true">auto</button>
               <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: !resAuto && hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="setRes(r)">{{ r }}</button>
               <button class="mapx-bm sm" :class="{ on: gpuMode }" type="button" title="Render the hex choropleth on the GPU (deck.gl) — scales to 100k+ cells" @click="toggleGpu">⚡ GPU</button>
+              <button class="mapx-bm sm" :class="{ on: hotspotsOn }" type="button" title="Getis-Ord Gi* hot-spot analysis — statistically significant clusters of the active metric (red = hot, blue = cold, 95%)" @click="toggleHotspots">◬ Hotspots</button>
               <button class="mapx-bm sm" type="button" title="Download every visible cell as a governed GAIA WorldClaim (GeoJSON + policy status, Ω grade, sources, fingerprint)" @click="exportViewClaims">⭳ Claims</button>
               <button class="mapx-bm sm" type="button" title="Ingest a governed WorldClaim bundle (from the GAIA pipeline or a prior export) — verifies the content fingerprint" @click="ingestInput?.click()">⭱ Ingest</button>
               <input ref="ingestInput" type="file" accept=".geojson,.json,application/geo+json,application/json" style="display:none" @change="onIngestFile" />
@@ -252,6 +253,7 @@
               <div class="mapx-cell-grid">
                 <div v-for="m in activeGroup.metrics" :key="m.key" class="mapx-cell-kv"><span>{{ m.label }}</span><b>{{ fmtCell(m) }}</b></div>
               </div>
+              <p v-if="selectedHotZ !== null" class="mapx-land-hint" :class="{ ok: Math.abs(selectedHotZ) >= 1.96 }">Gi* z = {{ selectedHotZ.toFixed(2) }} · {{ selectedHotZ >= 1.96 ? 'significant HOT spot (95%)' : selectedHotZ <= -1.96 ? 'significant COLD spot (95%)' : 'not a significant cluster' }}</p>
               <WorldClaimCard v-if="selectedClaim" :claim="selectedClaim" />
               <template v-if="activeGroup.id === 'realestate'">
                 <div class="mapx-cell-mix" :title="`Owner-occupied ${cellOwnerPct}% · renters ${100 - cellOwnerPct}%`"><span class="mapx-cell-mix-own" :style="{ width: cellOwnerPct + '%' }" /></div>
@@ -676,7 +678,8 @@ import { fetchFloodZones, floodRiskAt, floodInfoAt, type FloodZone } from '../da
 import { fetchTransitStops, type TransitStop } from '../data/adapters/transitLive';
 import { renderDeckHexes, clearDeckHexes } from '../map/deckHexLayer';
 import { hexColorData } from '../map/deckHexColors';
-import { latLngToCell, cellToLatLng } from 'h3-js';
+import { latLngToCell, cellToLatLng, gridDisk } from 'h3-js';
+import { getisOrdGiStar } from '../data/hotspots';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
 import {
@@ -771,6 +774,7 @@ const gridType = ref<'hex' | 'square'>('hex');
 const hexRes = ref(8);
 const resAuto = ref(true); // hex size follows zoom for a consistent crisp screen-size
 const gpuMode = ref(false); // render the hex choropleth via deck.gl (GPU) for scale
+const hotspotsOn = ref(false); // Getis-Ord Gi* hot/cold-spot analysis (ESDA) on the active metric
 function resForZoom(z: number): number { return z >= 14.3 ? 9 : z >= 12.3 ? 8 : 7; }
 function setRes(r: number) { resAuto.value = false; hexRes.value = r; }
 // The grid follows the viewport (clamped so hex counts stay bounded). Field stays
@@ -1886,9 +1890,25 @@ function hideBaseLayersExcept(keep: 'civic' | 'census' | 'ft') {
   if (keep !== 'ft' && map.getLayer('ft-line')) map.setLayoutProperty('ft-line', 'visibility', 'none');
 }
 function hideCivicFill() { if (map?.getLayer('civic-fill')) map.setLayoutProperty('civic-fill', 'visibility', 'none'); } // MapLibre fill only, deck untouched
+// Getis-Ord Gi* z-score per cell for the active metric (H3 neighbours via gridDisk).
+const hotResults = computed<Map<string, number>>(() => {
+  if (!hotspotsOn.value || gridType.value !== 'hex') return new Map();
+  const m = activeMetric.value; const f = metricFactor.value;
+  const cells = gridFeatures.value.map((ft) => { const p = ft.properties as Record<string, number>; return { id: String(p.id), value: Number(p[m.key] ?? 0) * f }; });
+  return new Map(getisOrdGiStar(cells, (id) => gridDisk(id, 1)).map((r) => [r.id, r.z]));
+});
+function renderHotspots() {
+  const zByCell = hotResults.value;
+  const feats = gridFeatures.value.map((ft) => { const p = ft.properties as Record<string, unknown>; return { ...ft, properties: { ...p, giz: zByCell.get(String(p.id)) ?? 0 } }; });
+  // Diverging RdBu (reversed): blue cold cluster → grey → red hot cluster, breaks at ±1.96 (95%).
+  const expr = ['interpolate', ['linear'], ['get', 'giz'], -3, '#2166ac', -1.96, '#67a9cf', 0, '#e7e7e7', 1.96, '#ef8a62', 3, '#b2182b'] as never;
+  paintCivic({ type: 'FeatureCollection', features: feats } as unknown as FillData, expr);
+}
 function renderCivic() {
   if (isFootTraffic.value) { renderFootTraffic(); return; } // renderFootTraffic owns base exclusion
   hideBaseLayersExcept('civic');
+  // Spatial-stats hot-spot mode (Esri/Carto turf) — paint Gi* significance, not the raw metric.
+  if (hotspotsOn.value && gridType.value === 'hex') { clearDeckHexes(); renderHotspots(); return; }
   if (bivariateOn.value && isRealEstate.value) { clearDeckHexes(); renderBivariate(); return; }
   // GPU path: render the choropleth as a deck.gl H3HexagonLayer (hex mode only) so
   // it scales to 100k+ cells on the GPU. Same class colours as the MapLibre fill.
@@ -2093,6 +2113,8 @@ watch(popState, () => { if (civicOn.value && !siteMode.value && isPeople.value) 
 watch(floodState, () => { if (civicOn.value && !siteMode.value && isEnvironment.value) renderCivic(); });
 watch(transitState, () => { if (civicOn.value && !siteMode.value && isMobility.value) renderCivic(); });
 function toggleGpu() { gpuMode.value = !gpuMode.value; if (civicOn.value && !siteMode.value) renderCivic(); }
+function toggleHotspots() { hotspotsOn.value = !hotspotsOn.value; if (civicOn.value && !siteMode.value) renderCivic(); }
+const selectedHotZ = computed(() => (hotspotsOn.value && selectedCell.value) ? (hotResults.value.get(String(selectedCell.value.id)) ?? null) : null);
 
 function updateMapMarker() {
   if (!map || !marker) return;
