@@ -103,6 +103,16 @@
             <input type="checkbox" :checked="civicOn" @change="toggleCivic" />
             <span>Choropleth overlay <InfoLabel info="Shades each area by the selected statistic (a choropleth). Areas are binned into an aggregation grid — a fixture stand-in for census / agency data." /></span>
           </label>
+
+          <label class="mapx-switch">
+            <input type="checkbox" :checked="censusOn" @change="toggleCensus" />
+            <span>Real census tracts · income <InfoLabel info="Real US Census ACS median household income joined to real TIGER census-tract polygons — actual demographics over actual boundaries (Manhattan). No key; falls back to fixture if the Census/TIGER services are unreachable." /></span>
+          </label>
+          <div v-if="censusState !== 'idle'" class="mapx-poi" style="margin-top:0">
+            <span v-if="censusState === 'loading'" class="mapx-poi-n">⟳ fetching census…</span>
+            <span v-else-if="censusState === 'live'" class="mapx-poi-n">● <b>{{ censusFC?.features.length }}</b> real tracts · green = higher income</span>
+            <span v-else class="mapx-poi-n" style="color:#f0656a">⚠ census/TIGER unreachable — fixture</span>
+          </div>
           <template v-if="civicOn">
             <div class="mapx-basemap mapx-groups">
               <button v-for="g in CIVIC_LAYERS" :key="g.id" class="mapx-bm" :class="{ on: civicGroupId === g.id }" type="button" @click="setCivicGroup(g.id)">{{ g.label }}</button>
@@ -576,6 +586,7 @@ import { fetchPois, type Poi } from '../data/adapters/overpassLive';
 import { breaksFor, quantileBreaks, classOf, sampleRamp, type ClassMode } from '../data/classify';
 import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL, type FtNetwork } from '../data/footTrafficFixture';
 import { fetchStreets } from '../data/adapters/streetsLive';
+import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
 import { latLngToCell } from 'h3-js';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
@@ -872,6 +883,39 @@ function renderCompHeat() {
 }
 function hideCompHeat() { if (map?.getLayer('comp-fill')) map.setLayoutProperty('comp-fill', 'visibility', 'none'); }
 function toggleCompHeat() { compHeatOn.value = !compHeatOn.value; renderCompHeat(); }
+
+// Real census tracts (ACS median income joined to TIGER polygons) — a genuine
+// demographic choropleth over actual boundaries, distinct from the synthetic hexes.
+const censusOn = ref(false);
+const censusFC = ref<CensusFC | null>(null);
+const censusState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+function renderCensus() {
+  if (!map || !censusFC.value) return;
+  const feats = censusFC.value.features.filter((f) => f.properties.medianIncome > 0);
+  if (!feats.length) return;
+  const incomes = feats.map((f) => f.properties.medianIncome);
+  const br = breaksFor('quantile', incomes, Math.min(...incomes), Math.max(...incomes), 5);
+  const cols = Array.from({ length: 5 }, (_, i) => sampleRamp([[0, '#edf8e9'], [0.5, '#74c476'], [1, '#005a32']], i / 4));
+  const color = buildStepExpr(['get', 'medianIncome'], br, cols) as never;
+  const data = { type: 'FeatureCollection', features: feats } as unknown as FillData;
+  const src = map.getSource('census') as maplibregl.GeoJSONSource | undefined;
+  if (src) src.setData(data); else map.addSource('census', { type: 'geojson', data });
+  if (map.getLayer('census-fill')) { map.setLayoutProperty('census-fill', 'visibility', 'visible'); map.setPaintProperty('census-fill', 'fill-color', color); }
+  else map.addLayer({ id: 'census-fill', type: 'fill', source: 'census', paint: { 'fill-color': color, 'fill-opacity': 0.7, 'fill-outline-color': 'rgba(255,255,255,0.3)' } });
+}
+function hideCensus() { if (map?.getLayer('census-fill')) map.setLayoutProperty('census-fill', 'visibility', 'none'); }
+async function goLiveCensus() {
+  if (censusState.value === 'loading') return;
+  censusState.value = 'loading';
+  const r = await fetchCensus();
+  if (r) { censusFC.value = r; censusState.value = 'live'; muteBasemapForData(); hideCivic(); hideFootTraffic(); renderCensus(); }
+  else censusState.value = 'error';
+}
+function toggleCensus() {
+  censusOn.value = !censusOn.value;
+  if (censusOn.value) { if (censusFC.value) { muteBasemapForData(); hideCivic(); hideFootTraffic(); renderCensus(); } else void goLiveCensus(); }
+  else { hideCensus(); if (siteMode.value) renderSite(); else if (civicOn.value) renderCivic(); }
+}
 const topAreas = computed(() =>
   gridFeatures.value
     .map((f) => ({ props: f.properties as Record<string, number>, score: siteScoreOf(f.properties as Record<string, number>) }))
@@ -1145,6 +1189,13 @@ function initializeMap() {
     hoverInfo.value = { x: e.point.x, y: e.point.y, label: `${FT_KIND_LABEL[kind] ?? 'Corridor'} · ${hourLabel(ftHour.value)}`, value: `${Math.round(int * 100)} traffic index` };
   });
   map.on('mouseleave', 'ft-line', () => { if (map) map.getCanvas().style.cursor = ''; hoverInfo.value = null; });
+  // Read-on-hover for real census tracts.
+  map.on('mousemove', 'census-fill', (e) => {
+    if (map) map.getCanvas().style.cursor = 'pointer';
+    const f = e.features?.[0]; if (!f) { hoverInfo.value = null; return; }
+    hoverInfo.value = { x: e.point.x, y: e.point.y, label: String(f.properties?.name ?? 'Census tract').replace(/;.*/, '').slice(0, 44), value: `$${Math.round(Number(f.properties?.medianIncome ?? 0) / 1000)}k median income` };
+  });
+  map.on('mouseleave', 'census-fill', () => { if (map) map.getCanvas().style.cursor = ''; hoverInfo.value = null; });
   marker = new maplibregl.Marker({ color: '#0f62fe' })
     .setLngLat(center)
     .setPopup(new maplibregl.Popup({ offset: 16 }).setText(`OSM ${selectedFeature.value?.osm_ref?.osm_type || 'way'} ${selectedFeature.value?.osm_ref?.osm_id || '424242'}`))
