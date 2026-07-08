@@ -92,8 +92,11 @@
             <div v-if="gridType === 'hex'" class="mapx-cells-res">
               <span>res</span>
               <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="hexRes = r">{{ r }}</button>
-              <span class="mapx-cells-n">{{ baseGrid.features.length }} cells</span>
+              <span class="mapx-cells-n">{{ gridFeatures.length }} cells</span>
             </div>
+            <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live', err: streetsState === 'error' }" :disabled="streetsState === 'loading'" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="goLiveStreets">
+              {{ streetsState === 'loading' ? '⟳ fetching streets…' : streetsState === 'live' ? '● On real streets & land' : streetsState === 'error' ? '⚠ offline — synthetic' : '↻ Snap to real streets & land (live)' }}
+            </button>
           </div>
 
           <label class="mapx-switch">
@@ -566,7 +569,9 @@ import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, type MetricDef, type CivicGrid } from '../data/healthMapFixture';
 import { fetchPois, type Poi } from '../data/adapters/overpassLive';
 import { breaksFor, quantileBreaks, classOf, sampleRamp, type ClassMode } from '../data/classify';
-import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL } from '../data/footTrafficFixture';
+import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL, type FtNetwork } from '../data/footTrafficFixture';
+import { fetchStreets } from '../data/adapters/streetsLive';
+import { latLngToCell } from 'h3-js';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
 import {
@@ -662,6 +667,39 @@ const hexRes = ref(8);
 const baseGrid = ref<CivicGrid>(civicHexGrid(hexRes.value));
 // Foot traffic — a corridor network + time-of-day, not a block choropleth.
 const ftNet = footTrafficNetwork();
+// Real OSM street network (Overpass) — foot traffic rides this instead of the
+// synthetic grid, and its points define which hexes are actual developable land.
+const liveStreets = ref<FtNetwork | null>(null);
+const streetPoints = ref<Array<[number, number]>>([]);
+const streetsState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const activeFtNet = computed(() => liveStreets.value ?? ftNet);
+// A hex that contains a real street = developable land. When streets are live this
+// is the REAL land mask for the choropleth (hex mode) — no hand-drawn coastline.
+const landCellIds = computed<Set<string> | null>(() => {
+  if (gridType.value !== 'hex' || !streetPoints.value.length) return null;
+  const set = new Set<string>();
+  for (const [lon, lat] of streetPoints.value) set.add(latLngToCell(lat, lon, hexRes.value));
+  return set;
+});
+const gridFeatures = computed(() => {
+  const feats = baseGrid.value.features;
+  const ids = landCellIds.value;
+  return ids ? feats.filter((f) => ids.has(String((f.properties as Record<string, unknown>).id))) : feats;
+});
+async function goLiveStreets() {
+  if (!map || streetsState.value === 'loading') return;
+  streetsState.value = 'loading';
+  const b = map.getBounds();
+  const r = await fetchStreets({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() });
+  if (r) {
+    liveStreets.value = r.network;
+    streetPoints.value = r.points;
+    streetsState.value = 'live';
+    if (isFootTraffic.value && civicOn.value) renderFootTraffic();
+    // real streets ⇒ real land mask for the hex choropleth
+    if (siteMode.value) renderSite(); else if (civicOn.value && !isFootTraffic.value) renderCivic();
+  } else streetsState.value = 'error';
+}
 const ftHour = ref(18);
 const ftWeekend = ref(false);
 const ftPlaying = ref(false);
@@ -707,7 +745,7 @@ function isoTimeMin(p: Record<string, number>, origin: { lng: number; lat: numbe
 }
 function reachedFor(origin: { lng: number; lat: number } | null): Record<string, number>[] {
   if (!origin) return [];
-  return baseGrid.value.features.map((f) => f.properties as Record<string, number>).filter((p) => isoTimeMin(p, origin) <= isoMax.value);
+  return gridFeatures.value.map((f) => f.properties as Record<string, number>).filter((p) => isoTimeMin(p, origin) <= isoMax.value);
 }
 const summaryOf = (r: Record<string, number>[]) => ({
   cells: r.length,
@@ -728,7 +766,7 @@ const CATCHMENT: Array<{ key: string; label: string; fmt: (v: number) => string;
 const mean = (arr: Record<string, number>[], key: string) => (arr.length ? arr.reduce((s, p) => s + Number(p[key] ?? 0), 0) / arr.length : 0);
 const catchmentStats = computed(() => {
   const r = isoReached.value;
-  const all = baseGrid.value.features.map((f) => f.properties as Record<string, number>);
+  const all = gridFeatures.value.map((f) => f.properties as Record<string, number>);
   if (!r.length || !all.length) return [] as Array<{ label: string; value: string; delta: number; favorable: boolean | null }>;
   return CATCHMENT.map((m) => {
     const c = mean(r, m.key);
@@ -795,7 +833,7 @@ async function goLivePois() {
 const competitorByCell = computed(() => {
   const m = new Map<string, number>();
   if (poiState.value !== 'live' || !pois.value.length) return m;
-  const cells = baseGrid.value.features;
+  const cells = gridFeatures.value;
   for (const p of pois.value) {
     let best = ''; let bd = Infinity;
     for (const f of cells) {
@@ -813,7 +851,7 @@ function siteScoreOf(props: Record<string, string | number>): number {
   return Math.max(0, Math.round(base - competitionPenalty(competitorByCell.value.get(String(props.id)) ?? 0)));
 }
 const topAreas = computed(() =>
-  baseGrid.value.features
+  gridFeatures.value
     .map((f) => ({ props: f.properties as Record<string, number>, score: siteScoreOf(f.properties as Record<string, number>) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 5),
@@ -835,7 +873,7 @@ const allMetrics = CIVIC_LAYERS.flatMap((g) => g.metrics);
 const selectedSite = computed(() => {
   const c = selectedCell.value; if (!c) return null;
   const score = siteScoreOf(c);
-  const sorted = baseGrid.value.features.map((f) => siteScoreOf(f.properties as Record<string, number>)).sort((a, b) => b - a);
+  const sorted = gridFeatures.value.map((f) => siteScoreOf(f.properties as Record<string, number>)).sort((a, b) => b - a);
   const rank = sorted.findIndex((s) => s <= score) + 1;
   return { score, rank, total: sorted.length, label: SITE_PROFILES.find((p) => p.id === siteProfile.value)?.label ?? '' };
 });
@@ -877,10 +915,10 @@ const isRealEstate = computed(() => activeGroup.value.id === 'realestate');
 // metrics fall into the past where momentum is positive (gentrifying) and vice versa.
 const timeQ = ref(0); // quarters before "now"
 function tFeatures() {
-  if (timeQ.value === 0) return baseGrid.value.features;
+  if (timeQ.value === 0) return gridFeatures.value;
   const m = activeMetric.value;
   const dir = m.higherBetter ? 1 : -1;
-  return baseGrid.value.features.map((f) => {
+  return gridFeatures.value.map((f) => {
     const p = f.properties as Record<string, number>;
     const adj = Math.max(m.min, Math.min(m.max, Number(p[m.key] ?? 0) * (1 - Number(p.momentum ?? 0) * dir * timeQ.value)));
     return { ...f, properties: { ...p, [m.key]: adj } };
@@ -1136,7 +1174,7 @@ function paintCivic(data: FillData, color: never) {
 }
 function renderBivariate() {
   const { pf, yf, price, yield: yld } = bivBreaks();
-  const features = baseGrid.value.features.map((f) => {
+  const features = gridFeatures.value.map((f) => {
     const p = Number((f.properties as Record<string, number>)[BIV_PRICE_KEY] ?? 0) * pf;
     const y = Number((f.properties as Record<string, number>)[BIV_YIELD_KEY] ?? 0) * yf;
     const xc = classOf(p, price);
@@ -1151,7 +1189,7 @@ function renderBivariate() {
 // Foot traffic as a corridor network, weighted + colored by time-of-day intensity.
 function renderFootTraffic() {
   if (!map) return;
-  const feats = ftNet.features.map((s) => ({ ...s, properties: { ...s.properties, int: +(s.properties.base * footTrafficFactor(s.properties.kind, ftHour.value, ftWeekend.value)).toFixed(3) } }));
+  const feats = activeFtNet.value.features.map((s) => ({ ...s, properties: { ...s.properties, int: +(s.properties.base * footTrafficFactor(s.properties.kind, ftHour.value, ftWeekend.value)).toFixed(3) } }));
   const data = { type: 'FeatureCollection', features: feats } as unknown as FillData;
   const src = map.getSource('ft') as maplibregl.GeoJSONSource | undefined;
   if (src) src.setData(data);
@@ -1171,7 +1209,7 @@ function hideFootTraffic() { if (map?.getLayer('ft-line')) map.setLayoutProperty
 function paintIsoLayer(origin: { lng: number; lat: number } | null, sourceId: string, layerId: string, colors: string[]) {
   if (!map) return;
   if (!origin) { if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none'); return; }
-  const feats = baseGrid.value.features
+  const feats = gridFeatures.value
     .map((f) => ({ f, t: isoTimeMin(f.properties as Record<string, number>, origin) }))
     .filter((x) => x.t <= isoMax.value)
     .map((x) => ({ ...x.f, properties: { ...x.f.properties, isoBand: ISO_BANDS.findIndex((b) => x.t <= b) === -1 ? ISO_BANDS.length : ISO_BANDS.findIndex((b) => x.t <= b) } }));
@@ -1236,8 +1274,8 @@ function renderSite() {
   // Suitability scores cluster tightly (e.g. 50–60), so a raw 0–100 ramp paints
   // everything the same shade. Classify over the ACTUAL score range so the best
   // areas go green and the worst red — the whole point of a site-selection map.
-  const scores = baseGrid.value.features.map((f) => siteScoreOf(f.properties as Record<string, number>));
-  const scored = { type: 'FeatureCollection', features: baseGrid.value.features.map((f, i) => ({ ...f, properties: { ...f.properties, siteScore: scores[i] } })) };
+  const scores = gridFeatures.value.map((f) => siteScoreOf(f.properties as Record<string, number>));
+  const scored = { type: 'FeatureCollection', features: gridFeatures.value.map((f, i) => ({ ...f, properties: { ...f.properties, siteScore: scores[i] } })) };
   const br = breaksFor('quantile', scores, Math.min(...scores), Math.max(...scores), N_CLASSES);
   const cols = Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(SITE_RAMP, i / (N_CLASSES - 1)));
   paintCivic(scored as unknown as FillData, buildStepExpr(['get', 'siteScore'], br, cols) as never);
@@ -1739,6 +1777,9 @@ onUnmounted(() => {
 .mapx-cells-res { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.35rem; font-size: 0.66rem; color: var(--text-3); }
 .mapx-cells-res .mapx-bm { flex: 0 0 auto; min-width: 1.8rem; }
 .mapx-cells-n { margin-left: auto; font-variant-numeric: tabular-nums; }
+.mapx-land { width: 100%; margin-top: 0.4rem; text-align: center; }
+.mapx-land.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
+.mapx-land.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; }
 .mapx-class { margin-top: 0.55rem; }
 .mapx-class-l { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.3rem; }
 .mapx-bm.sm { font-size: 0.68rem; padding: 0.25rem 0.4rem; }
