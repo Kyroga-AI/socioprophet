@@ -1151,9 +1151,10 @@ function fmtVal(v: number, def: MetricDef): string {
   return `${v}${def.unit}`;
 }
 function fmtCell(m: MetricDef): string {
-  const raw = Number(selectedCell.value?.[m.key] ?? 0);
-  const f = activeGroup.value.segmented ? segFactor(reSegment.value, m.key) : 1;
-  return fmtVal(raw * f, m);
+  // Route through cellRaw so the compact inspector + Ask-Noetica show the SAME
+  // value as the area profile — including real ACS income when the join is live.
+  if (!selectedCell.value) return fmtVal(0, m);
+  return fmtVal(cellRaw(selectedCell.value, m), m);
 }
 const scoreColor = (s: number): string => (s >= 66 ? '#4bbf73' : s >= 40 ? '#e3b341' : '#f0656a');
 const cellOwnerPct = computed(() => Number(selectedCell.value?.reOwnerOccPct ?? 0));
@@ -1454,12 +1455,14 @@ function clearIso() {
   if (isoOn.value) armIso(compareOn.value ? 'a' : 'a');
 }
 function renderCivic() {
+  hideCensus(); // one base data layer at a time — census is its own overlay
   if (isFootTraffic.value) { hideCivic(); renderFootTraffic(); return; }
   hideFootTraffic();
   if (bivariateOn.value && isRealEstate.value) { renderBivariate(); return; }
   paintCivic({ type: 'FeatureCollection', features: tFeatures() } as unknown as FillData, civicColorExpr(activeMetric.value, metricFactor.value) as never);
 }
 function renderSite() {
+  hideCensus(); // one base data layer at a time
   // Nothing to classify when the view is too wide (gridFeatures is empty) — bail
   // before Math over an empty array yields Infinity breaks and a broken step expr.
   if (!gridFeatures.value.length) { hideCivic(); return; }
