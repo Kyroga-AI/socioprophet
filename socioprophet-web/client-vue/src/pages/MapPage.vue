@@ -190,9 +190,9 @@
 
             <!-- Public-Safety layer: swap synthetic crime for REAL NYPD reported incidents (NYC) -->
             <div v-if="isSafety && !isFootTraffic && activeMetric.key === 'crimeRate'" class="mapx-income-real">
-              <LiveToggle :state="crimeState" label="Use real NYPD crime" live-text="Real NYPD crime" title="Pull real reported incidents for this view from NYC Open Data (NYPD complaints, no key) and bin them to these cells. Only the crime metric becomes real — NYC only." @click="goLiveCrime" />
-              <span v-if="useRealCrime" class="mapx-income-note">● {{ crimeMatched }} cells on real NYPD reported incidents · {{ crimePoints.length }} incidents in view</span>
-              <span v-else-if="crimeState === 'error'" class="mapx-income-note err">⚠ NYC Open Data unreachable or no incidents here — kept illustrative</span>
+              <LiveToggle :state="crimeState" label="Use real reported crime" live-text="Real reported crime" title="Pull real reported incidents for this view from the city's open-data portal (NYC / Chicago / San Francisco, no key) and bin them to these cells. Search a supported city first." @click="goLiveCrime" />
+              <span v-if="useRealCrime" class="mapx-income-note">● {{ crimeMatched }} cells on real {{ crimeCity }} reported incidents · {{ crimePoints.length }} in view</span>
+              <span v-else-if="crimeState === 'error'" class="mapx-income-note err">⚠ No open-data crime portal for this view (supported: NYC, Chicago, SF) — kept illustrative</span>
             </div>
 
             <!-- People layer: swap synthetic population for REAL ACS population -->
@@ -663,7 +663,7 @@ import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import WorldClaimCard from '../components/WorldClaimCard.vue';
-import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, nycCrimeEvidence, openMeteoAirEvidence, femaFloodEvidence, osmTransitEvidence, type WorldClaim } from '../gaia/worldClaim';
+import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, crimeEvidence, openMeteoAirEvidence, femaFloodEvidence, osmTransitEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { crossDomainClaims, crossDomainPrompt, type DomainInput } from '../gaia/crossDomain';
 import { claimBundle, downloadClaimBundle } from '../gaia/exportClaims';
 import { ingestClaimBundle, indexIngestedByCell } from '../gaia/claimStore';
@@ -681,7 +681,7 @@ import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
 import { prepTracts, tractIncomeAt, tractPopulationAt } from '../data/censusJoin';
 import { fetchCountyFips } from '../data/adapters/fipsLive';
 import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
-import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
+import { fetchCrime, crimeCityForPoint, type CrimePoint } from '../data/adapters/crimeLive';
 import { fetchAirQuality, type AirPoint } from '../data/adapters/airLive';
 import { fetchFloodZones, floodRiskAt, floodInfoAt, type FloodZone } from '../data/adapters/floodLive';
 import { fetchTransitStops, type TransitStop } from '../data/adapters/transitLive';
@@ -1188,6 +1188,7 @@ const popMatched = computed(() => censusPopByCell.value.size);
 // illustrative. Fails closed → stays on the fixture safety field.
 const crimeState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
 const crimePoints = ref<CrimePoint[]>([]);
+const crimeCity = ref('Municipal Open Data'); // the resolved city for the current crime data
 const isSafety = computed(() => activeGroup.value.id === 'safety');
 const useRealCrime = computed(() => crimeState.value === 'live' && crimePoints.value.length > 0);
 const crimeByCell = computed<Map<string, number>>(() => {
@@ -1205,6 +1206,8 @@ async function goLiveCrime() {
   if (crimeState.value === 'live') { crimeGen += 1; crimeState.value = 'idle'; crimePoints.value = []; renderCivic(); return; } // back to synthetic
   crimeState.value = 'loading';
   const g = ++crimeGen;
+  const c = map.getCenter();
+  crimeCity.value = crimeCityForPoint(c.lat, c.lng)?.name ?? 'Municipal Open Data';
   const b = map.getBounds();
   const r = await fetchCrime({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() });
   if (g !== crimeGen) return; // superseded by a toggle-off or a newer fetch — drop the stale result
@@ -1539,7 +1542,7 @@ function buildCellClaim(c: Record<string, string | number>, m: MetricDef): World
   }
   if (m.key === 'crimeRate' && useRealCrime.value && crimeByCell.value.has(cellId)) {
     const n = crimeByCell.value.get(cellId)!;
-    return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { reportedIncidents: n }, source: nycCrimeEvidence(cellId, n) });
+    return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { reportedIncidents: n }, source: crimeEvidence(cellId, n, crimeCity.value) });
   }
   if (m.key === 'airQualityAqi' && useRealAir.value && airByCell.value.has(cellId)) {
     return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { usAqi: airByCell.value.get(cellId) }, source: openMeteoAirEvidence(cellId), confidence: 0.75, uncertaintyClass: 'moderate', uncertaintyNotes: 'CAMS reanalysis sampled across the view, nearest-assigned to this cell.' });
@@ -2067,7 +2070,7 @@ const crossDomainInputs = computed<DomainInput[]>(() => {
     let value = Number(c[key] ?? 0);
     let real: DomainInput['real'];
     if (key === 'medianIncome' && useRealIncome.value && censusIncomeByCell.value.has(cellId)) { value = censusIncomeByCell.value.get(cellId)!; real = { source: acsIncomeEvidence(cellId), confidence: 0.9, uncertaintyClass: 'low' }; }
-    else if (key === 'crimeRate' && useRealCrime.value && crimeByCell.value.has(cellId)) { value = crimeByCell.value.get(cellId)!; real = { source: nycCrimeEvidence(cellId, value), confidence: 0.85, uncertaintyClass: 'low' }; }
+    else if (key === 'crimeRate' && useRealCrime.value && crimeByCell.value.has(cellId)) { value = crimeByCell.value.get(cellId)!; real = { source: crimeEvidence(cellId, value, crimeCity.value), confidence: 0.85, uncertaintyClass: 'low' }; }
     else if (key === 'airQualityAqi' && useRealAir.value && airByCell.value.has(cellId)) { value = airByCell.value.get(cellId)!; real = { source: openMeteoAirEvidence(cellId), confidence: 0.75, uncertaintyClass: 'moderate' }; }
     else if (key === 'population' && useRealPop.value && censusPopByCell.value.has(cellId)) { value = censusPopByCell.value.get(cellId)!; real = { source: acsPopulationEvidence(cellId), confidence: 0.9, uncertaintyClass: 'low' }; }
     else if (key === 'floodRiskPct' && useRealFlood.value && floodByCell.value.has(cellId)) { value = floodByCell.value.get(cellId)!; real = { source: femaFloodEvidence(cellId, ''), confidence: 0.88, uncertaintyClass: 'low' }; }
