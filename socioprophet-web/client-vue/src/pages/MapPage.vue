@@ -627,6 +627,7 @@ import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL, type F
 import { fetchStreets } from '../data/adapters/streetsLive';
 import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
 import { prepTracts, tractIncomeAt } from '../data/censusJoin';
+import { fetchCountyFips } from '../data/adapters/fipsLive';
 import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
 import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
 import { fetchAirQuality, type AirPoint } from '../data/adapters/airLive';
@@ -1006,13 +1007,36 @@ function renderCensus() {
   else map.addLayer({ id: 'census-fill', type: 'fill', source: 'census', paint: { 'fill-color': color, 'fill-opacity': 0.7, 'fill-outline-color': 'rgba(10,12,16,0.5)' } });
 }
 function hideCensus() { if (map?.getLayer('census-fill')) map.setLayoutProperty('census-fill', 'visibility', 'none'); }
-// Fetch the real ACS/TIGER tracts once and cache them; both the census overlay and
-// the economic-income enrichment share this data (fetch it at most once).
-async function loadCensusData(): Promise<boolean> {
-  if (censusFC.value) return true;
-  const r = await fetchCensus();
-  if (r) { censusFC.value = r; return true; }
+// County-follow: which county's ACS tracts are currently loaded (FIPS state+county).
+const censusFips = ref<string | null>(null);
+async function loadCensusFor(state: string, county: string): Promise<boolean> {
+  const fips = state + county;
+  if (censusFC.value && censusFips.value === fips) return true; // already have this county
+  const r = await fetchCensus(state, county);
+  if (r) { censusFC.value = r; censusFips.value = fips; return true; }
   return false;
+}
+// Resolve the county under the current map centre so census/income FOLLOW the view
+// anywhere in the US; fall back to New York County if the reverse-geocode is down.
+async function loadCensusData(): Promise<boolean> {
+  const c = map?.getCenter();
+  if (c) {
+    const co = await fetchCountyFips(c.lat, c.lng);
+    if (co) return loadCensusFor(co.state, co.county);
+  }
+  return loadCensusFor('36', '061');
+}
+// When the view pans into a different county while census/income is live, refetch
+// that county's tracts and repaint. Called from the debounced move handler.
+async function followCensusCounty() {
+  if (!map || (censusState.value !== 'live' && incomeState.value !== 'live')) return;
+  const c = map.getCenter();
+  const co = await fetchCountyFips(c.lat, c.lng);
+  if (!co || censusFips.value === co.state + co.county) return; // same county — nothing to do
+  const ok = await loadCensusFor(co.state, co.county);
+  if (!ok) return;
+  if (censusOn.value) renderCensus();
+  else if (civicOn.value && isEconomic.value && incomeState.value === 'live') renderCivic();
 }
 async function goLiveCensus() {
   if (censusState.value === 'loading') return;
@@ -1688,6 +1712,7 @@ function onMapMoved() {
     if (targetRes !== hexRes.value) hexRes.value = targetRes;
     else rebuildGrid();
     if (civicOn.value || siteMode.value) void refreshStreetsForView(); // real land mask for the new view
+    void followCensusCounty(); // census/income follow the viewport across county lines
   }, 1200); // generous debounce: Overpass rate-limits hard, so settle well before refetching
 }
 // Beauty: mute the basemap when data goes on top, so the choropleth reads clean.
