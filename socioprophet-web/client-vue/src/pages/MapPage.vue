@@ -91,7 +91,8 @@
             </div>
             <div v-if="gridType === 'hex'" class="mapx-cells-res">
               <span>res</span>
-              <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="hexRes = r">{{ r }}</button>
+              <button class="mapx-bm sm" :class="{ on: resAuto }" type="button" title="Hex size follows zoom" @click="resAuto = true">auto</button>
+              <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: !resAuto && hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="setRes(r)">{{ r }}</button>
               <span class="mapx-cells-n">{{ gridFeatures.length }} cells</span>
             </div>
             <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live' && !viewTooWide, err: streetsState === 'error' || viewTooWide }" :disabled="streetsState === 'loading' || viewTooWide" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="refreshStreetsForView(true)">
@@ -680,6 +681,9 @@ const selectedListing = ref<Listing | null>(null);
 // grid. Switchable; rebuilding re-samples the same metric schema.
 const gridType = ref<'hex' | 'square'>('hex');
 const hexRes = ref(8);
+const resAuto = ref(true); // hex size follows zoom for a consistent crisp screen-size
+function resForZoom(z: number): number { return z >= 14.3 ? 9 : z >= 12.3 ? 8 : 7; }
+function setRes(r: number) { resAuto.value = false; hexRes.value = r; }
 // The grid follows the viewport (clamped so hex counts stay bounded). Field stays
 // stable across pans; only the cells shown change.
 const gridBox = ref<GeoBox>({ ...CITY_BBOX });
@@ -881,7 +885,7 @@ function renderCompHeat() {
   if (src) src.setData(data); else map.addSource('comp', { type: 'geojson', data });
   const color = ['interpolate', ['linear'], ['get', 'dens'], 0, 'rgba(0,0,0,0)', 0.3, '#1a9850', 1, '#fee08b', 3, '#fdae61', 6, '#d73027'] as never;
   if (map.getLayer('comp-fill')) { map.setLayoutProperty('comp-fill', 'visibility', 'visible'); map.setPaintProperty('comp-fill', 'fill-color', color); }
-  else map.addLayer({ id: 'comp-fill', type: 'fill', source: 'comp', paint: { 'fill-color': color, 'fill-opacity': 0.55, 'fill-outline-color': 'rgba(255,255,255,0.15)' } });
+  else map.addLayer({ id: 'comp-fill', type: 'fill', source: 'comp', paint: { 'fill-color': color, 'fill-opacity': 0.55, 'fill-outline-color': 'rgba(10,12,16,0.4)' } });
 }
 function hideCompHeat() { if (map?.getLayer('comp-fill')) map.setLayoutProperty('comp-fill', 'visibility', 'none'); }
 function toggleCompHeat() { compHeatOn.value = !compHeatOn.value; renderCompHeat(); }
@@ -903,7 +907,7 @@ function renderCensus() {
   const src = map.getSource('census') as maplibregl.GeoJSONSource | undefined;
   if (src) src.setData(data); else map.addSource('census', { type: 'geojson', data });
   if (map.getLayer('census-fill')) { map.setLayoutProperty('census-fill', 'visibility', 'visible'); map.setPaintProperty('census-fill', 'fill-color', color); }
-  else map.addLayer({ id: 'census-fill', type: 'fill', source: 'census', paint: { 'fill-color': color, 'fill-opacity': 0.7, 'fill-outline-color': 'rgba(255,255,255,0.3)' } });
+  else map.addLayer({ id: 'census-fill', type: 'fill', source: 'census', paint: { 'fill-color': color, 'fill-opacity': 0.7, 'fill-outline-color': 'rgba(10,12,16,0.5)' } });
 }
 function hideCensus() { if (map?.getLayer('census-fill')) map.setLayoutProperty('census-fill', 'visibility', 'none'); }
 async function goLiveCensus() {
@@ -1203,7 +1207,7 @@ function initializeMap() {
     .setPopup(new maplibregl.Popup({ offset: 16 }).setText(`OSM ${selectedFeature.value?.osm_ref?.osm_type || 'way'} ${selectedFeature.value?.osm_ref?.osm_id || '424242'}`))
     .addTo(map);
   // Grid follows the viewport: seed the box from the initial view + track moves.
-  map.on('load', () => { if (map) { gridBox.value = clampBox(map.getBounds()); rebuildGrid(); } });
+  map.on('load', () => { if (map) { gridBox.value = clampBox(map.getBounds()); if (resAuto.value) hexRes.value = resForZoom(map.getZoom()); rebuildGrid(); } });
   map.on('moveend', onMapMoved);
 }
 
@@ -1248,7 +1252,7 @@ function paintCivic(data: FillData, color: never) {
     map.setLayoutProperty('civic-fill', 'visibility', 'visible');
   } else {
     // NYT-style: crisp thin borders, no heavy outline.
-    map.addLayer({ id: 'civic-fill', type: 'fill', source: 'civic', paint: { 'fill-color': color, 'fill-opacity': civicOpacity.value, 'fill-outline-color': 'rgba(255,255,255,0.28)' } });
+    map.addLayer({ id: 'civic-fill', type: 'fill', source: 'civic', paint: { 'fill-color': color, 'fill-opacity': civicOpacity.value, 'fill-outline-color': 'rgba(10,12,16,0.55)' } });
   }
 }
 function renderBivariate() {
@@ -1303,7 +1307,7 @@ function paintIsoLayer(origin: { lng: number; lat: number } | null, sourceId: st
     map.setPaintProperty(layerId, 'fill-color', color);
     map.setPaintProperty(layerId, 'fill-opacity', opacity);
   } else {
-    map.addLayer({ id: layerId, type: 'fill', source: sourceId, paint: { 'fill-color': color, 'fill-opacity': opacity, 'fill-outline-color': 'rgba(255,255,255,0.25)' } });
+    map.addLayer({ id: layerId, type: 'fill', source: sourceId, paint: { 'fill-color': color, 'fill-opacity': opacity, 'fill-outline-color': 'rgba(10,12,16,0.4)' } });
   }
 }
 function renderIso() {
@@ -1394,14 +1398,18 @@ function onMapMoved() {
     const old = gridBox.value;
     const moved = Math.abs(nb.minLon - old.minLon) + Math.abs(nb.maxLon - old.maxLon) + Math.abs(nb.minLat - old.minLat) + Math.abs(nb.maxLat - old.maxLat);
     const span = (old.maxLon - old.minLon) + (old.maxLat - old.minLat);
-    if (moved < span * 0.15) return; // negligible move (e.g. a fly-to) — don't thrash the grid / Overpass
+    const targetRes = resAuto.value ? resForZoom(map.getZoom()) : hexRes.value;
+    if (moved < span * 0.15 && targetRes === hexRes.value) return; // negligible move + same res — don't thrash
     gridBox.value = nb;
+    if (targetRes !== hexRes.value) hexRes.value = targetRes; // triggers rebuild via its watcher too, but rebuild is idempotent
     rebuildGrid();
     if (civicOn.value || siteMode.value) void refreshStreetsForView(); // real land mask for the new view
   }, 450);
 }
 // Beauty: mute the basemap when data goes on top, so the choropleth reads clean.
-function muteBasemapForData() { if (basemap.value === 'streets') setBasemap('light'); }
+// Data-forward: put choropleth/heat data on a DARK basemap so the colored cells
+// pop and the map underneath reads cleanly (a light basemap muddies the fills).
+function muteBasemapForData() { if (basemap.value === 'streets') setBasemap('dark'); }
 // The first time a data layer is shown, silently fetch the real street network so
 // the default land mask + foot traffic are correct — the static mask shows
 // instantly, then refines when Overpass responds (graceful if it doesn't).
