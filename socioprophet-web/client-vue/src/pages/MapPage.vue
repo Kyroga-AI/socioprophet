@@ -302,7 +302,7 @@
         </section>
 
         <section class="panel-section">
-          <div class="section-title">Reachability <InfoLabel info="Travel-time estimate from a point: roughly how far you can get in N minutes on foot, bike, or transit. Bands are a straight-line (as-the-crow-flies) estimate scaled by a local mobility factor — NOT turn-by-turn network routing, so real travel time varies (a river or highway can cut it off). Click the map to set the origin." /></div>
+          <div class="section-title">Reachability <InfoLabel info="Travel-time isochrone from a point on foot, bike, or transit. When the real OSM street network is loaded this is a true shortest-path routing (a river or highway correctly cuts off reach); before streets load it falls back to a straight-line estimate. The indicator below says which. Click the map to set the origin." /></div>
           <label class="mapx-switch">
             <input type="checkbox" :checked="isoOn" @change="toggleIso" />
             <span>Isochrone from a point</span>
@@ -331,6 +331,9 @@
             <p v-if="compareOn && isoArm" class="lookup-status">Click the map to set point {{ isoArmTarget.toUpperCase() }}.</p>
 
             <button v-else-if="!isoOrigin" class="mapx-bm sm" type="button" :class="{ on: isoArm }" @click="armIso('a')">📍 Click the map to set origin{{ isoArm ? '…' : '' }}</button>
+
+            <!-- Routed vs straight-line honesty indicator -->
+            <p v-if="isoOrigin" class="mapx-iso-mode" :class="{ routed: isoRouted }">{{ isoRouted ? '● Routed on the real street network' : '◇ Straight-line estimate — load real streets to route' }}</p>
 
             <!-- Single-point catchment -->
             <template v-if="!compareOn && isoOrigin">
@@ -610,6 +613,7 @@ import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL, type F
 import { fetchStreets } from '../data/adapters/streetsLive';
 import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
 import { prepTracts, tractIncomeAt } from '../data/censusJoin';
+import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
 import { latLngToCell, cellToLatLng } from 'h3-js';
 import { communityEvents, EVENT_TYPES, type CommunityEvent } from '../data/communityEventsFixture';
 import { LISTINGS, type Listing } from '../data/mlsFixture';
@@ -810,9 +814,33 @@ function isoTimeMin(p: Record<string, number>, origin: { lng: number; lat: numbe
   const d = haversineKm(origin.lng, origin.lat, Number(p.cLon), Number(p.cLat));
   return (d / (ISO_SPEED[isoMode.value] * isoSpeedFactor(p))) * 60;
 }
+// The OSM route graph for the loaded street network (rebuilt only when streets change).
+const routeGraph = computed<RouteGraph | null>(() => {
+  const s = liveStreets.value;
+  return s && s.features.length ? buildRouteGraph(s.features as Array<{ geometry: { coordinates: number[][] } }>) : null;
+});
+// Routed travel-time per hex cell via Dijkstra on the real network (hex mode only —
+// square-grid ids aren't H3). null → caller uses the straight-line fallback.
+function routedCellTimes(origin: { lng: number; lat: number } | null): Map<string, number> | null {
+  const g = routeGraph.value;
+  if (!origin || !g || g.nodes.size < 20 || gridType.value !== 'hex') return null;
+  const nodeTimes = reachableMinutes(g, origin.lng, origin.lat, ISO_SPEED[isoMode.value], isoMax.value);
+  if (!nodeTimes.size) return null;
+  const cellTimes = new Map<string, number>();
+  for (const [k, t] of nodeTimes) {
+    const n = g.nodes.get(k)!; const cell = latLngToCell(n[1], n[0], hexRes.value);
+    const prev = cellTimes.get(cell);
+    if (prev === undefined || t < prev) cellTimes.set(cell, t);
+  }
+  return cellTimes;
+}
+// Whether the primary isochrone is routed on the real network (vs straight-line estimate).
+const isoRouted = computed(() => isoOrigin.value != null && routedCellTimes(isoOrigin.value) != null);
 function reachedFor(origin: { lng: number; lat: number } | null): Record<string, number>[] {
   if (!origin) return [];
-  return gridFeatures.value.map((f) => f.properties as Record<string, number>).filter((p) => isoTimeMin(p, origin) <= isoMax.value);
+  const routed = routedCellTimes(origin);
+  if (routed) return gridFeatures.value.map((f) => f.properties as Record<string, number>).filter((p) => { const t = routed.get(String(p.id)); return t !== undefined && t <= isoMax.value; });
+  return gridFeatures.value.map((f) => f.properties as Record<string, number>).filter((p) => isoTimeMin(p, origin) <= isoMax.value); // straight-line fallback
 }
 const summaryOf = (r: Record<string, number>[]) => ({
   cells: r.length,
@@ -859,11 +887,11 @@ const SYNTH_QUALIFIER = 'Note: these area statistics (income, rent, foot traffic
 function askIsoNoetica() {
   if (compareOn.value && isoOriginB.value) {
     const rows = compareRows.value.map((x) => `${x.label} A=${x.a} B=${x.b}${x.winner ? ` (${x.winner.toUpperCase()} better)` : ''}`).join('; ');
-    cockpit.askAbout(`Compare two catchments for a ${isoMax.value}-min ${isoMode.value} (straight-line reach estimate): A reaches ${isoSummary.value.population.toLocaleString()} people, B reaches ${isoSummaryB.value.population.toLocaleString()}. Profiles — ${rows}. Which site is the better bet and why? ${SYNTH_QUALIFIER}`);
+    cockpit.askAbout(`Compare two catchments for a ${isoMax.value}-min ${isoMode.value} (${isoRouted.value ? 'routed on the real street network' : 'straight-line reach estimate'}): A reaches ${isoSummary.value.population.toLocaleString()} people, B reaches ${isoSummaryB.value.population.toLocaleString()}. Profiles — ${rows}. Which site is the better bet and why? ${SYNTH_QUALIFIER}`);
     return;
   }
   const s = catchmentStats.value.map((x) => `${x.label} ${x.value} (${x.delta >= 0 ? '+' : ''}${x.delta}% vs city)`).join(', ');
-  cockpit.askAbout(`Reachability catchment (straight-line reach estimate): within a ${isoMax.value}-min ${isoMode.value} of this point are ~${isoSummary.value.population.toLocaleString()} people across ${isoSummary.value.cells} areas — ${s}. Is this a strong catchment for a new location, and what does the profile favor? ${SYNTH_QUALIFIER}`);
+  cockpit.askAbout(`Reachability catchment (${isoRouted.value ? 'routed on the real street network' : 'straight-line reach estimate'}): within a ${isoMax.value}-min ${isoMode.value} of this point are ~${isoSummary.value.population.toLocaleString()} people across ${isoSummary.value.cells} areas — ${s}. Is this a strong catchment for a new location, and what does the profile favor? ${SYNTH_QUALIFIER}`);
 }
 
 // Live POIs (OSM Overpass) — the real businesses of the active site-profile type in
@@ -2033,6 +2061,8 @@ onUnmounted(() => {
 .mapx-iso-bands { display: flex; gap: 0.5rem; margin: 0.5rem 0; font-size: 0.64rem; color: var(--text-3); }
 .mapx-iso-bands span { display: inline-flex; align-items: center; gap: 0.2rem; }
 .mapx-iso-bands i { width: 11px; height: 11px; border-radius: 3px; }
+.mapx-iso-mode { margin: 0.5rem 0 0; font-size: var(--fs-eyebrow, 0.62rem); letter-spacing: 0.02em; color: var(--text-3); }
+.mapx-iso-mode.routed { color: var(--live); }
 .mapx-iso-sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin: 0.55rem 0; }
 .mapx-iso-sum > div { display: flex; flex-direction: column; padding: 0.4rem 0.5rem; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 9px; background: rgba(255, 255, 255, 0.03); }
 .mapx-iso-sum b { font-size: 0.95rem; color: var(--text); font-variant-numeric: tabular-nums; }
