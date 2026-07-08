@@ -247,7 +247,7 @@
               <button class="mapx-bm sm" :class="{ on: poiState === 'live', err: poiState === 'error' }" :disabled="poiState === 'loading'" type="button" :title="`Real ${profileLabel} locations from OpenStreetMap in the current view — the actual competitors`" @click="goLivePois">
                 {{ poiState === 'loading' ? '⟳ finding…' : poiState === 'error' ? '⚠ offline' : `↻ Real ${profileLabel.toLowerCase()} nearby (live)` }}
               </button>
-              <span v-if="poiState === 'live'" class="mapx-poi-n">{{ pois.length }} found<span v-if="isoOn && isoOrigin"> · <b>{{ poiReachCount }}</b> in reach</span></span>
+              <span v-if="poiState === 'live'" class="mapx-poi-n">{{ pois.length }} found<span v-if="isoOn && isoOrigin"> · <b>{{ poiReachCount }}</b> in reach</span> · <b>folded into scores</b></span>
             </div>
             <div class="mapx-site-head"><ProvenanceBadge :p="siteProv" compact /><span>computed suitability · click an area to fly</span></div>
             <div class="mapx-site-legend">
@@ -785,12 +785,36 @@ async function goLivePois() {
   poiState.value = 'loading';
   const b = map.getBounds();
   const r = await fetchPois({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() }, siteProfile.value);
-  if (r) { pois.value = r; poiState.value = 'live'; renderPois(); }
+  if (r) { pois.value = r; poiState.value = 'live'; renderPois(); if (siteMode.value) renderSite(); }
   else poiState.value = 'error';
+}
+// Fold REAL competitor density into the suitability score: assign each live POI to
+// its nearest cell; 1 nearby competitor validates the market (no penalty), each
+// additional one saturates it (−5, capped −20). So "Go live" makes the ranking
+// react to actual on-the-ground competition, not just the fixture proxy.
+const competitorByCell = computed(() => {
+  const m = new Map<string, number>();
+  if (poiState.value !== 'live' || !pois.value.length) return m;
+  const cells = baseGrid.value.features;
+  for (const p of pois.value) {
+    let best = ''; let bd = Infinity;
+    for (const f of cells) {
+      const pr = f.properties as Record<string, number>;
+      const d = haversineKm(p.lon, p.lat, Number(pr.cLon), Number(pr.cLat));
+      if (d < bd) { bd = d; best = String(pr.id); }
+    }
+    if (best) m.set(best, (m.get(best) ?? 0) + 1);
+  }
+  return m;
+});
+const competitionPenalty = (count: number) => (count <= 1 ? 0 : Math.min(20, (count - 1) * 5));
+function siteScoreOf(props: Record<string, string | number>): number {
+  const base = scoreCell(props, siteProfile.value);
+  return Math.max(0, Math.round(base - competitionPenalty(competitorByCell.value.get(String(props.id)) ?? 0)));
 }
 const topAreas = computed(() =>
   baseGrid.value.features
-    .map((f) => ({ props: f.properties as Record<string, number>, score: scoreCell(f.properties, siteProfile.value) }))
+    .map((f) => ({ props: f.properties as Record<string, number>, score: siteScoreOf(f.properties as Record<string, number>) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 5),
 );
@@ -810,8 +834,8 @@ const allMetrics = CIVIC_LAYERS.flatMap((g) => g.metrics);
 // Selected area's site score + city rank for the active business profile.
 const selectedSite = computed(() => {
   const c = selectedCell.value; if (!c) return null;
-  const score = scoreCell(c, siteProfile.value);
-  const sorted = baseGrid.value.features.map((f) => scoreCell(f.properties, siteProfile.value)).sort((a, b) => b - a);
+  const score = siteScoreOf(c);
+  const sorted = baseGrid.value.features.map((f) => siteScoreOf(f.properties as Record<string, number>)).sort((a, b) => b - a);
   const rank = sorted.findIndex((s) => s <= score) + 1;
   return { score, rank, total: sorted.length, label: SITE_PROFILES.find((p) => p.id === siteProfile.value)?.label ?? '' };
 });
@@ -1212,7 +1236,7 @@ function renderSite() {
   // Suitability scores cluster tightly (e.g. 50–60), so a raw 0–100 ramp paints
   // everything the same shade. Classify over the ACTUAL score range so the best
   // areas go green and the worst red — the whole point of a site-selection map.
-  const scores = baseGrid.value.features.map((f) => scoreCell(f.properties, siteProfile.value));
+  const scores = baseGrid.value.features.map((f) => siteScoreOf(f.properties as Record<string, number>));
   const scored = { type: 'FeatureCollection', features: baseGrid.value.features.map((f, i) => ({ ...f, properties: { ...f.properties, siteScore: scores[i] } })) };
   const br = breaksFor('quantile', scores, Math.min(...scores), Math.max(...scores), N_CLASSES);
   const cols = Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(SITE_RAMP, i / (N_CLASSES - 1)));
@@ -1302,7 +1326,7 @@ watch(isFootTraffic, (on) => { if (!on) stopFtPlay(); });
 watch([isoMode, isoMax], () => { if (isoOn.value && isoOrigin.value) renderIso(); });
 watch(timeQ, () => { if (civicOn.value && !siteMode.value && !isFootTraffic.value) renderCivic(); });
 watch([isFootTraffic, siteMode, civicOn], ([ft, site, on]) => { if (ft || site || !on) stopTimePlay(); });
-watch(siteProfile, () => { if (siteMode.value) renderSite(); if (pois.value.length) { pois.value = []; clearPois(); poiState.value = 'idle'; } });
+watch(siteProfile, () => { if (pois.value.length) { pois.value = []; clearPois(); poiState.value = 'idle'; } if (siteMode.value) renderSite(); });
 watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLayer('civic-fill')) map.setPaintProperty('civic-fill', 'fill-opacity', civicOpacity.value); });
 
 function updateMapMarker() {
