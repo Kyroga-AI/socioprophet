@@ -94,8 +94,8 @@
               <button v-for="r in [7, 8, 9]" :key="r" class="mapx-bm sm" :class="{ on: hexRes === r }" type="button" :title="`H3 resolution ${r}`" @click="hexRes = r">{{ r }}</button>
               <span class="mapx-cells-n">{{ gridFeatures.length }} cells</span>
             </div>
-            <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live', err: streetsState === 'error' }" :disabled="streetsState === 'loading'" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="refreshStreetsForView">
-              {{ streetsState === 'loading' ? '⟳ fetching streets…' : streetsState === 'live' ? '● On real streets & land' : streetsState === 'error' ? '⚠ offline — synthetic' : '↻ Snap to real streets & land (live)' }}
+            <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live' && !viewTooWide, err: streetsState === 'error' || viewTooWide }" :disabled="streetsState === 'loading' || viewTooWide" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="refreshStreetsForView(true)">
+              {{ viewTooWide ? '⤢ zoom in to load real land data' : streetsState === 'loading' ? '⟳ fetching streets…' : streetsState === 'live' ? '● On real streets & land' : streetsState === 'error' ? '⚠ streets unavailable — kept last' : '↻ Snap to real streets & land (live)' }}
             </button>
           </div>
 
@@ -702,14 +702,19 @@ const streetsState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
 const activeFtNet = computed(() => liveStreets.value ?? ftNet);
 // A hex that contains a real street = developable land. When streets are live this
 // is the REAL land mask for the choropleth (hex mode) — no hand-drawn coastline.
+const streetsBox = ref<GeoBox | null>(null);
+const STREET_MAX_SPAN = (CITY_BBOX.maxLon - CITY_BBOX.minLon) * 1.7; // beyond this the Overpass query is too big to be reliable
+const viewTooWide = computed(() => (gridBox.value.maxLon - gridBox.value.minLon) > STREET_MAX_SPAN);
+const landReady = computed(() => gridType.value === 'hex' && streetPoints.value.length > 0);
 const landCellIds = computed<Set<string> | null>(() => {
-  if (gridType.value !== 'hex' || !streetPoints.value.length) return null;
+  if (!landReady.value) return null;
   const set = new Set<string>();
   for (const [lon, lat] of streetPoints.value) set.add(latLngToCell(lat, lon, hexRes.value));
   return set;
 });
 const gridFeatures = computed(() => {
   const feats = baseGrid.value.features;
+  if (viewTooWide.value) return [] as typeof feats; // too wide for a real land mask — hide rather than leak over water
   const ids = landCellIds.value;
   return ids ? feats.filter((f) => ids.has(String((f.properties as Record<string, unknown>).id))) : feats;
 });
@@ -1364,13 +1369,19 @@ function rebuildGrid() {
   if (compHeatOn.value) renderCompHeat();
 }
 // Re-fetch streets (land mask + real-street foot traffic) for the current box.
-async function refreshStreetsForView() {
+function boxCovers(outer: GeoBox, inner: GeoBox): boolean {
+  const m = 0.002;
+  return inner.minLon >= outer.minLon - m && inner.maxLon <= outer.maxLon + m && inner.minLat >= outer.minLat - m && inner.maxLat <= outer.maxLat + m;
+}
+async function refreshStreetsForView(force = false) {
   if (!map) return;
+  if (viewTooWide.value) { streetsState.value = 'idle'; return; } // too big to fetch reliably — overlay hides with a zoom-in hint
+  if (!force && streetsBox.value && boxCovers(streetsBox.value, gridBox.value)) return; // cached: already have streets covering this view
   streetsState.value = 'loading';
   const b = { s: gridBox.value.minLat, w: gridBox.value.minLon, n: gridBox.value.maxLat, e: gridBox.value.maxLon };
   const r = await fetchStreets(b);
-  if (r) { liveStreets.value = r.network; streetPoints.value = r.points; streetsState.value = 'live'; rebuildGrid(); if (isFootTraffic.value && civicOn.value) renderFootTraffic(); }
-  else { streetsState.value = 'error'; }
+  if (r) { liveStreets.value = r.network; streetPoints.value = r.points; streetsBox.value = { ...gridBox.value }; streetsState.value = 'live'; rebuildGrid(); if (isFootTraffic.value && civicOn.value) renderFootTraffic(); }
+  else { streetsState.value = 'error'; } // KEEP the last-good streets — never revert to the leaky static mask
 }
 // When the map settles after a zoom/pan, follow the viewport (debounced).
 let moveTimer: number | null = null;
