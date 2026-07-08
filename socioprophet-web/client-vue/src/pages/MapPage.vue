@@ -240,6 +240,7 @@
                 <button class="mapx-bm" :class="{ on: isPinned(selectedCell.id) }" type="button" :disabled="pinnedCells.length >= 3 && !isPinned(selectedCell.id)" @click="pinCell">📌 Compare</button>
               </div>
               <button class="mapx-ask mapx-ask-sm" type="button" @click="askAreaNoetica">◇ Ask Noetica about this area</button>
+              <button class="mapx-ask mapx-ask-sm mapx-ask-cd" type="button" :title="`Reason across income, crime, air, walkability, rent & green space at once — ${crossDomainRealCount} of ${CROSS_DOMAIN_KEYS.length} governed as real for this area`" @click="crossDomainBrief">⬡ Brief across all domains<span class="mapx-cd-grade">{{ crossDomainRealCount }}/{{ CROSS_DOMAIN_KEYS.length }} real</span></button>
             </div>
           </template>
         </section>
@@ -619,6 +620,7 @@ import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import WorldClaimCard from '../components/WorldClaimCard.vue';
 import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, nycCrimeEvidence, openMeteoAirEvidence, type WorldClaim } from '../gaia/worldClaim';
+import { crossDomainClaims, crossDomainPrompt, type DomainInput } from '../gaia/crossDomain';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, isLand, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
 import { fetchPois, type Poi } from '../data/adapters/overpassLive';
@@ -1785,6 +1787,31 @@ function askAreaNoetica() {
   const stats = activeGroup.value.metrics.map((m) => `${m.label} ${fmtCell(m)}`).join(', ');
   cockpit.askAbout(`Tell me about this area on the ${activeGroup.value.label} layer: ${stats}. How does it compare to the rest of the city, and what should I know before ${activeGroup.value.id === 'realestate' ? 'investing' : 'opening a business or moving'} here? ${SYNTH_QUALIFIER}`);
 }
+// THE cross-domain move: assemble a governed WorldClaim per domain for this area
+// (real where a live source covers the cell, illustrative otherwise) and ask Noetica
+// to reason across all of them with each fact's truth grade attached.
+const CROSS_DOMAIN_KEYS = ['medianIncome', 'crimeRate', 'airQualityAqi', 'walkScore', 'reMedianRent', 'greenSpacePct'];
+const crossDomainInputs = computed<DomainInput[]>(() => {
+  const c = selectedCell.value; if (!c) return [];
+  const cellId = String(c.id);
+  const out: DomainInput[] = [];
+  for (const key of CROSS_DOMAIN_KEYS) {
+    const def = METRIC_BY_KEY[key]; if (!def) continue;
+    let value = Number(c[key] ?? 0);
+    let real: DomainInput['real'];
+    if (key === 'medianIncome' && useRealIncome.value && censusIncomeByCell.value.has(cellId)) { value = censusIncomeByCell.value.get(cellId)!; real = { source: acsIncomeEvidence(cellId), confidence: 0.9, uncertaintyClass: 'low' }; }
+    else if (key === 'crimeRate' && useRealCrime.value && crimeByCell.value.has(cellId)) { value = crimeByCell.value.get(cellId)!; real = { source: nycCrimeEvidence(cellId, value), confidence: 0.85, uncertaintyClass: 'low' }; }
+    else if (key === 'airQualityAqi' && useRealAir.value && airByCell.value.has(cellId)) { value = airByCell.value.get(cellId)!; real = { source: openMeteoAirEvidence(cellId), confidence: 0.75, uncertaintyClass: 'moderate' }; }
+    out.push({ key, label: def.label, value, format: (v) => fmtVal(v, def), real });
+  }
+  return out;
+});
+const crossDomainRealCount = computed(() => crossDomainInputs.value.filter((i) => i.real).length);
+function crossDomainBrief() {
+  const c = selectedCell.value; if (!c) return;
+  const claims = crossDomainClaims(String(c.id), Number(c.cLon), Number(c.cLat), crossDomainInputs.value);
+  cockpit.askAbout(crossDomainPrompt(areaLabel(c), claims, 'Give me a cross-domain read on this area for someone deciding whether to live or open a business here.'));
+}
 function clearPin() { pinMarker?.remove(); pinMarker = null; droppedPin.value = null; }
 // MLS listings — individual inventory over the aggregate choropleth.
 const listingLabel = (l: Listing) => (l.type === 'sale' ? (l.price >= 1_000_000 ? `$${(l.price / 1_000_000).toFixed(2)}M` : `$${Math.round(l.price / 1000)}k`) : `$${(l.price / 1000).toFixed(1)}k/mo`);
@@ -2145,6 +2172,8 @@ onUnmounted(() => {
 .mapx-hover-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); }
 .mapx-hover-value { font-size: 0.9rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .mapx-ask-sm { width: 100%; margin-top: 0.55rem; }
+.mapx-ask-cd { display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-color: var(--accent); background: var(--accent-soft); color: var(--accent-2); }
+.mapx-cd-grade { font-family: var(--mono, ui-monospace); font-size: 0.56rem; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid currentColor; border-radius: 999px; padding: 0.05rem 0.4rem; opacity: 0.85; }
 .mapx-tools2 { margin-top: 0.5rem; }
 .mapx-cell-actions { margin-top: 0.5rem; }
 
