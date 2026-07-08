@@ -63,12 +63,17 @@ function inRing(lon: number, lat: number, ring: number[][]): boolean {
   return inside;
 }
 
-// Highest-risk flood zone containing (lon, lat); -1 if the point is in no mapped zone.
-export function floodRiskAt(lon: number, lat: number, zones: FloodZone[]): number {
-  let risk = -1;
+// Highest-risk flood zone containing (lon, lat), with its label — so the painted
+// risk and the reported FEMA zone can never disagree (both come from one argmax).
+// risk = -1 / zone = '' when the point is in no mapped zone.
+export function floodInfoAt(lon: number, lat: number, zones: FloodZone[]): { risk: number; zone: string } {
+  let risk = -1; let zone = '';
   for (const z of zones) {
     if (lon < z.minLon || lon > z.maxLon || lat < z.minLat || lat > z.maxLat) continue;
-    for (const r of z.rings) if (inRing(lon, lat, r)) { if (z.risk > risk) risk = z.risk; break; }
+    for (const r of z.rings) if (inRing(lon, lat, r)) { if (z.risk > risk) { risk = z.risk; zone = z.zone; } break; }
   }
-  return risk;
+  return { risk, zone };
+}
+export function floodRiskAt(lon: number, lat: number, zones: FloodZone[]): number {
+  return floodInfoAt(lon, lat, zones).risk;
 }

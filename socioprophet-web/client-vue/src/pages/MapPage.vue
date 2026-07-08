@@ -672,7 +672,7 @@ import { fetchCountyFips } from '../data/adapters/fipsLive';
 import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
 import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
 import { fetchAirQuality, type AirPoint } from '../data/adapters/airLive';
-import { fetchFloodZones, floodRiskAt, type FloodZone } from '../data/adapters/floodLive';
+import { fetchFloodZones, floodRiskAt, floodInfoAt, type FloodZone } from '../data/adapters/floodLive';
 import { fetchTransitStops, type TransitStop } from '../data/adapters/transitLive';
 import { renderDeckHexes, clearDeckHexes } from '../map/deckHexLayer';
 import { hexColorData } from '../map/deckHexColors';
@@ -1185,17 +1185,29 @@ const crimeByCell = computed<Map<string, number>>(() => {
   }
   return m;
 });
+let crimeGen = 0;
 async function goLiveCrime() {
   if (!map || crimeState.value === 'loading') return;
-  if (crimeState.value === 'live') { crimeState.value = 'idle'; crimePoints.value = []; renderCivic(); return; } // back to synthetic
+  if (crimeState.value === 'live') { crimeGen += 1; crimeState.value = 'idle'; crimePoints.value = []; renderCivic(); return; } // back to synthetic
   crimeState.value = 'loading';
+  const g = ++crimeGen;
   const b = map.getBounds();
   const r = await fetchCrime({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() });
+  if (g !== crimeGen) return; // superseded by a toggle-off or a newer fetch — drop the stale result
   if (!r) { crimeState.value = 'error'; return; }
   crimePoints.value = r; crimeState.value = 'live';
   if (civicOn.value && isSafety.value) renderCivic();
 }
 const crimeMatched = computed(() => crimeByCell.value.size);
+// A significant pan invalidates the viewport-bound point/sample layers — clear them
+// (bumping the gen so any in-flight fetch is dropped) so stale points from the old
+// view are never re-binned onto the new grid. The user re-triggers Go-live for the area.
+function resetViewportLiveLayers() {
+  if (crimeState.value === 'live') { crimeGen += 1; crimeState.value = 'idle'; crimePoints.value = []; }
+  if (airState.value === 'live') { airGen += 1; airState.value = 'idle'; airPoints.value = []; }
+  if (floodState.value === 'live') { floodGen += 1; floodState.value = 'idle'; floodZones.value = []; }
+  if (transitState.value === 'live') { transitGen += 1; transitState.value = 'idle'; transitStops.value = []; }
+}
 
 // ── Real air quality for the Environment layer (GLOBAL — not city-pinned) ─────
 // Sample cell centroids, batch-fetch US-AQI from Open-Meteo (CAMS), and nearest-
@@ -1213,20 +1225,25 @@ const airByCell = computed<Map<string, number>>(() => {
     const clon = Number(p.cLon); const clat = Number(p.cLat);
     let best = Infinity; let aqi = -1;
     for (const a of pts) { const d = haversineKm(clon, clat, a.lon, a.lat); if (d < best) { best = d; aqi = a.aqi; } }
-    if (aqi >= 0) m.set(String(p.id), aqi);
+    // Cap the nearest-assign: beyond ~2.5km a sample isn't a fair proxy — leave the
+    // cell illustrative rather than paint a far reading as if measured here.
+    if (aqi >= 0 && best <= 2.5) m.set(String(p.id), aqi);
   }
   return m;
 });
+let airGen = 0;
 async function goLiveAir() {
   if (!map || airState.value === 'loading') return;
-  if (airState.value === 'live') { airState.value = 'idle'; airPoints.value = []; renderCivic(); return; }
+  if (airState.value === 'live') { airGen += 1; airState.value = 'idle'; airPoints.value = []; renderCivic(); return; }
   airState.value = 'loading';
+  const g = ++airGen;
   const feats = gridFeatures.value;
   if (!feats.length) { airState.value = 'error'; return; }
   const step = Math.max(1, Math.floor(feats.length / 48)); // ≤~48 sample points in one batched call
   const sample: Array<[number, number]> = [];
   for (let i = 0; i < feats.length; i += step) { const p = feats[i]!.properties as Record<string, number>; sample.push([Number(p.cLon), Number(p.cLat)]); }
   const r = await fetchAirQuality(sample);
+  if (g !== airGen) return; // superseded — drop stale samples
   if (!r) { airState.value = 'error'; return; }
   airPoints.value = r; airState.value = 'live';
   if (civicOn.value && isEnvironment.value) renderCivic();
@@ -1247,12 +1264,15 @@ const floodByCell = computed<Map<string, number>>(() => {
   }
   return m;
 });
+let floodGen = 0;
 async function goLiveFlood() {
   if (!map || floodState.value === 'loading') return;
-  if (floodState.value === 'live') { floodState.value = 'idle'; floodZones.value = []; renderCivic(); return; }
+  if (floodState.value === 'live') { floodGen += 1; floodState.value = 'idle'; floodZones.value = []; renderCivic(); return; }
   floodState.value = 'loading';
+  const g = ++floodGen;
   const b = map.getBounds();
   const r = await fetchFloodZones({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() });
+  if (g !== floodGen) return; // superseded — drop stale zones
   if (!r) { floodState.value = 'error'; return; }
   floodZones.value = r; floodState.value = 'live';
   if (civicOn.value && isEnvironment.value) renderCivic();
@@ -1273,12 +1293,15 @@ const transitByCell = computed<Map<string, number>>(() => {
   }
   return m;
 });
+let transitGen = 0;
 async function goLiveTransit() {
   if (!map || transitState.value === 'loading') return;
-  if (transitState.value === 'live') { transitState.value = 'idle'; transitStops.value = []; renderCivic(); return; }
+  if (transitState.value === 'live') { transitGen += 1; transitState.value = 'idle'; transitStops.value = []; renderCivic(); return; }
   transitState.value = 'loading';
+  const g = ++transitGen;
   const b = map.getBounds();
   const r = await fetchTransitStops({ s: b.getSouth(), w: b.getWest(), n: b.getNorth(), e: b.getEast() });
+  if (g !== transitGen) return; // superseded — drop stale stops
   if (!r) { transitState.value = 'error'; return; }
   transitStops.value = r; transitState.value = 'live';
   if (civicOn.value && isMobility.value) renderCivic();
@@ -1328,9 +1351,26 @@ const cellRaw = (c: Record<string, string | number>, m: MetricDef) => {
   return Number(c[m.key] ?? 0) * cellFactor(m.key);
 };
 // Normalized 0..1 goodness for a metric (higher-better aware), for bars + ranking.
+// The live real-value map for a metric, if its real override is active (else null).
+function realMapFor(key: string): Map<string, number> | null {
+  if (key === 'medianIncome' && useRealIncome.value) return censusIncomeByCell.value;
+  if (key === 'crimeRate' && useRealCrime.value) return crimeByCell.value;
+  if (key === 'airQualityAqi' && useRealAir.value) return airByCell.value;
+  if (key === 'population' && useRealPop.value) return censusPopByCell.value;
+  if (key === 'floodRiskPct' && useRealFlood.value) return floodByCell.value;
+  if (key === 'transitAccessIdx' && useRealTransit.value) return transitByCell.value;
+  return null;
+}
+// Domain (lo, hi) for normalization/classification: the REAL data range when a real
+// override is live (real counts don't fit the fixture min/max), else the fixture bounds.
+function metricDomain(m: MetricDef): [number, number] {
+  const rm = realMapFor(m.key);
+  if (rm && rm.size) { const vals = [...rm.values()]; return [minOf(vals), maxOf(vals)]; }
+  const f = cellFactor(m.key);
+  return [m.min * f, m.max * f];
+}
 function cellGood(c: Record<string, string | number>, m: MetricDef): number {
-  const lo = m.min * cellFactor(m.key);
-  const hi = m.max * cellFactor(m.key);
+  const [lo, hi] = metricDomain(m);
   const t = (cellRaw(c, m) - lo) / ((hi - lo) || 1);
   return Math.max(0, Math.min(1, m.higherBetter ? t : 1 - t));
 }
@@ -1428,7 +1468,7 @@ function toggleTimePlay() {
 }
 const cellValues = (key: string, factor: number) => tFeatures().map((f) => Number((f.properties as Record<string, number>)[key] ?? 0) * factor);
 const classColorsFor = (m: MetricDef) => Array.from({ length: N_CLASSES }, (_, i) => sampleRamp(m.ramp, i / (N_CLASSES - 1)));
-const classBreaks = computed(() => breaksFor(classMode.value, cellValues(activeMetric.value.key, metricFactor.value), activeMetric.value.min * metricFactor.value, activeMetric.value.max * metricFactor.value, N_CLASSES));
+const classBreaks = computed(() => { const [lo, hi] = metricDomain(activeMetric.value); return breaksFor(classMode.value, cellValues(activeMetric.value.key, metricFactor.value), lo, hi, N_CLASSES); });
 const legendClasses = computed(() => {
   const cols = classColorsFor(activeMetric.value);
   const bounds = [activeMetric.value.min * metricFactor.value, ...classBreaks.value, activeMetric.value.max * metricFactor.value];
@@ -1494,8 +1534,8 @@ function buildCellClaim(c: Record<string, string | number>, m: MetricDef): World
     return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { population: censusPopByCell.value.get(cellId) }, source: acsPopulationEvidence(cellId) });
   }
   if (m.key === 'floodRiskPct' && useRealFlood.value && floodByCell.value.has(cellId)) {
-    const zone = floodZones.value.find((z) => floodRiskAt(lon, lat, [z]) >= 0)?.zone ?? '';
-    return realWorldClaim({ cellId, lon, lat, claimType: 'risk', value: { floodRiskPct: floodByCell.value.get(cellId), femaZone: zone }, source: femaFloodEvidence(cellId, zone), confidence: 0.88, uncertaintyClass: 'low' });
+    const info = floodInfoAt(lon, lat, floodZones.value); // risk + zone from one argmax — can't disagree
+    return realWorldClaim({ cellId, lon, lat, claimType: 'risk', value: { floodRiskPct: info.risk, femaZone: info.zone }, source: femaFloodEvidence(cellId, info.zone), confidence: 0.88, uncertaintyClass: 'low' });
   }
   if (m.key === 'transitAccessIdx' && useRealTransit.value && transitByCell.value.has(cellId)) {
     const n = transitByCell.value.get(cellId)!;
@@ -1723,7 +1763,8 @@ function buildStepExpr(input: unknown, breaks: number[], colors: string[]): unkn
 // Data-driven fill color for the active civic metric — a stepped classification
 // (equal / quantile / Jenks) so each class is a distinct, honest band.
 function civicColorExpr(m: MetricDef, factor: number): unknown {
-  const br = breaksFor(classMode.value, cellValues(m.key, factor), m.min * factor, m.max * factor, N_CLASSES);
+  const [lo, hi] = metricDomain(m); // real data range when a real override is live, else fixture bounds
+  const br = breaksFor(classMode.value, cellValues(m.key, factor), lo, hi, N_CLASSES);
   return buildStepExpr(['*', ['get', m.key], factor], br, classColorsFor(m));
 }
 type FillData = Parameters<maplibregl.GeoJSONSource['setData']>[0];
@@ -1924,6 +1965,7 @@ function onMapMoved() {
     else rebuildGrid();
     if (civicOn.value || siteMode.value) void refreshStreetsForView(); // real land mask for the new view
     void followCensusCounty(); // census/income follow the viewport across county lines
+    resetViewportLiveLayers();  // point/sample layers are bound to the old view — clear rather than re-bin stale data
   }, 1200); // generous debounce: Overpass rate-limits hard, so settle well before refetching
 }
 // Beauty: mute the basemap when data goes on top, so the choropleth reads clean.

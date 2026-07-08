@@ -30,7 +30,10 @@ export function joinCensus(acs: AcsRows, tiger: { features?: TigerFeature[] }): 
   for (const row of acs.slice(1)) {
     const geoid = `${row[iState]}${row[iCounty]}${row[iTract]}`;
     const income = Number(row[iInc]);
-    byGeoid.set(geoid, { income: income > 0 ? income : 0, population: Number(row[iPop]) || 0, name: row[0] ?? geoid });
+    const pop = Number(row[iPop]);
+    // ACS returns a large negative sentinel (e.g. -666666666) for suppressed values —
+    // guard BOTH income and population against it (|| 0 only catches falsy, not negatives).
+    byGeoid.set(geoid, { income: income > 0 ? income : 0, population: pop > 0 ? pop : 0, name: row[0] ?? geoid });
   }
   const features: CensusTract[] = [];
   for (const f of tiger.features ?? []) {
