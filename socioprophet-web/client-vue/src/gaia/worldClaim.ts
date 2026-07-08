@@ -187,3 +187,15 @@ export function acsIncomeEvidence(cellId: string, observedAt = '2023-01-01T00:00
     quality: { score: 0.92 },
   };
 }
+
+// SourceEvidence for the real ACS × TIGER census population join (B01003).
+export function acsPopulationEvidence(cellId: string, observedAt = '2023-01-01T00:00:00Z'): SourceEvidence {
+  return {
+    evidence_id: `ev:acspop:${cellId}`,
+    source_type: 'census_acs',
+    source_ref: 'census-acs://B01003_001E + tigerweb/tracts',
+    attribution: { source_name: 'US Census Bureau ACS 5-year + TIGERweb', license_ref: 'us-gov:public-domain', attribution_text: 'U.S. Census Bureau, American Community Survey 5-year total population; TIGER/Line tract geometry.' },
+    temporal: { observed_at: observedAt },
+    quality: { score: 0.92 },
+  };
+}

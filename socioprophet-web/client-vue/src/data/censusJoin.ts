@@ -8,6 +8,7 @@ import type { CensusFC } from './adapters/censusLive';
 
 export interface PreppedTract {
   income: number;
+  population: number;
   minLon: number; minLat: number; maxLon: number; maxLat: number;
   rings: number[][][]; // exterior ring per polygon part
 }
@@ -34,7 +35,7 @@ export function prepTracts(fc: CensusFC): PreppedTract[] {
       if (lon < minLon) minLon = lon; if (lon > maxLon) maxLon = lon;
       if (lat < minLat) minLat = lat; if (lat > maxLat) maxLat = lat;
     }
-    out.push({ income: t.properties.medianIncome, minLon, minLat, maxLon, maxLat, rings });
+    out.push({ income: t.properties.medianIncome, population: t.properties.population ?? 0, minLon, minLat, maxLon, maxLat, rings });
   }
   return out;
 }
@@ -54,6 +55,15 @@ export function tractIncomeAt(lon: number, lat: number, tracts: PreppedTract[]):
   for (const t of tracts) {
     if (lon < t.minLon || lon > t.maxLon || lat < t.minLat || lat > t.maxLat) continue;
     for (const r of t.rings) if (inRing(lon, lat, r)) return t.income;
+  }
+  return 0;
+}
+
+// Population of the tract containing (lon, lat), or 0 if none.
+export function tractPopulationAt(lon: number, lat: number, tracts: PreppedTract[]): number {
+  for (const t of tracts) {
+    if (lon < t.minLon || lon > t.maxLon || lat < t.minLat || lat > t.maxLat) continue;
+    for (const r of t.rings) if (inRing(lon, lat, r)) return t.population;
   }
   return 0;
 }

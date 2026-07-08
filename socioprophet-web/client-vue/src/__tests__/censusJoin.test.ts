@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { prepTracts, tractIncomeAt } from '../data/censusJoin';
+import { prepTracts, tractIncomeAt, tractPopulationAt } from '../data/censusJoin';
 import type { CensusFC } from '../data/adapters/censusLive';
 
 // Two adjacent unit squares: A = [0,0]-[1,1] income 100k, B = [1,0]-[2,1] income 50k.
@@ -30,6 +30,11 @@ describe('census income join', () => {
   it('returns 0 for a point outside every tract', () => {
     expect(tractIncomeAt(-1, -1, tracts)).toBe(0);
     expect(tractIncomeAt(10, 10, tracts)).toBe(0);
+  });
+
+  it('also joins population by point-in-polygon', () => {
+    expect(tractPopulationAt(0.5, 0.5, tracts)).toBe(1000); // tract A population
+    expect(tractPopulationAt(-1, -1, tracts)).toBe(0);
   });
 
   it('handles MultiPolygon geometry', () => {

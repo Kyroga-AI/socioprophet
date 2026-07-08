@@ -181,6 +181,13 @@
               <span v-else-if="crimeState === 'error'" class="mapx-income-note err">⚠ NYC Open Data unreachable or no incidents here — kept illustrative</span>
             </div>
 
+            <!-- People layer: swap synthetic population for REAL ACS population -->
+            <div v-if="isPeople && !isFootTraffic && activeMetric.key === 'population'" class="mapx-income-real">
+              <LiveToggle :state="popState" label="Use real ACS population" live-text="Real ACS population" title="Join real US Census ACS total population onto these cells by tract (public data, no key). Follows the viewport across counties." @click="goLivePopulation" />
+              <span v-if="useRealPop" class="mapx-income-note">● {{ popMatched }} cells on real ACS population · areas outside tract coverage stay illustrative</span>
+              <span v-else-if="popState === 'error'" class="mapx-income-note err">⚠ census unreachable or no tracts for this view — kept illustrative</span>
+            </div>
+
             <!-- Environment layer: swap synthetic air for REAL Open-Meteo US-AQI (global) -->
             <div v-if="isEnvironment && !isFootTraffic && activeMetric.key === 'airQualityAqi'" class="mapx-income-real">
               <LiveToggle :state="airState" label="Use real air quality" live-text="Real US-AQI" title="Sample real US Air Quality Index across this view from Open-Meteo (CAMS reanalysis, no key) — works anywhere. Nearest-assigned to each cell." @click="goLiveAir" />
@@ -619,7 +626,7 @@ import { useCockpit } from '../stores/cockpit';
 import InfoLabel from '../components/InfoLabel.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import WorldClaimCard from '../components/WorldClaimCard.vue';
-import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, nycCrimeEvidence, openMeteoAirEvidence, type WorldClaim } from '../gaia/worldClaim';
+import { realWorldClaim, syntheticWorldClaim, acsIncomeEvidence, acsPopulationEvidence, nycCrimeEvidence, openMeteoAirEvidence, type WorldClaim } from '../gaia/worldClaim';
 import { crossDomainClaims, crossDomainPrompt, type DomainInput } from '../gaia/crossDomain';
 import { prov } from '../features/provenance/types';
 import { civicGrid, civicHexGrid, CITY_BBOX, CIVIC_LAYERS, METRIC_BY_KEY, SEGMENTS, segFactor, SITE_PROFILES, scoreCell, isLand, type MetricDef, type CivicGrid, type GeoBox } from '../data/healthMapFixture';
@@ -629,7 +636,7 @@ import { minOf, maxOf } from '../utils/arrayMath';
 import { footTrafficNetwork, footTrafficFactor, hourLabel, FT_KIND_LABEL, type FtNetwork } from '../data/footTrafficFixture';
 import { fetchStreets } from '../data/adapters/streetsLive';
 import { fetchCensus, type CensusFC } from '../data/adapters/censusLive';
-import { prepTracts, tractIncomeAt } from '../data/censusJoin';
+import { prepTracts, tractIncomeAt, tractPopulationAt } from '../data/censusJoin';
 import { fetchCountyFips } from '../data/adapters/fipsLive';
 import { buildRouteGraph, reachableMinutes, type RouteGraph } from '../data/routeGraph';
 import { fetchCrime, type CrimePoint } from '../data/adapters/crimeLive';
@@ -1095,6 +1102,37 @@ async function goLiveIncome() {
 }
 const incomeMatched = computed(() => censusIncomeByCell.value.size);
 
+// ── Real ACS population for the People layer (reuses the census fetch) ────────
+const popState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const isPeople = computed(() => activeGroup.value.id === 'people');
+const useRealPop = computed(() => popState.value === 'live' && !!censusFC.value);
+const censusPopByCell = computed<Map<string, number>>(() => {
+  const m = new Map<string, number>();
+  if (!useRealPop.value || !censusFC.value) return m;
+  const tracts = prepTracts(censusFC.value);
+  if (!tracts.length) return m;
+  for (const f of baseGrid.value.features) {
+    const p = f.properties as Record<string, number | string>;
+    const pop = tractPopulationAt(Number(p.cLon), Number(p.cLat), tracts);
+    if (pop > 0) m.set(String(p.id), pop);
+  }
+  return m;
+});
+async function goLivePopulation() {
+  if (popState.value === 'loading') return;
+  if (popState.value === 'live') { popState.value = 'idle'; renderCivic(); return; }
+  popState.value = 'loading';
+  const ok = await loadCensusData();
+  if (!ok || !censusFC.value) { popState.value = 'error'; return; }
+  const tracts = prepTracts(censusFC.value);
+  let matched = 0;
+  for (const f of baseGrid.value.features) { const p = f.properties as Record<string, number | string>; if (tractPopulationAt(Number(p.cLon), Number(p.cLat), tracts) > 0) { matched += 1; if (matched >= 3) break; } }
+  if (matched === 0) { popState.value = 'error'; return; }
+  popState.value = 'live';
+  if (civicOn.value && isPeople.value) renderCivic();
+}
+const popMatched = computed(() => censusPopByCell.value.size);
+
 // ── Real reported crime for the Public-Safety layer ──────────────────────────
 // Opt-in: pull real NYPD complaint points (NYC Open Data) for the view and bin
 // them to hex cells → real reported-incident intensity replaces the synthetic
@@ -1186,6 +1224,11 @@ const cellRaw = (c: Record<string, string | number>, m: MetricDef) => {
     const a = airByCell.value.get(String(c.id));
     if (a != null) return a;
   }
+  // Prefer real ACS population when the population join is live.
+  if (m.key === 'population' && useRealPop.value) {
+    const pop = censusPopByCell.value.get(String(c.id));
+    if (pop != null) return pop;
+  }
   return Number(c[m.key] ?? 0) * cellFactor(m.key);
 };
 // Normalized 0..1 goodness for a metric (higher-better aware), for bars + ranking.
@@ -1261,6 +1304,7 @@ function tFeatures() {
     useRealIncome.value && m.key === 'medianIncome' ? censusIncomeByCell.value
     : useRealCrime.value && m.key === 'crimeRate' ? crimeByCell.value
     : useRealAir.value && m.key === 'airQualityAqi' ? airByCell.value
+    : useRealPop.value && m.key === 'population' ? censusPopByCell.value
     : null;
   const t = timeQ.value;
   if (!realMap && t === 0) return gridFeatures.value;
@@ -1347,6 +1391,9 @@ const selectedClaim = computed<WorldClaim | null>(() => {
   }
   if (m.key === 'airQualityAqi' && useRealAir.value && airByCell.value.has(cellId)) {
     return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { usAqi: airByCell.value.get(cellId) }, source: openMeteoAirEvidence(cellId), confidence: 0.75, uncertaintyClass: 'moderate', uncertaintyNotes: 'CAMS reanalysis sampled across the view, nearest-assigned to this cell.' });
+  }
+  if (m.key === 'population' && useRealPop.value && censusPopByCell.value.has(cellId)) {
+    return realWorldClaim({ cellId, lon, lat, claimType: 'observation_passthrough', value: { population: censusPopByCell.value.get(cellId) }, source: acsPopulationEvidence(cellId) });
   }
   return syntheticWorldClaim({ cellId, lon, lat, claimType: 'feature_classification', value: { [m.key]: cellRaw(c, m) }, metricLabel: m.label });
 });
@@ -1790,7 +1837,7 @@ function askAreaNoetica() {
 // THE cross-domain move: assemble a governed WorldClaim per domain for this area
 // (real where a live source covers the cell, illustrative otherwise) and ask Noetica
 // to reason across all of them with each fact's truth grade attached.
-const CROSS_DOMAIN_KEYS = ['medianIncome', 'crimeRate', 'airQualityAqi', 'walkScore', 'reMedianRent', 'greenSpacePct'];
+const CROSS_DOMAIN_KEYS = ['medianIncome', 'population', 'crimeRate', 'airQualityAqi', 'walkScore', 'reMedianRent', 'greenSpacePct'];
 const crossDomainInputs = computed<DomainInput[]>(() => {
   const c = selectedCell.value; if (!c) return [];
   const cellId = String(c.id);
@@ -1802,6 +1849,7 @@ const crossDomainInputs = computed<DomainInput[]>(() => {
     if (key === 'medianIncome' && useRealIncome.value && censusIncomeByCell.value.has(cellId)) { value = censusIncomeByCell.value.get(cellId)!; real = { source: acsIncomeEvidence(cellId), confidence: 0.9, uncertaintyClass: 'low' }; }
     else if (key === 'crimeRate' && useRealCrime.value && crimeByCell.value.has(cellId)) { value = crimeByCell.value.get(cellId)!; real = { source: nycCrimeEvidence(cellId, value), confidence: 0.85, uncertaintyClass: 'low' }; }
     else if (key === 'airQualityAqi' && useRealAir.value && airByCell.value.has(cellId)) { value = airByCell.value.get(cellId)!; real = { source: openMeteoAirEvidence(cellId), confidence: 0.75, uncertaintyClass: 'moderate' }; }
+    else if (key === 'population' && useRealPop.value && censusPopByCell.value.has(cellId)) { value = censusPopByCell.value.get(cellId)!; real = { source: acsPopulationEvidence(cellId), confidence: 0.9, uncertaintyClass: 'low' }; }
     out.push({ key, label: def.label, value, format: (v) => fmtVal(v, def), real });
   }
   return out;
@@ -1843,6 +1891,7 @@ watch(civicOpacity, () => { if ((civicOn.value || siteMode.value) && map?.getLay
 watch(incomeState, () => { if (civicOn.value && !siteMode.value && isEconomic.value) renderCivic(); });
 watch(crimeState, () => { if (civicOn.value && !siteMode.value && isSafety.value) renderCivic(); });
 watch(airState, () => { if (civicOn.value && !siteMode.value && isEnvironment.value) renderCivic(); });
+watch(popState, () => { if (civicOn.value && !siteMode.value && isPeople.value) renderCivic(); });
 function toggleGpu() { gpuMode.value = !gpuMode.value; if (civicOn.value && !siteMode.value) renderCivic(); }
 
 function updateMapMarker() {
