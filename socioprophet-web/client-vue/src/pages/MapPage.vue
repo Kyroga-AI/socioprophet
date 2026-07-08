@@ -98,6 +98,7 @@
             <button v-if="gridType === 'hex'" class="mapx-bm sm mapx-land" :class="{ on: streetsState === 'live' && !viewTooWide, err: streetsState === 'error' || viewTooWide }" :disabled="streetsState === 'loading' || viewTooWide" type="button" title="Snap to the real OpenStreetMap street network: keep only hexes that contain actual streets (drops water/non-developable land) and ride foot traffic on real roads. No key." @click="refreshStreetsForView(true)">
               {{ viewTooWide ? '⤢ zoom in to load real land data' : streetsState === 'loading' ? '⟳ fetching streets…' : streetsState === 'live' ? '● On real streets & land' : streetsState === 'error' ? '⚠ streets unavailable — kept last' : '↻ Snap to real streets & land (live)' }}
             </button>
+            <p v-if="streetsState === 'live' && streetsTruncated && gridType === 'hex'" class="mapx-land-hint">Dense area — street data hit the cap, so some blocks may be missing. Zoom in for full coverage.</p>
           </div>
 
           <label class="mapx-switch">
@@ -721,6 +722,7 @@ const ftNet = footTrafficNetwork();
 const liveStreets = ref<FtNetwork | null>(null);
 const streetPoints = ref<Array<[number, number]>>([]);
 const streetsState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const streetsTruncated = ref(false); // last fetch hit the way cap → possible coverage holes
 const activeFtNet = computed(() => liveStreets.value ?? ftNet);
 // A hex that contains a real street = developable land. When streets are live this
 // is the REAL land mask for the choropleth (hex mode) — no hand-drawn coastline.
@@ -905,7 +907,7 @@ async function goLivePois() {
 const COMP_SIGMA_KM = 0.4;
 const competitorDensity = computed(() => {
   const m = new Map<string, number>();
-  if (poiState.value !== 'live' || !pois.value.length) return m;
+  if (!siteMode.value || poiState.value !== 'live' || !pois.value.length) return m; // only site mode consumes this — skip the O(cells×pois) work otherwise
   for (const f of gridFeatures.value) {
     const pr = f.properties as Record<string, number>;
     const clon = Number(pr.cLon); const clat = Number(pr.cLat);
@@ -1015,12 +1017,13 @@ async function goLiveIncome() {
   if (civicOn.value && isEconomic.value) renderCivic();
 }
 const incomeMatched = computed(() => censusIncomeByCell.value.size);
-const topAreas = computed(() =>
-  gridFeatures.value
+const topAreas = computed(() => {
+  if (!siteMode.value) return []; // only the site panel consumes this — skip the score+sort otherwise
+  return gridFeatures.value
     .map((f) => ({ props: f.properties as Record<string, number>, score: siteScoreOf(f.properties as Record<string, number>) }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, 5),
-);
+    .slice(0, 5);
+});
 // ── Area profile — real stats for a selected cell (replaces demo plumbing) ────
 const areaLabel = (c: Record<string, string | number>) => `Area ${String(c.id ?? '').replace('cell-', '')} · ${c.cLat}, ${c.cLon}`;
 const cellFactor = (key: string) => segFactor(reSegment.value, key); // 1 for non-real-estate keys
@@ -1510,7 +1513,7 @@ async function refreshStreetsForView(force = false) {
   const box = { ...gridBox.value }; // the exact view we're fetching for — record it, don't read gridBox again at resolve
   const r = await fetchStreets({ s: box.minLat, w: box.minLon, n: box.maxLat, e: box.maxLon });
   if (r) {
-    liveStreets.value = r.network; streetPoints.value = r.points; streetsBox.value = box; streetsState.value = 'live';
+    liveStreets.value = r.network; streetPoints.value = r.points; streetsBox.value = box; streetsState.value = 'live'; streetsTruncated.value = r.truncated;
     rebuildGrid(); if (isFootTraffic.value && civicOn.value) renderFootTraffic();
     // The viewport moved on while we were fetching → chase the current view (bounded by the coverage cache).
     if (!boxCovers(box, gridBox.value)) void refreshStreetsForView();
@@ -2045,6 +2048,7 @@ onUnmounted(() => {
 .mapx-cells-res .mapx-bm { flex: 0 0 auto; min-width: 1.8rem; }
 .mapx-cells-n { margin-left: auto; font-variant-numeric: tabular-nums; }
 .mapx-land { width: 100%; margin-top: 0.4rem; text-align: center; }
+.mapx-land-hint { margin: 0.3rem 0 0; font-size: var(--fs-eyebrow, 0.62rem); line-height: 1.4; color: var(--amber); }
 .mapx-land.on { border-color: #4bbf73; color: #4bbf73; background: rgba(75, 191, 115, 0.14); }
 .mapx-land.err { border-color: rgba(240, 101, 106, 0.5); color: #f0656a; }
 .mapx-class { margin-top: 0.55rem; }

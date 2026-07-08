@@ -10,12 +10,9 @@ import type { FtNetwork, FtSeg, FtKind } from '../footTrafficFixture';
 import { minOf, maxOf } from '../../utils/arrayMath';
 import { fetchT } from './http';
 
-// Whether the last fetch hit the way cap (i.e. Overpass truncated the result and
-// the returned network may have coverage holes). Callers can surface this.
-export let streetsTruncated = false;
-
 export interface BBox { s: number; w: number; n: number; e: number }
-export interface LiveStreets { network: FtNetwork; points: Array<[number, number]> } // points = [lon, lat]
+// `truncated`: the result hit the way cap, so the network may have coverage holes.
+export interface LiveStreets { network: FtNetwork; points: Array<[number, number]>; truncated: boolean } // points = [lon, lat]
 
 // OSM highway class → our foot-traffic kind (drives the time-of-day profile).
 function highwayKind(hw: string): FtKind {
@@ -42,7 +39,7 @@ export async function fetchStreets(bbox: BBox, limit = 12000): Promise<LiveStree
     const j = (await res.json()) as { elements?: Array<{ id: number; tags?: Record<string, string>; geometry?: Array<{ lat: number; lon: number }> }> };
     const ways = (j.elements ?? []).filter((w) => Array.isArray(w.geometry) && w.geometry.length >= 2);
     if (!ways.length) return null;
-    streetsTruncated = ways.length >= limit;
+    const truncated = ways.length >= limit;
     const raw: FtSeg[] = [];
     const points: Array<[number, number]> = [];
     for (const w of ways) {
@@ -73,7 +70,7 @@ export async function fetchStreets(bbox: BBox, limit = 12000): Promise<LiveStree
       else if (s.properties.kind === 'transit') nb = Math.min(1, nb * 1.1 + 0.1);
       s.properties.base = +nb.toFixed(3);
     }
-    return { network: { type: 'FeatureCollection', features: raw }, points };
+    return { network: { type: 'FeatureCollection', features: raw }, points, truncated };
   } catch {
     return null;
   }
