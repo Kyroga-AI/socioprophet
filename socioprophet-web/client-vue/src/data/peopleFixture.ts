@@ -5,7 +5,7 @@ export type EntityKind = 'person' | 'org' | 'place' | 'gov';
 
 export interface Relation { to: string; label: string }
 
-export type Platform = 'x' | 'linkedin' | 'github' | 'mastodon' | 'telegram' | 'web';
+export type Platform = 'x' | 'linkedin' | 'github' | 'mastodon' | 'telegram' | 'web' | 'bluesky';
 export interface SocialAccount { platform: Platform; handle: string; url: string; followers?: number; verified?: boolean; lastActive?: string }
 
 export type SelectorKind = 'email' | 'username' | 'domain' | 'phone';

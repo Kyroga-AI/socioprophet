@@ -192,6 +192,7 @@ const PLATFORM: Record<Platform, { label: string; color: string }> = {
   mastodon: { label: 'M', color: '#8b8cff' },
   telegram: { label: 'TG', color: '#3aa0e0' },
   web: { label: '@', color: '#8b949e' },
+  bluesky: { label: 'bsky', color: '#3b9aef' },
 };
 const platform = (p: Platform) => PLATFORM[p];
 function fmtNum(n: number): string { return n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(1)}K` : String(n); }

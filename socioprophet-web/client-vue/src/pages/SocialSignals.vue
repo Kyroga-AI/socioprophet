@@ -1,7 +1,7 @@
 <template>
   <section class="ss" aria-label="Social signals">
     <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Social Signals'" :eyebrow="(scope && !scope.isPrimary) ? (scope.domain) : ''">
-      <template #badge><span class="ss-pill">fixture</span></template>
+      <template #badge><span class="ss-pill" :class="{ live: liveState === 'live' }">{{ liveState === 'live' ? 'live · bluesky' : 'fixture' }}</span></template>
       <template #search>
         <form class="term-cmd" @submit.prevent>
         <span class="term-cmd-prompt">›</span>
@@ -10,7 +10,8 @@
         </form>
       </template>
       <template #actions>
-        <div class="ss-asof">{{ asOfLabel }}</div>
+        <LiveToggle :state="liveState" label="Go live" live-text="Bluesky" title="Pull real public posts from the Bluesky (ATProto) app-view search API — public, no key. Sentiment is an on-device polarity heuristic, not a trained model." @click="goLive" />
+        <div class="ss-asof">{{ liveState === 'live' ? liveAsOfLabel : asOfLabel }}</div>
       </template>
     </SurfaceHeader>
 
@@ -32,10 +33,11 @@
           <div class="ss-sig-head">
             <span class="ss-avatar" :style="{ background: kindColor(who(sig).kind) }">{{ initials(who(sig).name) }}</span>
             <span class="ss-name">{{ who(sig).name }}</span>
-            <span class="ss-handle">{{ handleOf(sig) }}</span>
+            <a v-if="sig.live" class="ss-handle live" :href="sig.live.url" target="_blank" rel="noopener" :title="'Open on Bluesky · ' + sig.live.handle">{{ sig.live.handle }} ↗</a>
+            <span v-else class="ss-handle">{{ handleOf(sig) }}</span>
             <span class="ss-plat" :style="{ color: plat(sig.platform).color, borderColor: plat(sig.platform).color }">{{ plat(sig.platform).label }}</span>
             <span v-if="sig.kind === 'mention'" class="ss-mention">mention</span>
-            <span class="ss-sent" :class="sig.sentiment" :title="sig.sentiment" />
+            <span class="ss-sent" :class="sig.sentiment" :title="sig.live ? sig.sentiment + ' · on-device heuristic' : sig.sentiment" />
             <span class="ss-time">{{ rel(sig.time) }}</span>
           </div>
           <p class="ss-text">{{ sig.text }}</p>
@@ -74,28 +76,54 @@ import SurfaceHeader from '../components/SurfaceHeader.vue';
 import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { socialSignals, trends, asOf, type SocialSignal, type Sentiment } from '../data/socialFixture';
+import { socialSignals, trends, asOf, blueskyToSignals, type SocialSignal, type Sentiment, type LiveBskyLike } from '../data/socialFixture';
 import { entities, type EntityKind, type Platform } from '../data/peopleFixture';
 import { navScopeForPath } from '../config/cockpitNav';
+import LiveToggle from '../components/LiveToggle.vue';
+import { fetchBlueskyLive } from '../data/adapters/blueskyLive';
 
 const route = useRoute();
 // Active lens — a domain sub-domain or a capability (e.g. Sentiment Analytics)
 // realized through this board.
 const scope = computed(() => navScopeForPath(route.path));
 
-const platforms = ['all', 'x', 'linkedin', 'mastodon', 'telegram'] as const;
+const platforms = ['all', 'bluesky', 'x', 'linkedin', 'mastodon', 'telegram'] as const;
 const sentiments = ['all', 'pos', 'neu', 'neg'] as const;
 const platform = ref<(typeof platforms)[number]>('all');
 const sentiment = ref<(typeof sentiments)[number]>('all');
 const query = ref('');
 
 const byId = new Map(entities.map((e) => [e.id, e]));
-const who = (sig: SocialSignal) => byId.get(sig.entityId) ?? { name: sig.entityId, kind: 'org' as EntityKind, accounts: [] as { platform: Platform; handle: string }[] };
-const handleOf = (sig: SocialSignal) => who(sig).accounts.find((a) => a.platform === sig.platform)?.handle ?? '';
+const who = (sig: SocialSignal) => sig.live
+  ? { name: sig.live.displayName, kind: 'person' as EntityKind, accounts: [] as { platform: Platform; handle: string }[] }
+  : (byId.get(sig.entityId) ?? { name: sig.entityId, kind: 'org' as EntityKind, accounts: [] as { platform: Platform; handle: string }[] });
+const handleOf = (sig: SocialSignal) => sig.live?.handle ?? who(sig).accounts.find((a) => a.platform === sig.platform)?.handle ?? '';
+
+// Live overlay — real Bluesky (ATProto) posts, fail-closed. When live, they REPLACE the
+// fixture stream (a real feed, not a demo one); sentiment is the on-device heuristic.
+const liveState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const liveSignals = ref<SocialSignal[]>([]);
+const liveAsOf = ref('');
+const liveAsOfLabel = computed(() => liveAsOf.value ? new Date(liveAsOf.value).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '');
+async function goLive() {
+  if (liveState.value === 'loading') return;
+  liveState.value = 'loading';
+  const res = await fetchBlueskyLive('markets OR economy OR policy OR "supply chain"', 40);
+  if (!res || !res.items.length) { liveState.value = 'error'; return; }
+  const posts: LiveBskyLike[] = res.items.map((it) => {
+    const m = res.meta.get(it.id)!;
+    return { id: it.id, text: m.text, createdAt: it.publishedAt, likeCount: m.likeCount, repostCount: m.repostCount, actor: { handle: m.actor.handle, displayName: m.actor.displayName }, canonicalUrl: it.canonicalUrl };
+  });
+  liveSignals.value = blueskyToSignals(posts);
+  liveAsOf.value = new Date().toISOString();
+  liveState.value = 'live';
+}
+
+const source = computed<SocialSignal[]>(() => liveState.value === 'live' && liveSignals.value.length ? liveSignals.value : socialSignals);
 
 const filtered = computed<SocialSignal[]>(() => {
   const q = query.value.trim().toLowerCase();
-  return socialSignals.filter((s) => {
+  return source.value.filter((s) => {
     if (platform.value !== 'all' && s.platform !== platform.value) return false;
     if (sentiment.value !== 'all' && s.sentiment !== sentiment.value) return false;
     if (!q) return true;
@@ -104,7 +132,8 @@ const filtered = computed<SocialSignal[]>(() => {
 });
 
 function moodPct(kind: Sentiment): number {
-  const list = filtered.value.length ? filtered.value : socialSignals;
+  const list = filtered.value.length ? filtered.value : source.value;
+  if (!list.length) return 0;
   return Math.round((list.filter((s) => s.sentiment === kind).length / list.length) * 100);
 }
 
@@ -112,7 +141,7 @@ const KIND_COLORS: Record<EntityKind, string> = { person: '#58a6ff', org: '#c58a
 const kindColor = (k: EntityKind) => KIND_COLORS[k];
 const PLATFORM: Record<Platform, { label: string; color: string }> = {
   x: { label: 'X', color: '#e7e9ea' }, linkedin: { label: 'in', color: '#4aa3ff' }, github: { label: 'GH', color: '#f0f6fc' },
-  mastodon: { label: 'M', color: '#8b8cff' }, telegram: { label: 'TG', color: '#3aa0e0' }, web: { label: '@', color: '#8b949e' },
+  mastodon: { label: 'M', color: '#8b8cff' }, telegram: { label: 'TG', color: '#3aa0e0' }, web: { label: '@', color: '#8b949e' }, bluesky: { label: 'bsky', color: '#3b9aef' },
 };
 const plat = (p: Platform) => PLATFORM[p];
 function initials(name: string): string { return name.split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join(''); }
@@ -128,6 +157,8 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 .ss-title { display: flex; align-items: baseline; gap: 0.5rem; } .ss-title h1 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .ss-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
 .ss-pill { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.08em; color: #e3b341; background: rgba(227, 179, 65, 0.14); border-radius: 4px; padding: 0.08rem 0.3rem; }
+.ss-pill.live { color: var(--up); background: rgba(63, 185, 80, 0.14); }
+.ss-handle.live { color: #3b9aef; text-decoration: none; } .ss-handle.live:hover { text-decoration: underline; }
 .ss-asof { margin-left: auto; font-size: 0.72rem; color: rgba(255, 255, 255, 0.4); }
 .ss-filters { display: flex; gap: 1rem; }
 .ss-fgroup { display: flex; gap: 0.25rem; }

@@ -14,9 +14,52 @@ export interface SocialSignal {
   reposts: number;
   time: string;
   sentiment: Sentiment;
+  // Present only on LIVE signals pulled from a real source (e.g. Bluesky/ATProto).
+  // Carries the real handle + canonical post URL so provenance is not synthesized
+  // and the row can resolve a display name without a peopleFixture entity.
+  live?: { handle: string; displayName: string; url: string };
 }
 
 export interface Trend { topic: string; volume: number; changePct: number }
+
+// On-device sentiment heuristic — a small polarity lexicon, NOT a trained model.
+// Deliberately transparent: live posts get a labeled heuristic sentiment so we never
+// paint a model-grade classification we didn't compute. Ties/empty → neutral.
+const POS_LEX = ['gain', 'gains', 'up', 'growth', 'strong', 'beat', 'beats', 'record', 'surge', 'rally', 'win', 'wins', 'good', 'great', 'progress', 'resilience', 'stability', 'improve', 'improved', 'recover', 'recovery', 'optimistic', 'positive', 'success', 'boost', 'tighten', 'tightened', 'reopened', 'agree', 'aligns', 'breakthrough'];
+const NEG_LEX = ['loss', 'losses', 'down', 'fall', 'falls', 'weak', 'miss', 'missed', 'crash', 'slump', 'selloff', 'risk', 'risks', 'fear', 'fears', 'cut', 'cuts', 'lag', 'lagging', 'pressure', 'decline', 'drop', 'concern', 'concerns', 'warning', 'warn', 'crisis', 'default', 'sanction', 'sanctions', 'conflict', 'dispute', 'delay', 'delayed', 'shortage', 'recession'];
+
+export function classifySentiment(text: string): Sentiment {
+  const words = text.toLowerCase().match(/[a-z']+/g) ?? [];
+  let score = 0;
+  for (const w of words) {
+    if (POS_LEX.includes(w)) score += 1;
+    else if (NEG_LEX.includes(w)) score -= 1;
+  }
+  return score > 0 ? 'pos' : score < 0 ? 'neg' : 'neu';
+}
+
+// Map a live Bluesky post (blueskyLive.BskyPost) to a SocialSignal. Kept adapter-shaped
+// (structural typing) so socialFixture stays free of adapter imports.
+export interface LiveBskyLike {
+  id: string; text: string; createdAt: string;
+  likeCount: number; repostCount: number;
+  actor: { handle: string; displayName: string };
+  canonicalUrl?: string;
+}
+export function blueskyToSignals(posts: LiveBskyLike[]): SocialSignal[] {
+  return posts.map((p) => ({
+    id: `live-${p.id}`,
+    entityId: `bsky:${p.actor.handle}`,
+    platform: 'bluesky' as Platform,
+    kind: 'post' as const,
+    text: p.text,
+    likes: p.likeCount,
+    reposts: p.repostCount,
+    time: p.createdAt,
+    sentiment: classifySentiment(p.text),
+    live: { handle: `@${p.actor.handle}`, displayName: p.actor.displayName || p.actor.handle, url: p.canonicalUrl ?? `https://bsky.app/profile/${p.actor.handle}` },
+  }));
+}
 
 export const socialSignals: SocialSignal[] = [
   { id: 's-01', entityId: 'p-avery', platform: 'x', kind: 'post', text: 'Disinflation is real but services stay sticky — watch shelter and wages before calling the cut.', likes: 2140, reposts: 388, time: '2026-07-04T00:35:00-04:00', sentiment: 'neu' },
