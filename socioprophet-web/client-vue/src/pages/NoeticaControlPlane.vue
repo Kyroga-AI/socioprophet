@@ -8,7 +8,7 @@
           <span v-if="amLive" class="cp-kpi ok"><b>{{ gov!.autonomy.session.authorizedLevel }}</b> {{ gov!.autonomy.session.role }}{{ gov!.autonomy.enforced ? ' · enforced' : '' }}</span>
           <span class="cp-kpi"><b>{{ seats.length }}</b> seats</span>
           <span class="cp-kpi"><b>{{ activeCount }}</b> active</span>
-          <span class="cp-kpi warn" :class="{ hot: queue.length }"><b>{{ queue.length }}</b> in review</span>
+          <span class="cp-kpi warn" :class="{ hot: displayQueue.length }"><b>{{ displayQueue.length }}</b> in review</span>
           <span class="cp-kpi ok"><b>{{ amLive ? gov!.runs.length : admittedToday }}</b> {{ amLive ? 'runs' : 'admitted today' }}</span>
           <span v-if="alerts.length" class="cp-kpi risk"><b>{{ alerts.length }}</b> alerts</span>
         </div>
@@ -47,9 +47,13 @@
           </div>
         </div>
         <div class="cp-am-block">
-          <div class="cp-am-k">Session authority <span class="cp-sub">{{ gov!.autonomy.enforced ? 'enforced' : 'observed' }}</span></div>
+          <div class="cp-am-k">Session authority <span class="cp-sub">{{ gov!.autonomy.enforced ? 'enforced · live write' : 'observed' }}</span></div>
           <div class="cp-am-purpose"><b>{{ gov!.autonomy.session.role }}</b> · authorized <b>{{ gov!.autonomy.session.authorizedLevel }}</b></div>
           <div v-for="e in gov!.autonomy.session.evidence" :key="e" class="cp-am-ev">◆ {{ e }}</div>
+          <div class="cp-am-write">
+            <span class="cp-am-wlabel">bind level:</span>
+            <button v-for="l in gov!.autonomy.ladder" :key="l.level" class="cp-am-wbtn" :class="{ on: gov!.autonomy.session.authorizedLevel === l.level }" :disabled="amBusy || gov!.autonomy.session.authorizedLevel === l.level" :title="`${l.label.replace(/_/g,' ')} · gate: ${l.gate.replace(/_/g,' ')}`" @click="bindLevel(l.level)">{{ l.level }}</button>
+          </div>
         </div>
         <div class="cp-am-block">
           <div class="cp-am-k">Authority hierarchy <span class="cp-sub">posture</span></div>
@@ -74,7 +78,7 @@
       <section class="cp-card cp-queue">
         <div class="cp-card-h">◆ Governance queue <span class="cp-sub">what Noetica proposed · pending human admission</span></div>
 
-        <div v-if="queue.length" class="cp-q-bulk">
+        <div v-if="displayQueue.length" class="cp-q-bulk">
           <label class="cp-check"><input type="checkbox" :checked="allSelected" :indeterminate.prop="someSelected && !allSelected" @change="toggleAll" /> <span>{{ selected.size ? `${selected.size} selected` : 'Select all' }}</span></label>
           <div v-if="selected.size" class="cp-bulk-acts">
             <select v-model="bulkReason" class="cp-reason" aria-label="Bulk reason"><option value="">reason…</option><option v-for="r in reasons" :key="r" :value="r">{{ r }}</option></select>
@@ -83,9 +87,9 @@
           </div>
         </div>
 
-        <EmptyState v-if="!queue.length" title="Queue clear" hint="No claims or actions awaiting review. New proposals from fielded seats land here." icon="✓" />
+        <EmptyState v-if="!displayQueue.length" title="Queue clear" :hint="amLive ? 'The agent-machine policy admitted every recent run — nothing held for human review.' : 'No claims or actions awaiting review. New proposals from fielded seats land here.'" icon="✓" />
         <ul v-else class="cp-q-list">
-          <li v-for="q in queue" :key="q.id" class="cp-q-item" :class="{ overdue: overdue(q), sel: selected.has(q.id) }">
+          <li v-for="q in displayQueue" :key="q.id" class="cp-q-item" :class="{ overdue: overdue(q), sel: selected.has(q.id) }">
             <div class="cp-q-top">
               <label class="cp-check tiny"><input type="checkbox" :checked="selected.has(q.id)" @change="toggle(q.id)" /></label>
               <span class="cp-q-kind" :class="q.kind">{{ q.kind.replace('-', ' ') }}</span>
@@ -242,7 +246,7 @@ import { notationOf, type OmegaState } from '../ontology/ontogenesis';
 import { computeAlerts, isOverdue, ageMinutes, REVIEW_SLA_MIN, buildAuditEntry, loadAudit, saveAudit, auditToJsonl, simulateCap, leastPrivilege, roleUnusedSurfaces, type Alert } from '../features/controlPlane/governance';
 import LiveToggle from '../components/LiveToggle.vue';
 import { fetchLiveGovernance, type LiveGovernance } from '../data/adapters/controlPlaneLive';
-import { postContainment } from '../services/agentMachineApi';
+import { postContainment, bindAutonomy, postGovernanceDecision, type GovDecision } from '../services/agentMachineApi';
 import { useCockpit } from '../stores/cockpit';
 
 const seats = ref<Seat[]>(SEATS.map((s) => ({ ...s })));
@@ -336,32 +340,53 @@ async function containmentAction(body: Parameters<typeof postContainment>[0]) {
     const g = await fetchLiveGovernance(); if (g) gov.value = g; // refresh posture/alerts too
   } catch { /* endpoint refused — leave state unchanged */ } finally { amBusy.value = false; }
 }
+// Real autonomy grant writeback — binds this session's authorized level on the live machine.
+async function bindLevel(level: string) {
+  if (!amLive.value || amBusy.value || !gov.value) return;
+  amBusy.value = true;
+  try {
+    await bindAutonomy(gov.value.autonomy.session.role, level, [`bound from control plane ${new Date().toISOString().slice(0, 16)}`]);
+    const g = await fetchLiveGovernance(); if (g) gov.value = g;
+  } catch { /* endpoint refused — leave state unchanged */ } finally { amBusy.value = false; }
+}
 
 // ── Queue selection + decisions ──────────────────────────────────────────────
+// When connected, the review queue is the machine's HELD runs (policy didn't auto-admit);
+// otherwise the fixture demo queue. liveDismissed hides items already decided this session.
+const liveDismissed = ref<Set<string>>(new Set());
+const displayQueue = computed<QueueItem[]>(() => amLive.value ? gov.value!.queue.filter((q) => !liveDismissed.value.has(q.id)) : queue.value);
+
 const selected = ref<Set<string>>(new Set());
 const reasonFor = reactive<Record<string, string>>({});
 const bulkReason = ref('');
-const allSelected = computed(() => queue.value.length > 0 && selected.value.size === queue.value.length);
+const allSelected = computed(() => displayQueue.value.length > 0 && selected.value.size === displayQueue.value.length);
 const someSelected = computed(() => selected.value.size > 0);
 function toggle(id: string) { const n = new Set(selected.value); n.has(id) ? n.delete(id) : n.add(id); selected.value = n; }
-function toggleAll() { selected.value = allSelected.value ? new Set() : new Set(queue.value.map((q) => q.id)); }
+function toggleAll() { selected.value = allSelected.value ? new Set() : new Set(displayQueue.value.map((q) => q.id)); }
 
 // Undo support — keep the removed item so a decision can be reversed.
-const undoStack = ref<Array<{ entryId: string; item: QueueItem; bumped: boolean }>>([]);
+const undoStack = ref<Array<{ entryId: string; item: QueueItem; bumped: boolean; live: boolean }>>([]);
 
-function decide(q: QueueItem, decision: AuditDecision, reason?: string) {
-  const entry = buildAuditEntry(q, decision, 'you', new Date(nowMs.value).toISOString(), reason || undefined);
+async function decide(q: QueueItem, decision: AuditDecision, reason?: string) {
+  const live = amLive.value;
+  const entry = buildAuditEntry(q, decision, live ? 'operator' : 'you', new Date(nowMs.value).toISOString(), reason || undefined);
   audit.value = [entry, ...audit.value];
   saveAudit(audit.value);
-  queue.value = queue.value.filter((x) => x.id !== q.id);
   if (selected.value.has(q.id)) { const n = new Set(selected.value); n.delete(q.id); selected.value = n; }
   const bumped = decision === 'admitted' || decision === 'executed';
-  if (bumped) admittedToday.value += 1;
-  undoStack.value.push({ entryId: entry.id, item: q, bumped });
+  if (bumped && !live) admittedToday.value += 1;
+  undoStack.value.push({ entryId: entry.id, item: q, bumped, live });
+  if (live) {
+    liveDismissed.value = new Set(liveDismissed.value).add(q.id);
+    // Write the human decision back to the machine (fail-closed if the endpoint is absent).
+    try { await postGovernanceDecision(q.id, (decision === 'executed' ? 'admitted' : decision) as GovDecision, reason || undefined); } catch { /* older machine — local record only */ }
+  } else {
+    queue.value = queue.value.filter((x) => x.id !== q.id);
+  }
 }
-function bulkDecide(decision: AuditDecision) {
+async function bulkDecide(decision: AuditDecision) {
   const ids = new Set(selected.value);
-  for (const q of queue.value.filter((x) => ids.has(x.id))) decide(q, decision, bulkReason.value || undefined);
+  for (const q of displayQueue.value.filter((x) => ids.has(x.id))) await decide(q, decision, bulkReason.value || undefined);
   bulkReason.value = '';
 }
 function undo() {
@@ -369,8 +394,8 @@ function undo() {
   if (!last) return;
   audit.value = audit.value.filter((a) => a.id !== last.entryId);
   saveAudit(audit.value);
-  queue.value = [last.item, ...queue.value].sort((a, b) => Date.parse(b.receivedAt) - Date.parse(a.receivedAt));
-  if (last.bumped) admittedToday.value = Math.max(0, admittedToday.value - 1);
+  if (last.live) { const n = new Set(liveDismissed.value); n.delete(last.item.id); liveDismissed.value = n; }
+  else { queue.value = [last.item, ...queue.value].sort((a, b) => Date.parse(b.receivedAt) - Date.parse(a.receivedAt)); if (last.bumped) admittedToday.value = Math.max(0, admittedToday.value - 1); }
 }
 
 // ── Audit filter / search / export ────────────────────────────────────────────
@@ -409,7 +434,12 @@ function focusAlert(a: Alert) {
 }
 
 onMounted(() => {
-  clock = setInterval(() => { nowMs.value = Date.now(); }, 30000);
+  // Tick the clock (SLA aging) and, when connected, auto-refresh live governance — the
+  // audit/queue update without a reload (there is no governance SSE, so this polls).
+  clock = setInterval(async () => {
+    nowMs.value = Date.now();
+    if (amLive.value) { const g = await fetchLiveGovernance(); if (g && amState.value === 'live') gov.value = g; }
+  }, 30000);
   useCockpit().setContext({ surface: 'Control Plane', entityLabel: 'Organization · Noetica governance', detail: `${queue.value.length} in review · ${alerts.value.length} alerts`, route: '/control-plane/org' });
 });
 onUnmounted(() => { if (clock) clearInterval(clock); });

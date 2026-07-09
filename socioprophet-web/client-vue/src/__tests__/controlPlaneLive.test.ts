@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { runsToAudit, governanceAlerts, fetchLiveGovernance } from '../data/adapters/controlPlaneLive';
+import { runsToAudit, runsToQueue, decisionsToAudit, governanceAlerts, fetchLiveGovernance } from '../data/adapters/controlPlaneLive';
 import type { GovRun, GovPosture, Containment, AutonomyState } from '../services/agentMachineApi';
 
 const RUNS: GovRun[] = [
@@ -17,15 +17,34 @@ const CONT_FULL: Containment = { killed: false, reason: null, since: null, purpo
 afterEach(() => vi.restoreAllMocks());
 
 describe('runs → audit trail', () => {
-  it('maps policy admission to a governed decision with a real run receipt', () => {
+  it('maps only policy-admitted runs into the audit, with a real run receipt', () => {
     const a = runsToAudit(RUNS);
+    expect(a).toHaveLength(1); // the held run is NOT in the audit — it goes to the queue
     expect(a[0].decision).toBe('admitted');
     expect(a[0].receipt).toBe('run:e7e402ea');
     expect(a[0].actor).toBe('ollama/qwen2.5:7b');
     expect(a[0].omega).toBe('TRUSTED');          // admitted + memory-written = strongest rung
-    expect(a[1].decision).toBe('held-for-review'); // not policy-admitted
-    expect(a[1].reason).toBe('policy-held');
-    expect(a[1].subject).toContain('128 egressed'); // real egress surfaced
+  });
+});
+
+describe('held runs → review queue', () => {
+  it('routes only NON-admitted runs into the queue (honest empty when policy admits all)', () => {
+    const q = runsToQueue(RUNS);
+    expect(q).toHaveLength(1);
+    expect(q[0].id).toBe('ab12cd34-0000-1111'); // run_id becomes the queue id for decision writeback
+    expect(q[0].policy).toBe('review');
+    expect(q[0].summary).toContain('128 egressed');
+    expect(runsToQueue(RUNS.filter((r) => r.policy_admitted))).toHaveLength(0);
+  });
+});
+
+describe('human decisions → audit trail', () => {
+  it('maps recorded operator decisions with their sealed receipt', () => {
+    const a = decisionsToAudit([{ decision_id: 'd1', run_id: 'ab12cd34ffff', decision: 'rejected', reason: 'unsourced', actor: 'operator', timestamp: '2026-07-09T12:00:00Z', receipt: 'sha256:decision:ab' }]);
+    expect(a[0].decision).toBe('rejected');
+    expect(a[0].actor).toBe('operator');
+    expect(a[0].receipt).toBe('sha256:decision:ab');
+    expect(a[0].reason).toBe('unsourced');
   });
 });
 
@@ -55,7 +74,8 @@ describe('fetchLiveGovernance', () => {
     }));
     const g = await fetchLiveGovernance();
     expect(g).not.toBeNull();
-    expect(g!.audit).toHaveLength(2);
+    expect(g!.audit).toHaveLength(1);  // 1 admitted run (held run routes to the queue)
+    expect(g!.queue).toHaveLength(1);  // 1 held run
     expect(g!.autonomy.session.authorizedLevel).toBe('L1');
     expect(g!.alerts.length).toBeGreaterThan(0);
   });

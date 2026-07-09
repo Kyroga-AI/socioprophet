@@ -82,7 +82,7 @@ export interface AutonomyState { session: { role: string; authorizedLevel: strin
 export interface Containment { killed: boolean; reason: string | null; since: string | null; purpose: string; purpose_allows: string[]; purposes: Array<{ name: string; allow: string[]; note: string }> }
 export interface GovRun {
   run_id: string; model_routed: string; provider: string; policy_admitted: boolean; memory_written: boolean;
-  timestamp: string; latency_ms: number; input_tokens: number; output_tokens: number; cost_usd: number; tokens_egressed: number; task: string; session_id: string;
+  timestamp: string; latency_ms: number; input_tokens: number; output_tokens: number; cost_usd: number; tokens_egressed: number; task: string; session_id: string; error?: string;
 }
 export const govPosture = () => get<GovPosture>('/api/governance/posture');
 export const autonomyState = () => get<AutonomyState>('/api/autonomy');
@@ -94,6 +94,21 @@ export const govRecent = () => get<{ runs: GovRun[] }>('/api/governance/recent')
 // on the live agent-machine — the console actually halts / narrows the sovereign agent.
 export type ContainmentAction = { action: 'kill'; reason?: string } | { action: 'disarm' } | { action: 'bind'; purpose: string };
 export const postContainment = (body: ContainmentAction) => post<Containment>('/api/containment', body);
+
+// Real autonomy WRITE: POST /api/autonomy {action:'bind', role, level, evidence[]} | {action:'clear'}.
+// Binds this session's authorized autonomy level on the live agent-machine (enforced).
+export const bindAutonomy = (role: string, level: string, evidence: string[]) => post<AutonomyState>('/api/autonomy', { action: 'bind', role, level, evidence });
+export const clearAutonomy = () => post<AutonomyState>('/api/autonomy', { action: 'clear' });
+
+// Human decision writeback: POST /api/governance/decision {run_id, decision, reason?, actor?}.
+// Records an operator Admit/Reject/Hold on a machine run into the persisted governance log.
+// (Endpoint added to the agent-machine on the feat/governance-decision-endpoint branch; the
+// call fails closed if the running machine predates it, so the console degrades gracefully.)
+export type GovDecision = 'admitted' | 'rejected' | 'held-for-review';
+export interface GovDecisionRecord { decision_id: string; run_id: string; decision: GovDecision; reason?: string; actor: string; timestamp: string; receipt: string }
+export const postGovernanceDecision = (run_id: string, decision: GovDecision, reason?: string, actor = 'operator') =>
+  post<GovDecisionRecord>('/api/governance/decision', { run_id, decision, reason, actor });
+export const govDecisions = () => get<{ decisions: GovDecisionRecord[] }>('/api/governance/decisions');
 
 // ---- Forge → Local git import (folder picker + SSE push into sovereign Gitea) ----
 export interface BrowseEntry { name: string; path: string; isGitRepo: boolean }
