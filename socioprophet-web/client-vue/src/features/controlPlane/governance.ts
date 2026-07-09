@@ -98,3 +98,29 @@ export function saveAudit(entries: AuditEntry[]): void {
 export function auditToJsonl(entries: AuditEntry[]): string {
   return entries.map((e) => JSON.stringify(e)).join('\n');
 }
+
+// ── Policy what-if simulator (AWS IAM policy-simulator pattern) ─────────────────────
+// "If I lower the {role} cap to L{n}, which seats get throttled and to what level?" —
+// computed BEFORE applying, so the operator sees the blast radius.
+export interface CapSimResult { role: string; newCap: number; affected: Array<{ id: string; name: string; from: number; to: number }> }
+export function simulateCap(seats: Seat[], role: string, newCap: number): CapSimResult {
+  const affected = seats
+    .filter((s) => s.role === role && s.autonomy > newCap)
+    .map((s) => ({ id: s.id, name: s.name, from: s.autonomy, to: newCap }));
+  return { role, newCap, affected };
+}
+
+// ── Access Advisor / least-privilege (AWS IAM Access Advisor pattern) ────────────────
+// Granted capability surfaces vs those a seat has actually touched → unused grants to prune.
+export interface AccessAdvice { granted: string[]; used: string[]; unused: string[] }
+export function leastPrivilege(granted: string[], usedSurfaces: string[]): AccessAdvice {
+  const used = new Set(usedSurfaces);
+  return { granted, used: granted.filter((g) => used.has(g)), unused: granted.filter((g) => !used.has(g)) };
+}
+// Role-level rollup: surfaces in a role's membrane that NO seat in the role has ever used —
+// the strongest signal to tighten the role membrane itself.
+export function roleUnusedSurfaces(seats: Seat[], role: string, membrane: string[]): string[] {
+  const usedByRole = new Set<string>();
+  for (const s of seats.filter((x) => x.role === role)) for (const u of s.usedSurfaces) usedByRole.add(u);
+  return membrane.filter((m) => !usedByRole.has(m));
+}

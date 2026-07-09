@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { SEATS, QUEUE, AUDIT, type Seat, type QueueItem } from '../data/controlPlaneFixture';
 import { reputationFor } from '../features/reputation/reputation';
-import { computeAlerts, isOverdue, ageMinutes, sealReceipt, buildAuditEntry, auditToJsonl, REVIEW_SLA_MIN } from '../features/controlPlane/governance';
+import { computeAlerts, isOverdue, ageMinutes, sealReceipt, buildAuditEntry, auditToJsonl, REVIEW_SLA_MIN, simulateCap, leastPrivilege, roleUnusedSurfaces } from '../features/controlPlane/governance';
+import { ROLE_POLICY } from '../data/controlPlaneFixture';
 
 const tierOf = (name: string) => reputationFor(name)?.tier;
 const NOW = Date.now();
@@ -73,5 +74,35 @@ describe('audit log build + export', () => {
     const lines = jsonl.split('\n');
     expect(lines).toHaveLength(AUDIT.length);
     expect(() => lines.forEach((l) => JSON.parse(l))).not.toThrow();
+  });
+});
+
+describe('policy what-if simulator', () => {
+  it('reports which seats a lowered cap would throttle, and to what level', () => {
+    // Trader cap is L4; Grace sits at L4. Lower to L2 → Grace throttled L4→L2.
+    const r = simulateCap(SEATS, 'Trader', 2);
+    expect(r.affected).toHaveLength(1);
+    expect(r.affected[0].name).toBe('Grace');
+    expect(r.affected[0].from).toBe(4);
+    expect(r.affected[0].to).toBe(2);
+  });
+  it('reports no blast radius when seats are already under the proposed cap', () => {
+    expect(simulateCap(SEATS, 'Compliance', 3).affected).toHaveLength(0); // B. Berners at L2 ≤ 3
+  });
+});
+
+describe('access advisor / least-privilege', () => {
+  it('splits granted surfaces into used vs unused for a seat', () => {
+    const analyst = ROLE_POLICY.find((p) => p.role === 'Analyst')!;
+    const ada = SEATS.find((s) => s.name === 'Ada L.')!;
+    const a = leastPrivilege(analyst.membrane, ada.usedSurfaces);
+    expect(a.unused).toContain('news');       // granted, never used
+    expect(a.used).toContain('map');           // granted + used
+    expect(a.used).not.toContain('news');
+  });
+  it('flags role-membrane surfaces no seat in the role has ever used', () => {
+    const intern = ROLE_POLICY.find((p) => p.role === 'Intern')!;
+    // The only Intern (suspended) used nothing → the whole membrane is role-unused.
+    expect(roleUnusedSurfaces(SEATS, 'Intern', intern.membrane)).toEqual(intern.membrane);
   });
 });

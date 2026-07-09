@@ -34,9 +34,17 @@
       </div>
       <div class="cp-am-grid">
         <div class="cp-am-block">
-          <div class="cp-am-k">Capability membrane <span class="cp-sub">containment purpose</span></div>
+          <div class="cp-am-k">Capability membrane <span class="cp-sub">containment purpose · live write</span></div>
           <div class="cp-am-purpose">purpose: <b>{{ gov!.containment.purpose }}</b></div>
           <div class="cp-am-caps"><span v-for="c in gov!.containment.purpose_allows" :key="c" class="cp-mem-chip on">{{ c }}</span></div>
+          <div class="cp-am-write">
+            <span class="cp-am-wlabel">bind:</span>
+            <button v-for="p in ['read-only','research','build','full']" :key="p" class="cp-am-wbtn" :class="{ on: gov!.containment.purpose === p }" :disabled="amBusy || gov!.containment.purpose === p" @click="containmentAction({ action: 'bind', purpose: p })">{{ p }}</button>
+          </div>
+          <div class="cp-am-write">
+            <button v-if="!gov!.containment.killed" class="cp-am-wbtn danger" :disabled="amBusy" title="Arm the kill-switch — halts the agent" @click="containmentAction({ action: 'kill', reason: 'halted from control plane' })">⛔ Arm kill-switch</button>
+            <button v-else class="cp-am-wbtn safe" :disabled="amBusy" @click="containmentAction({ action: 'disarm' })">● Disarm</button>
+          </div>
         </div>
         <div class="cp-am-block">
           <div class="cp-am-k">Session authority <span class="cp-sub">{{ gov!.autonomy.enforced ? 'enforced' : 'observed' }}</span></div>
@@ -103,13 +111,13 @@
         <div class="cp-card-h">◉ Fielded seats <span class="cp-sub">{{ amLive ? 'org roster · demo (single-box machine has one session)' : 'autonomy is capped by role policy' }}</span></div>
         <div class="cp-seats">
           <div v-for="s in seats" :key="s.id" class="cp-seat" :class="{ risk: repRisk(s), focus: focusSeatId === s.id }" :ref="(el) => setSeatRef(s.id, el)">
-            <div class="cp-seat-id">
+            <button class="cp-seat-id" type="button" :title="`Open ${s.name}'s detail`" @click="openSeatId = s.id">
               <span class="cp-dot" :class="s.status" :title="s.status" />
               <div>
                 <div class="cp-seat-name">{{ s.name }} <ReputationBadge :subject="s.name" /></div>
-                <div class="cp-seat-role">{{ s.role }} · {{ s.dept }}<span v-if="repRisk(s)" class="cp-risk-flag" title="High autonomy on a low / unrated HolographMe reputation — review the grant">⚠ autonomy &gt; reputation</span></div>
+                <div class="cp-seat-role">{{ s.role }} · {{ s.dept }}<span v-if="repRisk(s)" class="cp-risk-flag" title="High autonomy on a low / unrated HolographMe reputation — review the grant">⚠ autonomy &gt; reputation</span><span v-if="unusedCount(s)" class="cp-unused-flag" :title="`${unusedCount(s)} granted capability surface(s) never used — prune candidate`">{{ unusedCount(s) }} unused grant{{ unusedCount(s) > 1 ? 's' : '' }}</span></div>
               </div>
-            </div>
+            </button>
             <div class="cp-seat-auto">
               <button class="cp-step" type="button" :disabled="s.autonomy <= 0" aria-label="Lower autonomy" @click="setAutonomy(s, s.autonomy - 1)">▾</button>
               <span class="cp-auto-lvl" :title="autonomyBlurb(s.autonomy)">L{{ s.autonomy }} · {{ autonomyLabel(s.autonomy) }}</span>
@@ -127,8 +135,23 @@
           <div v-for="p in policy" :key="p.role" class="cp-pol-row">
             <span class="cp-pol-role">{{ p.role }}</span>
             <span class="cp-pol-cap">cap L{{ p.autonomyCap }}</span>
-            <span class="cp-pol-mem"><span v-for="m in p.membrane" :key="m" class="cp-mem-chip">{{ m }}</span></span>
+            <span class="cp-pol-mem"><span v-for="m in p.membrane" :key="m" class="cp-mem-chip" :class="{ unused: roleUnusedSurfaces(seats, p.role, p.membrane).includes(m) }" :title="roleUnusedSurfaces(seats, p.role, p.membrane).includes(m) ? 'Granted but unused by everyone in this role — candidate to prune' : ''">{{ m }}</span></span>
           </div>
+        </div>
+        <!-- Policy what-if simulator -->
+        <div class="cp-sim">
+          <div class="cp-sim-h">What-if <span class="cp-sub">preview the blast radius before applying</span></div>
+          <div class="cp-sim-ctl">
+            <span>Lower</span>
+            <select v-model="simRole" class="cp-reason"><option v-for="p in policy" :key="p.role" :value="p.role">{{ p.role }}</option></select>
+            <span>cap to</span>
+            <select v-model.number="simCap" class="cp-reason"><option v-for="n in [0,1,2,3,4,5]" :key="n" :value="n">L{{ n }}</option></select>
+            <button class="cp-act" type="button" :disabled="!simResult.affected.length" @click="applySim">Apply</button>
+          </div>
+          <p class="cp-sim-out" :class="{ hot: simResult.affected.length }">
+            <template v-if="simResult.affected.length">⚠ {{ simResult.affected.length }} seat{{ simResult.affected.length > 1 ? 's' : '' }} throttled: <span v-for="a in simResult.affected" :key="a.id" class="cp-sim-seat">{{ a.name }} L{{ a.from }}→L{{ a.to }}</span></template>
+            <template v-else>No seats affected — all {{ simRole }} seats already ≤ L{{ simCap }}.</template>
+          </p>
         </div>
       </section>
     </div>
@@ -154,6 +177,56 @@
         </li>
       </ul>
     </section>
+
+    <!-- Seat detail drawer — identity, access advisor, activity, session, revoke -->
+    <div v-if="openSeat" class="cp-drawer-scrim" @click.self="openSeatId = null">
+      <aside class="cp-drawer" role="dialog" aria-label="Seat detail">
+        <header class="cp-dr-head">
+          <div>
+            <div class="cp-dr-name"><span class="cp-dot" :class="openSeat.status" />{{ openSeat.name }} <ReputationBadge :subject="openSeat.name" /></div>
+            <div class="cp-dr-sub">{{ openSeat.role }} · {{ openSeat.dept }} · {{ openSeat.status }}</div>
+          </div>
+          <button class="cp-dr-x" type="button" aria-label="Close" @click="openSeatId = null">✕</button>
+        </header>
+
+        <div class="cp-dr-facts">
+          <div class="cp-dr-fact"><span>Autonomy</span><strong>L{{ openSeat.autonomy }} · {{ autonomyLabel(openSeat.autonomy) }} <em>(role cap L{{ roleCap(openSeat.role) }})</em></strong></div>
+          <div class="cp-dr-fact"><span>Throughput</span><strong>{{ openSeat.claims30d.toLocaleString() }}/30d · {{ openSeat.admitRate }}% admit</strong></div>
+          <div class="cp-dr-fact"><span>Session</span><strong>{{ openSeat.sessionId }} · {{ openSeat.device }}</strong></div>
+          <div class="cp-dr-fact"><span>Last active</span><strong>{{ openSeat.lastActive }}</strong></div>
+        </div>
+
+        <!-- Access Advisor -->
+        <div class="cp-dr-block" v-if="seatAdvice">
+          <div class="cp-dr-bh">Access Advisor <span class="cp-sub">least-privilege · {{ seatAdvice.used.length }}/{{ seatAdvice.granted.length }} granted surfaces used</span></div>
+          <div class="cp-dr-caps">
+            <span v-for="g in seatAdvice.granted" :key="g" class="cp-mem-chip" :class="{ on: seatAdvice.used.includes(g), unused: seatAdvice.unused.includes(g) }">{{ g }}{{ seatAdvice.unused.includes(g) ? ' · unused' : '' }}</span>
+          </div>
+          <p v-if="seatAdvice.unused.length" class="cp-dr-hint">{{ seatAdvice.unused.length }} surface{{ seatAdvice.unused.length > 1 ? 's' : '' }} granted but never used — prune to least-privilege.</p>
+          <p v-if="roleUnused.length" class="cp-dr-hint role">Role-wide: <b>{{ roleUnused.join(', ') }}</b> unused by all {{ openSeat.role }}s — candidate to drop from the role membrane.</p>
+        </div>
+
+        <!-- Activity history -->
+        <div class="cp-dr-block">
+          <div class="cp-dr-bh">Recent activity <span class="cp-sub">{{ seatActivity.length }} events</span></div>
+          <ul class="cp-dr-act">
+            <li v-for="(a, i) in seatActivity" :key="i" class="cp-dr-arow">
+              <span class="cp-dr-adot" :class="{ bad: !a.ok }" />
+              <span class="cp-dr-atext">{{ a.action }}</span>
+              <span class="cp-dr-asurf">{{ a.surface }}</span>
+              <span class="cp-dr-atime">{{ relTime(a.at) }}</span>
+            </li>
+            <li v-if="!seatActivity.length" class="cp-dr-arow empty">No recorded activity.</li>
+          </ul>
+        </div>
+
+        <!-- Actions -->
+        <div class="cp-dr-acts">
+          <button class="cp-act" type="button" :class="{ admit: impersonating === openSeat.id }" @click="impersonate(openSeat)">{{ impersonating === openSeat.id ? '● Viewing as this seat' : '👤 Impersonate (view-as)' }}</button>
+          <button class="cp-act reject" type="button" :disabled="openSeat.status === 'suspended' && openSeat.autonomy === 0" @click="revokeSeat(openSeat)">⊘ Revoke access (suspend · L0)</button>
+        </div>
+      </aside>
+    </div>
   </section>
 </template>
 
@@ -164,11 +237,12 @@ import SurfaceHeader from '../components/SurfaceHeader.vue';
 import EmptyState from '../components/EmptyState.vue';
 import ReputationBadge from '../components/ReputationBadge.vue';
 import { reputationFor } from '../features/reputation/reputation';
-import { SEATS, QUEUE, ROLE_POLICY, AUDIT, AUTONOMY_LEVELS, DECISION_REASONS, type Seat, type QueueItem, type AuditDecision, type AutonomyLevel } from '../data/controlPlaneFixture';
+import { SEATS, QUEUE, ROLE_POLICY, AUDIT, AUTONOMY_LEVELS, DECISION_REASONS, SEAT_ACTIVITY, type Seat, type QueueItem, type AuditDecision, type AutonomyLevel } from '../data/controlPlaneFixture';
 import { notationOf, type OmegaState } from '../ontology/ontogenesis';
-import { computeAlerts, isOverdue, ageMinutes, REVIEW_SLA_MIN, buildAuditEntry, loadAudit, saveAudit, auditToJsonl, type Alert } from '../features/controlPlane/governance';
+import { computeAlerts, isOverdue, ageMinutes, REVIEW_SLA_MIN, buildAuditEntry, loadAudit, saveAudit, auditToJsonl, simulateCap, leastPrivilege, roleUnusedSurfaces, type Alert } from '../features/controlPlane/governance';
 import LiveToggle from '../components/LiveToggle.vue';
 import { fetchLiveGovernance, type LiveGovernance } from '../data/adapters/controlPlaneLive';
+import { postContainment } from '../services/agentMachineApi';
 import { useCockpit } from '../stores/cockpit';
 
 const seats = ref<Seat[]>(SEATS.map((s) => ({ ...s })));
@@ -221,6 +295,46 @@ function relTime(iso: string): string {
 function setAutonomy(s: Seat, level: number) {
   const cap = roleCap(s.role);
   s.autonomy = Math.max(0, Math.min(cap, level)) as AutonomyLevel;
+}
+const membraneOf = (role: string) => ROLE_POLICY.find((p) => p.role === role)?.membrane ?? [];
+
+// ── Policy what-if simulator ─────────────────────────────────────────────────────
+const simRole = ref<string>(ROLE_POLICY[0]?.role ?? '');
+const simCap = ref<number>(2);
+const simResult = computed(() => simulateCap(seats.value, simRole.value, simCap.value));
+function applySim() {
+  for (const a of simResult.value.affected) { const s = seats.value.find((x) => x.id === a.id); if (s) s.autonomy = a.to as AutonomyLevel; }
+  // also lower the role cap so the throttle sticks
+  const p = ROLE_POLICY.find((x) => x.role === simRole.value); if (p) p.autonomyCap = simCap.value as AutonomyLevel;
+}
+
+// ── Access Advisor / least-privilege ─────────────────────────────────────────────
+const adviceFor = (s: Seat) => leastPrivilege(membraneOf(s.role), s.usedSurfaces);
+const unusedCount = (s: Seat) => adviceFor(s).unused.length;
+
+// ── Seat detail drawer ────────────────────────────────────────────────────────────
+const openSeatId = ref<string | null>(null);
+const openSeat = computed<Seat | undefined>(() => seats.value.find((s) => s.id === openSeatId.value));
+const seatAdvice = computed(() => openSeat.value ? adviceFor(openSeat.value) : null);
+const seatActivity = computed(() => openSeat.value ? (SEAT_ACTIVITY[openSeat.value.id] ?? []) : []);
+const roleUnused = computed(() => openSeat.value ? roleUnusedSurfaces(seats.value, openSeat.value.role, membraneOf(openSeat.value.role)) : []);
+function revokeSeat(s: Seat) { s.status = 'suspended'; s.autonomy = 0 as AutonomyLevel; }
+const impersonating = ref<string | null>(null);
+function impersonate(s: Seat) {
+  impersonating.value = impersonating.value === s.id ? null : s.id;
+  useCockpit().setContext({ surface: 'Control Plane', entityLabel: impersonating.value ? `Viewing as ${s.name} (${s.role})` : 'Organization · Noetica governance', detail: impersonating.value ? `impersonation · membrane ${membraneOf(s.role).join(', ')}` : `${queue.value.length} in review`, route: '/control-plane/org' });
+}
+
+// ── Real containment write (kill-switch / purpose bind) — only when connected ───────
+const amBusy = ref(false);
+async function containmentAction(body: Parameters<typeof postContainment>[0]) {
+  if (!amLive.value || amBusy.value) return;
+  amBusy.value = true;
+  try {
+    const next = await postContainment(body);
+    if (gov.value && next) gov.value = { ...gov.value, containment: next };
+    const g = await fetchLiveGovernance(); if (g) gov.value = g; // refresh posture/alerts too
+  } catch { /* endpoint refused — leave state unchanged */ } finally { amBusy.value = false; }
 }
 
 // ── Queue selection + decisions ──────────────────────────────────────────────
@@ -389,6 +503,43 @@ onUnmounted(() => { if (clock) clearInterval(clock); });
 .cp-pol-role { font-size: 0.8rem; font-weight: 600; } .cp-pol-cap { font-family: var(--mono, ui-monospace); font-size: 0.62rem; color: var(--accent); }
 .cp-pol-mem { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.25rem; }
 .cp-mem-chip { font-size: 0.58rem; color: var(--text-3); border: 1px solid var(--line-2); border-radius: 999px; padding: 0.05rem 0.4rem; }
+.cp-mem-chip.unused { color: var(--amber); border-color: rgba(227,179,65,0.4); border-style: dashed; }
+
+/* Seat clickable + flags */
+.cp-seat-id { display: flex; align-items: center; gap: 0.5rem; background: transparent; border: 0; padding: 0.1rem 0.2rem 0.1rem 0; margin: -0.1rem; border-radius: 8px; cursor: pointer; text-align: left; color: inherit; } .cp-seat-id:hover { background: rgba(255,255,255,0.03); }
+.cp-unused-flag { margin-left: 0.5rem; font-size: 0.56rem; color: var(--amber); border: 1px dashed rgba(227,179,65,0.4); border-radius: 4px; padding: 0.02rem 0.3rem; }
+
+/* Policy what-if simulator */
+.cp-sim { margin-top: 0.7rem; border-top: 1px solid var(--line); padding-top: 0.6rem; }
+.cp-sim-h { font-size: 0.72rem; font-weight: 620; display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.4rem; }
+.cp-sim-ctl { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; font-size: 0.72rem; color: var(--text-2); }
+.cp-sim-out { margin: 0.45rem 0 0; font-size: 0.72rem; color: var(--text-3); } .cp-sim-out.hot { color: var(--amber); }
+.cp-sim-seat { display: inline-block; margin-left: 0.35rem; font-family: var(--mono, ui-monospace); font-size: 0.66rem; color: var(--text-2); }
+
+/* Containment write buttons */
+.cp-am-write { display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; margin-top: 0.35rem; }
+.cp-am-wlabel { font-size: 0.62rem; color: var(--text-3); }
+.cp-am-wbtn { font-size: 0.62rem; text-transform: capitalize; color: var(--text-2); border: 1px solid var(--line-2); background: transparent; border-radius: 6px; padding: 0.15rem 0.45rem; cursor: pointer; } .cp-am-wbtn.on { color: var(--live); border-color: var(--live); background: var(--live-soft); } .cp-am-wbtn:disabled { opacity: 0.5; cursor: default; }
+.cp-am-wbtn.danger { color: var(--down); border-color: rgba(240,101,106,0.5); } .cp-am-wbtn.danger:hover:not(:disabled) { background: rgba(240,101,106,0.1); }
+.cp-am-wbtn.safe { color: var(--live); border-color: var(--live); }
+
+/* Seat detail drawer */
+.cp-drawer-scrim { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; justify-content: flex-end; z-index: 40; }
+.cp-drawer { width: min(440px, 92vw); height: 100%; background: var(--surface); border-left: 1px solid var(--line); padding: 1rem 1.1rem 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.85rem; }
+.cp-dr-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+.cp-dr-name { display: flex; align-items: center; gap: 0.4rem; font-size: 1rem; font-weight: 640; } .cp-dr-sub { font-size: 0.7rem; color: var(--text-3); margin-top: 0.15rem; text-transform: capitalize; }
+.cp-dr-x { border: 1px solid var(--line-2); background: transparent; color: var(--text-2); border-radius: 6px; width: 1.6rem; height: 1.6rem; cursor: pointer; }
+.cp-dr-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 0.7rem; }
+.cp-dr-fact { display: flex; flex-direction: column; gap: 0.1rem; } .cp-dr-fact span { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); } .cp-dr-fact strong { font-size: 0.74rem; font-weight: 560; } .cp-dr-fact em { color: var(--text-3); font-style: normal; }
+.cp-dr-block { border-top: 1px solid var(--line); padding-top: 0.6rem; }
+.cp-dr-bh { font-size: 0.74rem; font-weight: 620; display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.4rem; }
+.cp-dr-caps { display: flex; flex-wrap: wrap; gap: 0.25rem; } .cp-dr-caps .cp-mem-chip.on { color: var(--live); border-color: rgba(63,185,80,0.4); }
+.cp-dr-hint { margin: 0.4rem 0 0; font-size: 0.68rem; color: var(--amber); } .cp-dr-hint.role { color: var(--text-3); } .cp-dr-hint.role b { color: var(--amber); }
+.cp-dr-act { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; }
+.cp-dr-arow { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.72rem; } .cp-dr-arow.empty { color: var(--text-3); }
+.cp-dr-adot { width: 6px; height: 6px; border-radius: 50%; background: var(--live); flex-shrink: 0; align-self: center; } .cp-dr-adot.bad { background: var(--amber); }
+.cp-dr-atext { flex: 1; color: var(--text); } .cp-dr-asurf { font-size: 0.58rem; color: var(--text-3); border: 1px solid var(--line-2); border-radius: 4px; padding: 0.02rem 0.3rem; } .cp-dr-atime { font-size: 0.64rem; color: var(--text-3); white-space: nowrap; }
+.cp-dr-acts { margin-top: auto; display: flex; flex-direction: column; gap: 0.4rem; padding-top: 0.6rem; border-top: 1px solid var(--line); } .cp-dr-acts .cp-act { width: 100%; }
 
 /* Audit card */
 .cp-audit-card { }

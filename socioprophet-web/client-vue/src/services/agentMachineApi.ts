@@ -89,6 +89,12 @@ export const autonomyState = () => get<AutonomyState>('/api/autonomy');
 export const containment = () => get<Containment>('/api/containment');
 export const govRecent = () => get<{ runs: GovRun[] }>('/api/governance/recent');
 
+// Real governance WRITE: POST /api/containment {action:'kill'|'disarm'|'bind', reason?, purpose?}.
+// Arms/disarms the kill-switch or binds the capability purpose (read-only|research|build|full)
+// on the live agent-machine — the console actually halts / narrows the sovereign agent.
+export type ContainmentAction = { action: 'kill'; reason?: string } | { action: 'disarm' } | { action: 'bind'; purpose: string };
+export const postContainment = (body: ContainmentAction) => post<Containment>('/api/containment', body);
+
 // ---- Forge → Local git import (folder picker + SSE push into sovereign Gitea) ----
 export interface BrowseEntry { name: string; path: string; isGitRepo: boolean }
 export interface BrowseResult { path: string; parent: string | null; entries: BrowseEntry[] }

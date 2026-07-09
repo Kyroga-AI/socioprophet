@@ -22,7 +22,12 @@ export interface Seat {
   id: string; name: string; role: string; dept: string;
   autonomy: AutonomyLevel; status: SeatStatus; lastActive: string;
   claims30d: number; admitRate: number; // % of this seat's proposed claims admitted
+  usedSurfaces: string[]; // capability surfaces this seat has actually touched (Access Advisor)
+  sessionId?: string; device?: string; // for the seat detail drawer
 }
+
+// Per-seat recent activity for the detail drawer (most-recent first).
+export interface SeatActivity { at: string; action: string; surface: string; ok: boolean }
 
 export type QueueKind = 'world-claim' | 'action' | 'canon-edit';
 export type QueuePolicy = 'proposed' | 'provisional' | 'review';
@@ -48,13 +53,22 @@ const minsAgo = (m: number) => new Date(Date.now() - m * 60000).toISOString();
 // seat carries its portable verified reputation. A high-autonomy + low-reputation seat
 // (e.g. 'the skeptic' at L5) is exactly the governance tension the console should surface.
 export const SEATS: Seat[] = [
-  { id: 's1', name: 'Ada L.', role: 'Analyst', dept: 'Research', autonomy: 3, status: 'active', lastActive: '2m ago', claims30d: 412, admitRate: 91 },
-  { id: 's2', name: 'Linus', role: 'Ops Lead', dept: 'Operations', autonomy: 4, status: 'active', lastActive: 'just now', claims30d: 688, admitRate: 87 },
-  { id: 's3', name: 'B. Berners', role: 'Compliance', dept: 'Risk', autonomy: 2, status: 'active', lastActive: '11m ago', claims30d: 133, admitRate: 98 },
-  { id: 's4', name: 'Grace', role: 'Trader', dept: 'Markets', autonomy: 4, status: 'idle', lastActive: '1h ago', claims30d: 921, admitRate: 82 },
-  { id: 's5', name: 'the skeptic', role: 'Field Agent', dept: 'Field', autonomy: 5, status: 'active', lastActive: '4m ago', claims30d: 1503, admitRate: 79 },
-  { id: 's6', name: 'F. Lindqvist', role: 'Intern', dept: 'Research', autonomy: 1, status: 'suspended', lastActive: '3d ago', claims30d: 27, admitRate: 74 },
+  { id: 's1', name: 'Ada L.', role: 'Analyst', dept: 'Research', autonomy: 3, status: 'active', lastActive: '2m ago', claims30d: 412, admitRate: 91, usedSurfaces: ['map', 'people', 'knowledge'], sessionId: 'sx-ada-91f2', device: 'workstation · macOS' },
+  { id: 's2', name: 'Linus', role: 'Ops Lead', dept: 'Operations', autonomy: 4, status: 'active', lastActive: 'just now', claims30d: 688, admitRate: 87, usedSurfaces: ['map', 'marketplace', 'operator'], sessionId: 'sx-lin-3c8a', device: 'workstation · Linux' },
+  { id: 's3', name: 'B. Berners', role: 'Compliance', dept: 'Risk', autonomy: 2, status: 'active', lastActive: '11m ago', claims30d: 133, admitRate: 98, usedSurfaces: ['law', 'audit'], sessionId: 'sx-ber-77de', device: 'workstation · Windows' },
+  { id: 's4', name: 'Grace', role: 'Trader', dept: 'Markets', autonomy: 4, status: 'idle', lastActive: '1h ago', claims30d: 921, admitRate: 82, usedSurfaces: ['markets', 'portfolio', 'algo'], sessionId: 'sx-gra-12b0', device: 'workstation · macOS' },
+  { id: 's5', name: 'the skeptic', role: 'Field Agent', dept: 'Field', autonomy: 5, status: 'active', lastActive: '4m ago', claims30d: 1503, admitRate: 79, usedSurfaces: ['map', 'situations', 'news'], sessionId: 'sx-skp-aa41', device: 'mobile · iOS' },
+  { id: 's6', name: 'F. Lindqvist', role: 'Intern', dept: 'Research', autonomy: 1, status: 'suspended', lastActive: '3d ago', claims30d: 27, admitRate: 74, usedSurfaces: [], sessionId: 'sx-lnd-0000', device: 'workstation · macOS' },
 ];
+
+export const SEAT_ACTIVITY: Record<string, SeatActivity[]> = {
+  s1: [{ at: minsAgo(2), action: 'Proposed ACS income claim · Tract 61', surface: 'map', ok: true }, { at: minsAgo(40), action: 'Resolved entity · Wikidata', surface: 'people', ok: true }, { at: minsAgo(180), action: 'Canon lookup · disclosure rule', surface: 'knowledge', ok: true }],
+  s2: [{ at: minsAgo(0), action: 'Opened supplier contract · stage 3', surface: 'marketplace', ok: true }, { at: minsAgo(25), action: 'Isochrone recompute · depot siting', surface: 'map', ok: true }, { at: minsAgo(95), action: 'Ran deploy status check', surface: 'operator', ok: false }],
+  s3: [{ at: minsAgo(11), action: 'Proposed SKOS term · audit-trail guidance', surface: 'law', ok: true }, { at: minsAgo(60), action: 'Verified audit chain', surface: 'audit', ok: true }],
+  s4: [{ at: minsAgo(62), action: 'Rebalance hedge −4% (held for review)', surface: 'algo', ok: false }, { at: minsAgo(120), action: 'Marked-to-market book', surface: 'portfolio', ok: true }, { at: minsAgo(200), action: 'Pulled Treasury yields', surface: 'markets', ok: true }],
+  s5: [{ at: minsAgo(4), action: 'Flood-risk reclass · 12 cells', surface: 'map', ok: true }, { at: minsAgo(30), action: 'Filed night-market report (unverified)', surface: 'situations', ok: false }, { at: minsAgo(70), action: 'Cross-posted brief', surface: 'news', ok: true }],
+  s6: [{ at: minsAgo(4320), action: 'Canon lookup (last before suspension)', surface: 'knowledge', ok: true }],
+};
 
 export const QUEUE: QueueItem[] = [
   { id: 'q1', kind: 'world-claim', summary: 'Median income for Tract 61 (Manhattan) → $128k', subject: 'map · economic', policy: 'review', omega: 'TRUSTED', confidence: 0.9, seatId: 's1', at: '3m ago', receivedAt: minsAgo(3) },
