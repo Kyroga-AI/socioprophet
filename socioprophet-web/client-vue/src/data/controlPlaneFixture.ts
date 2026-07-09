@@ -36,12 +36,15 @@ export interface RolePolicy { role: string; autonomyCap: AutonomyLevel; membrane
 export type AuditDecision = 'admitted' | 'rejected' | 'held-for-review' | 'executed';
 export interface AuditEntry { id: string; at: string; actor: string; decision: AuditDecision; subject: string; omega: OmegaState; receipt: string }
 
+// name doubles as the HolographMe subject (resolves via reputationFor) so each fielded
+// seat carries its portable verified reputation. A high-autonomy + low-reputation seat
+// (e.g. 'the skeptic' at L5) is exactly the governance tension the console should surface.
 export const SEATS: Seat[] = [
-  { id: 's1', name: 'A. Rivera', role: 'Analyst', dept: 'Research', autonomy: 3, status: 'active', lastActive: '2m ago', claims30d: 412, admitRate: 91 },
-  { id: 's2', name: 'B. Okafor', role: 'Ops Lead', dept: 'Operations', autonomy: 4, status: 'active', lastActive: 'just now', claims30d: 688, admitRate: 87 },
-  { id: 's3', name: 'C. Nguyen', role: 'Compliance', dept: 'Risk', autonomy: 2, status: 'active', lastActive: '11m ago', claims30d: 133, admitRate: 98 },
-  { id: 's4', name: 'D. Sokolov', role: 'Trader', dept: 'Markets', autonomy: 4, status: 'idle', lastActive: '1h ago', claims30d: 921, admitRate: 82 },
-  { id: 's5', name: 'E. Haddad', role: 'Field Agent', dept: 'Field', autonomy: 5, status: 'active', lastActive: '4m ago', claims30d: 1503, admitRate: 79 },
+  { id: 's1', name: 'Ada L.', role: 'Analyst', dept: 'Research', autonomy: 3, status: 'active', lastActive: '2m ago', claims30d: 412, admitRate: 91 },
+  { id: 's2', name: 'Linus', role: 'Ops Lead', dept: 'Operations', autonomy: 4, status: 'active', lastActive: 'just now', claims30d: 688, admitRate: 87 },
+  { id: 's3', name: 'B. Berners', role: 'Compliance', dept: 'Risk', autonomy: 2, status: 'active', lastActive: '11m ago', claims30d: 133, admitRate: 98 },
+  { id: 's4', name: 'Grace', role: 'Trader', dept: 'Markets', autonomy: 4, status: 'idle', lastActive: '1h ago', claims30d: 921, admitRate: 82 },
+  { id: 's5', name: 'the skeptic', role: 'Field Agent', dept: 'Field', autonomy: 5, status: 'active', lastActive: '4m ago', claims30d: 1503, admitRate: 79 },
   { id: 's6', name: 'F. Lindqvist', role: 'Intern', dept: 'Research', autonomy: 1, status: 'suspended', lastActive: '3d ago', claims30d: 27, admitRate: 74 },
 ];
 

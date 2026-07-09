@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { SEATS, QUEUE, ROLE_POLICY, AUDIT, AUTONOMY_LEVELS } from '../data/controlPlaneFixture';
 import { notationOf } from '../ontology/ontogenesis';
+import { reputationFor } from '../features/reputation/reputation';
 
 describe('organization control plane', () => {
   it('defines the full L0–L5 autonomy ladder', () => {
@@ -30,5 +31,16 @@ describe('organization control plane', () => {
 
   it('audit decisions are from the governed decision set', () => {
     for (const a of AUDIT) expect(['admitted', 'rejected', 'held-for-review', 'executed']).toContain(a.decision);
+  });
+
+  it('fielded seats carry a HolographMe reputation (except the unrated intern)', () => {
+    const rated = SEATS.filter((s) => s.role !== 'Intern');
+    for (const s of rated) expect(reputationFor(s.name), `reputation for ${s.name}`).toBeDefined();
+  });
+
+  it('surfaces the autonomy>reputation risk: a high-autonomy seat on a low reputation is flagged', () => {
+    const risky = SEATS.filter((s) => { const r = reputationFor(s.name); return s.autonomy >= 4 && (!r || r.tier === 'emerging' || r.tier === 'unrated'); });
+    expect(risky.length).toBeGreaterThan(0); // 'the skeptic' at L5 (emerging) is the demo case
+    expect(risky.some((s) => s.name === 'the skeptic')).toBe(true);
   });
 });

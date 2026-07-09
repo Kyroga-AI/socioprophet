@@ -8,6 +8,7 @@
           <span class="cp-kpi"><b>{{ activeCount }}</b> active</span>
           <span class="cp-kpi warn" :class="{ hot: queue.length }"><b>{{ queue.length }}</b> in review</span>
           <span class="cp-kpi ok"><b>{{ admittedToday }}</b> admitted today</span>
+          <span v-if="riskCount" class="cp-kpi risk"><b>{{ riskCount }}</b> autonomy&gt;reputation</span>
         </div>
       </template>
     </SurfaceHeader>
@@ -42,10 +43,13 @@
       <section class="cp-card">
         <div class="cp-card-h">◉ Fielded seats <span class="cp-sub">autonomy is capped by role policy</span></div>
         <div class="cp-seats">
-          <div v-for="s in seats" :key="s.id" class="cp-seat">
+          <div v-for="s in seats" :key="s.id" class="cp-seat" :class="{ risk: repRisk(s) }">
             <div class="cp-seat-id">
               <span class="cp-dot" :class="s.status" :title="s.status" />
-              <div><div class="cp-seat-name">{{ s.name }}</div><div class="cp-seat-role">{{ s.role }} · {{ s.dept }}</div></div>
+              <div>
+                <div class="cp-seat-name">{{ s.name }} <ReputationBadge :subject="s.name" /></div>
+                <div class="cp-seat-role">{{ s.role }} · {{ s.dept }}<span v-if="repRisk(s)" class="cp-risk-flag" title="High autonomy on a low / unrated HolographMe reputation — review the grant">⚠ autonomy &gt; reputation</span></div>
+              </div>
             </div>
             <div class="cp-seat-auto">
               <button class="cp-step" type="button" :disabled="s.autonomy <= 0" aria-label="Lower autonomy" @click="setAutonomy(s, s.autonomy - 1)">▾</button>
@@ -88,6 +92,8 @@
 import { ref, computed, onMounted } from 'vue';
 import SurfaceHeader from '../components/SurfaceHeader.vue';
 import EmptyState from '../components/EmptyState.vue';
+import ReputationBadge from '../components/ReputationBadge.vue';
+import { reputationFor } from '../features/reputation/reputation';
 import { SEATS, QUEUE, ROLE_POLICY, AUDIT, AUTONOMY_LEVELS, type Seat, type QueueItem, type AuditDecision, type AutonomyLevel } from '../data/controlPlaneFixture';
 import { notationOf, type OmegaState } from '../ontology/ontogenesis';
 import { useCockpit } from '../stores/cockpit';
@@ -98,6 +104,13 @@ const audit = ref(AUDIT.map((a) => ({ ...a })));
 const admittedToday = ref(3);
 
 const activeCount = computed(() => seats.value.filter((s) => s.status === 'active').length);
+// HolographMe governance: a seat granted high autonomy on a low / unrated portable
+// reputation is a risk the control plane should surface.
+function repRisk(s: Seat): boolean {
+  const r = reputationFor(s.name);
+  return s.autonomy >= 4 && (!r || r.tier === 'emerging' || r.tier === 'unrated');
+}
+const riskCount = computed(() => seats.value.filter(repRisk).length);
 const seatName = (id: string) => seats.value.find((s) => s.id === id)?.name ?? 'seat';
 const autonomyLabel = (l: AutonomyLevel) => AUTONOMY_LEVELS[l]?.label ?? '';
 const autonomyBlurb = (l: AutonomyLevel) => AUTONOMY_LEVELS[l]?.blurb ?? '';
@@ -125,6 +138,10 @@ onMounted(() => useCockpit().setContext({ surface: 'Control Plane', entityLabel:
 .cp-kpi { font-size: 0.72rem; color: var(--text-3); border: 1px solid var(--line-2); border-radius: 999px; padding: 0.15rem 0.55rem; }
 .cp-kpi b { color: var(--text); font-variant-numeric: tabular-nums; }
 .cp-kpi.ok b { color: var(--live); } .cp-kpi.warn.hot b { color: var(--amber); }
+.cp-kpi.risk { border-color: rgba(240,101,106,0.5); } .cp-kpi.risk b { color: var(--down); }
+.cp-seat.risk { background: rgba(240,101,106,0.05); border-radius: 8px; }
+.cp-risk-flag { margin-left: 0.5rem; font-family: var(--mono, ui-monospace); font-size: 0.56rem; color: var(--down); border: 1px solid rgba(240,101,106,0.4); border-radius: 4px; padding: 0.02rem 0.3rem; }
+.cp-seat-name { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
 .cp-lede { margin: 0; max-width: 80ch; font-size: 0.9rem; color: var(--text-2); } .cp-lede b { color: var(--text); font-weight: 600; }
 .cp-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 0.9rem; }
 @media (max-width: 900px) { .cp-grid { grid-template-columns: 1fr; } }
