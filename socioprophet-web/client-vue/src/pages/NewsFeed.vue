@@ -218,6 +218,7 @@ import { newsSources, newsItems } from '../data/newsFeedFixture';
 import { blueskySources, blueskyItems, blueskyMeta, type BskyPost } from '../data/blueskyFixture';
 import { fetchBlueskyLive, BSKY_LIVE_SOURCE } from '../data/adapters/blueskyLive';
 import { fetchHackerNews, HN_LIVE_SOURCE } from '../data/adapters/newsLive';
+import { fetchGdelt, GDELT_LIVE_SOURCE } from '../data/adapters/gdeltLive';
 import type { FeedItem } from '../features/feed-intelligence/types';
 import {
   storyMeta, DOWNVOTE_REASONS, FLAG_REASONS,
@@ -241,12 +242,12 @@ const liveSources = ref<typeof newsSources>([]);
 async function goLive() {
   if (liveState.value === 'loading') return;
   liveState.value = 'loading';
-  const [bsky, hn] = await Promise.all([fetchBlueskyLive(), fetchHackerNews()]);
-  const items = [...(bsky?.items ?? []), ...(hn ?? [])];
+  const [bsky, hn, gdelt] = await Promise.all([fetchBlueskyLive(), fetchHackerNews(), fetchGdelt()]);
+  const items = [...(bsky?.items ?? []), ...(hn ?? []), ...(gdelt ?? [])];
   if (items.length) {
     liveItems.value = items;
     liveMeta.value = bsky?.meta ?? new Map();
-    liveSources.value = [...(bsky?.items.length ? [BSKY_LIVE_SOURCE] : []), ...(hn?.length ? [HN_LIVE_SOURCE] : [])];
+    liveSources.value = [...(bsky?.items.length ? [BSKY_LIVE_SOURCE] : []), ...(hn?.length ? [HN_LIVE_SOURCE] : []), ...(gdelt?.length ? [GDELT_LIVE_SOURCE] : [])];
     liveState.value = 'live';
   } else liveState.value = 'error';
 }
