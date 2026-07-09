@@ -1,10 +1,11 @@
 <template>
   <section class="lm" aria-label="Labor market">
     <SurfaceHeader :title="scope && !scope.isPrimary ? scope.label : 'Labor Market'" :eyebrow="scope?.domain ?? 'People & Society'">
-      <template #badge><span class="lm-pill">fixture</span></template>
+      <template #badge><span class="lm-pill" :class="{ live: liveState === 'live' }">{{ liveState === 'live' ? 'live · remotive' : 'fixture' }}</span></template>
       <template #actions>
+        <LiveToggle :state="liveState" label="Go live" live-text="Remotive" title="Pull real open roles from the Remotive public jobs API — public, no key. Each posting maps to a real labor request (a 'role')." @click="goLive" />
         <div class="lm-agg">
-        <span class="lm-agg-k">Requests</span><span class="lm-num">{{ requests.length }}</span>
+        <span class="lm-agg-k">Requests</span><span class="lm-num">{{ displayRequests.length }}</span>
         <span class="lm-agg-k">Open</span><span class="lm-num">{{ openCount }}</span>
         </div>
       </template>
@@ -15,8 +16,8 @@
       <template #list>
       <!-- Request list -->
       <div ref="listEl" class="lm-list" aria-label="Requests" @keydown="arrowRove($event, listEl, '.lm-row')">
-        <p class="lm-count">{{ requests.length }} requests</p>
-        <button v-for="r in requests" :key="r.id" class="lm-row" :class="{ on: r.id === selectedId }" @click="selectedId = r.id">
+        <p class="lm-count">{{ displayRequests.length }} requests</p>
+        <button v-for="r in displayRequests" :key="r.id" class="lm-row" :class="{ on: r.id === selectedId }" @click="selectedId = r.id">
           <div class="lm-row-top">
             <span class="lm-rt">{{ r.requestType }}</span>
             <span class="lm-status" :class="r.status">{{ r.status }}</span>
@@ -34,7 +35,7 @@
         <div class="lm-d-head">
           <div>
             <div class="lm-d-name"><span class="lm-rt">{{ selected.requestType }}</span> {{ selected.objective }}</div>
-            <div class="lm-d-sub">requested by {{ selected.requester }} · due {{ selected.responseDeadline }}</div>
+            <div class="lm-d-sub">requested by {{ selected.requester }} · due {{ selected.responseDeadline }}<template v-if="selected.live"> · <a class="lm-src" :href="selected.live.url" target="_blank" rel="noopener">{{ selected.live.source }} posting ↗</a></template></div>
           </div>
           <span class="lm-status lg" :class="selected.status">{{ selected.status }}</span>
         </div>
@@ -109,20 +110,40 @@ import SplitPane from '../components/SplitPane.vue';
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
-import { requests, requestById, type LaborRequest, type Compensation, type Response } from '../data/laborMarketFixture';
+import { requests, type LaborRequest, type Compensation, type Response } from '../data/laborMarketFixture';
+import { fetchLaborLive } from '../data/adapters/laborLive';
+import LiveToggle from '../components/LiveToggle.vue';
 import { arrowRove } from '../utils/listKeys';
 
 const router = useRouter();
 const route = useRoute();
 const scope = computed(() => navScopeForPath(route.path));
 
+// Live overlay — real open roles from Remotive, fail-closed. When live, the real feed
+// REPLACES the fixture request book (a genuine marketplace, not a demo one).
+const liveState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const liveRequests = ref<LaborRequest[]>([]);
+const displayRequests = computed<LaborRequest[]>(() => liveState.value === 'live' && liveRequests.value.length ? liveRequests.value : requests);
+
 const selectedId = ref<string>(requests[0]!.id);
-const selected = computed<LaborRequest | undefined>(() => requestById(selectedId.value));
+const selected = computed<LaborRequest | undefined>(() => displayRequests.value.find((r) => r.id === selectedId.value));
 const listEl = ref<HTMLElement | null>(null);
-const openCount = requests.filter((r) => r.status === 'open' || r.status === 'shortlisting').length;
+const openCount = computed(() => displayRequests.value.filter((r) => r.status === 'open' || r.status === 'shortlisting').length);
+
+async function goLive() {
+  if (liveState.value === 'loading') return;
+  liveState.value = 'loading';
+  const roles = await fetchLaborLive(40);
+  if (!roles || !roles.length) { liveState.value = 'error'; return; }
+  liveRequests.value = roles;
+  liveState.value = 'live';
+  selectedId.value = roles[0]!.id;
+}
 
 function compLabel(c: Compensation): string {
   if (c.transparency === 'exempt') return `exempt · ${c.exemptReason}`;
+  if (c.transparency === 'undisclosed') return 'salary undisclosed';
+  if (c.note) return c.note;
   const rng = c.min !== undefined ? (c.max !== undefined && c.max !== c.min ? `${c.min.toLocaleString()}–${c.max.toLocaleString()}` : c.min.toLocaleString()) : '';
   return `${c.currency ?? ''} ${rng}${c.model ? ` · ${c.model}` : ''}`.trim();
 }
@@ -140,6 +161,8 @@ function openResponder(resp: Response) {
 .lm-title { display: flex; align-items: baseline; gap: 0.6rem; } .lm-title h1 { margin: 0; font-size: 1.3rem; letter-spacing: -0.01em; color: var(--text); font-weight: 640; }
 .lm-eyebrow { margin: 0 0 0.1rem; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
 .lm-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); background: var(--accent-soft); border-radius: 5px; padding: 0.1rem 0.4rem; }
+.lm-pill.live { color: var(--up); background: rgba(63, 185, 80, 0.14); }
+.lm-src { color: #3b9aef; text-decoration: none; } .lm-src:hover { text-decoration: underline; }
 .lm-agg { display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; color: var(--text-3); } .lm-agg-k { text-transform: uppercase; letter-spacing: 0.05em; } .lm-agg .lm-num { color: var(--text); font-variant-numeric: tabular-nums; margin-right: 0.4rem; }
 .lm-note { margin: 0; font-size: 0.8rem; color: var(--text-3); max-width: 96ch; } .lm-note b { color: var(--text-2); }
 

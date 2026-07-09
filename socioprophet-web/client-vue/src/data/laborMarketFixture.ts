@@ -9,10 +9,13 @@ export type RequestType = 'RFI' | 'RFP' | 'RFQ' | 'role' | 'collaboration' | 'ap
 export type ReqStatus = 'open' | 'shortlisting' | 'awarded' | 'closed';
 
 export interface Compensation {
-  transparency: 'disclosed' | 'exempt';
+  // 'undisclosed' = a real posting that simply didn't publish pay (honest — not the
+  // charter's principled 'exempt'). 'note' carries the poster's verbatim salary text
+  // when structured min/max isn't available (e.g. live job feeds).
+  transparency: 'disclosed' | 'exempt' | 'undisclosed';
   exemptReason?: 'volunteer' | 'mutual-aid' | 'exploratory';
   model?: 'fixed' | 'hourly' | 'milestone' | 'equity' | 'stipend';
-  min?: number; max?: number; currency?: string;
+  min?: number; max?: number; currency?: string; note?: string;
 }
 
 export interface FitScore { rubric: Record<string, number>; fit: number; confidence: number; missingEvidence?: string[] }
@@ -41,6 +44,41 @@ export interface LaborRequest {
   responses: Response[];
   award?: Award;
   trustEvents: TrustEvent[];
+  // Present only on LIVE requests sourced from a real open-roles feed (e.g. Remotive).
+  // Carries real provenance so the row links back to the actual posting.
+  live?: { source: string; url: string; category?: string; postedAt?: string };
+}
+
+// Shape of a live job posting (Remotive /api/remote-jobs), kept structural so the
+// fixture stays adapter-free. Maps a real open role → a 'role' LaborRequest.
+export interface LiveRole {
+  id: number | string; title: string; company_name: string; category?: string;
+  tags?: string[]; job_type?: string; publication_date?: string;
+  candidate_required_location?: string; salary?: string; url: string;
+}
+export function remotiveToRequests(jobs: LiveRole[]): LaborRequest[] {
+  return jobs.map((j) => {
+    const salary = (j.salary ?? '').trim();
+    const compensation: Compensation = salary
+      ? { transparency: 'disclosed', note: salary }
+      : { transparency: 'undisclosed' };
+    const where = j.candidate_required_location?.trim() || 'Remote';
+    return {
+      id: `live-${j.id}`,
+      requestType: 'role',
+      requester: j.company_name,
+      objective: j.title,
+      outcome: `Fill the ${j.title} role — ${where}.`,
+      compensation,
+      schedule: [j.job_type?.replace(/_/g, ' '), where].filter(Boolean).join(' · '),
+      responseDeadline: 'rolling',
+      evaluationCriteria: (j.tags ?? []).slice(0, 6),
+      status: 'open',
+      responses: [],
+      trustEvents: [],
+      live: { source: 'Remotive', url: j.url, category: j.category, postedAt: j.publication_date },
+    };
+  });
 }
 
 export const requests: LaborRequest[] = [

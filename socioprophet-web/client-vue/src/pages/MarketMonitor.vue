@@ -11,7 +11,7 @@
         </form>
       </template>
       <template #actions>
-        <LiveToggle :state="liveState" title="Real crypto prices via CoinGecko — no key" @click="goLive" />
+        <LiveToggle :state="liveState" title="Real live data, no key: crypto via CoinGecko, FX via exchangerate.host, and per-tenor US Treasury par yields (US2Y/10Y/30Y) via the Treasury Daily Par Yield Curve feed." @click="goLive" />
         <div class="mk-asof">{{ liveState === 'live' ? 'CoinGecko · now' : asOfLabel }}</div>
       </template>
     </SurfaceHeader>
@@ -156,6 +156,7 @@ import { useRoute } from 'vue-router';
 import { navScopeForPath } from '../config/cockpitNav';
 import { indices, watchlist, instruments, SUBDOMAIN_CLASSES, asOf, type Instrument, type AssetClass } from '../data/marketsFixture';
 import { fetchCryptoLive, fetchFxLive } from '../data/adapters/marketsLive';
+import { fetchTreasuryLive } from '../data/adapters/treasuryLive';
 import HumanNetworks from '../components/HumanNetworks.vue';
 import { arrowRove } from '../utils/listKeys';
 import { usePortfolio } from '../stores/portfolio';
@@ -206,8 +207,10 @@ const displayInstruments = computed<Instrument[]>(() => instruments.map((i) => {
 async function goLive() {
   if (liveState.value === 'loading') return;
   liveState.value = 'loading';
-  const [c, f] = await Promise.all([fetchCryptoLive(), fetchFxLive()]);
-  const merged = new Map([...(c ?? new Map()), ...(f ?? new Map())]);
+  const [c, f, t] = await Promise.all([fetchCryptoLive(), fetchFxLive(), fetchTreasuryLive()]);
+  const merged = new Map<string, { price: number; changePct: number }>([...(c ?? new Map()), ...(f ?? new Map())]);
+  // Real per-tenor Treasury par yields overlay the US2Y/US10Y/US30Y rate rows.
+  if (t) for (const [sym, q] of t) merged.set(sym, { price: q.price, changePct: q.changePct });
   if (merged.size) { liveQuotes.value = merged; liveState.value = 'live'; selected.value = displayInstruments.value.find((i) => i.symbol === selected.value.symbol) ?? selected.value; }
   else liveState.value = 'error';
 }
