@@ -67,6 +67,28 @@ export async function graphHealth(): Promise<GraphHealth> {
   return { ok: g?.status === 'ok', nodes: g?.nodeCount, edges: g?.edgeCount, walPath: g?.walPath, vectorIndex: g?.vectorIndexStatus, error: raw.error };
 }
 
+// ---- Governance → the sovereign agent-machine control plane (real, on-device) ----
+// These back the Organization Control Plane's "Connect to Agent Machine" mode: the
+// enforced autonomy ladder, the capability membrane (containment purpose), governance
+// posture (kill-switch + authority hierarchy), and the real reasoning-run audit trail.
+export interface GovPosture {
+  killSwitchArmed: boolean; killSwitchReason: string | null; scopedConfigured: boolean;
+  policyId: string | null; policyName: string | null;
+  authorityHierarchy: Array<{ level: string; label: string; description: string; active: boolean }>;
+  escalationActionClasses: string[]; escalationNote?: string;
+}
+export interface AutonomyRung { level: string; rank: number; label: string; roles: string[]; gate: string; evidenceRequired: string; enforcedAt: string }
+export interface AutonomyState { session: { role: string; authorizedLevel: string; evidence: string[] }; enforced: boolean; ladder: AutonomyRung[] }
+export interface Containment { killed: boolean; reason: string | null; since: string | null; purpose: string; purpose_allows: string[]; purposes: Array<{ name: string; allow: string[]; note: string }> }
+export interface GovRun {
+  run_id: string; model_routed: string; provider: string; policy_admitted: boolean; memory_written: boolean;
+  timestamp: string; latency_ms: number; input_tokens: number; output_tokens: number; cost_usd: number; tokens_egressed: number; task: string; session_id: string;
+}
+export const govPosture = () => get<GovPosture>('/api/governance/posture');
+export const autonomyState = () => get<AutonomyState>('/api/autonomy');
+export const containment = () => get<Containment>('/api/containment');
+export const govRecent = () => get<{ runs: GovRun[] }>('/api/governance/recent');
+
 // ---- Forge → Local git import (folder picker + SSE push into sovereign Gitea) ----
 export interface BrowseEntry { name: string; path: string; isGitRepo: boolean }
 export interface BrowseResult { path: string; parent: string | null; entries: BrowseEntry[] }

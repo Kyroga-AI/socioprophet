@@ -1,13 +1,15 @@
 <template>
   <section class="cp" aria-label="Organization control plane">
     <SurfaceHeader title="Control Plane" eyebrow="Organization · Noetica governance">
-      <template #badge><span class="cp-pill">fixture · demo org</span></template>
+      <template #badge><span class="cp-pill" :class="{ live: amLive }">{{ amLive ? 'live · agent-machine' : 'fixture · demo org' }}</span></template>
       <template #actions>
+        <LiveToggle :state="amState" label="Connect Agent Machine" live-text="agent-machine :8080" title="Bind this console to the sovereign Noetica Agent Machine on :8080 — the enforced autonomy ladder, live capability membrane (containment purpose), kill-switch, and the real policy-admitted reasoning-run audit trail. Read-only; falls back to the demo org if the machine isn't running." @click="goLiveAM" />
         <div class="cp-kpis">
+          <span v-if="amLive" class="cp-kpi ok"><b>{{ gov!.autonomy.session.authorizedLevel }}</b> {{ gov!.autonomy.session.role }}{{ gov!.autonomy.enforced ? ' · enforced' : '' }}</span>
           <span class="cp-kpi"><b>{{ seats.length }}</b> seats</span>
           <span class="cp-kpi"><b>{{ activeCount }}</b> active</span>
           <span class="cp-kpi warn" :class="{ hot: queue.length }"><b>{{ queue.length }}</b> in review</span>
-          <span class="cp-kpi ok"><b>{{ admittedToday }}</b> admitted today</span>
+          <span class="cp-kpi ok"><b>{{ amLive ? gov!.runs.length : admittedToday }}</b> {{ amLive ? 'runs' : 'admitted today' }}</span>
           <span v-if="alerts.length" class="cp-kpi risk"><b>{{ alerts.length }}</b> alerts</span>
         </div>
       </template>
@@ -21,6 +23,42 @@
         <span class="cp-alert-sev">{{ a.severity === 'critical' ? '⚠' : a.severity === 'warn' ? '▲' : 'ℹ' }}</span>
         <span class="cp-alert-body"><b>{{ a.title }}</b><span class="cp-alert-detail">{{ a.detail }}</span></span>
       </button>
+    </section>
+
+    <p v-if="amState === 'error'" class="cp-amerr">⚠ Agent Machine not reachable on :8080 — showing the demo org. Start the sovereign Noetica agent-machine (<code>VITE_AGENT_MACHINE</code>) and reconnect.</p>
+
+    <!-- LIVE: the real sovereign Agent Machine governance state (not fixture) -->
+    <section v-if="amLive" class="cp-card cp-am" aria-label="Agent Machine governance">
+      <div class="cp-card-h">▲ Agent Machine <span class="cp-sub">sovereign · on-device :8080 · read-only</span>
+        <span class="cp-am-kill" :class="gov!.containment.killed ? 'armed' : 'safe'">{{ gov!.containment.killed ? '⛔ kill-switch ARMED' : '● kill-switch clear' }}</span>
+      </div>
+      <div class="cp-am-grid">
+        <div class="cp-am-block">
+          <div class="cp-am-k">Capability membrane <span class="cp-sub">containment purpose</span></div>
+          <div class="cp-am-purpose">purpose: <b>{{ gov!.containment.purpose }}</b></div>
+          <div class="cp-am-caps"><span v-for="c in gov!.containment.purpose_allows" :key="c" class="cp-mem-chip on">{{ c }}</span></div>
+        </div>
+        <div class="cp-am-block">
+          <div class="cp-am-k">Session authority <span class="cp-sub">{{ gov!.autonomy.enforced ? 'enforced' : 'observed' }}</span></div>
+          <div class="cp-am-purpose"><b>{{ gov!.autonomy.session.role }}</b> · authorized <b>{{ gov!.autonomy.session.authorizedLevel }}</b></div>
+          <div v-for="e in gov!.autonomy.session.evidence" :key="e" class="cp-am-ev">◆ {{ e }}</div>
+        </div>
+        <div class="cp-am-block">
+          <div class="cp-am-k">Authority hierarchy <span class="cp-sub">posture</span></div>
+          <div v-for="a in gov!.posture.authorityHierarchy" :key="a.level" class="cp-am-auth" :class="{ active: a.active }">
+            <span class="cp-am-adot" :class="{ on: a.active }" />{{ a.label }}<span class="cp-am-adesc">{{ a.active ? 'active' : 'inactive' }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="cp-am-ladder">
+        <div class="cp-am-k">Enforced autonomy ladder <span class="cp-sub">gate + evidence required per rung</span></div>
+        <div class="cp-am-lrow" v-for="l in gov!.autonomy.ladder" :key="l.level" :class="{ here: l.level === gov!.autonomy.session.authorizedLevel }">
+          <span class="cp-am-llvl">{{ l.level }}</span>
+          <span class="cp-am-llabel">{{ l.label.replace(/_/g, ' ') }}</span>
+          <span class="cp-am-lgate">gate: {{ l.gate.replace(/_/g, ' ') }}</span>
+          <span class="cp-am-levid">{{ l.evidenceRequired.replace(/_/g, ' ') }}</span>
+        </div>
+      </div>
     </section>
 
     <div class="cp-grid">
@@ -62,7 +100,7 @@
 
       <!-- Fielded seats -->
       <section class="cp-card">
-        <div class="cp-card-h">◉ Fielded seats <span class="cp-sub">autonomy is capped by role policy</span></div>
+        <div class="cp-card-h">◉ Fielded seats <span class="cp-sub">{{ amLive ? 'org roster · demo (single-box machine has one session)' : 'autonomy is capped by role policy' }}</span></div>
         <div class="cp-seats">
           <div v-for="s in seats" :key="s.id" class="cp-seat" :class="{ risk: repRisk(s), focus: focusSeatId === s.id }" :ref="(el) => setSeatRef(s.id, el)">
             <div class="cp-seat-id">
@@ -97,7 +135,7 @@
 
     <!-- Audit trail — first-class, persistent, filterable, exportable (Okta system-log pattern) -->
     <section class="cp-card cp-audit-card">
-      <div class="cp-card-h">▤ Audit <span class="cp-sub">governed decisions · sealed receipts · persists across reloads</span>
+      <div class="cp-card-h">▤ Audit <span class="cp-sub">{{ amLive ? 'live · policy-admitted reasoning runs from the agent machine' : 'governed decisions · sealed receipts · persists across reloads' }}</span>
         <div class="cp-audit-tools">
           <input v-model="auditQuery" class="cp-audit-search" placeholder="Search subject / actor…" spellcheck="false" />
           <button v-for="f in auditFilters" :key="f" class="cp-af" :class="{ on: auditFilter === f }" type="button" @click="auditFilter = f">{{ f }}</button>
@@ -105,7 +143,7 @@
           <button class="cp-af" type="button" title="Export the audit log as JSONL" @click="exportAudit">⭳ Export</button>
         </div>
       </div>
-      <div class="cp-audit-count">{{ filteredAudit.length }} of {{ audit.length }} entries</div>
+      <div class="cp-audit-count">{{ filteredAudit.length }} of {{ baseAudit.length }} entries</div>
       <EmptyState v-if="!filteredAudit.length" title="No matching entries" hint="Clear the filter or search to see the full trail." icon="▤" />
       <ul v-else class="cp-audit">
         <li v-for="a in filteredAudit" :key="a.id" class="cp-audit-row">
@@ -129,6 +167,8 @@ import { reputationFor } from '../features/reputation/reputation';
 import { SEATS, QUEUE, ROLE_POLICY, AUDIT, AUTONOMY_LEVELS, DECISION_REASONS, type Seat, type QueueItem, type AuditDecision, type AutonomyLevel } from '../data/controlPlaneFixture';
 import { notationOf, type OmegaState } from '../ontology/ontogenesis';
 import { computeAlerts, isOverdue, ageMinutes, REVIEW_SLA_MIN, buildAuditEntry, loadAudit, saveAudit, auditToJsonl, type Alert } from '../features/controlPlane/governance';
+import LiveToggle from '../components/LiveToggle.vue';
+import { fetchLiveGovernance, type LiveGovernance } from '../data/adapters/controlPlaneLive';
 import { useCockpit } from '../stores/cockpit';
 
 const seats = ref<Seat[]>(SEATS.map((s) => ({ ...s })));
@@ -147,7 +187,21 @@ function repRisk(s: Seat): boolean {
   const r = reputationFor(s.name);
   return s.autonomy >= 4 && (!r || r.tier === 'emerging' || r.tier === 'unrated');
 }
-const alerts = computed<Alert[]>(() => computeAlerts(seats.value, queue.value, nowMs.value, (name) => reputationFor(name)?.tier));
+const fixtureAlerts = computed<Alert[]>(() => computeAlerts(seats.value, queue.value, nowMs.value, (name) => reputationFor(name)?.tier));
+
+// ── Live wire to the sovereign Agent Machine (Noetica :8080) ─────────────────────
+const amState = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const gov = ref<LiveGovernance | null>(null);
+const amLive = computed(() => amState.value === 'live' && !!gov.value);
+async function goLiveAM() {
+  if (amState.value === 'loading') return;
+  amState.value = 'loading';
+  const g = await fetchLiveGovernance();
+  if (!g) { amState.value = 'error'; return; }
+  gov.value = g; amState.value = 'live';
+}
+// When connected, real machine alerts lead; the org-roster demo alerts follow.
+const alerts = computed<Alert[]>(() => amLive.value ? [...gov.value!.alerts, ...fixtureAlerts.value] : fixtureAlerts.value);
 
 const seatName = (id: string) => seats.value.find((s) => s.id === id)?.name ?? 'seat';
 const autonomyLabel = (l: AutonomyLevel) => AUTONOMY_LEVELS[l]?.label ?? '';
@@ -209,16 +263,19 @@ function undo() {
 const auditFilters = ['all', 'admitted', 'rejected', 'held-for-review', 'executed'] as const;
 const auditFilter = ref<(typeof auditFilters)[number]>('all');
 const auditQuery = ref('');
+// When live, the audit trail IS the machine's real policy-admitted reasoning runs, with
+// any in-session human decisions ('you') kept on top; otherwise the fixture/human trail.
+const baseAudit = computed(() => amLive.value ? [...audit.value.filter((a) => a.actor === 'you'), ...gov.value!.audit] : audit.value);
 const filteredAudit = computed(() => {
   const q = auditQuery.value.trim().toLowerCase();
-  return audit.value.filter((a) => {
+  return baseAudit.value.filter((a) => {
     if (auditFilter.value !== 'all' && a.decision !== auditFilter.value) return false;
     if (!q) return true;
     return [a.subject, a.actor, a.decision, a.reason ?? ''].some((f) => f.toLowerCase().includes(q));
   });
 });
 function exportAudit() {
-  const blob = new Blob([auditToJsonl(audit.value)], { type: 'application/x-ndjson' });
+  const blob = new Blob([auditToJsonl(baseAudit.value)], { type: 'application/x-ndjson' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = `noetica-audit-${new Date().toISOString().slice(0, 10)}.jsonl`;
@@ -247,6 +304,26 @@ onUnmounted(() => { if (clock) clearInterval(clock); });
 <style scoped>
 .cp { height: 100%; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; padding: 1rem 1.25rem 1.5rem; background: var(--bg); color: var(--text); }
 .cp-pill { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); background: var(--amber-soft); border-radius: 5px; padding: 0.1rem 0.35rem; white-space: nowrap; }
+.cp-pill.live { color: var(--live); background: var(--live-soft); }
+
+/* Live Agent Machine card */
+.cp-amerr { margin: 0; font-size: 0.76rem; color: var(--amber); background: var(--amber-soft); border: 1px solid rgba(227,179,65,0.35); border-radius: 8px; padding: 0.5rem 0.7rem; } .cp-amerr code { font-size: 0.7rem; }
+.cp-am { border-color: rgba(63,185,80,0.35); }
+.cp-am-kill { margin-left: auto; font-family: var(--mono, ui-monospace); font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 5px; } .cp-am-kill.safe { color: var(--live); background: var(--live-soft); } .cp-am-kill.armed { color: var(--down); background: rgba(240,101,106,0.15); }
+.cp-am-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; } @media (max-width: 820px) { .cp-am-grid { grid-template-columns: 1fr; } }
+.cp-am-block { display: flex; flex-direction: column; gap: 0.3rem; }
+.cp-am-k { font-size: 0.72rem; font-weight: 620; display: flex; align-items: baseline; gap: 0.4rem; }
+.cp-am-purpose { font-size: 0.78rem; color: var(--text-2); } .cp-am-purpose b { color: var(--text); }
+.cp-am-caps { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.1rem; }
+.cp-mem-chip.on { color: var(--live); border-color: rgba(63,185,80,0.4); }
+.cp-am-ev { font-size: 0.64rem; color: var(--text-3); }
+.cp-am-auth { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; color: var(--text-3); } .cp-am-auth.active { color: var(--text-2); }
+.cp-am-adot { width: 7px; height: 7px; border-radius: 50%; background: var(--line-2); } .cp-am-adot.on { background: var(--live); }
+.cp-am-adesc { margin-left: auto; font-size: 0.58rem; color: var(--text-3); }
+.cp-am-ladder { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
+.cp-am-lrow { display: grid; grid-template-columns: 2.2rem 1fr 1.4fr 1.4fr; gap: 0.5rem; align-items: baseline; font-size: 0.7rem; padding: 0.22rem 0.35rem; border-radius: 6px; }
+.cp-am-lrow.here { background: var(--live-soft); }
+.cp-am-llvl { font-family: var(--mono, ui-monospace); color: var(--accent); font-weight: 700; } .cp-am-llabel { color: var(--text); text-transform: capitalize; } .cp-am-lgate { color: var(--text-3); } .cp-am-levid { color: var(--text-3); font-style: italic; }
 .cp-kpis { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .cp-kpi { font-size: 0.72rem; color: var(--text-3); border: 1px solid var(--line-2); border-radius: 999px; padding: 0.15rem 0.55rem; }
 .cp-kpi b { color: var(--text); font-variant-numeric: tabular-nums; }
