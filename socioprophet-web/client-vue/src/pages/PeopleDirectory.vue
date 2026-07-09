@@ -36,7 +36,11 @@
           </div>
           <span class="pd-conf" :title="`resolution confidence ${(e.confidence * 100).toFixed(0)}%`">{{ (e.confidence * 100).toFixed(0) }}%</span>
         </button>
-        <EmptyState v-if="results.length === 0" title="No matches" hint="Clear the search or pick a different entity type." />
+        <EmptyState v-if="results.length === 0" :title="liveState === 'error' ? 'No one found' : 'No matches'" :hint="query.trim() ? 'Not in the local directory. Resolve real people & orgs from Wikidata — no key.' : 'Clear the search or pick a different entity type.'" icon="◇">
+          <template v-if="query.trim()" #action>
+            <button class="pd-resolve" type="button" :disabled="liveState === 'loading'" @click="goLive">{{ liveState === 'loading' ? '⟳ resolving…' : `⌕ Resolve “${query.trim()}” from Wikidata` }}</button>
+          </template>
+        </EmptyState>
         </div>
       </template>
 
@@ -308,6 +312,7 @@ const asOfLabel = new Date(asOf).toLocaleString('en-US', { month: 'short', day: 
 
 .pd-list { min-height: 0; overflow-y: auto; border: 1px solid var(--line-2); border-radius: 12px; }
 .pd-count { margin: 0; padding: 0.5rem 0.85rem; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.4); border-bottom: 1px solid var(--line); }
+.pd-resolve { font-size: 0.78rem; border: 1px solid var(--accent); color: var(--accent); background: var(--accent-soft); border-radius: 8px; padding: 0.4rem 0.75rem; cursor: pointer; } .pd-resolve:hover:not(:disabled) { background: var(--accent); color: #04121f; } .pd-resolve:disabled { opacity: 0.5; cursor: default; }
 .pd-row { width: 100%; display: flex; align-items: center; gap: 0.7rem; border: none; border-bottom: 1px solid var(--line); background: transparent; color: inherit; padding: 0.6rem 0.85rem; cursor: pointer; text-align: left; } .pd-row:hover { background: rgba(255, 255, 255, 0.03); } .pd-row.on { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
 .pd-avatar { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 0.72rem; font-weight: 800; color: #04121f; } .pd-avatar.lg { width: 52px; height: 52px; font-size: 1rem; }
 .pd-row-main { min-width: 0; flex: 1; }
