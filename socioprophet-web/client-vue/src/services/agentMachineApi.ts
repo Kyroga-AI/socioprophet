@@ -110,6 +110,18 @@ export const postGovernanceDecision = (run_id: string, decision: GovDecision, re
   post<GovDecisionRecord>('/api/governance/decision', { run_id, decision, reason, actor });
 export const govDecisions = () => get<{ decisions: GovDecisionRecord[] }>('/api/governance/decisions');
 
+// Real scoped-egress WRITE: POST /api/governance/policy writes the SCOPE-D EngagementPolicy
+// that governs which cloud targets the agent may egress to (shape mirrors lib/scope-d.ts).
+// The machine 400s unless SCOPED_ENGAGEMENT_POLICY points to a writable path.
+export interface EngagementPolicy {
+  policyId: string; name: string;
+  targetBoundary?: { authorizedTargets?: string[]; outOfScopeTargets?: string[] };
+  authorizedTargets?: string[]; authorizedModes?: string[];
+  approvalRules?: Array<{ actionClass: string; requiredGate: string }>;
+  blockedActions?: string[]; expiresAt?: string;
+}
+export const postGovernancePolicy = (policy: EngagementPolicy) => post<{ saved: boolean; policyId: string }>('/api/governance/policy', policy);
+
 // ---- Forge → Local git import (folder picker + SSE push into sovereign Gitea) ----
 export interface BrowseEntry { name: string; path: string; isGitRepo: boolean }
 export interface BrowseResult { path: string; parent: string | null; entries: BrowseEntry[] }

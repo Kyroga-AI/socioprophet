@@ -62,6 +62,14 @@
           </div>
         </div>
       </div>
+      <div class="cp-am-scoped">
+        <div class="cp-am-k">Egress governance <span class="cp-sub">SCOPE-D policy · governs cloud egress</span></div>
+        <div class="cp-am-scoped-row">
+          <span class="cp-am-scoped-state" :class="gov!.posture.scopedConfigured ? 'ok' : 'warn'">{{ gov!.posture.scopedConfigured ? `● active · ${gov!.posture.policyName || gov!.posture.policyId}` : '▲ unconfigured — cloud egress ungoverned' }}</span>
+          <button v-if="!gov!.posture.scopedConfigured" class="cp-am-wbtn" :disabled="amBusy" title="Bind a sovereign least-privilege policy: no cloud targets authorized (everything stays local), all escalation classes human-gated" @click="bindScopedPolicy">Bind least-privilege policy</button>
+          <span v-if="scopedMsg" class="cp-am-scoped-msg">{{ scopedMsg }}</span>
+        </div>
+      </div>
       <div class="cp-am-ladder">
         <div class="cp-am-k">Enforced autonomy ladder <span class="cp-sub">gate + evidence required per rung</span></div>
         <div class="cp-am-lrow" v-for="l in gov!.autonomy.ladder" :key="l.level" :class="{ here: l.level === gov!.autonomy.session.authorizedLevel }">
@@ -245,8 +253,8 @@ import { SEATS, QUEUE, ROLE_POLICY, AUDIT, AUTONOMY_LEVELS, DECISION_REASONS, SE
 import { notationOf, type OmegaState } from '../ontology/ontogenesis';
 import { computeAlerts, isOverdue, ageMinutes, REVIEW_SLA_MIN, buildAuditEntry, loadAudit, saveAudit, auditToJsonl, simulateCap, leastPrivilege, roleUnusedSurfaces, type Alert } from '../features/controlPlane/governance';
 import LiveToggle from '../components/LiveToggle.vue';
-import { fetchLiveGovernance, type LiveGovernance } from '../data/adapters/controlPlaneLive';
-import { postContainment, bindAutonomy, postGovernanceDecision, type GovDecision } from '../services/agentMachineApi';
+import { fetchLiveGovernance, buildLeastPrivilegePolicy, type LiveGovernance } from '../data/adapters/controlPlaneLive';
+import { postContainment, bindAutonomy, postGovernanceDecision, postGovernancePolicy, type GovDecision } from '../services/agentMachineApi';
 import { useCockpit } from '../stores/cockpit';
 
 const seats = ref<Seat[]>(SEATS.map((s) => ({ ...s })));
@@ -348,6 +356,18 @@ async function bindLevel(level: string) {
     await bindAutonomy(gov.value.autonomy.session.role, level, [`bound from control plane ${new Date().toISOString().slice(0, 16)}`]);
     const g = await fetchLiveGovernance(); if (g) gov.value = g;
   } catch { /* endpoint refused — leave state unchanged */ } finally { amBusy.value = false; }
+}
+// Real scoped-egress governance — bind a sovereign least-privilege EngagementPolicy so cloud
+// egress is no longer ungoverned. Fails honestly when the machine lacks SCOPED_ENGAGEMENT_POLICY.
+const scopedMsg = ref('');
+async function bindScopedPolicy() {
+  if (!amLive.value || amBusy.value) return;
+  amBusy.value = true; scopedMsg.value = '';
+  try {
+    const r = await postGovernancePolicy(buildLeastPrivilegePolicy());
+    scopedMsg.value = `✓ bound · ${r.policyId}`;
+    const g = await fetchLiveGovernance(); if (g) gov.value = g;
+  } catch { scopedMsg.value = 'Set SCOPED_ENGAGEMENT_POLICY to a writable path on the machine, then retry.'; } finally { amBusy.value = false; }
 }
 
 // ── Queue selection + decisions ──────────────────────────────────────────────
@@ -464,6 +484,10 @@ onUnmounted(() => { if (clock) clearInterval(clock); });
 .cp-am-auth { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; color: var(--text-3); } .cp-am-auth.active { color: var(--text-2); }
 .cp-am-adot { width: 7px; height: 7px; border-radius: 50%; background: var(--line-2); } .cp-am-adot.on { background: var(--live); }
 .cp-am-adesc { margin-left: auto; font-size: 0.58rem; color: var(--text-3); }
+.cp-am-scoped { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
+.cp-am-scoped-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.35rem; }
+.cp-am-scoped-state { font-size: 0.72rem; } .cp-am-scoped-state.ok { color: var(--live); } .cp-am-scoped-state.warn { color: var(--amber); }
+.cp-am-scoped-msg { font-size: 0.66rem; color: var(--text-3); }
 .cp-am-ladder { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
 .cp-am-lrow { display: grid; grid-template-columns: 2.2rem 1fr 1.4fr 1.4fr; gap: 0.5rem; align-items: baseline; font-size: 0.7rem; padding: 0.22rem 0.35rem; border-radius: 6px; }
 .cp-am-lrow.here { background: var(--live-soft); }

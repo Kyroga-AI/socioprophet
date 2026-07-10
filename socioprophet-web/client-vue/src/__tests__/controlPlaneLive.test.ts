@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { runsToAudit, runsToQueue, decisionsToAudit, governanceAlerts, fetchLiveGovernance } from '../data/adapters/controlPlaneLive';
+import { runsToAudit, runsToQueue, decisionsToAudit, governanceAlerts, buildLeastPrivilegePolicy, fetchLiveGovernance } from '../data/adapters/controlPlaneLive';
 import type { GovRun, GovPosture, Containment, AutonomyState } from '../services/agentMachineApi';
 
 const RUNS: GovRun[] = [
@@ -59,6 +59,21 @@ describe('posture/containment → governance alerts', () => {
     expect(alerts.some((a) => a.title.includes('full'))).toBe(true);
     expect(alerts.some((a) => a.title.includes('SCOPE-D'))).toBe(true);
     expect(alerts.some((a) => a.severity === 'critical')).toBe(false); // nothing armed
+  });
+});
+
+describe('least-privilege egress policy', () => {
+  it('authorizes NO cloud targets (everything stays local — sovereign default)', () => {
+    const p = buildLeastPrivilegePolicy();
+    expect(p.policyId).toBeTruthy();
+    expect(p.name).toBeTruthy();          // policyId + name are the machine's required fields
+    expect(p.authorizedTargets).toEqual([]);
+    expect(p.targetBoundary?.outOfScopeTargets).toContain('public-internet');
+  });
+  it('gates every escalation action class to a human approver', () => {
+    const gated = new Set(buildLeastPrivilegePolicy().approvalRules?.map((r) => r.actionClass));
+    for (const cls of ['network_call', 'credential_access', 'destructive_action', 'deployment', 'identity_write']) expect(gated.has(cls)).toBe(true);
+    expect(buildLeastPrivilegePolicy().approvalRules?.every((r) => r.requiredGate === 'human')).toBe(true);
   });
 });
 

@@ -5,7 +5,7 @@
 // the fixture demo when the agent-machine isn't running. This is what makes the plane
 // real rather than a paper tiger: the audit trail below is the machine's actual
 // policy-admitted reasoning runs, the ladder is enforced, the membrane is its live purpose.
-import { govPosture, autonomyState, containment, govRecent, govDecisions, type GovPosture, type AutonomyState, type Containment, type GovRun, type GovDecisionRecord } from '../../services/agentMachineApi';
+import { govPosture, autonomyState, containment, govRecent, govDecisions, type GovPosture, type AutonomyState, type Containment, type GovRun, type GovDecisionRecord, type EngagementPolicy } from '../../services/agentMachineApi';
 import type { AuditEntry, QueueItem, QueueKind } from '../controlPlaneFixture';
 import type { OmegaState } from '../../ontology/ontogenesis';
 import type { Alert } from '../../features/controlPlane/governance';
@@ -91,6 +91,27 @@ export function governanceAlerts(posture: GovPosture, cont: Containment): Alert[
   }
   const rank = { critical: 0, warn: 1, info: 2 } as const;
   return out.sort((a, b) => rank[a.severity] - rank[b.severity]);
+}
+
+// A sovereign-default SCOPE-D EngagementPolicy the console can bind when egress is ungoverned:
+// NO cloud targets authorized (every non-local route stays on-device — maximal sovereignty), and
+// every escalation action class gated to a human approver. Grounded in the lib/scope-d.ts schema.
+export function buildLeastPrivilegePolicy(): EngagementPolicy {
+  return {
+    policyId: 'cockpit-least-privilege',
+    name: 'Cockpit least-privilege egress',
+    targetBoundary: { authorizedTargets: [], outOfScopeTargets: ['third-party-services', 'public-internet'] },
+    authorizedTargets: [],
+    authorizedModes: ['local'],
+    approvalRules: [
+      { actionClass: 'network_call', requiredGate: 'human' },
+      { actionClass: 'credential_access', requiredGate: 'human' },
+      { actionClass: 'destructive_action', requiredGate: 'human' },
+      { actionClass: 'deployment', requiredGate: 'human' },
+      { actionClass: 'identity_write', requiredGate: 'human' },
+    ],
+    blockedActions: [],
+  };
 }
 
 export async function fetchLiveGovernance(): Promise<LiveGovernance | null> {
