@@ -35,12 +35,15 @@ export const useAuth = defineStore("auth", () => {
     });
   }
 
-  // Load the caller's tier + policy from the backend (server is source of truth).
+  // Resolve the caller's tier from the Firebase ID token's custom claims (set server-side
+  // via the Admin SDK), defaulting to "free". The cockpit auth is self-contained — it no
+  // longer calls the SourceOS-Builder /api backend (that was app-vue's, and it now expects
+  // Supabase tokens, so a Firebase token would 401). Tier only drives the topbar pill.
   const loadProfile = async () => {
-    const { whoami } = await import("../services/buildsApi");
-    const me = await whoami();
-    tier.value = me.tier || "free";
-    policy.value = me.policy || null;
+    const res = await user.value?.getIdTokenResult?.();
+    const claims = (res?.claims ?? {}) as Record<string, unknown>;
+    tier.value = (claims.tier as string) || (claims.stripeRole as string) || "free";
+    policy.value = (claims.policy as unknown) ?? null;
   };
 
   const signInGoogle = () => auth.signInWithPopup(googleProvider);

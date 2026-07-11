@@ -36,10 +36,6 @@
       ],
       "rewrites": [
         {
-          "source": "/api/**",
-          "run": { "serviceId": "builder-api", "region": "us-central1" }
-        },
-        {
           "source": "**",
           "destination": "/index.html"
         }
