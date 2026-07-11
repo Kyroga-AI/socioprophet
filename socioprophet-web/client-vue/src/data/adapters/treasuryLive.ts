@@ -28,10 +28,12 @@ function entryDate(chunk: string): string | null {
 }
 
 function parse(xml: string): Map<string, RateQuote> | null {
-  // Entries are chronological; the last two dated entries give latest + prior close.
   const chunks = xml.split('<entry').filter((c) => c.includes('NEW_DATE'));
   const dated = chunks.map((c) => ({ date: entryDate(c), c })).filter((e): e is { date: string; c: string } => !!e.date);
   if (dated.length < 1) return null;
+  // Sort ascending by real date rather than trusting the feed's document order, so
+  // latest/prior are correct even if the feed reorders or appends a placeholder.
+  dated.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
   const latest = dated[dated.length - 1];
   const prior = dated.length >= 2 ? dated[dated.length - 2] : null;
   const out = new Map<string, RateQuote>();
@@ -49,13 +51,18 @@ export async function fetchTreasuryLive(): Promise<Map<string, RateQuote> | null
   const base = 'https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value_month=';
   try {
     const now = new Date();
-    let res = await fetchT(`${base}${monthParam(now)}`, { headers: { accept: 'application/xml' } });
-    let xml = res.ok ? await res.text() : '';
-    // Early in a month (or a holiday run) the current month may be empty — fall back one month.
-    if (!xml.includes('NEW_DATE')) {
+    const fetchMonth = async (d: Date) => {
+      const res = await fetchT(`${base}${monthParam(d)}`, { headers: { accept: 'application/xml' } });
+      return res.ok ? await res.text() : '';
+    };
+    let xml = await fetchMonth(now);
+    // A day-over-day change needs TWO dated entries. Early in a month (or on the 1st business
+    // day, when the current month has a single entry) pull the previous month too so the prior
+    // close is real — parse() splits on <entry> and sorts by date, so concatenation is safe.
+    const dateCount = (s: string) => (s.match(/<d:NEW_DATE/g) ?? []).length;
+    if (dateCount(xml) < 2) {
       const prevMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
-      res = await fetchT(`${base}${monthParam(prevMonth)}`, { headers: { accept: 'application/xml' } });
-      xml = res.ok ? await res.text() : '';
+      xml = (await fetchMonth(prevMonth)) + xml;
     }
     if (!xml.includes('NEW_DATE')) return null;
     return parse(xml);

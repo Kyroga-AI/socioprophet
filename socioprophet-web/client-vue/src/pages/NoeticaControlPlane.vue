@@ -170,7 +170,7 @@
 
     <!-- Audit trail — first-class, persistent, filterable, exportable (Okta system-log pattern) -->
     <section class="cp-card cp-audit-card">
-      <div class="cp-card-h">▤ Audit <span class="cp-sub">{{ amLive ? 'live · policy-admitted reasoning runs from the agent machine' : 'governed decisions · sealed receipts · persists across reloads' }}</span>
+      <div class="cp-card-h">▤ Audit <span class="cp-sub">{{ amLive ? (streamOn ? 'live · streaming · agent-machine runs + decisions' : 'live · polling 30s · agent-machine runs') : 'governed decisions · sealed receipts · persists across reloads' }}</span>
         <div class="cp-audit-tools">
           <input v-model="auditQuery" class="cp-audit-search" placeholder="Search subject / actor…" spellcheck="false" />
           <button v-for="f in auditFilters" :key="f" class="cp-af" :class="{ on: auditFilter === f }" type="button" @click="auditFilter = f">{{ f }}</button>
@@ -253,8 +253,8 @@ import { SEATS, QUEUE, ROLE_POLICY, AUDIT, AUTONOMY_LEVELS, DECISION_REASONS, SE
 import { notationOf, type OmegaState } from '../ontology/ontogenesis';
 import { computeAlerts, isOverdue, ageMinutes, REVIEW_SLA_MIN, buildAuditEntry, loadAudit, saveAudit, auditToJsonl, simulateCap, leastPrivilege, roleUnusedSurfaces, type Alert } from '../features/controlPlane/governance';
 import LiveToggle from '../components/LiveToggle.vue';
-import { fetchLiveGovernance, buildLeastPrivilegePolicy, type LiveGovernance } from '../data/adapters/controlPlaneLive';
-import { postContainment, bindAutonomy, postGovernanceDecision, postGovernancePolicy, type GovDecision } from '../services/agentMachineApi';
+import { fetchLiveGovernance, buildLeastPrivilegePolicy, runsToAudit, runsToQueue, decisionsToAudit, type LiveGovernance } from '../data/adapters/controlPlaneLive';
+import { postContainment, bindAutonomy, postGovernanceDecision, postGovernancePolicy, AM_BASE, type GovDecision, type GovRun, type GovDecisionRecord } from '../services/agentMachineApi';
 import { useCockpit } from '../stores/cockpit';
 
 const seats = ref<Seat[]>(SEATS.map((s) => ({ ...s })));
@@ -285,7 +285,36 @@ async function goLiveAM() {
   const g = await fetchLiveGovernance();
   if (!g) { amState.value = 'error'; return; }
   gov.value = g; amState.value = 'live';
+  openGovStream();
 }
+
+// Live SSE feed of governance events — updates the audit/queue the instant the machine emits
+// a run or decision, instead of waiting for the 30s poll. Falls back silently to the poll if
+// the stream endpoint is absent (older machine) or errors. EventSource honours the machine's
+// CORS header. streamOn reflects whether we're actually tailing (for the badge).
+let govStream: EventSource | null = null;
+const streamOn = ref(false);
+function onGovRun(run: GovRun) {
+  if (!gov.value || !run?.run_id) return;
+  gov.value = { ...gov.value, runs: [run, ...gov.value.runs].slice(0, 100), audit: [...runsToAudit([run]), ...gov.value.audit], queue: [...runsToQueue([run]), ...gov.value.queue] };
+}
+function onGovDecision(rec: GovDecisionRecord) {
+  if (!gov.value || !rec?.run_id) return;
+  liveDismissed.value = new Set(liveDismissed.value).add(rec.run_id); // the decided run leaves the queue
+  gov.value = { ...gov.value, audit: [...decisionsToAudit([rec]), ...gov.value.audit] };
+}
+function openGovStream() {
+  closeGovStream();
+  if (typeof EventSource === 'undefined') return;
+  try {
+    govStream = new EventSource(`${AM_BASE}/api/governance/stream`);
+    govStream.addEventListener('ready', () => { streamOn.value = true; });
+    govStream.addEventListener('run', (e) => { try { onGovRun(JSON.parse((e as MessageEvent).data)); } catch { /* skip bad frame */ } });
+    govStream.addEventListener('decision', (e) => { try { onGovDecision(JSON.parse((e as MessageEvent).data)); } catch { /* skip bad frame */ } });
+    govStream.onerror = () => { streamOn.value = false; }; // poll remains the fallback
+  } catch { govStream = null; }
+}
+function closeGovStream() { if (govStream) { govStream.close(); govStream = null; } streamOn.value = false; }
 // When connected, real machine alerts lead; the org-roster demo alerts follow.
 const alerts = computed<Alert[]>(() => amLive.value ? [...gov.value!.alerts, ...fixtureAlerts.value] : fixtureAlerts.value);
 
@@ -384,8 +413,9 @@ const someSelected = computed(() => selected.value.size > 0);
 function toggle(id: string) { const n = new Set(selected.value); n.has(id) ? n.delete(id) : n.add(id); selected.value = n; }
 function toggleAll() { selected.value = allSelected.value ? new Set() : new Set(displayQueue.value.map((q) => q.id)); }
 
-// Undo support — keep the removed item so a decision can be reversed.
-const undoStack = ref<Array<{ entryId: string; item: QueueItem; bumped: boolean; live: boolean }>>([]);
+// Undo support — fixture decisions only (live decisions are server-durable; undo can't
+// rescind a recorded machine decision, so we don't pretend to).
+const undoStack = ref<Array<{ entryId: string; item: QueueItem; bumped: boolean }>>([]);
 
 async function decide(q: QueueItem, decision: AuditDecision, reason?: string) {
   const live = amLive.value;
@@ -394,14 +424,23 @@ async function decide(q: QueueItem, decision: AuditDecision, reason?: string) {
   saveAudit(audit.value);
   if (selected.value.has(q.id)) { const n = new Set(selected.value); n.delete(q.id); selected.value = n; }
   const bumped = decision === 'admitted' || decision === 'executed';
-  if (bumped && !live) admittedToday.value += 1;
-  undoStack.value.push({ entryId: entry.id, item: q, bumped, live });
   if (live) {
     liveDismissed.value = new Set(liveDismissed.value).add(q.id);
-    // Write the human decision back to the machine (fail-closed if the endpoint is absent).
-    try { await postGovernanceDecision(q.id, (decision === 'executed' ? 'admitted' : decision) as GovDecision, reason || undefined); } catch { /* older machine — local record only */ }
+    try {
+      await postGovernanceDecision(q.id, (decision === 'executed' ? 'admitted' : decision) as GovDecision, reason || undefined);
+      // Recorded server-side — drop our local echo (avoids a duplicate) and refetch so the
+      // machine's receipt-bearing entry shows.
+      audit.value = audit.value.filter((a) => a.id !== entry.id);
+      saveAudit(audit.value);
+      const g = await fetchLiveGovernance(); if (g && amState.value === 'live') gov.value = g;
+    } catch {
+      // Older machine without the endpoint: keep the local 'operator' entry as the ONLY record
+      // (baseAudit surfaces operator entries), so the decision is never silently lost.
+    }
   } else {
+    if (bumped) admittedToday.value += 1;
     queue.value = queue.value.filter((x) => x.id !== q.id);
+    undoStack.value.push({ entryId: entry.id, item: q, bumped });
   }
 }
 async function bulkDecide(decision: AuditDecision) {
@@ -414,8 +453,8 @@ function undo() {
   if (!last) return;
   audit.value = audit.value.filter((a) => a.id !== last.entryId);
   saveAudit(audit.value);
-  if (last.live) { const n = new Set(liveDismissed.value); n.delete(last.item.id); liveDismissed.value = n; }
-  else { queue.value = [last.item, ...queue.value].sort((a, b) => Date.parse(b.receivedAt) - Date.parse(a.receivedAt)); if (last.bumped) admittedToday.value = Math.max(0, admittedToday.value - 1); }
+  queue.value = [last.item, ...queue.value].sort((a, b) => Date.parse(b.receivedAt) - Date.parse(a.receivedAt));
+  if (last.bumped) admittedToday.value = Math.max(0, admittedToday.value - 1);
 }
 
 // ── Audit filter / search / export ────────────────────────────────────────────
@@ -424,7 +463,7 @@ const auditFilter = ref<(typeof auditFilters)[number]>('all');
 const auditQuery = ref('');
 // When live, the audit trail IS the machine's real policy-admitted reasoning runs, with
 // any in-session human decisions ('you') kept on top; otherwise the fixture/human trail.
-const baseAudit = computed(() => amLive.value ? [...audit.value.filter((a) => a.actor === 'you'), ...gov.value!.audit] : audit.value);
+const baseAudit = computed(() => amLive.value ? [...audit.value.filter((a) => a.actor === 'you' || a.actor === 'operator'), ...gov.value!.audit] : audit.value);
 const filteredAudit = computed(() => {
   const q = auditQuery.value.trim().toLowerCase();
   return baseAudit.value.filter((a) => {
@@ -458,11 +497,13 @@ onMounted(() => {
   // audit/queue update without a reload (there is no governance SSE, so this polls).
   clock = setInterval(async () => {
     nowMs.value = Date.now();
-    if (amLive.value) { const g = await fetchLiveGovernance(); if (g && amState.value === 'live') gov.value = g; }
+    // Skip the reconcile poll while a write is in flight — otherwise a poll that started before
+    // the write can resolve after it and clobber gov.value with pre-write state.
+    if (amLive.value && !amBusy.value) { const g = await fetchLiveGovernance(); if (g && amState.value === 'live') gov.value = g; }
   }, 30000);
   useCockpit().setContext({ surface: 'Control Plane', entityLabel: 'Organization · Noetica governance', detail: `${queue.value.length} in review · ${alerts.value.length} alerts`, route: '/control-plane/org' });
 });
-onUnmounted(() => { if (clock) clearInterval(clock); });
+onUnmounted(() => { if (clock) clearInterval(clock); closeGovStream(); });
 </script>
 
 <style scoped>

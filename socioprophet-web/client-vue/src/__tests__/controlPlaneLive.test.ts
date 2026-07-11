@@ -38,6 +38,17 @@ describe('held runs → review queue', () => {
   });
 });
 
+describe('malformed records degrade gracefully (no whole-view crash)', () => {
+  it('skips a run/decision missing run_id instead of throwing', () => {
+    const bad = [{ ...RUNS[0], run_id: undefined as unknown as string }, RUNS[1]];
+    expect(() => runsToAudit(bad)).not.toThrow();
+    expect(() => runsToQueue(bad)).not.toThrow();
+    expect(runsToAudit(bad)).toHaveLength(0);  // RUNS[0] (admitted) had its id stripped → skipped
+    expect(runsToQueue(bad)).toHaveLength(1);  // RUNS[1] (held) still maps
+    expect(() => decisionsToAudit([{ decision_id: 'd', run_id: undefined as unknown as string, decision: 'admitted', actor: 'x', timestamp: 't', receipt: 'r' }])).not.toThrow();
+  });
+});
+
 describe('human decisions → audit trail', () => {
   it('maps recorded operator decisions with their sealed receipt', () => {
     const a = decisionsToAudit([{ decision_id: 'd1', run_id: 'ab12cd34ffff', decision: 'rejected', reason: 'unsourced', actor: 'operator', timestamp: '2026-07-09T12:00:00Z', receipt: 'sha256:decision:ab' }]);

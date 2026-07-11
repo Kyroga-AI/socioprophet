@@ -38,6 +38,14 @@ describe('treasury par yield parsing', () => {
   it('returns null for empty/dataless XML (fails closed)', () => {
     expect(_parseTreasuryXml('<feed></feed>')).toBeNull();
   });
+
+  it('takes latest/prior by real date, not document order (feed reordering is safe)', () => {
+    // Same two entries, emitted newest-first — must still pick 07-08 as latest.
+    const reordered = XML.split('<entry').filter((c) => c.includes('NEW_DATE')).reverse().map((c) => '<entry' + c).join('');
+    const q = _parseTreasuryXml('<feed>' + reordered + '</feed>')!;
+    expect(q.get('US10Y')!.asOf).toBe('2026-07-08');
+    expect(q.get('US10Y')!.changePct).toBe(0.22); // still (4.56-4.55)/4.55, not inverted
+  });
 });
 
 describe('fetchTreasuryLive', () => {

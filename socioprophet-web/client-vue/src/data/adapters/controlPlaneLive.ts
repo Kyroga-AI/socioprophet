@@ -30,8 +30,10 @@ function omegaOfRun(r: GovRun): OmegaState {
 const subjectOfRun = (r: GovRun) => `${r.task ?? 'run'} · ${r.output_tokens ?? 0} tok · ${r.tokens_egressed ?? 0} egressed`;
 
 // Decided (policy-admitted) runs → audit rows. Held runs go to the queue instead.
+// Guard run_id: one malformed record must degrade to skipping that row, not throw and drop
+// the entire live view to fixture (.slice on a missing id would).
 export function runsToAudit(runs: GovRun[]): AuditEntry[] {
-  return runs.filter((r) => r.policy_admitted).map((r) => ({
+  return runs.filter((r) => r.policy_admitted && typeof r.run_id === 'string' && r.run_id).map((r) => ({
     id: `run-${r.run_id}`,
     at: r.timestamp,
     actor: `${r.provider}/${r.model_routed}`,
@@ -45,7 +47,7 @@ export function runsToAudit(runs: GovRun[]): AuditEntry[] {
 // HELD runs (the policy did NOT auto-admit) → the human review queue. When the machine's
 // policy admits everything, this is correctly empty (an honest 'queue clear').
 export function runsToQueue(runs: GovRun[]): QueueItem[] {
-  return runs.filter((r) => !r.policy_admitted).map((r) => ({
+  return runs.filter((r) => !r.policy_admitted && typeof r.run_id === 'string' && r.run_id).map((r) => ({
     id: r.run_id,
     kind: (r.task === 'canon' ? 'canon-edit' : 'action') as QueueKind,
     summary: `${r.task ?? 'run'} · ${r.model_routed} held by policy (${r.output_tokens ?? 0} tok, ${r.tokens_egressed ?? 0} egressed)`,
@@ -61,7 +63,7 @@ export function runsToQueue(runs: GovRun[]): QueueItem[] {
 
 // Human decisions recorded on the machine → audit rows (so operator Admit/Reject persists).
 export function decisionsToAudit(decisions: GovDecisionRecord[]): AuditEntry[] {
-  return decisions.map((d) => ({
+  return decisions.filter((d) => typeof d.decision_id === 'string' && typeof d.run_id === 'string' && d.run_id).map((d) => ({
     id: `dec-${d.decision_id}`,
     at: d.timestamp,
     actor: d.actor,
