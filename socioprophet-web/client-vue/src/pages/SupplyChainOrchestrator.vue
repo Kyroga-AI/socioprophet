@@ -3,11 +3,32 @@
     <SurfaceHeader title="Supply-Chain Orchestrator" eyebrow="Marketplace · organize a chain">
       <template #badge><span class="sco-goal">{{ sc.goal }}</span></template>
       <template #actions>
+        <LiveToggle :state="riskLive" label="Live risk" live-text="disruption radar" title="Join real disruption events to your chain by geography — USGS earthquakes (global, M4.5+) and NWS severe-weather alerts (US) — no key. Flags which provider nodes are exposed right now." @click="goLiveRisk" />
         <button class="sco-btn primary" type="button" @click="sc.autoRecommend()">✦ Auto-compose</button>
         <button class="sco-btn ask" type="button" @click="askNoetica">◇ Recommend</button>
         <button class="sco-btn" type="button" @click="sc.reset()">Reset</button>
       </template>
     </SurfaceHeader>
+
+    <!-- Live disruption radar — real events joined to chain nodes -->
+    <div v-if="riskLive === 'live'" class="sco-radar" :class="{ clear: !disruptions.length }">
+      <div class="sco-radar-h">
+        <span class="sco-radar-t">● Live disruption radar</span>
+        <span class="sco-radar-sub">{{ quakeCount }} quakes M4.5+ · {{ alertCount }} US severe alert{{ alertCount === 1 ? '' : 's' }} · <b>{{ disruptions.length }}</b> node{{ disruptions.length === 1 ? '' : 's' }} exposed</span>
+      </div>
+      <p v-if="!disruptions.length" class="sco-radar-clear">No provider nodes within reach of an active earthquake or severe-weather alert right now.</p>
+      <ul v-else class="sco-radar-list">
+        <li v-for="e in disruptions" :key="e.provider.id" class="sco-radar-row" :class="e.severity">
+          <span class="sco-radar-sev">{{ e.severity === 'high' ? '⚠' : '▲' }}</span>
+          <span class="sco-radar-node">{{ e.provider.name }}<span class="sco-radar-place">{{ e.provider.geo.place }}</span><span v-if="inChain(e.provider.id)" class="sco-radar-chain" title="In your composed chain">in chain</span></span>
+          <span class="sco-radar-evt">
+            <template v-if="e.alert"><b>{{ e.alert.event }}</b> · {{ e.alert.severity }}</template>
+            <template v-else-if="e.quake"><b>M{{ e.quake.quake.mag }}</b> quake {{ e.quake.km }}km · {{ e.quake.quake.place }}</template>
+          </span>
+        </li>
+      </ul>
+    </div>
+    <p v-else-if="riskLive === 'error'" class="sco-radar-err">Disruption feeds unreachable — showing the deterministic risk score only.</p>
 
     <!-- Summary -->
     <div class="sco-summary">
@@ -77,13 +98,44 @@ import SurfaceHeader from '../components/SurfaceHeader.vue';
 import ProvenanceBadge from '../components/ProvenanceBadge.vue';
 import CrossLinks from '../components/CrossLinks.vue';
 import ReputationBadge from '../components/ReputationBadge.vue';
+import { ref } from 'vue';
+import LiveToggle from '../components/LiveToggle.vue';
 import { prov } from '../features/provenance/types';
-import { STAGES, providersForStage, type Stage } from '../data/providersFixture';
+import { STAGES, PROVIDERS, providersForStage, type Stage } from '../data/providersFixture';
 import { scoreProvider, useSupplyChain } from '../stores/supplyChain';
 import { useCockpit } from '../stores/cockpit';
+import { fetchSignificantQuakes } from '../data/adapters/quakesLive';
+import { fetchActiveAlerts, type WxAlert } from '../data/adapters/nwsAlertsLive';
+import { computeDisruptions, isUsProvider, type ProviderExposure } from '../features/supplyChain/disruption';
 
 const sc = useSupplyChain();
 const cockpit = useCockpit();
+
+// Live disruption radar — real USGS quakes (global) + NWS severe-weather alerts (US) joined to
+// provider geography, so the analyst sees which chain nodes are exposed RIGHT NOW (the Everstream
+// / project44 move, bound to the governed chain). No key; fails closed to the fixture risk score.
+const riskLive = ref<'idle' | 'loading' | 'live' | 'error'>('idle');
+const disruptions = ref<ProviderExposure[]>([]);
+const quakeCount = ref(0);
+const alertCount = ref(0);
+const inChain = (id: string) => sc.chosen.some((p) => p.id === id);
+async function goLiveRisk() {
+  if (riskLive.value === 'loading') return;
+  riskLive.value = 'loading';
+  const quakes = await fetchSignificantQuakes();
+  // NWS point API is US-only — query it just for US providers, in parallel, each fail-closed.
+  const usProviders = PROVIDERS.filter(isUsProvider);
+  const resolved = await Promise.all(usProviders.map(async (p) => {
+    try { return { id: p.id, alerts: await fetchActiveAlerts(p.geo.lat, p.geo.lon, 1) }; } catch { return { id: p.id, alerts: null }; }
+  }));
+  const alertsByProvider: Record<string, WxAlert> = {};
+  for (const r of resolved) if (r.alerts && r.alerts.length) alertsByProvider[r.id] = r.alerts[0];
+  if (quakes === null && Object.keys(alertsByProvider).length === 0) { riskLive.value = 'error'; return; }
+  disruptions.value = computeDisruptions(PROVIDERS, quakes ?? [], alertsByProvider);
+  quakeCount.value = quakes?.length ?? 0;
+  alertCount.value = Object.keys(alertsByProvider).length;
+  riskLive.value = 'live';
+}
 const money = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: n >= 1000 ? 'compact' : 'standard', maximumFractionDigits: n >= 1000 ? 1 : 0 }).format(n);
 const sel = (s: Stage) => sc.selectedProviders.find((x) => x.stage.id === s)?.provider;
 const recId = (s: Stage) => [...providersForStage(s)].sort((a, b) => scoreProvider(b) - scoreProvider(a))[0]?.id;
@@ -117,6 +169,20 @@ onMounted(() => cockpit.setContext({ surface: 'Supply-Chain Orchestrator', entit
 .sco-btn.primary { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .sco-btn.ask { border-color: rgba(120, 160, 255, 0.45); background: rgba(120, 160, 255, 0.08); color: #93b4ff; }
 .sco-summary { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; border: 1px solid var(--line-2); border-radius: 12px; padding: 0.6rem 0.85rem; background: var(--surface); }
+.sco-radar { border: 1px solid rgba(240,101,106,0.35); border-radius: 12px; padding: 0.6rem 0.85rem; background: rgba(240,101,106,0.04); }
+.sco-radar.clear { border-color: rgba(75,191,115,0.35); background: rgba(75,191,115,0.04); }
+.sco-radar-h { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+.sco-radar-t { font-size: 0.82rem; font-weight: 640; color: var(--down); } .sco-radar.clear .sco-radar-t { color: var(--up, #4bbf73); }
+.sco-radar-sub { font-size: 0.68rem; color: var(--text-3); } .sco-radar-sub b { color: var(--text); font-variant-numeric: tabular-nums; }
+.sco-radar-clear { margin: 0.3rem 0 0; font-size: 0.76rem; color: var(--text-3); }
+.sco-radar-list { list-style: none; margin: 0.45rem 0 0; padding: 0; display: grid; gap: 0.3rem; }
+.sco-radar-row { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.76rem; }
+.sco-radar-sev { flex: 0 0 auto; } .sco-radar-row.high .sco-radar-sev { color: var(--down); } .sco-radar-row.medium .sco-radar-sev { color: var(--amber, #e3b341); }
+.sco-radar-node { flex: 0 0 auto; min-width: 12rem; font-weight: 560; color: var(--text); }
+.sco-radar-place { margin-left: 0.4rem; font-size: 0.64rem; font-weight: 400; color: var(--text-3); }
+.sco-radar-chain { margin-left: 0.4rem; font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 0.02rem 0.28rem; }
+.sco-radar-evt { color: var(--text-2); } .sco-radar-evt b { color: var(--text); font-variant-numeric: tabular-nums; }
+.sco-radar-err { margin: 0; font-size: 0.76rem; color: var(--amber, #e3b341); border: 1px solid rgba(227,179,65,0.3); border-radius: 8px; padding: 0.5rem 0.7rem; background: rgba(227,179,65,0.05); }
 .sco-stat { display: flex; flex-direction: column; gap: 0.05rem; min-width: 6rem; } .sco-stat.warn { color: var(--down); }
 .sco-stat span { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); }
 .sco-stat b { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
