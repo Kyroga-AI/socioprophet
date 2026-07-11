@@ -28,7 +28,7 @@
     },
     {
       "target": "app",
-      "public": "socioprophet-web/app-vue/dist",
+      "public": "socioprophet-web/client-vue/dist",
       "ignore": [
         "firebase.json",
         "**/.*",

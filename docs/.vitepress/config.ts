@@ -1,6 +1,9 @@
 import { defineConfig } from "vitepress";
 
 const base = process.env.DOCS_BASE || "/documentation/";
+// The cockpit SPA (socioprophet-web/client-vue) served on the Firebase `app` target.
+// Override per env at docs-build time (e.g. dev: https://socioprophet-builder-dev.web.app).
+const appUrl = process.env.APP_URL || "https://app.socioprophet.com";
 
 export default defineConfig({
   head: [
@@ -26,6 +29,7 @@ export default defineConfig({
       { text: "Legal Entities", link: "/guide/legal-entity-reference-fabric" },
       { text: "Academy", link: "/guide/academy-policy-index" },
       { text: "Products", link: "/guide/products/overview" },
+      { text: "Launch Cockpit ↗", link: appUrl },
     ],
     sidebar: {
       "/guide/": [
