@@ -74,7 +74,7 @@ export function Solutions() {
               Vertical solution briefs
             </h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 mb-10">
             {SOLUTIONS.map((solution) => {
               const Icon = solution.icon;
               return (
@@ -100,6 +100,13 @@ export function Solutions() {
                 </Link>
               );
             })}
+          </div>
+          <div className="border-l-2 border-primary bg-primary/5 p-8">
+            <p className="text-lg text-white leading-relaxed">
+              Beyond these verticals, we deploy with public sector and sovereign systems —
+              readiness, resilience, and public-service operations inside a governed defensive
+              perimeter, under explicit human oversight.
+            </p>
           </div>
         </div>
       </section>

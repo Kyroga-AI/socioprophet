@@ -105,7 +105,8 @@ export function Evidence() {
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Every result will ship with its methodology so your own technical team can reproduce
-              it. That is the difference between marketing and evidence.
+              it. Outputs are proof artifacts — evidence-bearing by construction, with provenance
+              and reversibility built in. That is the difference between marketing and evidence.
             </p>
           </div>
         </div>
@@ -121,8 +122,9 @@ export function Evidence() {
               </div>
               <h3 className="text-2xl font-bold text-white mb-3">Architecture whitepaper</h3>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                A technical deep-dive into the control plane, the evidence fabric, and the
-                cryptographic signing model — written for CIOs, CDOs, and security architects.
+                A technical deep-dive into the control plane, the evidence fabric, the boundary
+                model, and the cryptographic signing model — written for CIOs, CDOs, and security
+                architects.
               </p>
               <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted-foreground border border-border px-3 py-2">
                 Available on request under NDA

@@ -23,6 +23,8 @@ const NON_NEGOTIABLES = [
   "Every decision is evidenced and replayable.",
   "You can export everything you build, at any time.",
   "We never train on your data.",
+  "Human oversight bounds every control loop.",
+  "High-risk actions require approval — never silent execution.",
 ];
 
 export function Company() {
@@ -53,6 +55,11 @@ export function Company() {
                   indicators.
                 </p>
                 <p>We believe true governance must be baked into the architecture itself.</p>
+                <p>
+                  That is why the platform is deterministic and bounded by design: mathematically
+                  bounded safety, proof-bearing workflows, explicit reversibility, and human
+                  oversight on every control loop. Not ambient autonomy — governed operations.
+                </p>
                 <p>
                   By deploying a sovereign control plane entirely within the enterprise perimeter, and
                   cryptographically signing every retrieval and inference step, we give risk

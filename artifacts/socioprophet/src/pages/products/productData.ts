@@ -83,7 +83,7 @@ export const PRODUCTS: Product[] = [
     tagline: "The knowledge infrastructure that learns your organisation",
     icon: Database,
     intro:
-      "Hellagraph builds the structured knowledge graph of your domain — your ontology, your terminology, your decision history. It transforms unstructured silos into a deeply connected, AI-readable brain that is yours alone.",
+      "Hellagraph builds the structured knowledge graph of your domain — your ontology, your terminology, your decision history. It transforms unstructured silos into a deeply connected, AI-readable brain that is yours alone. Entity resolution is governed end to end: safe linkage, policy-constrained merges, and proof artifacts that show exactly what did — and did not — leak across contexts.",
     capabilities: [
       {
         title: "22-dimension domain model",
@@ -102,6 +102,10 @@ export const PRODUCTS: Product[] = [
         body: "Automatically infers relationships between disparate internal documents.",
       },
       {
+        title: "Policy-constrained merging",
+        body: "Entity merges are governed decisions — policy can veto even high-confidence links, and every merge is reversible with a full unmerge path.",
+      },
+      {
         title: "Access segregation",
         body: "Information barriers enforced at the graph layer, not just the interface.",
       },
@@ -112,7 +116,7 @@ export const PRODUCTS: Product[] = [
     ],
     highlights: [
       "It's your brain. You built it. You own it.",
-      "Graph-grounded retrieval, benchmarked in the open",
+      "Safe linkage: resolve carefully, merge cautiously, prove what did not leak",
       "Export the entire graph at any time, in standard formats",
     ],
     comparisonTitle: "Hellagraph vs. vector databases & Neo4j",
@@ -142,7 +146,7 @@ export const PRODUCTS: Product[] = [
       },
       {
         title: "Agent orchestration",
-        body: "Build, test, and deploy multi-agent workflows for complex reasoning tasks.",
+        body: "Role-bounded agent workflows with capability routing and audit-friendly operator state — high-risk actions require approval, never silent execution.",
       },
       {
         title: "Brain-build managed service",

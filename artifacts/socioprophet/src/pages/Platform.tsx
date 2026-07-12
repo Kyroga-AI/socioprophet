@@ -21,11 +21,11 @@ const COMPONENTS = [
   {
     icon: Network,
     name: "Cybernetic Control Plane",
-    body: "The routing and orchestration layer that connects your data, your people, and the model choir securely. It enforces policy, manages context, and guarantees data never leaks across tenant boundaries or onto the public internet.",
+    body: "The routing and orchestration layer that connects your data, your people, and the model choir securely. Agents run as role-bounded executors inside explicit control loops, with policy enforced on every request. High-risk actions surface as approval-required or blocked — never as silent execution.",
     points: [
-      "Strict role-based access control (RBAC)",
-      "Policy enforcement on every request",
-      "Vector routing and semantic cache handling",
+      "Role-bounded agent execution with capability routing",
+      "Policy enforcement and human oversight on every control loop",
+      "Audit-friendly operator state — nothing executes silently",
     ],
   },
   {
@@ -41,21 +41,21 @@ const COMPONENTS = [
   {
     icon: Database,
     name: "Hellagraph Knowledge Layer",
-    body: "A 22-dimension hypergraph — not a flat vector database — that structures your institutional knowledge into a connected, AI-readable brain. Retrieval is grounded in real relationships, with access barriers enforced at the graph layer.",
+    body: "A 22-dimension hypergraph — not a flat vector database — that structures your institutional knowledge into a connected, AI-readable brain. Retrieval is grounded in real relationships, entity linkage is policy-constrained, and access barriers are enforced at the graph layer.",
     points: [
       "22-dimension domain model, not flat vectors",
-      "Graph-layer access segregation",
+      "Governed entity graph with policy-constrained, reversible merges",
       "Full export in standard formats — no lock-in",
     ],
   },
   {
     icon: Activity,
     name: "Evidence Fabric",
-    body: "Every interaction, retrieval, and inference is cryptographically signed and logged. The architecture itself is the evidence — uncertainty is carried to the decision, not collapsed into a traffic light.",
+    body: "Every interaction, retrieval, and inference is cryptographically signed and logged as a proof artifact. The architecture itself is the evidence — provenance, promotion, and reversibility are explicit, and uncertainty is carried to the decision, not collapsed into a traffic light.",
     points: [
       "Cryptographic signatures on all agent actions",
-      "Full provenance from source document to output",
-      "Replayable decision contexts for risk committees",
+      "Proof artifacts with full provenance from source to output",
+      "Replayable, reversible decision contexts for risk committees",
     ],
   },
 ];
@@ -101,6 +101,16 @@ const SECURITY = [
     icon: Fingerprint,
     title: "Identity & access",
     body: "RBAC and information barriers enforced from the control plane down to the knowledge graph.",
+  },
+  {
+    icon: Network,
+    title: "Boundary-first model",
+    body: "A clear public-versus-restricted security boundary. What is exposed and what is protected is explicit by design, never ambient.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Authorized cyberdefense",
+    body: "Defense-first validation with purple-team learning loops — the platform is hardened under authorization, and every defensive exercise produces evidence.",
   },
 ];
 

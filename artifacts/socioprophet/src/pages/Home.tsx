@@ -35,7 +35,7 @@ const PILLARS = [
   {
     icon: ShieldCheck,
     title: "Governance by architecture",
-    body: "Not a dashboard bolted on top. Every model call and agent action is cryptographically signed, evidenced, and replayable — with uncertainty carried, with full provenance, to the decision.",
+    body: "Not a dashboard bolted on top. Human oversight bounds every control loop, and every model call and agent action is cryptographically signed, evidenced, and replayable — with uncertainty carried, with full provenance, to the decision.",
   },
   {
     icon: Network,
@@ -158,7 +158,7 @@ export function Home() {
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono font-medium uppercase tracking-wider mb-8 fade-in-up">
               <ShieldCheck className="w-4 h-4" />
-              <span>Sovereign Enterprise Infrastructure</span>
+              <span>Deterministic AI &bull; Governed Operations &bull; Boundary-First</span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-8 leading-[1.1] fade-in-up delay-100">
@@ -279,6 +279,14 @@ export function Home() {
                 <p className="text-muted-foreground text-sm leading-relaxed">{pillar.body}</p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-8 border-l-2 border-primary bg-primary/5 p-8">
+            <p className="text-lg md:text-xl text-white leading-relaxed">
+              SocioProphet is not an ambient-autonomy system. It is a governed operational
+              intelligence stack with mathematically bounded safety, proof-bearing workflows,
+              explicit reversibility, and a clear public-versus-restricted security boundary.
+            </p>
           </div>
         </div>
       </section>
