@@ -157,7 +157,7 @@ export function Education() {
                 <BookOpen className="w-4 h-4" />
                 <span>Education</span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
+              <h1 className="text-3xl min-[375px]:text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
                 Your AI. Your data.<br />
                 <span className="text-primary">Your rules.</span>
               </h1>
@@ -175,21 +175,21 @@ export function Education() {
                     <Link
                       key={p.title}
                       href={p.href}
-                      className="group flex flex-col gap-2 p-5 bg-card hover:bg-primary/5 border-b border-border last:border-0 transition-colors"
+                      className="group flex flex-col gap-2 p-4 min-[375px]:p-5 bg-card hover:bg-primary/5 border-b border-border last:border-0 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <Icon className="w-4 h-4 text-primary shrink-0" />
-                        <span className="font-bold text-white text-sm">{p.title}</span>
+                        <span className="font-bold text-white text-sm leading-snug">{p.title}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed pl-7">{p.body}</p>
-                      <span className="pl-7 font-mono text-xs text-primary group-hover:text-white transition-colors">
+                      <p className="text-xs text-muted-foreground leading-relaxed pl-6 min-[375px]:pl-7">{p.body}</p>
+                      <span className="pl-6 min-[375px]:pl-7 font-mono text-xs text-primary group-hover:text-white transition-colors">
                         {p.cta}
                       </span>
                     </Link>
                   );
                 })}
               </div>
-              <div className="mt-6 p-5 border border-primary/20 bg-primary/5">
+              <div className="mt-6 p-4 min-[375px]:p-5 border border-primary/20 bg-primary/5">
                 <p className="font-mono text-xs uppercase tracking-widest text-primary mb-3">Read now</p>
                 <div className="flex flex-wrap gap-2">
                   {[
@@ -211,10 +211,10 @@ export function Education() {
 
             {/* Left-bottom: body copy + tags — order-3 on mobile (after pathway panel), col 1-2 row 2 on md+ */}
             <div className="order-3 md:col-span-2 md:col-start-1 md:row-start-2 pb-16 md:pb-24">
-              <p className="text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl">
+              <p className="text-base min-[375px]:text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl">
                 Noetica is the entry point for everyone — individuals, families, teams, and regulated enterprises. A local-first AI workspace that runs on your own device, keeps your data off third-party servers, and builds a knowledge graph that compounds over time.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-10 max-w-2xl">
+              <p className="text-sm min-[375px]:text-lg text-muted-foreground leading-relaxed mb-10 max-w-2xl">
                 ~85MB install. Bring your existing API keys for{" "}
                 <TermTooltip term="model-choir">the frontier models you already use</TermTooltip>.
                 Works offline. Full{" "}
