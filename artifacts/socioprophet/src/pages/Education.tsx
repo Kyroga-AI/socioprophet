@@ -21,7 +21,7 @@ const PATHWAYS = [
   {
     icon: Users,
     title: "Individuals & Families",
-    body: "Own your AI. Keep every conversation, document, and insight on your own device — building a personal knowledge graph that compounds over time, without training anyone else's model.",
+    body: "Own your AI. Keep every conversation, document, and insight on your own device — building a personal knowledge graph that compounds over time, without contributing to anyone else's training data.",
     cta: "Start with Noetica →",
     href: "/contact",
   },
@@ -60,7 +60,7 @@ const WHY_SOVEREIGN = [
   {
     icon: ArrowRight,
     title: "Bring your history with you",
-    body: "Exodus migration tooling lets you bring your existing Claude and ChatGPT conversations, prompts, and workflows across — without lock-in or rework. Start governed from day one, without starting from scratch.",
+    body: "Exodus migration tooling lets you bring your existing AI conversations, prompts, and workflows across — without lock-in or rework. Start governed from day one, without starting from scratch.",
   },
 ];
 
@@ -73,7 +73,7 @@ const HOW_NOETICA_WORKS = [
   {
     icon: Zap,
     title: "Bring your own API keys",
-    body: "Noetica integrates Claude, GPT, Gemini, Llama, Mistral, and Perplexity out of the box. Use the models you already pay for, under the same governance and evidence controls. No new subscriptions required.",
+    body: "Noetica integrates the frontier models you already pay for — open-weight and hosted alike — under the same governance and evidence controls. No new subscriptions required.",
   },
   {
     icon: Fingerprint,
@@ -119,7 +119,7 @@ const GET_STARTED = [
     icon: Users,
     audience: "For individuals",
     title: "Download Noetica",
-    body: "A local-first AI workspace that runs on your own device. Start with your existing API keys for Claude, GPT, Gemini or others. Your data stays yours.",
+    body: "A local-first AI workspace that runs on your own device. Use your existing API keys for frontier models you already pay for. Your data stays yours.",
     cta: "Join the interest list",
     href: "/contact",
     highlight: true,
@@ -166,7 +166,7 @@ export function Education() {
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-10 max-w-2xl">
                 ~85MB install. Bring your existing API keys for{" "}
-                <TermTooltip term="model-choir">Claude, GPT, Gemini, and more</TermTooltip>.
+                <TermTooltip term="model-choir">the frontier models you already use</TermTooltip>.
                 Works offline. Full{" "}
                 <TermTooltip term="evidence-fabric">evidence record</TermTooltip>{" "}
                 on every interaction. No lock-in.
@@ -233,7 +233,7 @@ export function Education() {
       </section>
 
       {/* Pillar 1: Why sovereign AI matters */}
-      <section className="py-24">
+      <section id="why-sovereign" className="py-24">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-16">
             <span className="font-mono text-primary text-sm uppercase tracking-widest">
@@ -269,7 +269,7 @@ export function Education() {
       </section>
 
       {/* Pillar 2: How Noetica works */}
-      <section className="py-24 bg-card border-y border-border">
+      <section id="how-noetica" className="py-24 bg-card border-y border-border">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-16">
             <span className="font-mono text-primary text-sm uppercase tracking-widest">
@@ -279,7 +279,7 @@ export function Education() {
               Noetica: governed AI, on your device
             </h2>
             <p className="text-lg text-muted-foreground mt-6 leading-relaxed">
-              As good as ChatGPT — and you can hand it to a regulator. Here is what makes that possible.
+              Full frontier AI capability — research, analysis, writing, reasoning — with a complete evidence record on every interaction. Here is what makes that possible.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 gap-8">
