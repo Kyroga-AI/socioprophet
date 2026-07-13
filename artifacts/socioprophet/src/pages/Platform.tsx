@@ -19,6 +19,26 @@ import { CTASection } from "@/components/sections/CTASection";
 
 const COMPONENTS = [
   {
+    icon: Activity,
+    name: "Evidence Fabric",
+    body: "The headline claim — and the moat. Cryptographically signed, replayable provenance at every agent action. Not logs. Not dashboards. Full proof. No wrapper or dashboard competitor can fake this without rebuilding at the architecture level, because the architecture itself is the evidence — provenance, promotion, and reversibility are explicit, and uncertainty is carried to the decision, not collapsed into a traffic light.",
+    points: [
+      "Cryptographic signatures on all agent actions",
+      "Proof artifacts with full provenance from source to output",
+      "Replayable, reversible decision contexts for risk committees",
+    ],
+  },
+  {
+    icon: Fingerprint,
+    name: "Neurosymbolic Harness",
+    body: "Every output is tagged with how it was produced — stated, retrieved, inferred, or deduced — creating an auditable epistemic chain regulators can actually examine. Your risk committee doesn't just see the answer; it sees the reasoning mode that produced it.",
+    points: [
+      "Four reasoning modes: stated, retrieved, inferred, deduced",
+      "An auditable epistemic chain on every output",
+      "Uncertainty as a first-class primitive, never a traffic light",
+    ],
+  },
+  {
     icon: Network,
     name: "Cybernetic Control Plane",
     body: "The routing and orchestration layer that connects your data, your people, and the model choir securely. Agents run as role-bounded executors inside explicit control loops, with policy enforced on every request. High-risk actions surface as approval-required or blocked — never as silent execution.",
@@ -45,17 +65,8 @@ const COMPONENTS = [
     points: [
       "22-dimension domain model, not flat vectors",
       "Governed entity graph with policy-constrained, reversible merges",
+      "Dialogue-flow-first: non-generative tasks execute in milliseconds via the graph — LLM generation is the last resort",
       "Full export in standard formats — no lock-in",
-    ],
-  },
-  {
-    icon: Activity,
-    name: "Evidence Fabric",
-    body: "Every interaction, retrieval, and inference is cryptographically signed and logged as a proof artifact. The architecture itself is the evidence — provenance, promotion, and reversibility are explicit, and uncertainty is carried to the decision, not collapsed into a traffic light.",
-    points: [
-      "Cryptographic signatures on all agent actions",
-      "Proof artifacts with full provenance from source to output",
-      "Replayable, reversible decision contexts for risk committees",
     ],
   },
 ];
@@ -76,8 +87,8 @@ const TIERS = [
   {
     icon: Zap,
     name: "Frontier",
-    detail: "Benchmarked competitive",
-    body: "Frontier-grade performance, benchmarked against the leading labs, with the heaviest models and continuous tuning.",
+    detail: "Heaviest models",
+    body: "Frontier-grade capability with the heaviest models and continuous tuning, kept current on a managed quarterly cadence.",
   },
 ];
 
@@ -126,12 +137,13 @@ export function Platform() {
               <span>The Architecture</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
-              The Governed AI <br />Control Plane.
+              A governed, model-portable <br />orchestration layer.
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl">
-              A deeply integrated architecture combining a governed model choir, a cybernetic control
-              plane, a hypergraph knowledge layer, and an immutable evidence fabric — deployed
-              entirely inside your perimeter.
+              Built to govern autonomous agents, not just chat. SocioProphet sits underneath
+              public AI, vendor platforms, and in-house agents alike — an evidence fabric,
+              a neurosymbolic harness, a cybernetic control plane, a governed model choir,
+              and a hypergraph knowledge layer, deployed entirely inside your perimeter.
             </p>
           </div>
         </div>
@@ -156,11 +168,16 @@ export function Platform() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-16">
             <span className="font-mono text-primary text-sm uppercase tracking-widest">
-              Four integrated components
+              Five integrated layers
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-white mt-4">
               One system, governed end to end
             </h2>
+            <p className="text-lg text-muted-foreground mt-6 leading-relaxed">
+              The evidence fabric is the headline — everything else supports it. Each layer
+              depends on the one below it, which is why the platform took 88 repositories to
+              build and cannot be replicated by bolting a feature onto an existing product.
+            </p>
           </div>
           <div className="space-y-32">
             {COMPONENTS.map((comp, idx) => {

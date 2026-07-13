@@ -11,7 +11,7 @@ const COLUMNS = [
   "DIY Build",
   "Governance Wrappers",
   "Hyperscaler In-Tenant",
-  "TrueFoundry",
+  "AI Gateways",
 ];
 
 const ROWS: { capability: string; cells: Cell[] }[] = [
@@ -85,15 +85,15 @@ const ROWS: { capability: string; cells: Cell[] }[] = [
 
 const CLAIMS = [
   {
-    target: "vs. Palantir",
+    target: "vs. decision-intelligence platforms",
     quote: "They collapse uncertainty into a traffic light. We carry it to the decision.",
   },
   {
-    target: "vs. Credo AI, Holistic AI",
+    target: "vs. governance-on-paper tools",
     quote: "They govern on paper. We govern in execution.",
   },
   {
-    target: "vs. TrueFoundry, WitnessAI",
+    target: "vs. AI gateways",
     quote:
       "Gateway enforcement asks \u201cdid it pass?\u201d We answer \u201cwhat did it do, why, and can you prove it?\u201d",
   },
@@ -127,7 +127,7 @@ export function Compare() {
             How SocioProphet compares.
           </>
         }
-        subtitle="There are many ways to bolt AI onto a regulated enterprise. Only one closes the perimeter, the currency, and the evidence gap at once. Here is the honest landscape."
+        subtitle="SocioProphet doesn't compete with public AI, vendor platforms, or in-house agents — it governs all three. But against every category trying to solve governance, the structural difference is stark. Here is the honest landscape."
       />
 
       <section className="py-24">
@@ -136,7 +136,7 @@ export function Compare() {
             <table className="w-full border-collapse min-w-[1040px]">
               <caption className="sr-only">
                 Capability comparison of SocioProphet against public AI, DIY builds, governance
-                wrappers, hyperscaler in-tenant offerings, and TrueFoundry.
+                wrappers, hyperscaler in-tenant offerings, and AI gateways.
               </caption>
               <thead>
                 <tr className="border-b border-border">

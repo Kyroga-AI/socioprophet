@@ -10,7 +10,7 @@ export function Footer() {
               <span className="font-sans font-bold text-xl tracking-tight text-white">Socio<span className="text-primary">Prophet</span></span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              Frontier-grade AI you can hand to a regulator. Governed, sovereign AI infrastructure for regulated enterprises.
+              SocioProphet governs people, agents, and knowledge. One governed intelligence layer for everything your organisation's AI does — and a cryptographic record of every decision it makes.
             </p>
           </div>
           
@@ -29,7 +29,8 @@ export function Footer() {
             <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-white mb-4">Products & Solutions</h4>
             <ul className="space-y-3">
               <li><Link href="/products/noetica" className="text-sm text-muted-foreground hover:text-white transition-colors">Noetica</Link></li>
-              <li><Link href="/products/profit" className="text-sm text-muted-foreground hover:text-white transition-colors">The Profit Platform</Link></li>
+              <li><Link href="/products/prophet-platform" className="text-sm text-muted-foreground hover:text-white transition-colors">Prophet Platform</Link></li>
+              <li><Link href="/products/scope-d" className="text-sm text-muted-foreground hover:text-white transition-colors">SCOPE-D</Link></li>
               <li><Link href="/products/hellagraph" className="text-sm text-muted-foreground hover:text-white transition-colors">Hellagraph</Link></li>
               <li><Link href="/solutions/sr26-2" className="text-sm text-muted-foreground hover:text-white transition-colors">SR 26-2</Link></li>
               <li><Link href="/solutions" className="text-sm text-muted-foreground hover:text-white transition-colors">All Solutions</Link></li>

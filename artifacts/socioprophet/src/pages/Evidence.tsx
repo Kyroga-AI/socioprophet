@@ -18,7 +18,38 @@ const QUOTES = [
 const CERTS = [
   { label: "SOC 2 Type II", status: "In progress" },
   { label: "ISO 27001", status: "In progress" },
-  { label: "MMLU Benchmark Suite", status: "Publishing ~8 July 2026" },
+  { label: "MMLU Benchmark Suite", status: "Publication pending" },
+];
+
+const FAQ = [
+  {
+    q: "What is SocioProphet?",
+    a: "A governed intelligence platform for regulated enterprises. It installs inside your own environment and produces a signed, replayable evidence record of every AI and agent action — governing whatever mix of public AI, preferred vendors, or in-house agents you're already using.",
+  },
+  {
+    q: "Does my data leave my environment?",
+    a: "No. SocioProphet deploys entirely inside your private cloud or on-premise infrastructure. We never see it, we never train on it.",
+  },
+  {
+    q: "Can I use my existing AI tools with SocioProphet?",
+    a: "Yes. Noetica integrates Claude, GPT, Gemini, Meta, Mistral, and Perplexity out of the box.",
+  },
+  {
+    q: "What happens to my data if I stop using SocioProphet?",
+    a: "Export your entire knowledge graph at any time, in standard formats. No lock-in.",
+  },
+  {
+    q: "How is this different from an AI governance platform?",
+    a: "They govern on paper — risk registers, model cards, policy documents. SocioProphet governs in execution — every action produces structural evidence.",
+  },
+  {
+    q: "Is my AI-generated institutional knowledge really an asset, not just a risk to manage?",
+    a: "Yes — that's a deliberate reframe. The durable competitive moat isn't the foundation model everyone has access to; it's your organisation's own compounding, governed, sovereign knowledge.",
+  },
+  {
+    q: "What regulations does SocioProphet help with?",
+    a: "SR 26-2 (US banking), APRA CPS 230 (Australia), EU AI Act, FCA (UK), MAS (Singapore). We provide governance infrastructure — you bring your regulatory interpretation.",
+  },
 ];
 
 export function Evidence() {
@@ -61,7 +92,7 @@ export function Evidence() {
                   MMLU Suite
                 </h3>
                 <span className="font-mono text-xs uppercase tracking-wider text-primary border border-primary/30 bg-primary/10 px-2 py-1">
-                  Publishing ~8 July 2026
+                  Publication pending
                 </span>
               </div>
               <div className="space-y-4">
@@ -150,8 +181,30 @@ export function Evidence() {
         </div>
       </section>
 
-      {/* Customer voices */}
+      {/* FAQ */}
       <section className="py-24 bg-card border-y border-border">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="max-w-3xl mb-16">
+            <span className="font-mono text-primary text-sm uppercase tracking-widest">
+              Frequently asked questions
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mt-4">
+              Straight answers to the questions buyers ask
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-px bg-border border border-border">
+            {FAQ.map((item) => (
+              <div key={item.q} className="bg-background p-8">
+                <h3 className="font-bold text-white mb-3">{item.q}</h3>
+                <p className="text-muted-foreground leading-relaxed">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Customer voices */}
+      <section className="py-24">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-16">
             <span className="font-mono text-primary text-sm uppercase tracking-widest">

@@ -8,9 +8,6 @@ import {
   Check,
   X,
   Minus,
-  Search,
-  DownloadCloud,
-  TrendingUp,
   ScrollText,
 } from "lucide-react";
 import heroAbstract from "@/assets/images/hero-abstract.png";
@@ -19,28 +16,28 @@ import evidenceFabric from "@/assets/images/evidence-fabric.png";
 import { CTASection } from "@/components/sections/CTASection";
 
 const ARGUMENT = [
-  "Every regulated institution faces a binary trap: use public AI and leak IP, or build your own and fall behind.",
-  "SocioProphet is the third path — a governed AI control plane that runs entirely inside your environment.",
-  "Three pillars hold it up: sovereignty, governance by architecture, and managed currency.",
-  "Every model call and agent action is cryptographically signed, evidenced, and replayable.",
+  "There are three ways to adopt AI today — public models, a single vendor's platform, or in-house agents. All of them incomplete.",
+  "SocioProphet is the fourth path: a governed, model-portable orchestration layer that sits underneath all three and makes every action provable.",
+  "It runs entirely inside your environment, builds an organisational brain that compounds over time, and governs people, agents, and knowledge.",
+  "Every model call and agent decision produces a cryptographically signed, replayable evidence artifact. Logs \u2260 provenance. Dashboards \u2260 replay.",
   "It is built for the regulatory wave now arriving: EU AI Act, SR 26-2, APRA CPS 230, FCA, DORA, MAS.",
 ];
 
 const PILLARS = [
   {
+    icon: Network,
+    title: "The fourth path",
+    body: "Keep using your preferred AI, your preferred vendor, or the agents your teams already built. We govern all of it — you don't have to rip anything out. On-device deployment, cloud-agnostic templates, full graph export, and Exodus migration tooling.",
+  },
+  {
     icon: Database,
-    title: "Sovereignty",
-    body: "Everything runs inside your environment — fully offline and air-gapped when required. No data crosses your boundary, and your institutional knowledge never trains anyone else's model.",
+    title: "IP sovereignty as competitive moat",
+    body: "Your AI-generated knowledge is intellectual property. We keep it governed, sovereign, and compounding — for you alone. The durable moat was never the foundation model everyone has access to; it's your organisation's own compounding knowledge.",
   },
   {
     icon: ShieldCheck,
-    title: "Governance by architecture",
-    body: "Not a dashboard bolted on top. Human oversight bounds every control loop, and every model call and agent action is cryptographically signed, evidenced, and replayable — with uncertainty carried, with full provenance, to the decision.",
-  },
-  {
-    icon: Network,
-    title: "Managed currency",
-    body: "You never fall behind. New capability is continuously hardened, tested, and deployed into your environment on a managed cadence. Frontier performance, without an internal AI arms race.",
+    title: "Managed frontier currency",
+    body: "You never fall behind. We manage your model lifecycle on a controlled cadence — quarterly refreshes, managed migrations, three deployment tiers. You own the decision to upgrade. We manage the execution.",
   },
 ];
 
@@ -53,8 +50,8 @@ const COMPARISON: {
   publicAILabel: string;
   diy: State;
   diyLabel: string;
-  trueFoundry: State;
-  trueFoundryLabel: string;
+  gateway: State;
+  gatewayLabel: string;
 }[] = [
   {
     capability: "Data stays in-perimeter",
@@ -63,8 +60,8 @@ const COMPARISON: {
     publicAILabel: "Leaves your control",
     diy: "yes",
     diyLabel: "Yes",
-    trueFoundry: "partial",
-    trueFoundryLabel: "Gateway only",
+    gateway: "partial",
+    gatewayLabel: "Gateway only",
   },
   {
     capability: "Frontier model currency",
@@ -73,8 +70,8 @@ const COMPARISON: {
     publicAILabel: "Vendor-controlled",
     diy: "no",
     diyLabel: "Falls behind",
-    trueFoundry: "partial",
-    trueFoundryLabel: "Bring-your-own",
+    gateway: "partial",
+    gatewayLabel: "Bring-your-own",
   },
   {
     capability: "Signed, replayable evidence",
@@ -83,8 +80,8 @@ const COMPARISON: {
     publicAILabel: "None",
     diy: "partial",
     diyLabel: "Bolted on",
-    trueFoundry: "partial",
-    trueFoundryLabel: "Gateway logs",
+    gateway: "partial",
+    gatewayLabel: "Gateway logs",
   },
   {
     capability: "Regulator-ready by design",
@@ -93,29 +90,55 @@ const COMPARISON: {
     publicAILabel: "No",
     diy: "partial",
     diyLabel: "Manual effort",
-    trueFoundry: "partial",
-    trueFoundryLabel: "Pass / fail checks",
+    gateway: "partial",
+    gatewayLabel: "Pass / fail checks",
   },
 ];
 
-const ENGAGEMENT = [
+const HOW_IT_WORKS = [
   {
-    icon: Search,
     step: "01",
-    title: "Discovery",
-    body: "Map your highest-value use cases against governance and risk requirements.",
+    title: "Deploy inside your environment",
+    body: "SocioProphet installs in your private cloud or on-premise — no data crosses your perimeter.",
   },
   {
-    icon: DownloadCloud,
     step: "02",
-    title: "Deploy",
-    body: "Install the control plane inside your environment, governed from day one.",
+    title: "Start with what you already use",
+    body: "Noetica integrates Claude, GPT, Gemini, and more out of the box. Bring your existing API key and keep working.",
   },
   {
-    icon: TrendingUp,
     step: "03",
-    title: "Scale",
-    body: "Expand across teams and products as managed currency keeps you current.",
+    title: "Your brain compounds",
+    body: "Every conversation, every document, every decision adds to your Hellagraph knowledge graph — automatically.",
+  },
+  {
+    step: "04",
+    title: "Every output is provable",
+    body: "The neurosymbolic harness tags every output with how it was produced. Every action is cryptographically signed and replayable.",
+  },
+  {
+    step: "05",
+    title: "We keep you current",
+    body: "Quarterly model updates, managed migrations. You own the upgrade decision. We manage the execution.",
+  },
+];
+
+const WHO_ITS_FOR = [
+  {
+    title: "Banks, asset managers, and insurers",
+    body: "Facing SR 26-2, APRA CPS 230, and EU AI Act obligations.",
+  },
+  {
+    title: "Healthcare networks and medical practices",
+    body: "Where patient data sovereignty is a legal obligation.",
+  },
+  {
+    title: "Law firms and consultancies",
+    body: "Where privilege and Chinese walls between engagements are structurally required.",
+  },
+  {
+    title: "Software companies and platform operators",
+    body: "Who want to add AI intelligence without building an AI team or exposing customer data.",
   },
 ];
 
@@ -158,25 +181,26 @@ export function Home() {
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono font-medium uppercase tracking-wider mb-8 fade-in-up">
               <ShieldCheck className="w-4 h-4" />
-              <span>Deterministic AI &bull; Governed Operations &bull; Boundary-First</span>
+              <span>SocioProphet governs people, agents, and knowledge</span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-8 leading-[1.1] fade-in-up delay-100">
-              Frontier AI <br className="hidden md:block" />
-              <span className="text-muted-foreground">you can hand to a regulator.</span>
+              Three ways to adopt AI. <br className="hidden md:block" />
+              <span className="text-muted-foreground">All of them incomplete. Until now.</span>
             </h1>
 
             <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl leading-relaxed fade-in-up delay-200">
-              Sovereign, governed enterprise AI — with your data inside your walls.
-              Your brain. Your agents. Your AI.
+              SocioProphet is the fourth path — a governed orchestration layer that sits
+              underneath public AI, vendor platforms, and in-house agents alike, and makes
+              every action provable. Your brain. Your agents. Your AI.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 fade-in-up delay-300">
               <Button asChild size="lg" className="rounded-none font-semibold uppercase tracking-wider h-14 px-8 text-sm">
-                <Link href="/contact">Request a Briefing</Link>
+                <Link href="/platform">See How It Works</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="rounded-none font-semibold uppercase tracking-wider h-14 px-8 text-sm border-muted-foreground/30 hover:bg-muted-foreground/10">
-                <Link href="/platform">Explore the Platform</Link>
+                <Link href="/contact">Talk to Our Team</Link>
               </Button>
             </div>
           </div>
@@ -202,35 +226,41 @@ export function Home() {
         </div>
       </section>
 
-      {/* The Binary Trap */}
+      {/* The Three Incomplete Paths */}
       <section className="py-24">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-16">
             <span className="font-mono text-primary text-sm uppercase tracking-widest">The Problem</span>
             <h2 className="text-3xl md:text-4xl font-bold text-white mt-4">
-              Every regulated institution is caught in the same trap
+              Three ways to adopt AI. All of them incomplete.
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             <div className="p-8 border border-border bg-card">
-              <h3 className="text-xl font-bold text-white mb-4">Use public AI</h3>
+              <h3 className="text-xl font-bold text-white mb-4">Public AI</h3>
               <p className="text-muted-foreground leading-relaxed">
-                ChatGPT and Copilot send your data, prompts, and institutional IP outside your control — with no record you can defend.
+                Fast and capable — but your data, prompts, and institutional IP leave your control, with no record you can defend to an examiner.
               </p>
             </div>
             <div className="p-8 border border-border bg-card">
-              <h3 className="text-xl font-bold text-white mb-4">Build your own</h3>
+              <h3 className="text-xl font-bold text-white mb-4">A single vendor's platform</h3>
               <p className="text-muted-foreground leading-relaxed">
-                You fall behind the frontier and burn budget chasing it, with no team large enough to keep pace.
+                Enterprise-grade — but you are dependent on one lab's availability, roadmap, and commercial terms, with no portability and no way to fine-tune without sending data out.
+              </p>
+            </div>
+            <div className="p-8 border border-border bg-card">
+              <h3 className="text-xl font-bold text-white mb-4">In-house agents</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Your teams are already building brilliant agents — completely ungoverned. Reasoning leaks into model providers, and nothing can be traced or replayed after the fact.
               </p>
             </div>
           </div>
 
           <div className="mt-8 border-l-2 border-primary bg-primary/5 p-8">
             <p className="text-lg md:text-xl text-white leading-relaxed">
-              No product in market resolves both sides of this trap at once. There is no third option —
-              <span className="text-primary"> that is what SocioProphet is built to be.</span>
+              Each of these paths is incomplete on its own. SocioProphet doesn't compete with them.
+              <span className="text-primary"> It is the fourth path: the governed layer that sits underneath all three and makes every action provable.</span>
             </p>
           </div>
 
@@ -263,9 +293,9 @@ export function Home() {
       <section className="py-24 bg-card border-y border-border">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-16">
-            <span className="font-mono text-primary text-sm uppercase tracking-widest">The Third Path</span>
+            <span className="font-mono text-primary text-sm uppercase tracking-widest">The Fourth Path</span>
             <h2 className="text-3xl md:text-4xl font-bold text-white mt-4">
-              Sovereign, governed, and always current — at the same time
+              Govern what you already do. Own what you build. Never fall behind.
             </h2>
           </div>
 
@@ -296,25 +326,26 @@ export function Home() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                They collapse uncertainty into a traffic light. <br/>
-                <span className="text-primary">We carry it to the decision.</span>
+              <span className="font-mono text-primary text-sm uppercase tracking-widest">The Evidence Fabric — why this can't be copied</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 mt-4">
+                Logs &ne; provenance. <br/>
+                <span className="text-primary">Dashboards &ne; replay.</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                General AI governance tools govern on paper. SocioProphet governs at the foundational level. The Evidence Fabric tracks exactly what was retrieved, inferred, deduced, and stated. So your auditor, your regulator, and your risk committee can see exactly how much to trust each output.
+                A log tells you a model was called. We tell you why, what it relied on, and let you replay it — because the governance is the architecture, not a layer we added on top. The Evidence Fabric produces cryptographically signed, replayable provenance at every agent action. Not logs. Not dashboards. Full proof — and the neurosymbolic harness tags every output as stated, retrieved, inferred, or deduced, so your auditor, your regulator, and your risk committee can see exactly how much to trust it.
               </p>
               <ul className="space-y-4 mb-10">
                 <li className="flex items-start gap-3">
                   <div className="mt-1 bg-primary/20 p-1 rounded-full"><ShieldCheck className="w-4 h-4 text-primary" /></div>
-                  <span className="text-white">Cryptographically signed interactions</span>
+                  <span className="text-white">Cryptographically signed, replayable artifacts at every decision point</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <div className="mt-1 bg-primary/20 p-1 rounded-full"><ShieldCheck className="w-4 h-4 text-primary" /></div>
-                  <span className="text-white">Full provenance of retrieval and inference</span>
+                  <span className="text-white">Four reasoning modes: stated, retrieved, inferred, deduced</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <div className="mt-1 bg-primary/20 p-1 rounded-full"><ShieldCheck className="w-4 h-4 text-primary" /></div>
-                  <span className="text-white">Immutable audit trails for compliance reporting</span>
+                  <span className="text-white">Policy enforcement: Chinese walls, access permissions, task controls</span>
                 </li>
               </ul>
               <div className="flex flex-col sm:flex-row gap-6">
@@ -347,7 +378,7 @@ export function Home() {
             <div className="order-1 md:order-2">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Einstein for your company.<br/>But just for you.</h2>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                The system starts grounded in broad academic knowledge, then learns continuously from your work, in your environment, becoming an AI that thinks the way your organisation thinks — and only yours. No competitor benefits from your data.
+                The system starts grounded in broad academic knowledge, then learns continuously from your work, in your environment, becoming an AI that thinks the way your organisation thinks — and only yours. Your AI-generated knowledge is intellectual property: it builds your moat, not someone else's model. No competitor benefits from your data, and no shared model trains on your experience.
               </p>
               <div className="grid grid-cols-2 gap-8 mb-8">
                 <div>
@@ -396,7 +427,7 @@ export function Home() {
                     DIY build
                   </th>
                   <th className="text-left p-5 font-mono text-xs uppercase tracking-widest text-muted-foreground font-medium w-[20%]">
-                    TrueFoundry
+                    AI gateways
                   </th>
                 </tr>
               </thead>
@@ -417,7 +448,7 @@ export function Home() {
                       <StatusCell state={row.diy} label={row.diyLabel} />
                     </td>
                     <td className="p-5 align-top">
-                      <StatusCell state={row.trueFoundry} label={row.trueFoundryLabel} />
+                      <StatusCell state={row.gateway} label={row.gatewayLabel} />
                     </td>
                   </tr>
                 ))}
@@ -428,36 +459,47 @@ export function Home() {
           <div className="mt-10">
             <Button asChild variant="link" className="text-primary p-0 h-auto font-semibold uppercase tracking-wider text-sm">
               <Link href="/compare" className="flex items-center gap-2">
-                See the full six-way comparison <ArrowRight className="w-4 h-4" />
+                See the full comparison <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* How we engage */}
+      {/* How it works */}
       <section className="py-24 bg-card border-y border-border">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-16">
-            <span className="font-mono text-primary text-sm uppercase tracking-widest">How we engage</span>
+            <span className="font-mono text-primary text-sm uppercase tracking-widest">How it works</span>
             <h2 className="text-3xl md:text-4xl font-bold text-white mt-4">
-              From first use case to enterprise scale
+              Inside your walls. Provable at every step.
             </h2>
+            <p className="text-lg text-muted-foreground mt-6 leading-relaxed">
+              We don't take your data. We don't train on your data. We don't see your data.
+              Everything runs inside your walls. And everything is provable.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {ENGAGEMENT.map((stage) => (
-              <div key={stage.step} className="p-8 border border-border bg-background">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 bg-primary/10 rounded flex items-center justify-center">
-                    <stage.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <span className="font-mono text-3xl font-bold text-muted-foreground/30">{stage.step}</span>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">{stage.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{stage.body}</p>
+          <div className="grid md:grid-cols-5 gap-6">
+            {HOW_IT_WORKS.map((stage) => (
+              <div key={stage.step} className="p-6 border border-border bg-background">
+                <span className="font-mono text-3xl font-bold text-muted-foreground/30 block mb-6">{stage.step}</span>
+                <h3 className="text-lg font-bold text-white mb-3">{stage.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{stage.body}</p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-16">
+            <h3 className="font-mono text-primary text-sm uppercase tracking-widest mb-8">Who it's for</h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {WHO_ITS_FOR.map((who) => (
+                <div key={who.title} className="p-6 border border-border bg-background">
+                  <h4 className="font-bold text-white mb-2">{who.title}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{who.body}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="mt-8 border-l-2 border-primary bg-primary/5 p-8">
@@ -480,7 +522,7 @@ export function Home() {
             A regulatory wave is arriving now
           </h2>
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-            Governance is shifting from optional to mandatory — and the buying window is open. SocioProphet maps directly to the frameworks already in force.
+            Governance is shifting from optional to mandatory. These frameworks don't prescribe a solution — they prescribe an obligation. SocioProphet provides structural support for the frameworks already in force.
           </p>
           <div className="flex flex-wrap justify-center gap-8 md:gap-12">
             {REGULATIONS.map((reg) =>

@@ -6,15 +6,21 @@ import { PageHero } from "@/components/sections/PageHero";
 const TEAM = [
   {
     name: "Michael Heller",
-    role: "Founder, CEO & CTO",
-    bio: "Sets the technical thesis: governance must be architectural, not a dashboard. Leads the engineering of the control plane, evidence fabric, and Hellagraph knowledge layer.",
+    role: "Founder, CEO & CTO — Philadelphia",
+    bio: "Built the technical architecture. Sets the technical thesis: governance must be architectural, not a dashboard. Leads the engineering of the control plane, evidence fabric, and Hellagraph knowledge layer.",
     initials: "MH",
   },
   {
     name: "Gus Quiroga",
-    role: "President & CRO",
-    bio: "Leads commercial strategy and the institutional relationships that bring sovereign AI into the most regulated environments on earth.",
+    role: "President & CRO — Sydney",
+    bio: "Brings the commercial lens — C-level relationships across APAC financial services and deep working knowledge of the regulatory pressures that make governed AI an obligation.",
     initials: "GQ",
+  },
+  {
+    name: "Keith Haller",
+    role: "Sales & Business Development",
+    bio: "Leads sales and business development, bringing deep enterprise data-platform relationships from prior roles at Databricks and Informatica.",
+    initials: "KH",
   },
 ];
 
@@ -43,9 +49,11 @@ export function Company() {
               <h2 className="text-3xl font-bold text-white mb-6">The founding vision</h2>
               <div className="prose prose-invert prose-p:text-muted-foreground prose-p:leading-relaxed max-w-none">
                 <p>
-                  SocioProphet was founded on a simple premise: the most valuable organisations in the
-                  world cannot adopt frontier AI if it means surrendering their intellectual property
-                  or operating in a regulatory grey area.
+                  SocioProphet was founded by Michael Heller and Gus Quiroga on a shared conviction:
+                  every organisation's data and IP must remain sovereign — a structural requirement of
+                  the AI era, not a preference. The most valuable organisations in the world cannot
+                  adopt frontier AI if it means surrendering their intellectual property or operating
+                  in a regulatory grey area.
                 </p>
                 <p>
                   We observed that existing AI governance tools were superficial — bolt-on dashboards
@@ -65,6 +73,11 @@ export function Company() {
                   cryptographically signing every retrieval and inference step, we give risk
                   committees and regulators exactly what they demand: explainability, accountability,
                   and absolute data sovereignty.
+                </p>
+                <p>
+                  The platform is backed by 88 repositories and thousands of commits of
+                  purpose-built infrastructure — each layer depending on the one below it. That is
+                  why it cannot be replicated by bolting a feature onto an existing product.
                 </p>
               </div>
             </div>
