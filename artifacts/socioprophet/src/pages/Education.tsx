@@ -150,9 +150,9 @@ export function Education() {
       {/* Hero */}
       <section className="pt-24 pb-0 md:pt-32 border-b border-border/40">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="grid md:grid-cols-3 gap-12 pb-0">
-            {/* Left: main hero content */}
-            <div className="md:col-span-2 pb-16 md:pb-24">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 pb-0">
+            {/* Left-top: badge + headline — always first */}
+            <div className="md:col-span-2 md:row-start-1 order-1 pt-0">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono font-medium uppercase tracking-wider mb-6">
                 <BookOpen className="w-4 h-4" />
                 <span>Education</span>
@@ -161,30 +161,10 @@ export function Education() {
                 Your AI. Your data.<br />
                 <span className="text-primary">Your rules.</span>
               </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl">
-                Noetica is the entry point for everyone — individuals, families, teams, and regulated enterprises. A local-first AI workspace that runs on your own device, keeps your data off third-party servers, and builds a knowledge graph that compounds over time.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-10 max-w-2xl">
-                ~85MB install. Bring your existing API keys for{" "}
-                <TermTooltip term="model-choir">the frontier models you already use</TermTooltip>.
-                Works offline. Full{" "}
-                <TermTooltip term="evidence-fabric">evidence record</TermTooltip>{" "}
-                on every interaction. No lock-in.
-              </p>
-              <div className="flex flex-wrap gap-3 mb-4">
-                {["Governed AI", "On-device", "Offline-capable", "No data egress", "Full export"].map((tag) => (
-                  <span
-                    key={tag}
-                    className="font-mono text-xs uppercase tracking-wider text-muted-foreground border border-border px-3 py-1.5"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
             </div>
 
-            {/* Right: audience pathway panel */}
-            <div className="border-l border-border/40 pl-8 md:pl-10 pb-8 md:pb-0 self-start md:sticky md:top-24">
+            {/* Right: audience pathway panel — order-2 on mobile (directly after headline), sticky on md+ */}
+            <div className="order-2 md:row-start-1 md:row-span-2 md:col-start-3 border-t border-border/40 pt-8 md:border-t-0 md:border-l md:border-border/40 md:pt-0 md:pl-10 pb-8 md:pb-0 self-start md:sticky md:top-24">
               <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-6">
                 Choose your path
               </p>
@@ -226,6 +206,30 @@ export function Education() {
                     </Link>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            {/* Left-bottom: body copy + tags — order-3 on mobile (after pathway panel), col 1-2 row 2 on md+ */}
+            <div className="order-3 md:col-span-2 md:col-start-1 md:row-start-2 pb-16 md:pb-24">
+              <p className="text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl">
+                Noetica is the entry point for everyone — individuals, families, teams, and regulated enterprises. A local-first AI workspace that runs on your own device, keeps your data off third-party servers, and builds a knowledge graph that compounds over time.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-10 max-w-2xl">
+                ~85MB install. Bring your existing API keys for{" "}
+                <TermTooltip term="model-choir">the frontier models you already use</TermTooltip>.
+                Works offline. Full{" "}
+                <TermTooltip term="evidence-fabric">evidence record</TermTooltip>{" "}
+                on every interaction. No lock-in.
+              </p>
+              <div className="flex flex-wrap gap-3 mb-4">
+                {["Governed AI", "On-device", "Offline-capable", "No data egress", "Full export"].map((tag) => (
+                  <span
+                    key={tag}
+                    className="font-mono text-xs uppercase tracking-wider text-muted-foreground border border-border px-3 py-1.5"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
