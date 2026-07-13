@@ -1,3 +1,4 @@
+import { TermTooltip } from "@/components/TermTooltip";
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
@@ -65,7 +66,8 @@ export function Products() {
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
                   Bespoke agent creation with governance controls — for enterprise teams building
-                  branded AI assistants that inherit the evidence fabric by default.
+                  branded AI assistants that inherit the{" "}
+                  <TermTooltip term="evidence-fabric">evidence fabric</TermTooltip> by default.
                 </p>
               </div>
             </div>

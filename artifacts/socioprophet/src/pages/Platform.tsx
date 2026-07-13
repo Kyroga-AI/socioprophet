@@ -1,3 +1,4 @@
+import { TermTooltip } from "@/components/TermTooltip";
 import { Link } from "wouter";
 import {
   ShieldCheck,
@@ -141,9 +142,13 @@ export function Platform() {
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl">
               Built to govern autonomous agents, not just chat. SocioProphet sits underneath
-              public AI, vendor platforms, and in-house agents alike — an evidence fabric,
-              a neurosymbolic harness, a cybernetic control plane, a governed model choir,
-              and a hypergraph knowledge layer, deployed entirely inside your perimeter.
+              public AI, vendor platforms, and in-house agents alike — an{" "}
+              <TermTooltip term="evidence-fabric">evidence fabric</TermTooltip>, a{" "}
+              <TermTooltip term="neurosymbolic-harness">neurosymbolic harness</TermTooltip>, a{" "}
+              <TermTooltip term="cybernetic-control-plane">cybernetic control plane</TermTooltip>, a
+              governed <TermTooltip term="model-choir">model choir</TermTooltip>, and a{" "}
+              <TermTooltip term="hypergraph-knowledge-layer">hypergraph knowledge layer</TermTooltip>,
+              deployed entirely inside your perimeter.
             </p>
           </div>
         </div>

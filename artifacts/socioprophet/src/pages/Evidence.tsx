@@ -1,3 +1,4 @@
+import { TermTooltip } from "@/components/TermTooltip";
 import { FileText, FlaskConical, ShieldCheck, BarChart3, Quote } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
 import { CTASection } from "@/components/sections/CTASection";
@@ -77,7 +78,8 @@ export function Evidence() {
               </div>
               <h2 className="text-3xl font-bold text-white mb-4">Benchmark results</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                We are running the full MMLU suite against our governed model choir and graph
+                We are running the full MMLU suite against our governed{" "}
+                <TermTooltip term="model-choir">model choir</TermTooltip> and graph
                 retrieval layer. The results — including head-to-head comparisons against frontier
                 lab performance — publish here on release.
               </p>
@@ -131,8 +133,9 @@ export function Evidence() {
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
               Most vendor benchmarks are run on a configuration you will never deploy. Ours are run
-              on the same governed, in-perimeter architecture you would actually operate — model
-              choir, Hellagraph knowledge layer, and evidence fabric included.
+              on the same governed, in-perimeter architecture you would actually operate —{" "}
+              <TermTooltip term="model-choir">model choir</TermTooltip>, Hellagraph knowledge layer,
+              and <TermTooltip term="evidence-fabric">evidence fabric</TermTooltip> included.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Every result will ship with its methodology so your own technical team can reproduce
@@ -153,7 +156,9 @@ export function Evidence() {
               </div>
               <h3 className="text-2xl font-bold text-white mb-3">Architecture whitepaper</h3>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                A technical deep-dive into the control plane, the evidence fabric, the boundary
+                A technical deep-dive into the{" "}
+                <TermTooltip term="cybernetic-control-plane">control plane</TermTooltip>, the{" "}
+                <TermTooltip term="evidence-fabric">evidence fabric</TermTooltip>, the boundary
                 model, and the cryptographic signing model — written for CIOs, CDOs, and security
                 architects.
               </p>

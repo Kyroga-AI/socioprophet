@@ -1,3 +1,4 @@
+import { TermTooltip } from "@/components/TermTooltip";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
@@ -332,7 +333,7 @@ export function Home() {
                 <span className="text-primary">Dashboards &ne; replay.</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                A log tells you a model was called. We tell you why, what it relied on, and let you replay it — because the governance is the architecture, not a layer we added on top. The Evidence Fabric produces cryptographically signed, replayable provenance at every agent action. Not logs. Not dashboards. Full proof — and the neurosymbolic harness tags every output as stated, retrieved, inferred, or deduced, so your auditor, your regulator, and your risk committee can see exactly how much to trust it.
+                A log tells you a model was called. We tell you why, what it relied on, and let you replay it — because the governance is the architecture, not a layer we added on top. The <TermTooltip term="evidence-fabric">Evidence Fabric</TermTooltip> produces cryptographically signed, replayable provenance at every agent action. Not logs. Not dashboards. Full proof — and the <TermTooltip term="neurosymbolic-harness">neurosymbolic harness</TermTooltip> tags every output as stated, retrieved, inferred, or deduced, so your auditor, your regulator, and your risk committee can see exactly how much to trust it.
               </p>
               <ul className="space-y-4 mb-10">
                 <li className="flex items-start gap-3">
