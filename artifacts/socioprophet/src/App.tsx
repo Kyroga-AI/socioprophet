@@ -11,6 +11,9 @@ import { Products } from "@/pages/Products";
 import { ProductDetail } from "@/pages/products/ProductDetail";
 import { Solutions } from "@/pages/Solutions";
 import { Sr262 } from "@/pages/solutions/Sr262";
+import { ApraCps230 } from "@/pages/solutions/ApraCps230";
+import { EuAiAct } from "@/pages/solutions/EuAiAct";
+import { FcaMas } from "@/pages/solutions/FcaMas";
 import { SolutionDetail } from "@/pages/solutions/SolutionDetail";
 import { Compare } from "@/pages/Compare";
 import { Evidence } from "@/pages/Evidence";
@@ -33,6 +36,9 @@ function Router() {
           <Route path="/products/:slug" component={ProductDetail} />
           <Route path="/solutions" component={Solutions} />
           <Route path="/solutions/sr26-2" component={Sr262} />
+          <Route path="/solutions/apra-cps-230" component={ApraCps230} />
+          <Route path="/solutions/eu-ai-act" component={EuAiAct} />
+          <Route path="/solutions/fca-mas" component={FcaMas} />
           <Route path="/solutions/:slug" component={SolutionDetail} />
           <Route path="/compare" component={Compare} />
           <Route path="/evidence" component={Evidence} />

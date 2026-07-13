@@ -98,19 +98,19 @@ const REGULATORY_CONTEXT = [
     label: "APRA CPS 230",
     region: "Australia",
     body: "Operational risk management for Australian-regulated entities. AI systems that produce decisions affecting customers or operations need traceable, auditable evidence trails.",
-    href: null,
+    href: "/solutions/apra-cps-230",
   },
   {
     label: "EU AI Act",
     region: "European Union",
     body: "Risk-tiered regulation requiring high-risk AI systems to maintain technical documentation, logging, and human oversight. Governed-by-architecture is the only durable compliance path.",
-    href: null,
+    href: "/solutions/eu-ai-act",
   },
   {
     label: "FCA & MAS",
     region: "UK & Singapore",
     body: "Financial conduct regulators in both jurisdictions are requiring firms to demonstrate AI explainability and auditability. The standard is not documentation — it is structural evidence.",
-    href: null,
+    href: "/solutions/fca-mas",
   },
 ];
 
