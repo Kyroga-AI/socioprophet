@@ -8,15 +8,17 @@ import {
 
 const GLOSSARY = {
   "evidence-fabric":
-    "The record-keeping layer. Every AI action gets a tamper-proof, signed record of what happened, why, and what information it relied on — so any decision can be replayed and verified later.",
+    "Every AI action gets a cryptographically signed, replayable record — not a log, a proof. When a regulator asks \"prove what your AI did,\" this is the answer no dashboard or wrapper can fake.",
   "neurosymbolic-harness":
-    "A safety wrapper around the AI that labels every answer by how it was produced — stated as fact, retrieved from your documents, inferred, or logically deduced — so you know how much to trust it.",
+    "Every answer is tagged by how it was made — stated, retrieved, inferred, or deduced. Most AI can't tell you which. This can, which is what makes the evidence trail actually trustworthy.",
   "cybernetic-control-plane":
-    "The traffic controller. It routes every request between your people, your data, and the AI models, enforces your rules on each one, and pauses risky actions for human approval.",
+    "The layer every agent action runs through — enforcing rules and holding risky actions for approval before they execute, not reporting on them after. Governance built into execution, not bolted on top.",
   "model-choir":
-    "Multiple AI models working together instead of relying on just one. Each request goes to the model best suited for it, and models can cross-check each other's answers.",
+    "A curated ensemble of models running on your own infrastructure, plus your own API keys for external models. Best-fit intelligence for every task — without your data or IP ever leaving your walls.",
+  "hellagraph":
+    "A true hypergraph, not a flat property graph like Neo4j — connections themselves can be full objects. Your organisation's knowledge compounds into owned, structured IP instead of scattered documents.",
   "hypergraph-knowledge-layer":
-    "Your organisation's knowledge stored as a rich web of connections — linking many related facts at once, not just pairs — so the AI understands full context, not isolated documents.",
+    "A true hypergraph, not a flat property graph like Neo4j — connections themselves can be full objects. Your organisation's knowledge compounds into owned, structured IP instead of scattered documents.",
 } as const;
 
 export type TermKey = keyof typeof GLOSSARY;
