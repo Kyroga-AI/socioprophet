@@ -10,6 +10,7 @@ export function Header() {
     { href: "/solutions", label: "Solutions" },
     { href: "/compare", label: "Compare" },
     { href: "/evidence", label: "Evidence" },
+    { href: "/education", label: "Education" },
     { href: "/company", label: "Company" },
   ];
 

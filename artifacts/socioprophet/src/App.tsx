@@ -14,6 +14,7 @@ import { Sr262 } from "@/pages/solutions/Sr262";
 import { SolutionDetail } from "@/pages/solutions/SolutionDetail";
 import { Compare } from "@/pages/Compare";
 import { Evidence } from "@/pages/Evidence";
+import { Education } from "@/pages/Education";
 import { Company } from "@/pages/Company";
 import { Contact } from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
@@ -35,6 +36,7 @@ function Router() {
           <Route path="/solutions/:slug" component={SolutionDetail} />
           <Route path="/compare" component={Compare} />
           <Route path="/evidence" component={Evidence} />
+          <Route path="/education" component={Education} />
           <Route path="/company" component={Company} />
           <Route path="/about" component={Company} />
           <Route path="/contact" component={Contact} />

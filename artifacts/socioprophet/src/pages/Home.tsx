@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
+  BookOpen,
   ShieldCheck,
   Database,
   Network,
@@ -461,6 +462,31 @@ export function Home() {
             <Button asChild variant="link" className="text-primary p-0 h-auto font-semibold uppercase tracking-wider text-sm">
               <Link href="/compare" className="flex items-center gap-2">
                 See the full comparison <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Education teaser */}
+      <section className="py-16 border-y border-border">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 p-8 border border-primary/20 bg-primary/5">
+            <div className="flex items-start gap-5">
+              <div className="w-10 h-10 bg-primary/10 rounded flex items-center justify-center shrink-0 mt-0.5">
+                <BookOpen className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-mono text-xs uppercase tracking-widest text-primary mb-2">Education</p>
+                <h3 className="text-xl font-bold text-white mb-2">Not ready for a sales conversation?</h3>
+                <p className="text-muted-foreground leading-relaxed max-w-xl">
+                  Start with the fundamentals — why sovereign AI matters, how Noetica works, and which path makes sense for you. For individuals, families, teams, and organisations.
+                </p>
+              </div>
+            </div>
+            <Button asChild variant="outline" className="rounded-none font-semibold uppercase tracking-wider text-xs shrink-0 border-primary/30 hover:bg-primary/10 h-12 px-8">
+              <Link href="/education" className="flex items-center gap-2">
+                Start with the fundamentals <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
           </div>

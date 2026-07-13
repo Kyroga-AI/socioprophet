@@ -38,8 +38,11 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-white mb-4">Company</h4>
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-white mb-4">Learn</h4>
             <ul className="space-y-3">
+              <li><Link href="/education" className="text-sm text-muted-foreground hover:text-white transition-colors">Education</Link></li>
+              <li><Link href="/education#why-sovereign" className="text-sm text-muted-foreground hover:text-white transition-colors">Why Sovereign AI</Link></li>
+              <li><Link href="/education#how-noetica" className="text-sm text-muted-foreground hover:text-white transition-colors">How Noetica Works</Link></li>
               <li><Link href="/company" className="text-sm text-muted-foreground hover:text-white transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-white transition-colors">Contact</Link></li>
             </ul>
