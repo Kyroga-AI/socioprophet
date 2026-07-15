@@ -29,7 +29,7 @@ const PILLARS = [
   {
     icon: Network,
     title: "The fourth path",
-    body: "Keep using your preferred AI, your preferred vendor, or the agents your teams already built. We govern all of it — you don't have to rip anything out. On-device deployment, cloud-agnostic templates, full graph export, and Exodus migration tooling.",
+    body: "Keep using your preferred AI, your preferred vendor, or the agents your teams already built. We govern all of it — you don't have to rip anything out. On-device deployment, cloud-agnostic templates, full graph export, and Exodus migration tooling — plus Prophet Mesh's multi-model orchestration, which directly rebuts the 'I could build that on a single model' objection from technical buyers.",
   },
   {
     icon: Database,
@@ -537,6 +537,52 @@ export function Home() {
               </Link>{" "}
               takes you from discovery to a mock examination — evidenced from day one.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Prophet Mesh */}
+      <section className="py-24 border-y border-border">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="grid md:grid-cols-2 gap-16 items-start mb-12">
+            <div>
+              <span className="font-mono text-primary text-sm uppercase tracking-widest">Prophet Mesh</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mt-4 mb-6">
+                One model is table stakes.<br />We give you a choir.
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Most AI platforms hand you one model and call it a day. Prophet Mesh gives you a choir — a curated ensemble of open-weight models running on your own hardware, arbitrated by a conductor that routes each task to the right specialist and re-aggregates results across up to eight model families. Cloud escalation only happens through your own API keys — the same bring-your-own-key model Noetica already offers for Claude, GPT, Gemini, Meta, Mistral, and Perplexity. No task goes anywhere you haven't already authorised.
+              </p>
+            </div>
+            <div className="border-l border-border/40 pl-8 md:pl-12 pt-2">
+              <p className="text-lg text-muted-foreground leading-relaxed italic">
+                "If a technical buyer says 'I could build that myself on Claude,' Prophet Mesh is the answer: this isn't a single-model wrapper."
+              </p>
+              <Button asChild variant="outline" className="mt-8 rounded-none font-semibold uppercase tracking-wider text-xs border-muted-foreground/30 hover:bg-muted-foreground/10">
+                <Link href="/platform">See how it works</Link>
+              </Button>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-3 gap-px bg-border border border-border">
+            {[
+              {
+                label: "Multi-model fan-out & re-aggregation",
+                body: "Results combined across up to 8 model families — no single model is a single point of failure or a replication target.",
+              },
+              {
+                label: "Dynamic, real-time routing",
+                body: "Local vs cloud routing based on task complexity and live performance. No manual configuration required.",
+              },
+              {
+                label: "Hardware-aware model selection",
+                body: "The conductor chooses the right model for your hardware automatically. You set the policy — it executes.",
+              },
+            ].map((item) => (
+              <div key={item.label} className="bg-background p-8">
+                <h3 className="font-bold text-white mb-3 text-sm">{item.label}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{item.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

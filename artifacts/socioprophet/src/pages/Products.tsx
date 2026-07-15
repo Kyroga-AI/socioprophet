@@ -44,27 +44,59 @@ export function Products() {
             })}
           </div>
 
+          {/* Prophet Mesh spotlight */}
+          <div className="mt-12 border border-primary/30 bg-primary/5 p-8 flex flex-col md:flex-row md:items-start gap-8">
+            <div className="flex-1">
+              <span className="font-mono text-primary text-xs uppercase tracking-widest">Inside Noetica</span>
+              <h2 className="text-2xl font-bold text-white mt-2 mb-3">Prophet Mesh</h2>
+              <p className="text-sm font-mono text-primary uppercase tracking-wider mb-4">
+                Multi-model orchestration — model choir + conductor
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                Prophet Mesh ships inside Noetica — not as a separate purchase. Multi-model orchestration so no single model is a single point of failure or a build-it-yourself target. The conductor routes each task to the right specialist and re-aggregates results across up to eight model families.
+              </p>
+            </div>
+            <div className="md:w-64 shrink-0 border-l border-border/40 md:pl-8">
+              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-3">Who uses it</p>
+              <p className="text-sm text-white">Enterprise IT, CIOs evaluating build-vs-buy</p>
+            </div>
+          </div>
+
           <div className="mt-16">
             <h2 className="font-mono text-primary text-sm uppercase tracking-widest mb-8">
               Also on the platform
             </h2>
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-3 gap-8">
               <div className="p-8 border border-border bg-card">
+                <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block mb-4">Product Surface</span>
+                <h3 className="text-xl font-bold text-white mb-2">Prophet Mesh</h3>
+                <p className="text-sm font-mono text-primary uppercase tracking-wider mb-4">
+                  Multi-model orchestration inside Noetica
+                </p>
+                <p className="text-muted-foreground leading-relaxed text-sm mb-6">
+                  Model choir + conductor — dynamic routing across up to 8 model families, running on your own hardware.
+                </p>
+                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-1">Who uses it</p>
+                <p className="text-sm text-white">Enterprise IT, CIOs evaluating build-vs-buy</p>
+              </div>
+              <div className="p-8 border border-border bg-card">
+                <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block mb-4">Product Surface</span>
                 <h3 className="text-xl font-bold text-white mb-2">SocioSphere</h3>
                 <p className="text-sm font-mono text-primary uppercase tracking-wider mb-4">
                   DevSecOps workspace fabric
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-sm">
                   Sovereign Git, CI/CD, and dependency intelligence for engineering teams —
                   the same governance and evidence guarantees, applied to how software gets built.
                 </p>
               </div>
               <div className="p-8 border border-border bg-card">
+                <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block mb-4">Product Surface</span>
                 <h3 className="text-xl font-bold text-white mb-2">Lattice Forge</h3>
                 <p className="text-sm font-mono text-primary uppercase tracking-wider mb-4">
                   Agent builder
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-sm">
                   Bespoke agent creation with governance controls — for enterprise teams building
                   branded AI assistants that inherit the{" "}
                   <TermTooltip term="evidence-fabric">evidence fabric</TermTooltip> by default.

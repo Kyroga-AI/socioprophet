@@ -51,12 +51,14 @@ const COMPONENTS = [
   },
   {
     icon: Cpu,
-    name: "Governed Model Choir",
-    body: "A curated suite of frontier-grade open-weight models — Llama, Mistral, Command and more — continuously hardened, fine-tuned, and deployed inside your environment. You are never reliant on a single provider's API.",
+    name: "Governed Model Choir — Prophet Mesh",
+    body: "A curated suite of frontier-grade open-weight models — Llama, Mistral, Command and more — continuously hardened, fine-tuned, and deployed inside your environment. Prophet Mesh adds a conductor layer: tasks are routed to the right specialist model and results re-aggregated across up to eight model families. You are never reliant on a single provider's API, and you never need to configure routing manually.",
     points: [
       "Models run 100% inside your infrastructure",
       "Managed cadence for capability refreshes",
       "Immune to upstream deprecations and rate limits",
+      // Spend minimisation claim pending internal validation before publishing
+      "Routes to local models by default — cloud escalation only when task complexity genuinely requires it",
     ],
   },
   {

@@ -51,6 +51,14 @@ const FAQ = [
     q: "What regulations does SocioProphet help with?",
     a: "SR 26-2 (US banking), APRA CPS 230 (Australia), EU AI Act, FCA (UK), MAS (Singapore). We provide governance infrastructure — you bring your regulatory interpretation.",
   },
+  {
+    q: "What is Prophet Mesh?",
+    a: "Prophet Mesh is Model Choir plus Model Conductor — a curated ensemble of open-weight models running on your own hardware, with a conductor that routes each task to the right model and combines results. It ships as part of Noetica, not as a separate purchase.",
+  },
+  {
+    q: "Why not just use one good model?",
+    a: "Because 'one good model' is exactly what any competitor can also wrap. Prophet Mesh's multi-model routing is the reason SocioProphet can't be replicated by adding a feature to an existing chatbot — it's an architectural difference, not a configuration choice.",
+  },
 ];
 
 export function Evidence() {
