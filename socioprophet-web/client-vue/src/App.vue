@@ -1,7 +1,7 @@
 <template>
   <div class="sp-shell" :class="{ 'dock-open': cockpit.dockOpen }">
     <header class="sp-topbar">
-      <RouterLink class="sp-brand" to="/news">SocioProphet</RouterLink>
+      <RouterLink class="sp-brand" to="/capability/dashboard">SocioProphet</RouterLink>
       <nav ref="domainNavEl" class="sp-domain-nav" aria-label="Primary domains" @focusout="onDomainFocusOut">
         <div v-for="(menu, mi) in domainMenu" :key="menu.label" class="sp-menu" :class="{ open: openMenu === mi }">
           <RouterLink
@@ -43,10 +43,27 @@
           </div>
         </div>
       </nav>
-      <div class="sp-profile" v-if="auth.user">
-        <span class="sp-tier-pill">{{ auth.tier }}</span>
-        <span class="sp-user-email">{{ auth.user.email }}</span>
-        <button type="button" class="sp-signout" @click="logout">Sign out</button>
+      <div class="sp-user" v-if="auth.user">
+        <button type="button" class="sp-avatar" :aria-expanded="userMenuOpen" aria-label="User menu" @click="userMenuOpen = !userMenuOpen">
+          {{ userInitials }}
+        </button>
+        <div v-if="userMenuOpen" class="sp-user-backdrop" @click="userMenuOpen = false" />
+        <div v-if="userMenuOpen" class="sp-user-menu" role="menu">
+          <div class="sp-user-head">
+            <span class="sp-user-email">{{ auth.user.email }}</span>
+            <span class="sp-tier-pill">{{ auth.tier }}</span>
+          </div>
+          <RouterLink to="/settings" class="sp-user-item" role="menuitem" @click="userMenuOpen = false">Profile</RouterLink>
+          <RouterLink to="/settings" class="sp-user-item" role="menuitem" @click="userMenuOpen = false">Settings</RouterLink>
+          <RouterLink to="/operator/holograph-me" class="sp-user-item" role="menuitem" @click="userMenuOpen = false">HolographMe</RouterLink>
+          <button type="button" class="sp-user-item sp-user-toggle" role="menuitemcheckbox" :aria-checked="settings.theme === 'light'" @click="settings.toggleTheme()">
+            <span>Appearance</span><span class="sp-toggle-state">{{ settings.theme === 'light' ? 'Light' : 'Dark' }}</span>
+          </button>
+          <button type="button" class="sp-user-item sp-user-toggle" role="menuitemcheckbox" :aria-checked="settings.operatorMode" @click="settings.toggleOperatorMode()">
+            <span>Operator mode</span><span class="sp-toggle-state" :class="{ on: settings.operatorMode }">{{ settings.operatorMode ? 'On' : 'Off' }}</span>
+          </button>
+          <button type="button" class="sp-user-item sp-user-signout" role="menuitem" @click="logout">Sign out</button>
+        </div>
       </div>
       <RouterLink v-else class="sp-signin" to="/login">Sign in</RouterLink>
     </header>
@@ -78,31 +95,30 @@
            it never disturbs the grid. -->
       <div v-if="navOpen" class="sp-nav-backdrop" @click="navOpen = false" />
       <nav v-if="navOpen" ref="navPanelEl" class="sp-nav-panel" aria-label="Capability navigation" @keydown="onNavPanelKey">
-        <div class="sp-nav-section-title">Capabilities</div>
-        <RouterLink
-          v-for="cap in capabilityRail"
-          :key="cap.to"
-          :to="cap.to"
-          class="sp-nav-link"
-          @click="navOpen = false"
-        >{{ cap.label }}</RouterLink>
-        <div class="sp-nav-section-title">Working surfaces</div>
-        <RouterLink
-          v-for="op in operatorShortcuts"
-          :key="op.to"
-          :to="op.to"
-          class="sp-nav-link"
-          @click="navOpen = false"
-        >{{ op.label }}</RouterLink>
-        <template v-for="grp in agentCockpit" :key="grp.label">
-          <div class="sp-nav-section-title">{{ grp.label }}</div>
-          <RouterLink
-            v-for="leaf in grp.items"
-            :key="leaf.to"
-            :to="leaf.to"
-            class="sp-nav-link"
-            @click="navOpen = false"
-          >{{ leaf.label }}</RouterLink>
+        <button class="sp-nav-search" type="button" @click="paletteOpen = true; navOpen = false">
+          <span>⌕ Jump to a surface…</span><kbd>⌘K</kbd>
+        </button>
+
+        <template v-if="pinnedSurfaces.length">
+          <div class="sp-nav-section-title">Pinned</div>
+          <div v-for="p in pinnedSurfaces" :key="p.to" class="sp-nav-link sp-nav-leaf">
+            <RouterLink :to="p.to" class="sp-nav-lbl" @click="navOpen = false">{{ p.label }}</RouterLink>
+            <button class="sp-pin on" type="button" title="Unpin" @click.stop="settings.togglePin(p.to)">★</button>
+          </div>
+        </template>
+
+        <template v-for="sec in drawerSections" :key="sec.id">
+          <button class="sp-nav-sec" type="button" :aria-expanded="secOpen(sec)" @click="settings.toggleSection(sec.id, secOpen(sec))">
+            <span class="sp-nav-caret">{{ secOpen(sec) ? '▾' : '▸' }}</span>
+            <span class="sp-nav-sec-lbl" :class="{ op: sec.operator }">{{ sec.label }}</span>
+            <span class="sp-nav-count">{{ sec.items.length }}</span>
+          </button>
+          <template v-if="secOpen(sec)">
+            <div v-for="leaf in sec.items" :key="leaf.to" class="sp-nav-link sp-nav-leaf">
+              <RouterLink :to="leaf.to" class="sp-nav-lbl" @click="navOpen = false">{{ leaf.label }}</RouterLink>
+              <button class="sp-pin" :class="{ on: settings.isPinned(leaf.to) }" type="button" :title="settings.isPinned(leaf.to) ? 'Unpin' : 'Pin'" @click.stop="settings.togglePin(leaf.to)">{{ settings.isPinned(leaf.to) ? '★' : '☆' }}</button>
+            </div>
+          </template>
         </template>
       </nav>
 
@@ -214,6 +230,7 @@ import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
 import { useAuth } from './stores/auth';
 import { useResearch } from './stores/research';
 import { useCockpit } from './stores/cockpit';
+import { useSettings } from './stores/settings';
 import RuntimeAdapterStatusBadge from './components/RuntimeAdapterStatusBadge.vue';
 import QuakeTerminal from './components/QuakeTerminal.vue';
 import CommandPalette from './components/CommandPalette.vue';
@@ -222,7 +239,7 @@ import GraphDock from './components/GraphDock.vue';
 import { useOperatorTerminal } from './composables/useOperatorTerminal';
 import { useNoeticaChat } from './composables/useNoeticaChat';
 import { domainSurfaces, surfaceForRoute, surfacesForDomain } from './config/domainRoutes';
-import { AGENT_COCKPIT, CAPABILITY_RAIL, DOMAIN_MENU, OPERATOR_MENU, OPERATOR_SHORTCUTS } from './config/cockpitNav';
+import { CAPABILITY_RAIL, DOMAIN_MENU, DRAWER_SECTIONS, ALL_SURFACES, type SurfaceEntry } from './config/cockpitNav';
 import {
   entriesForDomain,
   registryEntryForPath,
@@ -236,17 +253,31 @@ const router = useRouter();
 const auth = useAuth();
 const research = useResearch();
 const cockpit = useCockpit();
+const settings = useSettings();
 
 const logout = async () => {
   await auth.signOut();
   router.push('/login');
 };
 
-const domainMenu = [...DOMAIN_MENU, OPERATOR_MENU];
+// Top row = user domains only. The Operator / SourceOS surfaces do NOT sit in this
+// row (they're a dashboard-class thing, already reachable from the hamburger drawer,
+// and only when Operator mode is on). Keeps the primary bar clean for everyday users.
+const domainMenu = [...DOMAIN_MENU];
 const capabilityRail = CAPABILITY_RAIL;
-const operatorShortcuts = OPERATOR_SHORTCUTS;
-const agentCockpit = AGENT_COCKPIT;
+// Accordion drawer: everyday sections open, everything else collapsed-but-present.
+const drawerSections = DRAWER_SECTIONS;
+function secOpen(sec: (typeof DRAWER_SECTIONS)[number]) { return settings.isSectionOpen(sec.id, sec.defaultOpen, sec.operator); }
+const pinnedSurfaces = computed<SurfaceEntry[]>(() =>
+  settings.pinned.map((to) => ALL_SURFACES.find((s) => s.to === to)).filter(Boolean) as SurfaceEntry[]);
 const navOpen = ref(false);
+const userMenuOpen = ref(false);
+const userInitials = computed(() => {
+  const name: string = auth.user?.displayName ?? '';
+  if (name) return name.split(/\s+/).map((s: string) => s[0]).slice(0, 2).join('').toUpperCase();
+  const email: string = auth.user?.email ?? '';
+  return (email.slice(0, 2) || '?').toUpperCase();
+});
 
 // ── Keyboard navigation for the nav menus ────────────────────────────────────
 const domainNavEl = ref<HTMLElement | null>(null);
@@ -302,7 +333,7 @@ function onNavPanelKey(e: KeyboardEvent) {
 }
 
 // Any navigation closes the open menus.
-watch(() => route.path, () => { openMenu.value = null; navOpen.value = false; });
+watch(() => route.path, () => { openMenu.value = null; navOpen.value = false; userMenuOpen.value = false; });
 
 // Quake drop-down terminal — shell-wide, toggled by the footer button or Ctrl+`.
 const paletteOpen = ref(false);
@@ -461,6 +492,39 @@ const activeRuntimeFeatures = computed<RuntimeAdapterFeature[]>(() => {
 .sp-signin:hover { background: rgba(255, 255, 255, 0.08); }
 .sp-signin { margin-left: auto; }
 
+/* Top-right user dropdown */
+.sp-user { margin-left: auto; position: relative; }
+.sp-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.72rem; font-weight: 600; cursor: pointer;
+}
+.sp-avatar:hover { background: rgba(255, 255, 255, 0.16); }
+.sp-user-backdrop { position: fixed; inset: 0; z-index: 40; }
+.sp-user-menu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 41;
+  min-width: 240px; padding: 6px 0;
+  background: #14161c; border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.sp-user-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 8px 14px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.sp-user-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; text-align: left; padding: 8px 14px;
+  background: transparent; border: 0; cursor: pointer;
+  color: rgba(255, 255, 255, 0.85); font-size: 0.82rem; text-decoration: none;
+}
+.sp-user-item:hover { background: rgba(255, 255, 255, 0.08); }
+.sp-toggle-state { font-size: 0.72rem; color: rgba(255, 255, 255, 0.5); }
+.sp-toggle-state.on { color: #34d399; }
+.sp-user-signout { border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 4px; }
+.sp-nav-op { color: #34d399; }
+
 .sp-capture-actions {
   display: flex;
   align-items: center;
@@ -606,4 +670,19 @@ const activeRuntimeFeatures = computed<RuntimeAdapterFeature[]>(() => {
 }
 .sp-nav-link:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
 .sp-nav-link.router-link-active { color: #78c88c; }
+/* Accordion drawer */
+.sp-nav-search { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; width: calc(100% - 1.2rem); margin: 0.6rem; padding: 0.5rem 0.7rem; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; color: rgba(255, 255, 255, 0.6); cursor: pointer; font-size: 0.82rem; }
+.sp-nav-search kbd { font-size: 0.66rem; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 4px; padding: 0 0.3rem; }
+.sp-nav-sec { display: flex; align-items: center; gap: 0.5rem; width: 100%; background: transparent; border: 0; cursor: pointer; padding: 0.5rem 1rem; color: rgba(255, 255, 255, 0.85); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.sp-nav-sec:hover { background: rgba(255, 255, 255, 0.05); }
+.sp-nav-caret { width: 0.8rem; color: rgba(255, 255, 255, 0.5); font-size: 0.7rem; }
+.sp-nav-sec-lbl { flex: 1; text-align: left; }
+.sp-nav-sec-lbl.op { color: #34d399; }
+.sp-nav-count { font-size: 0.68rem; color: rgba(255, 255, 255, 0.4); }
+.sp-nav-leaf { display: flex; align-items: center; gap: 0.5rem; }
+.sp-nav-leaf .sp-nav-lbl { flex: 1; color: rgba(255, 255, 255, 0.82); text-decoration: none; }
+.sp-nav-leaf .sp-nav-lbl.router-link-active { color: #78c88c; }
+.sp-nav-leaf:hover { background: rgba(255, 255, 255, 0.08); }
+.sp-pin { background: transparent; border: 0; cursor: pointer; color: rgba(255, 255, 255, 0.28); font-size: 0.9rem; padding: 0 0.2rem; line-height: 1; }
+.sp-pin.on, .sp-pin:hover { color: #f5b301; }
 </style>

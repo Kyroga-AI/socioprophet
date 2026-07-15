@@ -20,6 +20,8 @@ import {
   type Polarity,
 } from '../data/vdtFixture';
 
+// Dashboard-bff (data). Dev uses the Vite proxy ('/api'); set VITE_DASHBOARD_BFF_BASE
+// to a hosted bff. (The Prophet Mesh is the model gateway, a separate endpoint — see config/mesh.ts.)
 const API_BASE = (import.meta as any).env?.VITE_DASHBOARD_BFF_BASE || '/api';
 
 export interface VdtWeightCell {
