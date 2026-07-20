@@ -29,6 +29,10 @@
     {
       "target": "app",
       "public": "socioprophet-web/app-vue/dist",
+      "predeploy": [
+        "npm --prefix socioprophet-web/app-vue install",
+        "npm --prefix socioprophet-web/app-vue run build"
+      ],
       "ignore": [
         "firebase.json",
         "**/.*",
