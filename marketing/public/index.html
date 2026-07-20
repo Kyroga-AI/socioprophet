@@ -45,6 +45,8 @@
       .btn-dark { display: inline-flex; align-items: center; border-radius: 0.5rem; background: #0f172a; color: white; padding: 0.75rem 1.25rem; text-decoration: none; }
       .btn-dark:hover { background: #1e293b; }
       .btn-dark, .btn-dark:visited, .home-nav a.btn-dark, .home-nav a.btn-dark:visited { color: #ffffff !important; -webkit-text-fill-color: #ffffff; opacity: 1; }
+      .home-nav a.nav-login { border: 1px solid #0f172a; border-radius: 0.45rem; padding: 0.4rem 0.95rem; color: #0f172a; font-weight: 600; }
+      .home-nav a.nav-login:hover { background: #0f172a; color: #fff; text-decoration: none; }
       .btn-light { display: inline-flex; align-items: center; border-radius: 0.5rem; border: 1px solid #cbd5e1; background: white; color: #0f172a; padding: 0.75rem 1.25rem; text-decoration: none; }
       .btn-light:hover { background: #f8fafc; }
       .hero { padding: 2.1rem 0 4.1rem; }
@@ -129,7 +131,7 @@
             <a href="/academy/">Commons</a>
             <a href="/organizations/">Organizations</a>
             <a href="/documentation/" onclick='spTrack("cta_docs_click",{href:this.getAttribute("href")})'>Documentation</a>
-            <a href="https://vue.socioprophet.com" onclick='spTrack("cta_portal_click",{href:this.getAttribute("href")})'>Portal</a>
+            <a class="nav-login" href="https://app.socioprophet.com/login" onclick='spTrack("cta_login_click",{href:this.getAttribute("href")})'>Log in</a>
           </nav>
         </div>
       </div>
@@ -147,7 +149,7 @@
               </h1>
 
               <p>
-                SocioProphet is a governed operational intelligence platform for Learning, Trust, and Deployment Surfaces. Start with Academy, open Documentation, or move into Organizations for institutional adoption, Entity Analytics, and Authorized Cyberdefense.
+                SocioProphet is a governed operational intelligence platform built on the <strong>Prophet Platform</strong>: <strong>Noetica</strong>, our sovereign reasoning agent, and <strong>HellGraph</strong>, a proof-carrying knowledge graph — so every answer is grounded, cited to its source, and replayable. Start with Academy, open Documentation, or move into Organizations for institutional adoption, Entity Analytics, and Authorized Cyberdefense.
               </p>
 
               <div class="cta-row">
