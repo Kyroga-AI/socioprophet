@@ -5,8 +5,10 @@ const base = process.env.DOCS_BASE || "/documentation/";
 export default defineConfig({
   head: [
     ["link", { rel: "icon", href: "/icon.png" }],
-    ["script", { async: "", src: "https://www.googletagmanager.com/gtag/js?id=G-GL5Y2786Z6" }],
-    ["script", {}, "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag(\"js\", new Date()); gtag(\"config\", \"G-GL5Y2786Z6\"); function spTrack(name, params){ try{ if(typeof gtag===\"function\") gtag(\"event\", name, params||{}); }catch(e){} }"],
+    // No third-party analytics/enrichment loader — removed the googletagmanager gtag loader (it was the
+    // injection vector for GA + ZoomInfo WebSights). spTrack is kept as a local no-op so any onclick
+    // handlers stay defined without any network call.
+    ["script", {}, "function spTrack(){}"],
   ],
   title: "SocioProphet",
   description: "SocioProphet documentation",
