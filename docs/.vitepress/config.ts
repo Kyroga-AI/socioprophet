@@ -1,6 +1,9 @@
 import { defineConfig } from "vitepress";
 
 const base = process.env.DOCS_BASE || "/documentation/";
+// The cockpit SPA (socioprophet-web/client-vue) served on the Firebase `app` target.
+// Override per env at docs-build time (e.g. dev: https://socioprophet-builder-dev.web.app).
+const appUrl = process.env.APP_URL || "https://app.socioprophet.com";
 
 export default defineConfig({
   head: [
@@ -22,10 +25,13 @@ export default defineConfig({
     nav: [
       { text: "Docs", link: "/" },
       { text: "Getting Started", link: "/guide/getting-started" },
+      { text: "Repo Map", link: "/repo-map" },
       { text: "Governance", link: "/guide/organizations-governance-and-institutional-safety" },
       { text: "Entity Analytics", link: "/guide/entity-analytics-reference" },
+      { text: "Legal Entities", link: "/guide/legal-entity-reference-fabric" },
       { text: "Academy", link: "/guide/academy-policy-index" },
       { text: "Products", link: "/guide/products/overview" },
+      { text: "Launch Cockpit ↗", link: appUrl },
     ],
     sidebar: {
       "/guide/": [
@@ -34,8 +40,15 @@ export default defineConfig({
           items: [
             { text: "Getting Started", link: "/guide/getting-started" },
             { text: "Architecture", link: "/guide/architecture" },
+            { text: "Cross-Lane Artifact Canon", link: "/guide/cross-lane-artifact-canon" },
             { text: "Canonical Platform Direction", link: "/guide/canonical-platform-direction" },
+            { text: "Event-Native Orchestration Workbench", link: "/guide/event-native-orchestration-workbench" },
             { text: "Surface Inventory", link: "/guide/surface-inventory" },
+            { text: "Desktop Linux Distro Strategy", link: "/guide/desktop-linux-distro-strategy" },
+            { text: "Domain Surface", link: "/guide/domain-surface" },
+            { text: "Governed Cybernetic Stack", link: "/guide/governed-cybernetic-stack" },
+            { text: "Documentation Home and Repository Status", link: "/guide/documentation-home-and-repository-status" },
+            { text: "Deployment Modes and Data Boundaries", link: "/guide/deployment-modes-and-data-boundaries" },
           ],
         },
         {
@@ -46,17 +59,24 @@ export default defineConfig({
             { text: "Platform Human Protection and Safeguarding", link: "/guide/platform-human-protection-and-safeguarding" },
             { text: "Provider Safety and Capability Eligibility", link: "/guide/provider-safety-and-capability-eligibility" },
             { text: "Provenance, Promotion, and Reversibility", link: "/guide/provenance-promotion-and-reversibility" },
+            { text: "Reporting and Disclosure", link: "/guide/reporting-and-disclosure" },
+            { text: "System Cards and Assurance", link: "/guide/system-cards-and-assurance" },
+            { text: "Trust Center", link: "/guide/trust-center" },
           ],
         },
         {
           text: "Operations & Routing",
           items: [
             { text: "Governed AI and Cybernetics", link: "/guide/governed-ai-and-cybernetics" },
+            { text: "Agent Corps and Operational Roles", link: "/guide/agent-corps-and-operational-roles" },
             { text: "Agent Plane and Operator Workflows", link: "/guide/agent-plane-and-operator-workflows" },
             { text: "Auth and Connections", link: "/guide/auth-and-connections" },
             { text: "Auth Recovery and Connection Health", link: "/guide/auth-recovery-and-connection-health" },
             { text: "Digital Trust and Capability Routing", link: "/guide/digital-trust-and-capability-routing" },
             { text: "Provider Capability Routing", link: "/guide/provider-capability-routing" },
+            { text: "Operating Modes: Learning and Defense", link: "/guide/operating-modes-learning-and-defense" },
+            { text: "MeshRush", link: "/guide/mesh-rush" },
+            { text: "Model Behavior and Command Resolution", link: "/guide/model-behavior-and-command-resolution" },
           ],
         },
         {
@@ -64,9 +84,14 @@ export default defineConfig({
           items: [
             { text: "Entity Analytics Overview", link: "/guide/entity-analytics-overview" },
             { text: "Entity Analytics Reference", link: "/guide/entity-analytics-reference" },
+            { text: "Cross-Lane Artifact Canon", link: "/guide/cross-lane-artifact-canon" },
+            { text: "Legal Entity Reference Fabric", link: "/guide/legal-entity-reference-fabric" },
             { text: "Entity Graph and Safe Linkage", link: "/guide/entity-graph-and-safe-linkage" },
             { text: "Identity Prime and Event IR", link: "/guide/identity-prime-and-event-ir" },
             { text: "Policy Constrained Merging and Unmerge", link: "/guide/policy-constrained-merging-and-unmerge" },
+            { text: "Marketer-Safe Outputs and Segment Proofs", link: "/guide/marketer-safe-outputs-and-segment-proofs" },
+            { text: "Intake UDM + Release Schema", link: "/guide/intake-udm-schema" },
+            { text: "Worked Example: Michael Cross-Context", link: "/guide/worked-example-michael-cross-context" },
           ],
         },
         {
@@ -78,8 +103,23 @@ export default defineConfig({
             { text: "Hybrid Representation Builder", link: "/guide/hybrid-representation-builder" },
             { text: "Semantic Representation Ladder", link: "/guide/semantic-representation-ladder" },
             { text: "Semantic Vector Stack", link: "/guide/semantic-vector-stack" },
+            { text: "Semantic Model Workstreams", link: "/guide/semantic-model-workstreams" },
+            { text: "LSA / LSI / LDA Geometry", link: "/guide/lsa-lsi-lda-geometry" },
             { text: "Temporal Graph Evolution", link: "/guide/temporal-graph-evolution" },
             { text: "Twenty-Three Topic Canon", link: "/guide/twenty-three-topic-canon" },
+          ],
+        },
+        {
+          text: "Trust Center",
+          items: [
+            { text: "Trust Center", link: "/guide/trust-center" },
+            { text: "Cross-Lane Artifact Canon", link: "/guide/cross-lane-artifact-canon" },
+            { text: "Reporting and Disclosure", link: "/guide/reporting-and-disclosure" },
+            { text: "Deployment Modes and Data Boundaries", link: "/guide/deployment-modes-and-data-boundaries" },
+            { text: "System Cards and Assurance", link: "/guide/system-cards-and-assurance" },
+            { text: "Model Behavior and Command Resolution", link: "/guide/model-behavior-and-command-resolution" },
+            { text: "Documentation Home and Repository Status", link: "/guide/documentation-home-and-repository-status" },
+            { text: "Mesh Rush", link: "/guide/mesh-rush" },
           ],
         },
         {
@@ -96,6 +136,9 @@ export default defineConfig({
           text: "Products",
           items: [
             { text: "Products Overview", link: "/guide/products/overview" },
+            { text: "Product Surface Standard", link: "/guide/product-surface-standard" },
+            { text: "Product Surface Maturity Matrix", link: "/guide/product-surface-maturity-matrix" },
+            { text: "Repo Map and Prophet Understand", link: "/guide/repo-map-prophet-understand" },
             { text: "Academy", link: "/guide/products/academy" },
             { text: "AI", link: "/guide/products/ai" },
             { text: "Cloud", link: "/guide/products/cloud" },
@@ -107,6 +150,10 @@ export default defineConfig({
             { text: "Wiki", link: "/guide/products/wiki" },
             { text: "Socios Host", link: "/guide/products/socios-host" },
             { text: "Truthorbot", link: "/guide/products/truthorbot" },
+            { text: "I/O Plane", link: "/guide/products/io" },
+            { text: "Knowledge Graph", link: "/guide/products/kg" },
+            { text: "Knowledge Representation", link: "/guide/products/kr" },
+            { text: "Cloud Shell", link: "/guide/products/sh" },
           ],
         },
       ],

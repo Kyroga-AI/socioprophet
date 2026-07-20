@@ -7,7 +7,32 @@ service cloud.firestore {
     }
 
     match /users/{uid} {
-      allow read, write: if signedIn() && request.auth.uid == uid;
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create: if signedIn() && request.auth.uid == uid;
+      // Owner may update their own doc, but NOT their tier/entitlements —
+      // those are set server-side (billing/admin), never self-granted.
+      allow update: if signedIn() && request.auth.uid == uid
+        && !request.resource.data.diff(resource.data).affectedKeys()
+              .hasAny(['tier', 'entitlements']);
+
+      // Image builds: owner can read their own; only the server (firebase-admin,
+      // which bypasses rules) creates/updates them. Clients never write builds.
+      match /builds/{buildId} {
+        allow read: if signedIn() && request.auth.uid == uid;
+        allow write: if false;
+      }
+
+      // Fleet devices: owner can read; server-only write (claim codes, assignments).
+      match /devices/{deviceId} {
+        allow read: if signedIn() && request.auth.uid == uid;
+        allow write: if false;
+      }
+    }
+
+    // Claim-code → device index, used by the unauthenticated /boot endpoint.
+    // Server-only (firebase-admin bypasses rules); never client-readable.
+    match /device_claims/{claim} {
+      allow read, write: if false;
     }
 
     // Intake is server-written only; client access denied.
