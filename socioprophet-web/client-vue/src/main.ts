@@ -20,6 +20,8 @@ import Discovery from './pages/Discovery.vue';
 import DataSearch from './pages/DataSearch.vue';
 import KnowledgeGraph from './pages/KnowledgeGraph.vue';
 import ForgeImport from './pages/ForgeImport.vue';
+import ImageBuilder from './pages/ImageBuilder.vue';
+import BuildsList from './pages/BuildsList.vue';
 import NewsFeed from './pages/NewsFeed.vue';
 import MarketMonitor from './pages/MarketMonitor.vue';
 import EconomySectorBoard from './pages/EconomySectorBoard.vue';
@@ -126,6 +128,8 @@ const explicitRoutes = [
   { path: '/data/search', component: DataSearch },
   { path: '/knowledge/graph', component: KnowledgeGraph },
   { path: '/forge/import', component: ForgeImport },
+  { path: '/sourceos/image-builder', component: ImageBuilder },
+  { path: '/sourceos/builds', component: BuildsList },
   { path: '/news', component: NewsFeed },
   { path: '/markets/indices-funds', component: MarketMonitor },
   { path: '/economy/macro-economics', component: EconomySectorBoard },

@@ -257,8 +257,10 @@ export const AGENT_COCKPIT: NavGroup[] = [
   },
   {
     label: 'SourceOS',
-    to: '/nlboot',
+    to: '/sourceos/image-builder',
     items: [
+      { label: 'Image Builder', to: '/sourceos/image-builder' },
+      { label: 'My Builds', to: '/sourceos/builds' },
       { label: 'NLBoot Evidence', to: '/nlboot' },
       { label: 'Operator Workbench', to: '/workbench' },
       { label: 'Code Search', to: '/code' },
