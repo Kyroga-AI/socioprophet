@@ -261,6 +261,8 @@ export const AGENT_COCKPIT: NavGroup[] = [
     items: [
       { label: 'Image Builder', to: '/sourceos/image-builder' },
       { label: 'My Builds', to: '/sourceos/builds' },
+      { label: 'Fleet', to: '/sourceos/fleet' },
+      { label: 'Cloud Broker', to: '/sourceos/cloud' },
       { label: 'NLBoot Evidence', to: '/nlboot' },
       { label: 'Operator Workbench', to: '/workbench' },
       { label: 'Code Search', to: '/code' },
