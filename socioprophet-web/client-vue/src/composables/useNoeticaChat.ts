@@ -6,6 +6,7 @@
 import { ref, watch } from 'vue';
 import { AM_BASE } from '../services/agentMachineApi';
 import { useSettings } from '../stores/settings';
+import type { NoeticaContext } from '../features/noetica/contextBudget';
 import { useProjects, projectCollectionId } from '../stores/projects';
 import { useMcp } from '../stores/mcp';
 import { meshChatStream } from '../config/mesh';
@@ -50,6 +51,7 @@ export interface ChatTurn {
   error?: boolean;
   model?: string;   // model_routed from the done event
   badge?: string;   // verification badge (e.g. "Generated · best-effort · attested")
+  context?: NoeticaContext;   // per-turn context-window composition from the done event
   rating?: 'up' | 'down';   // user feedback on an assistant turn
   awaitingApproval?: boolean;   // plan-mode: produced a plan, waiting for approve/reject
   fanoutModel?: string;   // when set, this turn is one column of a multi-model compare
@@ -161,11 +163,12 @@ export function createNoeticaChat() {
             } else if (event === 'thinking_delta' && typeof d.delta === 'string') {
               assistant.thinking = (assistant.thinking ?? '') + d.delta;
             } else if (event === 'done') {
-              const result = d.result as { content?: string; model_routed?: string; verification?: { badge?: string } } | undefined;
+              const result = d.result as { content?: string; model_routed?: string; verification?: { badge?: string }; context?: NoeticaContext } | undefined;
               if (result?.content && !assistant.content) assistant.content = result.content;
               assistant.content = assistant.content.replace(/\n?<!--\s*c2pa:[^>]*-->\s*$/i, '').trimEnd();
               if (result?.model_routed) assistant.model = result.model_routed;
               if (result?.verification?.badge) assistant.badge = result.verification.badge;
+              if (result?.context) assistant.context = result.context;
               if (modeAtSend === 'plan') assistant.awaitingApproval = true;
               assistant.streaming = false;
             } else if (event === 'error') {

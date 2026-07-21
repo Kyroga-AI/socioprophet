@@ -107,6 +107,10 @@
 
     <!-- Composer -->
     <div class="nx-composer">
+      <details v-if="latestContext" class="nx-ctx">
+        <summary class="nx-ctx-summary"><span class="nx-ctx-caret">▶</span> Context window <span class="nx-ctx-hint">{{ latestContext.model }}</span></summary>
+        <ContextWindow :context="latestContext" />
+      </details>
       <form class="nx-input" @submit.prevent="submit">
         <textarea
           ref="inputEl"
@@ -215,6 +219,7 @@ import { AM_BASE, labsCatalog, type ModelEntry } from '../services/agentMachineA
 import { renderMarkdown } from '../utils/markdown';
 import NoeticaMark from '../components/NoeticaMark.vue';
 import NoeticaTrace from '../components/NoeticaTrace.vue';
+import ContextWindow from '../components/ContextWindow.vue';
 
 function hasTrace(t: ChatTurn): boolean {
   return !!(t.trace?.length || t.plan?.steps?.length || t.retrieval || t.grounding || t.judgment?.verdict || t.intentName);
@@ -224,6 +229,8 @@ function traceCount(t: ChatTurn): number {
 }
 
 const chat = useNoeticaChat();
+// The most recent turn that reported its context-window composition (emitted on 'done').
+const latestContext = computed(() => [...chat.turns.value].reverse().find((t) => t.context)?.context ?? null);
 const projects = useProjects();
 const agentModes = ['auto', 'plan', 'ask'] as const;
 const replyLengths = ['short', 'medium', 'long'] as const;
@@ -539,6 +546,12 @@ onMounted(() => inputEl.value?.focus());
 
 /* ── Composer ── */
 .nx-composer { padding: 8px 16px 20px; }
+.nx-ctx { margin-bottom: 8px; }
+.nx-ctx-summary { list-style: none; cursor: pointer; font-size: 0.72rem; color: var(--text-3); display: flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0; user-select: none; }
+.nx-ctx-summary::-webkit-details-marker { display: none; }
+.nx-ctx-caret { font-size: 0.55rem; transition: transform 0.15s; } .nx-ctx[open] .nx-ctx-caret { transform: rotate(90deg); }
+.nx-ctx-hint { margin-left: auto; font-family: var(--mono, ui-monospace); color: var(--text-3); }
+.nx-ctx > :global(.cw) { margin-top: 6px; }
 .nx-input {
   max-width: 768px; margin: 0 auto;
   border: 1px solid var(--nline-weak); border-radius: 16px; background: var(--nb);
