@@ -23,8 +23,24 @@ permissions:
   contents: read
 
 jobs:
+  # The `secrets` context is NOT available in a job-level `if` — using it there fails the
+  # whole workflow at startup (no jobs even created). Gate via a tiny job whose STEP reads
+  # the secret into env, then skip percy-docs when the token isn't configured.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.check.outputs.enabled }}
+    steps:
+      - id: check
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+        run: |
+          if [ -n "$PERCY_TOKEN" ]; then echo "enabled=true" >> "$GITHUB_OUTPUT"; else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"; echo "PERCY_TOKEN not configured — skipping visual snapshots."; fi
+
   percy-docs:
-    if: ${{ secrets.PERCY_TOKEN != '' }}
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

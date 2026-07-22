@@ -68,13 +68,25 @@ jobs:
 
   parser-smoke:
     runs-on: ubuntu-latest
-    if: ${{ hashFiles('entity-fabric/parsers/tests/**') != '' }}
+    # hashFiles() only works in STEP-level expressions (it needs a checked-out workspace);
+    # at job level it fails the whole workflow at startup. Gate with a step instead.
     steps:
       - uses: actions/checkout@v4
+      - name: Check for parser tests
+        id: has
+        run: |
+          if [ -n "$(find entity-fabric/parsers/tests -type f -print -quit 2>/dev/null)" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"; echo "No parser tests yet — skipping."
+          fi
       - uses: actions/setup-python@v5
+        if: steps.has.outputs.found == 'true'
         with:
           python-version: "3.12"
       - name: Install parser test deps
+        if: steps.has.outputs.found == 'true'
         run: python -m pip install --upgrade pip pytest lxml
       - name: Run parser tests
+        if: steps.has.outputs.found == 'true'
         run: pytest -q entity-fabric/parsers/tests

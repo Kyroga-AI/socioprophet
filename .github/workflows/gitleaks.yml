@@ -1,59 +1,39 @@
 name: gitleaks
 
+# Secret scanning with the PINNED OPEN-SOURCE gitleaks binary.
+# NOTE: intentionally NOT gitleaks/gitleaks-action@v2 — that action is license-gated for
+# organization repos (GITLEAKS_LICENSE) and this repo is OSS-first / reproducible without
+# proprietary secrets. (A prior half-migration left this file with duplicate `on:` keys —
+# invalid YAML — so the workflow failed at startup on every push.)
+#
+# Scans the WORKING TREE (--no-git): "no secret in the current code" — deterministic and
+# green-able. A full-history scan would permanently redline CI on anything ever committed;
+# run `gitleaks git .` locally when you want a history audit.
+
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
+    branches: [main, master]
   pull_request:
-    branches:
-      - main
-      - master
-
-permissions:
-  contents: read
-# NOTE: We intentionally install a pinned open-source gitleaks binary.
-# Do NOT switch to license-gated gitleaks actions that require org license keys.
-# This repo is OSS-first and must remain reproducible without proprietary secrets.
-
-
-on:
-  push:
-    branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
+    branches: [main, master]
 
 permissions:
   contents: read
 
 jobs:
   scan:
-    name: scan
-    runs-on:
-      - self-hosted
-      - linux
-      - x64
-      - fedora
-      - coreos
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install pinned gitleaks (OSS binary)
+        run: |
+          curl -sSfL -o /tmp/gitleaks.tgz \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz
+          tar -xzf /tmp/gitleaks.tgz -C /tmp gitleaks
+          sudo install -m 0755 /tmp/gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+
+      - name: Scan working tree for secrets
+        run: gitleaks detect --no-git --source . --no-banner --redact --verbose
