@@ -152,14 +152,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 <style scoped>
 .mx { display: grid; grid-template-columns: 190px 300px 1fr; height: 100%; min-height: 0; font-size: 0.85rem; background: var(--bg); color: var(--text); }
 .mx-rail { border-right: 1px solid var(--line); padding: 0.75rem; display: flex; flex-direction: column; gap: 0.15rem; }
-.mx-compose { display: flex; align-items: center; gap: 0.5rem; background: var(--accent); color: #14110a; border: 0; border-radius: 8px; padding: 0.55rem; margin-bottom: 0.5rem; cursor: pointer; font-weight: 600; }
+.mx-compose { display: flex; align-items: center; gap: 0.5rem; background: var(--accent); color: #17130a; border: 0; border-radius: 8px; padding: 0.5rem 0.65rem; margin-bottom: 0.5rem; cursor: pointer; font-weight: 700; font-size: 0.82rem; } .mx-compose:hover { filter: brightness(1.06); }
 .mx-nav { display: flex; align-items: center; gap: 0.55rem; padding: 0.45rem 0.6rem; border: 0; background: none; border-radius: 8px; cursor: pointer; text-align: left; color: var(--text-2); font-size: 0.84rem; }
 .mx-nav:hover { background: rgba(255,255,255,0.03); } .mx-nav.on { background: var(--accent-soft); color: var(--accent); font-weight: 550; }
 .mx-glyph { width: 1rem; text-align: center; opacity: 0.8; }
 .mx-count, .mx-badge { margin-left: auto; font-size: 0.7rem; } .mx-badge { background: rgba(227,179,65,0.18); color: var(--amber); border-radius: 999px; padding: 0 0.45rem; }
 .mx-foot { margin-top: auto; font-size: 0.68rem; color: var(--text-3); display: flex; gap: 0.35rem; align-items: center; }
 .mx-list { border-right: 1px solid var(--line); overflow-y: auto; display: flex; flex-direction: column; }
-.mx-listhead { display: flex; justify-content: space-between; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--line); font-weight: 550; }
+.mx-listhead { display: flex; justify-content: space-between; align-items: baseline; padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--line); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--text-2); position: sticky; top: 0; background: var(--bg); z-index: 1; }
 .mx-row { display: block; width: 100%; text-align: left; padding: 0.55rem 0.75rem; border: 0; border-bottom: 1px solid var(--line); background: none; color: inherit; cursor: pointer; }
 .mx-row:hover { background: rgba(255,255,255,0.02); } .mx-row.on { background: var(--accent-soft); border-left: 2px solid var(--accent); }
 .mx-row.unread .mx-from, .mx-row.unread .mx-subj { font-weight: 640; color: var(--text); }
@@ -175,7 +175,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 .mx-replybar { display: flex; gap: 0.6rem; align-items: center; padding: 0.75rem 1rem; border-top: 1px solid var(--line); }
 .mx-replybar input { flex: 1; padding: 0.55rem 0.75rem; border: 1px solid var(--line-2); border-radius: 8px; background: var(--bg); color: var(--text); }
 .mx-draft, .mx-send, .mx-composebtns button, .mx-scbtns button { padding: 0.5rem 0.85rem; border-radius: 8px; border: 1px solid var(--line-2); background: var(--surface); cursor: pointer; color: var(--text-2); }
-.mx-send { background: var(--accent); color: #14110a; border: 0; } .mx-send:disabled, .mx-draft:disabled { opacity: 0.5; cursor: default; }
+.mx-send { background: var(--accent); color: #17130a; border: 0; font-weight: 700; } .mx-send:hover:not(:disabled) { filter: brightness(1.06); } .mx-send:disabled, .mx-draft:disabled { opacity: 0.5; cursor: default; }
+.mx-badge { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; }
 .mx-muted { color: var(--text-3); } .mx-small { font-size: 0.74rem; } .mx-pad { padding: 1rem; } .mx-err { color: var(--down); padding: 0.75rem; }
 .mx-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh; z-index: 40; }
 .mx-palette, .mx-modal { background: var(--surface); width: 520px; max-width: 92vw; border-radius: 12px; box-shadow: 0 20px 60px -20px rgba(0,0,0,0.7); border: 1px solid var(--line-2); padding: 0.85rem; display: flex; flex-direction: column; gap: 0.6rem; }

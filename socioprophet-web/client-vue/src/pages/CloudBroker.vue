@@ -64,20 +64,25 @@ const offerFor = (offerings: ReturnType<typeof compareServices>, v: Vendor) => o
 </template>
 
 <style scoped>
+/* Annealed epistemic-Carbon conformance (db-* vocabulary): uppercase bold mini-heads,
+   hairline var(--line) grid, tabular numerals, 0.56rem badge type, pill chips. */
 .cb { height: 100%; min-height: 0; overflow-y: auto; padding: 1rem 1.25rem 2rem; background: var(--bg); color: var(--text); }
-.cb-tag { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); background: var(--accent-soft); border-radius: 5px; padding: 0.1rem 0.4rem; }
-.cb-lede { margin: 0.3rem 0 0.9rem; max-width: 72ch; font-size: 0.9rem; color: var(--text-2); }
-.cb-controls { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.9rem; font-size: 0.8rem; color: var(--text-2); }
+.cb-tag { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 0.03rem 0.3rem; }
+.cb-lede { margin: 0.3rem 0 0.9rem; max-width: 72ch; font-size: 0.85rem; color: var(--text-3); }
+.cb-controls { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.9rem; font-size: 0.78rem; color: var(--text-3); }
 .cb-res select { margin-left: 0.4rem; padding: 0.25rem 0.5rem; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface); color: var(--text); }
-.cb-vbtn { border: 1px solid var(--line-2); background: var(--surface); color: var(--text-2); border-radius: 999px; padding: 0.1rem 0.6rem; margin: 0 0.15rem; cursor: pointer; font-size: 0.72rem; }
+.cb-vbtn { border: 1px solid var(--line-2); background: var(--surface); color: var(--text-2); border-radius: 999px; padding: 0.25rem 0.7rem; margin: 0 0.15rem; cursor: pointer; font-size: 0.78rem; }
+.cb-vbtn:hover { color: var(--accent); border-color: var(--accent); }
 .cb-vbtn.off { background: rgba(240,101,106,0.1); color: var(--down); border-color: rgba(240,101,106,0.4); text-decoration: line-through; }
-.cb-scroll { overflow-x: auto; }
-.cb-grid { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-.cb-grid th, .cb-grid td { border: 1px solid var(--line); padding: 0.5rem 0.6rem; text-align: left; vertical-align: top; }
-.cb-grid th { background: var(--surface); font-weight: 550; text-transform: capitalize; color: var(--text-2); position: sticky; top: 0; }
+.cb-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius, 12px); background: var(--surface); }
+.cb-grid { width: 100%; border-collapse: collapse; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.cb-grid th, .cb-grid td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+.cb-grid th:last-child, .cb-grid td:last-child { border-right: none; }
+.cb-grid tbody tr:last-child td { border-bottom: none; }
+.cb-grid th { background: var(--surface); font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); position: sticky; top: 0; z-index: 1; }
 .cb-kind { font-weight: 600; text-transform: capitalize; }
 .cb-prim { color: var(--text); } .cb-price { font-size: 0.72rem; color: var(--text-3); }
-.best { background: var(--live-soft); outline: 1px solid rgba(63,185,80,0.5); }
+.best { background: var(--live-soft); box-shadow: inset 2px 0 0 var(--live); }
 .cb-pick strong { color: var(--live); text-transform: uppercase; }
-.cb-na { color: var(--text-3); } .cb-foot { color: var(--text-3); margin-top: 1rem; font-size: 0.76rem; }
+.cb-na { color: var(--text-3); } .cb-foot { color: var(--text-3); margin-top: 0.9rem; font-size: 0.74rem; }
 </style>

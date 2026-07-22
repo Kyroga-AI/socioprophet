@@ -105,21 +105,27 @@ async function submit() {
 </template>
 
 <style scoped>
+/* Conforms to the annealed epistemic-Carbon language (OperatorDashboard db-* vocabulary):
+   hairline var(--line) panels at var(--radius), 0.7rem uppercase bold section heads,
+   0.62rem uppercase field labels, 0.56rem badges, accent buttons w/ #17130a ink. */
 .ib { height: 100%; min-height: 0; overflow-y: auto; padding: 1rem 1.25rem 2rem; background: var(--bg); color: var(--text); }
-.ib-tier { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); background: var(--accent-soft); border-radius: 5px; padding: 0.1rem 0.4rem; }
-.ib-lede { margin: 0.3rem 0 1rem; max-width: 70ch; font-size: 0.9rem; color: var(--text-2); }
-.ib-card { max-width: 620px; display: flex; flex-direction: column; gap: 0.85rem; border: 1px solid var(--line-2); border-radius: 14px; background: var(--surface); padding: 1.25rem; }
-.ib-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
-.ib-field { display: flex; flex-direction: column; gap: 0.3rem; } .ib-field > span { font-size: 0.72rem; color: var(--text-2); } .ib-field em { color: var(--text-3); font-style: normal; font-size: 0.66rem; }
+.ib-tier { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 0.03rem 0.3rem; }
+.ib-lede { margin: 0.3rem 0 0.9rem; max-width: 70ch; font-size: 0.85rem; color: var(--text-3); }
+.ib-card { max-width: 640px; display: flex; flex-direction: column; gap: 0.8rem; border: 1px solid var(--line); border-radius: var(--radius, 12px); background: var(--surface); padding: 0.85rem 1rem 1rem; }
+.ib-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.ib-field { display: flex; flex-direction: column; gap: 0.28rem; }
+.ib-field > span { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: var(--text-3); }
+.ib-field em { color: var(--text-3); font-style: normal; font-size: 0.62rem; text-transform: none; letter-spacing: 0; font-weight: 400; }
 .ib-field input, .ib-field select, .ib-field textarea { width: 100%; padding: 0.5rem 0.6rem; border: 1px solid var(--line-2); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 0.85rem; font-family: inherit; }
 .ib-field textarea { resize: vertical; font-family: var(--mono, ui-monospace), monospace; }
 .ib-field input:focus, .ib-field select:focus, .ib-field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.ib-gate { border: 1px solid var(--line); border-radius: 10px; padding: 0.7rem 0.85rem; margin: 0; display: flex; flex-direction: column; gap: 0.6rem; } .ib-gate.locked { opacity: 0.6; }
-.ib-gate legend { font-size: 0.74rem; font-weight: 600; padding: 0 0.35rem; }
-.ib-lock { margin-left: 0.4rem; font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--amber); border: 1px solid rgba(227,179,65,0.4); border-radius: 4px; padding: 0.02rem 0.3rem; }
+/* De-boxed gates: hairline separator + uppercase mini-head, not a nested card. */
+.ib-gate { border: none; border-top: 1px solid var(--line); border-radius: 0; padding: 0.75rem 0 0; margin: 0.2rem 0 0; display: flex; flex-direction: column; gap: 0.55rem; } .ib-gate.locked { opacity: 0.55; }
+.ib-gate legend { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--text-2); padding: 0 0 0.45rem; }
+.ib-lock { margin-left: 0.45rem; font-size: 0.56rem; letter-spacing: 0.03em; font-weight: 700; color: var(--amber); background: rgba(227,179,65,0.14); border-radius: 4px; padding: 0.03rem 0.3rem; }
 .ib-checks { display: flex; gap: 1.2rem; } .ib-check { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-2); } .ib-check input { accent-color: var(--accent); }
-.ib-actions { display: flex; align-items: center; gap: 0.9rem; margin-top: 0.3rem; }
-.ib-build { padding: 0.55rem 1.1rem; border-radius: 9px; border: 1px solid transparent; background: var(--accent); color: #14110a; font-weight: 600; font-size: 0.88rem; cursor: pointer; } .ib-build:hover:not(:disabled) { filter: brightness(1.06); } .ib-build:disabled { opacity: 0.6; cursor: default; }
+.ib-actions { display: flex; align-items: center; gap: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.8rem; margin-top: 0.2rem; }
+.ib-build { padding: 0.45rem 0.95rem; border-radius: 8px; border: none; background: var(--accent); color: #17130a; font-weight: 700; font-size: 0.82rem; cursor: pointer; } .ib-build:hover:not(:disabled) { filter: brightness(1.06); } .ib-build:disabled { opacity: 0.5; cursor: default; }
 .ib-lane { font-size: 0.72rem; color: var(--text-3); }
 .ib-err { margin: 0.2rem 0 0; font-size: 0.78rem; color: var(--down); background: rgba(240,101,106,0.1); border: 1px solid rgba(240,101,106,0.3); border-radius: 8px; padding: 0.5rem 0.65rem; }
 </style>

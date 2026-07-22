@@ -53,16 +53,20 @@ onUnmounted(() => { if (timer) clearInterval(timer); });
 </template>
 
 <style scoped>
+/* Annealed epistemic-Carbon conformance: ONE hairline panel of dense rows separated by
+   var(--line), 0.56rem uppercase badges, accent action w/ #17130a ink (db-* vocabulary). */
 .bl { height: 100%; min-height: 0; overflow-y: auto; padding: 1rem 1.25rem 2rem; background: var(--bg); color: var(--text); }
-.bl-new { font-size: 0.8rem; border: 1px solid var(--accent); color: var(--accent); background: var(--accent-soft); border-radius: 8px; padding: 0.35rem 0.7rem; cursor: pointer; } .bl-new:hover { background: var(--accent); color: #14110a; }
-.bl-err { font-size: 0.8rem; color: var(--amber); border: 1px solid rgba(227,179,65,0.3); background: rgba(227,179,65,0.05); border-radius: 8px; padding: 0.5rem 0.7rem; }
-.bl-list { list-style: none; margin: 0.9rem 0 0; padding: 0; display: grid; gap: 0.55rem; max-width: 720px; }
-.bl-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid var(--line-2); border-radius: 12px; background: var(--surface); padding: 0.75rem 1rem; }
-.bl-spec strong { text-transform: capitalize; } .bl-pkgs { font-size: 0.72rem; color: var(--text-3); margin-top: 0.2rem; }
-.bl-status { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem; }
-.bl-badge { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.1rem 0.4rem; border-radius: 5px; color: var(--text-3); border: 1px solid var(--line-2); }
+.bl-new { font-size: 0.78rem; border: none; color: #17130a; background: var(--accent); border-radius: 8px; padding: 0.4rem 0.85rem; font-weight: 700; cursor: pointer; } .bl-new:hover { filter: brightness(1.06); }
+.bl-err { font-size: 0.78rem; color: var(--amber); border: 1px solid rgba(227,179,65,0.3); background: rgba(227,179,65,0.05); border-radius: 8px; padding: 0.5rem 0.7rem; }
+.bl-list { list-style: none; margin: 0.9rem 0 0; padding: 0; max-width: 760px; border: 1px solid var(--line); border-radius: var(--radius, 12px); background: var(--surface); overflow: hidden; }
+.bl-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--line); padding: 0.55rem 0.85rem; }
+.bl-row:last-child { border-bottom: none; } .bl-row:hover { background: var(--surface-2, rgba(255,255,255,0.02)); }
+.bl-spec { font-size: 0.85rem; } .bl-spec strong { text-transform: capitalize; }
+.bl-pkgs { font-size: 0.72rem; color: var(--text-3); margin-top: 0.15rem; }
+.bl-status { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; }
+.bl-badge { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; padding: 0.03rem 0.3rem; border-radius: 4px; color: var(--text-3); border: 1px solid var(--line-2); }
 .bl-badge.complete { color: var(--live); border-color: rgba(63,185,80,0.4); background: var(--live-soft); }
 .bl-badge.building, .bl-badge.queued { color: var(--amber); border-color: rgba(227,179,65,0.4); }
 .bl-badge.failed, .bl-badge.error { color: var(--down); border-color: rgba(240,101,106,0.4); }
-.bl-dl { font-size: 0.76rem; color: var(--accent); text-decoration: none; } .bl-dl:hover { text-decoration: underline; }
+.bl-dl { font-size: 0.74rem; color: var(--accent); text-decoration: none; font-weight: 600; } .bl-dl:hover { text-decoration: underline; }
 </style>

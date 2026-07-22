@@ -71,18 +71,22 @@ onMounted(refresh);
 </template>
 
 <style scoped>
+/* Annealed epistemic-Carbon conformance (db-* vocabulary): hairline panel of dense rows,
+   0.56rem uppercase badges/labels, accent action w/ #17130a ink. */
 .fl { height: 100%; min-height: 0; overflow-y: auto; padding: 1rem 1.25rem 2rem; background: var(--bg); color: var(--text); }
-.fl-tag { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); background: rgba(227,179,65,0.14); border-radius: 5px; padding: 0.1rem 0.4rem; }
-.fl-lede { margin: 0.3rem 0 0.9rem; max-width: 74ch; font-size: 0.9rem; color: var(--text-2); }
-.fl-err { font-size: 0.8rem; color: var(--amber); border: 1px solid rgba(227,179,65,0.3); background: rgba(227,179,65,0.05); border-radius: 8px; padding: 0.5rem 0.7rem; }
-.fl-reg { display: flex; gap: 0.5rem; max-width: 460px; margin-bottom: 1rem; }
-.fl-reg input { flex: 1; padding: 0.5rem 0.65rem; border: 1px solid var(--line-2); border-radius: 8px; background: var(--bg); color: var(--text); }
+.fl-tag { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; color: var(--amber); background: rgba(227,179,65,0.14); border-radius: 4px; padding: 0.03rem 0.3rem; }
+.fl-lede { margin: 0.3rem 0 0.9rem; max-width: 74ch; font-size: 0.85rem; color: var(--text-3); }
+.fl-err { font-size: 0.78rem; color: var(--amber); border: 1px solid rgba(227,179,65,0.3); background: rgba(227,179,65,0.05); border-radius: 8px; padding: 0.5rem 0.7rem; }
+.fl-reg { display: flex; gap: 0.5rem; max-width: 460px; margin-bottom: 0.9rem; }
+.fl-reg input { flex: 1; padding: 0.5rem 0.65rem; border: 1px solid var(--line-2); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 0.85rem; }
 .fl-reg input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.fl-btn { padding: 0.5rem 0.9rem; border: 1px solid var(--accent); color: var(--accent); background: var(--accent-soft); border-radius: 8px; cursor: pointer; font-size: 0.82rem; white-space: nowrap; } .fl-btn:hover:not(:disabled) { background: var(--accent); color: #14110a; } .fl-btn:disabled { opacity: 0.6; }
-.fl-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; max-width: 720px; }
-.fl-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid var(--line-2); border-radius: 12px; background: var(--surface); padding: 0.75rem 1rem; }
-.fl-claim { font-family: var(--mono, ui-monospace), monospace; font-size: 0.72rem; color: var(--text-3); margin-top: 0.2rem; }
-.fl-seen { font-size: 0.7rem; color: var(--text-3); }
-.fl-assign { font-size: 0.68rem; color: var(--text-3); display: flex; flex-direction: column; gap: 0.25rem; text-align: right; }
-.fl-assign select { padding: 0.35rem 0.5rem; border: 1px solid var(--line-2); border-radius: 7px; background: var(--bg); color: var(--text); font-size: 0.78rem; }
+.fl-btn { padding: 0.4rem 0.85rem; border: none; color: #17130a; background: var(--accent); border-radius: 8px; cursor: pointer; font-size: 0.78rem; font-weight: 700; white-space: nowrap; } .fl-btn:hover:not(:disabled) { filter: brightness(1.06); } .fl-btn:disabled { opacity: 0.5; }
+.fl-list { list-style: none; margin: 0; padding: 0; max-width: 760px; border: 1px solid var(--line); border-radius: var(--radius, 12px); background: var(--surface); overflow: hidden; }
+.fl-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--line); padding: 0.55rem 0.85rem; }
+.fl-row:last-child { border-bottom: none; } .fl-row:hover { background: var(--surface-2, rgba(255,255,255,0.02)); }
+.fl-dev { font-size: 0.85rem; }
+.fl-claim { font-family: var(--mono, ui-monospace), monospace; font-size: 0.72rem; color: var(--text-3); margin-top: 0.15rem; }
+.fl-seen { font-size: 0.68rem; color: var(--text-3); }
+.fl-assign { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: var(--text-3); display: flex; flex-direction: column; gap: 0.28rem; text-align: right; }
+.fl-assign select { padding: 0.35rem 0.5rem; border: 1px solid var(--line-2); border-radius: 7px; background: var(--bg); color: var(--text); font-size: 0.78rem; text-transform: none; letter-spacing: 0; font-weight: 400; }
 </style>
