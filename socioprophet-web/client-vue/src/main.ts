@@ -24,6 +24,7 @@ import ImageBuilder from './pages/ImageBuilder.vue';
 import BuildsList from './pages/BuildsList.vue';
 import CloudBroker from './pages/CloudBroker.vue';
 import FleetManager from './pages/FleetManager.vue';
+import MailInbox from './pages/MailInbox.vue';
 import NewsFeed from './pages/NewsFeed.vue';
 import MarketMonitor from './pages/MarketMonitor.vue';
 import EconomySectorBoard from './pages/EconomySectorBoard.vue';
@@ -134,6 +135,7 @@ const explicitRoutes = [
   { path: '/sourceos/builds', component: BuildsList },
   { path: '/sourceos/fleet', component: FleetManager },
   { path: '/sourceos/cloud', component: CloudBroker },
+  { path: '/mail', component: MailInbox },
   { path: '/news', component: NewsFeed },
   { path: '/markets/indices-funds', component: MarketMonitor },
   { path: '/economy/macro-economics', component: EconomySectorBoard },
