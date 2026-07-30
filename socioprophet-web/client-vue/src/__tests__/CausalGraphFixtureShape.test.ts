@@ -140,3 +140,23 @@ describe('display projections', () => {
     expect(s).toBe('raises');
   });
 });
+
+describe('assertWellFormed guards hypothesis warrants too (Copilot follow-up)', () => {
+  it('refuses a snapshot where a hypothesis references an unresolvable warrant', () => {
+    const broken = structuredClone(demoAutoPartsSnapshot);
+    // Attach a bogus warrant ref to the first evidenced hypothesis.
+    const target = broken.hypotheses.find((h) => h.warrantRefs.length > 0)!;
+    target.warrantRefs.push('urn:srcos:evidence:ghost');
+    expect(() => assertWellFormed(broken)).toThrow(/hypothesis .* references warrant/);
+  });
+});
+
+describe('warrant lookup is own-property only (Copilot round-2)', () => {
+  it("does not treat 'toString' or '__proto__' as a valid warrant ref", () => {
+    for (const ghostRef of ['toString', '__proto__', 'hasOwnProperty']) {
+      const broken = structuredClone(demoAutoPartsSnapshot);
+      broken.edges[0]!.warrantRefs = [ghostRef];
+      expect(() => assertWellFormed(broken)).toThrow(/not present in snapshot.warrants/);
+    }
+  });
+});
