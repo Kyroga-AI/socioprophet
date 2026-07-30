@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { search, type BlendedResults, type SearchResult } from "../services/searchApi";
+import { isSafeHttp } from "../services/url-safe";
 
 const q = ref("");
 const loading = ref(false);
@@ -25,12 +26,16 @@ async function run() {
   }
 }
 
-function hostOf(url: string): string {
+// Copilot round-3: hostOf runs unconditionally on `r.url` in the template (the
+// `<a v-if="isSafeHttp(...)">` guard only hides the anchor, not the neighbouring
+// hostname line). If an upstream engine ever returns `r.url` as `null` / a number /
+// missing, the pre-fix `url.match(...)` on a non-string would throw and blow up the
+// whole results render. Accept `unknown`, fall through to empty for anything that
+// isn't a string — same fail-closed posture as `isSafeHttp` already does.
+function hostOf(url: unknown): string {
+  if (typeof url !== "string") return "";
   const m = url.match(/^[a-z]+:\/\/([^/]+)/i);
   return m ? m[1] : url.split("/")[0];
-}
-function isExternal(url: string): boolean {
-  return url.startsWith("http");
 }
 </script>
 
@@ -61,7 +66,7 @@ function isExternal(url: string): boolean {
       <div v-if="commons.length" class="group">
         <h2>⬡ Community commons <span class="count">{{ commons.length }}</span></h2>
         <article v-for="(r, i) in commons" :key="'c' + i" class="hit commons">
-          <a v-if="isExternal(r.url)" :href="r.url" target="_blank" rel="noopener" class="title">{{ r.title }}</a>
+          <a v-if="isSafeHttp(r.url)" :href="r.url" target="_blank" rel="noopener noreferrer" class="title">{{ r.title }}</a>
           <span v-else class="title plain">{{ r.title }}</span>
           <div class="src">{{ hostOf(r.url) }} · <span class="badge sov">sovereign commons</span><span v-if="r.publishedDate" class="date"> · {{ new Date(r.publishedDate).toLocaleDateString() }}</span></div>
           <p class="snippet">{{ r.snippet }}</p>
@@ -71,7 +76,8 @@ function isExternal(url: string): boolean {
       <div v-if="web.length" class="group">
         <h2>◍ Web <span class="count">{{ web.length }}</span></h2>
         <article v-for="(r, i) in web" :key="'w' + i" class="hit">
-          <a :href="r.url" target="_blank" rel="noopener" class="title">{{ r.title }}</a>
+          <a v-if="isSafeHttp(r.url)" :href="r.url" target="_blank" rel="noopener noreferrer" class="title">{{ r.title }}</a>
+          <span v-else class="title plain">{{ r.title }}</span>
           <div class="src">{{ hostOf(r.url) }} · <span class="badge">{{ r.engine }}</span></div>
           <p class="snippet">{{ r.snippet }}</p>
         </article>
