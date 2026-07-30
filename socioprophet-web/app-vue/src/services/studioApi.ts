@@ -795,6 +795,23 @@ export async function submitHdtObservation(input: { project: string; subject: st
   return await res.json();
 }
 
+// Discriminator for the promoteHdt / promoteWorldsignal union. `"blocked" in r`
+// is TRUE for `{ blocked: false }` too, so a legitimate success that ever
+// emitted `blocked: false` misread as a rejection. Callers use this helper
+// (and TypeScript narrows accordingly) instead of an `in`-check.
+// Copilot round-3: use `Object.prototype.hasOwnProperty.call` instead of `in` so
+// a `blocked` on the prototype chain (or an inherited getter) cannot fake a
+// rejection — parity with the other prototype-safe hardenings in this PR.
+export type PromoteBlocked = { blocked: true; message: string };
+export type PromoteOk = { to_state: string; epistemic_mode: string; canonical: boolean };
+export function isPromoteBlocked(r: PromoteOk | PromoteBlocked | { blocked: false }): r is PromoteBlocked {
+  return (
+    typeof r === "object" && r !== null &&
+    Object.prototype.hasOwnProperty.call(r, "blocked") &&
+    (r as { blocked: unknown }).blocked === true
+  );
+}
+
 export async function promoteHdt(input: { project: string; observation: string; to_state: string; actor_kind?: string }, token: string): Promise<{ to_state: string; epistemic_mode: string; canonical: boolean } | { blocked: true; message: string }> {
   if (!BASE) return input.actor_kind === "model" && input.to_state === "DELIVERED" ? { blocked: true, message: "HDT invariant — only a human/clinician/policy may DELIVER to canonical" } : { to_state: input.to_state, epistemic_mode: input.to_state === "DELIVERED" ? "attested" : "observed", canonical: input.to_state === "DELIVERED" };
   if (!token) throw new Error("write token required");
