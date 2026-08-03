@@ -48,6 +48,8 @@ import MapPage from './pages/MapPage.vue';
 import NLBootEvidence from './pages/NLBootEvidence.vue';
 import PersonGraph from './pages/PersonGraph.vue';
 import ProfessionalIntelligence from './pages/ProfessionalIntelligence.vue';
+import CompetitiveIntelligence from './pages/CompetitiveIntelligence.vue';
+import CompetitiveIntelligenceApp from './pages/CompetitiveIntelligenceApp.vue';
 import Reader from './pages/Reader.vue';
 import OperatorDashboard from './pages/OperatorDashboard.vue';
 import AlgoTradingBoard from './pages/AlgoTradingBoard.vue';
@@ -119,6 +121,8 @@ const explicitRoutes = [
   { path: '/capability/ontology-epistemology', component: KnowledgeGraph },
   { path: '/capability/economic-prophet', component: CausalValuation },
   { path: '/research', component: ResearchList },
+  { path: '/professional-intelligence/competitive', component: CompetitiveIntelligence },
+  { path: '/professional-intelligence/competitive/:id', component: CompetitiveIntelligenceApp },
   { path: '/professional-intelligence', component: ProfessionalIntelligence },
   { path: '/control-plane', component: ControlPlaneLifecycle },
   { path: '/control-plane/org', component: NoeticaControlPlane },
