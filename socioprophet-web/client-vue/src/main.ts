@@ -51,6 +51,8 @@ import ProfessionalIntelligence from './pages/ProfessionalIntelligence.vue';
 import CompetitiveIntelligence from './pages/CompetitiveIntelligence.vue';
 import CompetitiveIntelligenceApp from './pages/CompetitiveIntelligenceApp.vue';
 import CompetitiveIntelligenceFeatures from './pages/CompetitiveIntelligenceFeatures.vue';
+import CompetitiveIntelligenceMarkets from './pages/CompetitiveIntelligenceMarkets.vue';
+import CompetitiveIntelligenceEnterprise from './pages/CompetitiveIntelligenceEnterprise.vue';
 import Reader from './pages/Reader.vue';
 import OperatorDashboard from './pages/OperatorDashboard.vue';
 import AlgoTradingBoard from './pages/AlgoTradingBoard.vue';
@@ -63,6 +65,7 @@ import SupplyChainOrchestrator from './pages/SupplyChainOrchestrator.vue';
 import HolographMe from './pages/HolographMe.vue';
 import SituationsSurface from './pages/SituationsSurface.vue';
 import NlpExtractionBench from './pages/NlpExtractionBench.vue';
+import KnowledgeStudio from './pages/KnowledgeStudio.vue';
 import ExperimentsBoard from './pages/ExperimentsBoard.vue';
 import BehavioralAnalytics from './pages/BehavioralAnalytics.vue';
 import AppBuildBoard from './pages/AppBuildBoard.vue';
@@ -101,6 +104,7 @@ const explicitRoutes = [
   { path: '/marketplace/orchestrate', component: SupplyChainOrchestrator },
   { path: '/capability/algorithmic-trading', component: AlgoTradingBoard },
   { path: '/capability/nlp-information-extraction', component: NlpExtractionBench },
+  { path: '/knowledge/studio', component: KnowledgeStudio },
   { path: '/capability/experiments-simulations', component: ExperimentsBoard },
   { path: '/capability/behavioral-analytics', component: BehavioralAnalytics },
   { path: '/capability/mobile-app-development', component: AppBuildBoard },
@@ -125,6 +129,8 @@ const explicitRoutes = [
   { path: '/professional-intelligence/competitive', component: CompetitiveIntelligence },
   // static before the :id param so /features is not swallowed as a specimen slug
   { path: '/professional-intelligence/competitive/features', component: CompetitiveIntelligenceFeatures },
+  { path: '/professional-intelligence/competitive/markets', component: CompetitiveIntelligenceMarkets },
+  { path: '/professional-intelligence/competitive/enterprise', component: CompetitiveIntelligenceEnterprise },
   { path: '/professional-intelligence/competitive/:id', component: CompetitiveIntelligenceApp },
   { path: '/professional-intelligence', component: ProfessionalIntelligence },
   { path: '/control-plane', component: ControlPlaneLifecycle },
