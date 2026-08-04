@@ -90,7 +90,14 @@ export default defineConfig(({ mode }) => {
       environment: 'happy-dom',
       globals: true,
       setupFiles: ['src/__tests__/setup.ts'],
-      include: ['src/__tests__/**/*.test.ts'],
+      // Was `['src/__tests__/**/*.test.ts', 'src/utils/**/*.test.ts']` — a glob added
+      // narrowly for src/utils/urlSafe.test.ts (#550) that left 6 other real,
+      // pre-existing test files silently unrun by `npm test`/CI: src/config/mesh.test.ts,
+      // src/features/contract-surfaces/contractSurfaces.test.ts, and 4 files under
+      // src/runtime-adapters/. Widened to the whole tree so "a test file exists" and
+      // "a test file executes" can't diverge again — the exact declared-but-unenforced
+      // shape this session has been closing everywhere else.
+      include: ['src/**/*.test.ts'],
     },
   };
 });
