@@ -1,0 +1,13 @@
+source-repo: SourceOS-Linux/sourceos-spec
+source-path: estate-safety-kit/js/urlSafe.ts
+source-commit: 297c4e38befc4a04935cd8cd80bd66874888deb0
+vendored-path: socioprophet-web/app-vue/src/services/url-safe.ts
+vendored-at: 2026-08-04
+
+# Re-pinned to the actual squash-merge commit on sourceos-spec's main (PR #276 merged).
+# Verified byte-identical against this commit's copy before re-pinning:
+# sha256 9493df8ba2d957798233181f262c30a2fefc718c184200222e119709168703a1 both sides.
+#
+# Run: python3 check_vendored_safety_kit.py url-safe.ts
+# (fetch tools/check_vendored_safety_kit.py from sourceos-spec at source-commit above,
+# or point --source-root at a local sourceos-spec checkout)
