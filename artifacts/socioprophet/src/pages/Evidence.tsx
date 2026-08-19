@@ -25,7 +25,7 @@ const CERTS = [
 const FAQ = [
   {
     q: "What is SocioProphet?",
-    a: "A governed intelligence platform for regulated enterprises. It installs inside your own environment and produces a signed, replayable evidence record of every AI and agent action — governing whatever mix of public AI, preferred vendors, or in-house agents you're already using.",
+    a: "SocioProphet turns your organisation's use of AI into an asset you own. It installs inside your own environment and produces a signed, replayable evidence record of every AI and agent action — so the knowledge you build can compound without leaving your control.",
   },
   {
     q: "Does my data leave my environment?",
@@ -41,7 +41,7 @@ const FAQ = [
   },
   {
     q: "How is this different from an AI governance platform?",
-    a: "They govern on paper — risk registers, model cards, policy documents. SocioProphet governs in execution — every action produces structural evidence.",
+    a: "SocioProphet is not a dashboard bolted onto someone else's platform. It makes governance part of the execution layer, so every action produces structural evidence and the knowledge that accumulates remains yours.",
   },
   {
     q: "Is my AI-generated institutional knowledge really an asset, not just a risk to manage?",
@@ -49,7 +49,7 @@ const FAQ = [
   },
   {
     q: "What regulations does SocioProphet help with?",
-    a: "SR 26-2 (US banking), APRA CPS 230 (Australia), EU AI Act, FCA (UK), MAS (Singapore). We provide governance infrastructure — you bring your regulatory interpretation.",
+    a: "SR 26-2 (US banking), APRA CPS 230 (Australia), EU AI Act, FCA (UK), MAS (Singapore). We provide structural support for the evidence and control obligations — you bring your regulatory interpretation.",
   },
   {
     q: "What is Prophet Mesh?",
@@ -69,11 +69,11 @@ export function Evidence() {
         eyebrowIcon={<BarChart3 className="w-4 h-4" />}
         title={
           <>
-            We publish our results. <br className="hidden md:block" />
-            <span className="text-muted-foreground">Here they are.</span>
+            Build an intelligence asset <br className="hidden md:block" />
+            <span className="text-muted-foreground">you can prove.</span>
           </>
         }
-        subtitle="Skeptical technical buyers deserve evidence, not adjectives. This page collects our benchmarks, architecture validation, and security posture as they are released."
+        subtitle="If the work your organisation does with AI is going to compound, you need to know what happened, why it happened, and whether you can reproduce it. This page collects the evidence as it is released."
       />
 
       {/* Benchmarks */}
@@ -92,8 +92,8 @@ export function Evidence() {
                 lab performance — publish here on release.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                No one builds a better graph-grounded retrieval than us. We intend to prove it in the
-                open, not assert it in a sales deck.
+                We will publish the methodology with the results. The point is not a number in a
+                sales deck; it is evidence your own technical team can inspect and reproduce.
               </p>
             </div>
             <div className="border border-border bg-card p-8">
@@ -244,8 +244,8 @@ export function Evidence() {
       </section>
 
       <CTASection
-        title="Want to validate the architecture yourself?"
-        subtitle="Request the whitepaper and a technical briefing. We will give your engineers the detail they need to verify every claim."
+        title="Want to verify what you are building?"
+        subtitle="Request the whitepaper and a technical briefing. We will give your engineers the detail they need to inspect the architecture and its evidence."
         buttonLabel="Request the Whitepaper"
       />
     </div>

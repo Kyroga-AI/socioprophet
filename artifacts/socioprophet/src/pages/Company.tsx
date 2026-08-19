@@ -38,8 +38,8 @@ export function Company() {
     <div className="w-full">
       <PageHero
         eyebrow="Company"
-        title="Our thesis."
-        subtitle="We are an engineering-led infrastructure company building the foundations for enterprise AI accountability."
+        title="We build intelligence organisations can own."
+        subtitle="SocioProphet is an engineering-led infrastructure company for organisations that cannot let their reasoning, data, or decisions leave their control."
       />
 
       <section className="py-24">
@@ -50,34 +50,33 @@ export function Company() {
               <div className="prose prose-invert prose-p:text-muted-foreground prose-p:leading-relaxed max-w-none">
                 <p>
                   SocioProphet was founded by Michael Heller and Gus Quiroga on a shared conviction:
-                  every organisation's data and IP must remain sovereign — a structural requirement of
-                  the AI era, not a preference. The most valuable organisations in the world cannot
-                  adopt frontier AI if it means surrendering their intellectual property or operating
-                  in a regulatory grey area.
+                  an organisation&apos;s reasoning, data, and decisions should remain its own. The
+                  difference is not whether an organisation uses AI. It is whether it is renting
+                  intelligence or building one.
                 </p>
                 <p>
-                  We observed that existing AI governance tools were superficial — bolt-on dashboards
-                  that attempted to monitor &ldquo;black box&rdquo; API calls to external providers.
-                  They governed on paper, but offered no architectural guarantees. They collapsed
-                  complex probabilistic uncertainty into misleading &ldquo;traffic light&rdquo;
-                  indicators.
-                </p>
-                <p>We believe true governance must be baked into the architecture itself.</p>
-                <p>
-                  That is why the platform is deterministic and bounded by design: mathematically
-                  bounded safety, proof-bearing workflows, explicit reversibility, and human
-                  oversight on every control loop. Not ambient autonomy — governed operations.
+                  We observed that too much AI value dissipates into supplier platforms: prompts,
+                  decisions, and institutional reasoning become activity in someone else&apos;s system
+                  instead of an asset the organisation can keep and build on.
                 </p>
                 <p>
-                  By deploying a sovereign control plane entirely within the enterprise perimeter, and
-                  cryptographically signing every retrieval and inference step, we give risk
-                  committees and regulators exactly what they demand: explainability, accountability,
-                  and absolute data sovereignty.
+                  Governance is what makes the asset reliable. It belongs in the architecture, not
+                  in paperwork added after the work is done.
                 </p>
                 <p>
-                  The platform is backed by 88 repositories and thousands of commits of
-                  purpose-built infrastructure — each layer depending on the one below it. That is
-                  why it cannot be replicated by bolting a feature onto an existing product.
+                  That is why the platform is built around proof-bearing workflows, explicit
+                  reversibility, and human oversight. A decision you cannot reproduce is not
+                  institutional knowledge. It is a rumour with a timestamp.
+                </p>
+                <p>
+                  By keeping the work inside the organisation&apos;s boundary and producing
+                  cryptographically signed, replayable evidence, we make it possible for the
+                  knowledge created by AI to remain yours and be relied on.
+                </p>
+                <p>
+                  The result is one story across every surface: sovereignty determines whether
+                  anything accumulates, governance determines whether it can be relied on, and
+                  compounding knowledge is the return.
                 </p>
               </div>
             </div>

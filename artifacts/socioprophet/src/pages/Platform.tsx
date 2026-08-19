@@ -183,8 +183,8 @@ export function Platform() {
             </h2>
             <p className="text-lg text-muted-foreground mt-6 leading-relaxed">
               The evidence fabric is the headline — everything else supports it. Each layer
-              depends on the one below it, which is why the platform took 88 repositories to
-              build and cannot be replicated by bolting a feature onto an existing product.
+              depends on the one below it, so evidence is structural rather than a feature added
+              after the work is done.
             </p>
           </div>
           <div className="space-y-32">
