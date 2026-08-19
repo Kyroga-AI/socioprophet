@@ -6,7 +6,12 @@ export function Footer() {
       <div className="container mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
+            <Link href="/" aria-label="SocioProphet home" className="flex items-center gap-2 mb-4">
+              <img
+                src="/socioprophet-logo.png"
+                alt=""
+                className="size-10 object-contain shrink-0"
+              />
               <span className="font-sans font-bold text-xl tracking-tight text-white">Socio<span className="text-primary">Prophet</span></span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
