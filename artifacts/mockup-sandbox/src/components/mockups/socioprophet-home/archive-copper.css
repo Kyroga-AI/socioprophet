@@ -1,0 +1,131 @@
+/*
+ * SocioProphet — Archive / Copper
+ *
+ * A record-room palette: deep blue-black ink, warm paper-white type and a
+ * controlled copper signal. Copper is used like a registrar's annotation —
+ * sparse, legible and accountable rather than decorative or luxurious.
+ */
+
+:root {
+  --background: 218 29% 7%;
+  --foreground: 38 28% 92%;
+
+  --card: 218 25% 10%;
+  --card-foreground: 38 28% 92%;
+  --card-border: 218 18% 20%;
+
+  --popover: 218 25% 10%;
+  --popover-foreground: 38 28% 92%;
+  --popover-border: 218 18% 20%;
+
+  /* archival copper: intentionally low-chroma and high enough for text */
+  --primary: 25 66% 62%;
+  --primary-foreground: 218 29% 7%;
+
+  --secondary: 218 19% 17%;
+  --secondary-foreground: 38 28% 92%;
+  --muted: 218 19% 17%;
+  --muted-foreground: 38 13% 68%;
+  --accent: 218 19% 17%;
+  --accent-foreground: 38 28% 92%;
+
+  --border: 218 18% 20%;
+  --input: 218 18% 20%;
+  --ring: 25 66% 62%;
+
+  --sidebar: 218 25% 10%;
+  --sidebar-foreground: 38 28% 92%;
+  --sidebar-border: 218 18% 20%;
+  --sidebar-primary: 25 66% 62%;
+  --sidebar-primary-foreground: 218 29% 7%;
+  --sidebar-accent: 218 19% 17%;
+  --sidebar-accent-foreground: 38 28% 92%;
+  --sidebar-ring: 25 66% 62%;
+
+  --button-outline: rgba(236, 222, 196, 0.18);
+  --badge-outline: rgba(236, 222, 196, 0.08);
+  --elevate-1: rgba(236, 222, 196, 0.045);
+  --elevate-2: rgba(236, 222, 196, 0.085);
+  --primary-border: hsl(25 66% 72%);
+}
+
+/*
+ * Current.tsx deliberately uses white for display type and the wordmark.
+ * Warm it toward paper without changing its typography or hierarchy. The
+ * primary token handles every semantic copper treatment, including focus.
+ */
+.archive-copper {
+  color: hsl(var(--foreground));
+}
+
+.archive-copper .text-white {
+  color: hsl(38 28% 92%);
+}
+
+.archive-copper .text-white\/60 {
+  color: hsl(38 16% 68% / 0.72);
+}
+
+.archive-copper .text-primary,
+.archive-copper .group-hover\:text-primary:hover {
+  color: hsl(var(--primary));
+}
+
+.archive-copper .bg-primary\/5 {
+  background-color: hsl(25 55% 45% / 0.075);
+}
+
+.archive-copper .bg-primary\/10 {
+  background-color: hsl(25 55% 45% / 0.12);
+}
+
+.archive-copper .bg-primary\/20 {
+  background-color: hsl(25 55% 45% / 0.2);
+}
+
+.archive-copper .border-primary\/20 {
+  border-color: hsl(25 66% 62% / 0.26);
+}
+
+.archive-copper .border-primary\/25 {
+  border-color: hsl(25 66% 62% / 0.32);
+}
+
+.archive-copper .border-primary\/30 {
+  border-color: hsl(25 66% 62% / 0.38);
+}
+
+.archive-copper .hover\:bg-primary\/5:hover {
+  background-color: hsl(25 55% 45% / 0.1);
+}
+
+.archive-copper .hover\:decoration-primary:hover,
+.archive-copper .focus-visible\:decoration-primary:focus-visible {
+  text-decoration-color: hsl(var(--primary));
+}
+
+.archive-copper .hover\:text-white:hover,
+.archive-copper .focus-visible\:text-white:focus-visible {
+  color: hsl(38 28% 96%);
+}
+
+/* The abstract image stays the same asset, but reads as a copper plate under ink. */
+.archive-copper .mix-blend-screen img {
+  filter: sepia(0.34) saturate(0.7) hue-rotate(323deg);
+}
+
+.archive-copper .mix-blend-screen > .bg-gradient-to-t {
+  background-image: linear-gradient(
+    to top,
+    hsl(var(--background)) 0%,
+    hsl(218 29% 7% / 0.86) 58%,
+    hsl(218 29% 7% / 0.18) 100%
+  );
+}
+
+.archive-copper a:focus-visible,
+.archive-copper button:focus-visible,
+.archive-copper [tabindex="0"]:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 4px;
+}

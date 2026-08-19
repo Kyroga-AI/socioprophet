@@ -1,0 +1,127 @@
+/*
+ * Mineral / Ink
+ * A restrained material system: graphite foundation, mica surfaces, and
+ * oxidized violet as a deliberate signal of durable infrastructure.
+ * Scoped to the variant wrapper so Current remains an untouched baseline.
+ */
+
+.mineral-ink {
+  --background: 246 17% 7%;
+  --foreground: 242 20% 96%;
+  --card: 246 16% 10%;
+  --card-foreground: 242 20% 96%;
+  --card-border: 246 12% 20%;
+  --popover: 246 16% 10%;
+  --popover-foreground: 242 20% 96%;
+  --popover-border: 246 12% 20%;
+  --primary: 275 35% 64%;
+  --primary-foreground: 246 18% 9%;
+  --secondary: 246 13% 18%;
+  --secondary-foreground: 242 20% 96%;
+  --muted: 246 13% 18%;
+  --muted-foreground: 244 12% 69%;
+  --accent: 246 13% 18%;
+  --accent-foreground: 242 20% 96%;
+  --border: 246 12% 20%;
+  --input: 246 12% 20%;
+  --ring: 275 35% 64%;
+  --sidebar: 246 16% 10%;
+  --sidebar-foreground: 242 20% 96%;
+  --sidebar-border: 246 12% 20%;
+  --sidebar-primary: 275 35% 64%;
+  --sidebar-primary-foreground: 246 18% 9%;
+  --sidebar-accent: 246 13% 18%;
+  --sidebar-accent-foreground: 242 20% 96%;
+  --sidebar-ring: 275 35% 64%;
+  --button-outline: rgba(232, 228, 240, .16);
+  --elevate-1: rgba(224, 215, 235, .045);
+  --elevate-2: rgba(224, 215, 235, .085);
+  color-scheme: dark;
+  background-image:
+    linear-gradient(rgba(194, 184, 211, .022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(194, 184, 211, .018) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* The mark carries the same mica/violet language as the interface. */
+.mineral-ink .text-primary {
+  color: hsl(var(--primary));
+}
+
+.mineral-ink a:focus-visible,
+.mineral-ink button:focus-visible,
+.mineral-ink [tabindex="0"]:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 4px;
+}
+
+.mineral-ink header {
+  background-color: hsl(var(--background) / .88);
+  border-color: hsl(var(--primary) / .16);
+}
+
+.mineral-ink header .text-white,
+.mineral-ink footer .text-white {
+  color: hsl(242 20% 96%);
+}
+
+/* Turn the inherited hero wash into a quiet mineral veil, not a neon glow. */
+.mineral-ink section:first-of-type > div:first-child {
+  opacity: .34;
+  mix-blend-mode: luminosity;
+}
+
+.mineral-ink section:first-of-type > div:first-child > div {
+  background-image: linear-gradient(
+    to top,
+    hsl(var(--background)),
+    hsl(var(--background) / .86) 52%,
+    transparent
+  );
+}
+
+.mineral-ink .bg-primary\/5 {
+  background-color: hsl(var(--primary) / .055);
+}
+
+.mineral-ink .bg-primary\/10 {
+  background-color: hsl(var(--primary) / .11);
+}
+
+.mineral-ink .bg-primary\/20 {
+  background-color: hsl(var(--primary) / .18);
+}
+
+.mineral-ink .border-primary\/20 {
+  border-color: hsl(var(--primary) / .24);
+}
+
+.mineral-ink .border-primary\/25 {
+  border-color: hsl(var(--primary) / .30);
+}
+
+.mineral-ink .border-primary\/30 {
+  border-color: hsl(var(--primary) / .34);
+}
+
+.mineral-ink .hover\:bg-primary\/5:hover {
+  background-color: hsl(var(--primary) / .075);
+}
+
+.mineral-ink .hover\:decoration-primary:hover,
+.mineral-ink .focus-visible\:decoration-primary:focus-visible {
+  text-decoration-color: hsl(var(--primary));
+}
+
+.mineral-ink .group-hover\:text-primary:hover,
+.mineral-ink .group:hover .group-hover\:text-primary {
+  color: hsl(var(--primary));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mineral-ink .fade-in-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
