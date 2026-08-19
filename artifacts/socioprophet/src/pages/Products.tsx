@@ -10,8 +10,8 @@ export function Products() {
     <div className="w-full">
       <PageHero
         eyebrow="The Product Family"
-        title="SocioProphet is a platform, not a single product."
-        subtitle="It governs the three incomplete ways of adopting AI — public models, single-vendor platforms, and in-house agents — through purpose-built product surfaces: from the governed workspace your people use daily to the control harness your organisation runs on."
+        title="Build the intelligence asset your organisation owns."
+        subtitle="SocioProphet gives you the product surfaces to make AI yours: a daily workspace for people, a governed control layer for organisations, and the evidence architecture that lets what you learn compound."
       />
 
       <section className="py-24">
@@ -108,8 +108,8 @@ export function Products() {
       </section>
 
       <CTASection
-        title="Find the right entry point."
-        subtitle="Most institutions start with Noetica, then expand. We will help you map products to your highest-value use cases."
+        title="Choose the door. Keep the story."
+        subtitle="Start with Noetica, the organisational platform, or a focused product surface. The destination is the same: intelligence you own."
       />
     </div>
   );

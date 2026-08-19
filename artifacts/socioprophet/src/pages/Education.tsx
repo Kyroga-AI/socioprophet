@@ -158,8 +158,8 @@ export function Education() {
                 <span>Education</span>
               </div>
               <h1 className="text-3xl min-[375px]:text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
-                Your AI. Your data.<br />
-                <span className="text-primary">Your rules.</span>
+                Are you renting intelligence,<br />
+                <span className="text-primary">or building one?</span>
               </h1>
             </div>
 
@@ -212,7 +212,9 @@ export function Education() {
             {/* Left-bottom: body copy + tags — order-3 on mobile (after pathway panel), col 1-2 row 2 on md+ */}
             <div className="order-3 md:col-span-2 md:col-start-1 md:row-start-2 pb-16 md:pb-24">
               <p className="text-base min-[375px]:text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl">
-                Noetica is the entry point for everyone — individuals, families, teams, and regulated enterprises. A local-first AI workspace that runs on your own device, keeps your data off third-party servers, and builds a knowledge graph that compounds over time.
+                Noetica is the daily entry point for everyone — individuals, families, teams, and
+                regulated enterprises. It is a local-first AI workspace where your questions,
+                documents, and reasoning stay yours and build a knowledge base that compounds over time.
               </p>
               <p className="text-sm min-[375px]:text-lg text-muted-foreground leading-relaxed mb-10 max-w-2xl">
                 ~85MB install. Bring your existing API keys for{" "}
@@ -243,11 +245,12 @@ export function Education() {
             <span className="font-mono text-primary text-sm uppercase tracking-widest">
               Foundations
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mt-4">
-              Why sovereign AI matters
+                <h2 className="text-3xl md:text-4xl font-bold text-white mt-4">
+              The difference between renting intelligence and building one
             </h2>
             <p className="text-lg text-muted-foreground mt-6 leading-relaxed">
-              Every organisation using AI today is making a choice about where their knowledge goes. Most are not aware they are making it.
+              Sovereignty determines whether anything accumulates. Governance determines whether
+              what accumulated can be relied on. Compounding knowledge is the return.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 gap-px bg-border border border-border">
@@ -266,7 +269,7 @@ export function Education() {
           </div>
           <div className="mt-8 border-l-2 border-primary bg-primary/5 p-8">
             <p className="text-lg text-white leading-relaxed">
-              The question is not whether to use AI. It is whether the knowledge your AI generates belongs to you — or compounds inside someone else's model.
+              Every question your people ask AI is a deposit. The only question is whose account it lands in.
             </p>
           </div>
         </div>
@@ -329,7 +332,9 @@ export function Education() {
               The regulatory wave is here
             </h2>
             <p className="text-lg text-muted-foreground mt-6 leading-relaxed">
-              Governed AI is not optional for regulated industries. These are the frameworks shaping what evidence looks like in practice. We provide the governance infrastructure — you bring your regulatory interpretation.
+              These frameworks are evidence of a shift in what organisations must be able to
+              govern and explain. We provide structural support — you bring your regulatory
+              interpretation.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8">

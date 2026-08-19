@@ -13,19 +13,19 @@ import { CTASection } from "@/components/sections/CTASection";
 
 const PILLARS = [
   {
-    icon: Network,
-    title: "Govern what you already use",
-    body: "Keep your preferred models, vendor platforms, and in-house agents. SocioProphet sits underneath them as one governed control layer.",
+    icon: Database,
+    title: "Build knowledge that compounds",
+    body: "Every question, document, and decision can become a deposit in an intelligence asset that stays yours and grows with use.",
   },
   {
-    icon: Database,
-    title: "Keep knowledge in your control",
-    body: "Your data, prompts, and organisational knowledge stay inside your environment and remain portable. Your AI-generated knowledge compounds for you alone.",
+    icon: Network,
+    title: "Keep intelligence in your control",
+    body: "Your reasoning, data, and decisions stay inside your environment. Sovereignty is the difference between renting intelligence and building one.",
   },
   {
     icon: ShieldCheck,
-    title: "Stay current without surrendering control",
-    body: "You choose when to upgrade. SocioProphet manages model lifecycle and migration while preserving your policies, provenance, and knowledge.",
+    title: "Make it provable",
+    body: "Governance is infrastructure, not paperwork. Every AI decision can be signed, evidenced, and replayed — not logged after the fact and hoped for.",
   },
 ];
 
@@ -47,8 +47,8 @@ const HOW_IT_WORKS = [
   },
   {
     step: "04",
-    title: "Keep knowledge and models current",
-    body: "Your organisational knowledge compounds inside your environment while managed migrations keep your model choices current.",
+    title: "Let the asset compound",
+    body: "Your organisational knowledge grows inside your boundary while managed migrations keep your model choices current.",
   },
 ];
 
@@ -74,18 +74,18 @@ export function Home() {
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono font-medium uppercase tracking-wider mb-8 fade-in-up">
               <ShieldCheck className="w-4 h-4" />
-              <span>SocioProphet governs people, agents, and knowledge</span>
+              <span>Build an intelligence asset you own</span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-8 leading-[1.1] fade-in-up delay-100">
-              Keep the AI you chose. <br className="hidden md:block" />
-              <span className="text-muted-foreground">Make every action provable.</span>
+              Are you renting intelligence, <br className="hidden md:block" />
+              <span className="text-muted-foreground">or building one?</span>
             </h1>
 
             <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl leading-relaxed fade-in-up delay-200">
-              SocioProphet is the fourth path: one governed orchestration layer beneath your
-              models, vendor platforms, and in-house agents. It runs inside your environment
-              and turns every decision into signed, replayable evidence.
+              SocioProphet turns your organisation's use of AI into an asset you own. Sovereignty
+              makes it yours. Governance makes it provable. Every use helps it compound inside
+              your own walls.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 fade-in-up delay-300">
@@ -104,12 +104,12 @@ export function Home() {
       <section className="py-24 border-y border-border bg-card">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-14">
-            <h2 className="text-3xl md:text-5xl font-bold text-white">
-              Every adoption path leaves a governance gap.
+              <h2 className="text-3xl md:text-5xl font-bold text-white">
+              Your AI can create value. The question is where it accumulates.
             </h2>
             <p className="text-lg text-muted-foreground mt-6 leading-relaxed">
-              Public models, a single vendor platform, and in-house agents all create value.
-              Each remains incomplete without a governed layer beneath it.
+              Public models, a single vendor platform, and in-house agents can all help you work.
+              Each remains incomplete if the intelligence they create does not become yours.
             </p>
           </div>
 
@@ -136,8 +136,8 @@ export function Home() {
 
           <div className="mt-6 border border-primary/25 bg-primary/5 p-8 md:p-10">
             <p className="text-lg md:text-xl text-white leading-relaxed">
-              SocioProphet does not replace these paths. It completes them with one governed layer
-              for people, agents, and knowledge — inside your environment.
+              SocioProphet is the fourth path: one layer that turns AI use into an owned asset —
+              sovereign, provable, and compounding inside your environment.
             </p>
           </div>
         </div>
@@ -153,7 +153,12 @@ export function Home() {
                 <span className="text-primary">Dashboards &ne; replay.</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                A log tells you a model was called. The <TermTooltip term="evidence-fabric">Evidence Fabric</TermTooltip> records why it was called, what it relied on, and how to replay the result. Every agent action produces cryptographically signed provenance, while the <TermTooltip term="neurosymbolic-harness">neurosymbolic harness</TermTooltip> distinguishes what was stated, retrieved, inferred, or deduced.
+                A decision you cannot reproduce is not institutional knowledge. It is a rumour with
+                a timestamp. The <TermTooltip term="evidence-fabric">Evidence Fabric</TermTooltip>{" "}
+                records why a model was called, what it relied on, and how to replay the result.
+                Every agent action produces cryptographically signed provenance, while the{" "}
+                <TermTooltip term="neurosymbolic-harness">neurosymbolic harness</TermTooltip>{" "}
+                distinguishes what was stated, retrieved, inferred, or deduced.
               </p>
               <ul className="space-y-4 mb-10">
                 <li className="flex items-start gap-3">
@@ -166,7 +171,7 @@ export function Home() {
                 </li>
                 <li className="flex items-start gap-3">
                   <div className="mt-1 bg-primary/20 p-1 rounded-full"><ShieldCheck className="w-4 h-4 text-primary" /></div>
-                  <span className="text-white">Policy enforcement: Chinese walls, access permissions, task controls</span>
+                  <span className="text-white">Policy enforcement: information barriers, access permissions, task controls</span>
                 </li>
               </ul>
               <div className="flex flex-col sm:flex-row gap-6">
@@ -194,7 +199,7 @@ export function Home() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-14">
             <h2 className="text-3xl md:text-5xl font-bold text-white">
-              One governed layer changes what your AI can safely become.
+              Sovereignty makes it yours. Governance makes it provable. Compounding knowledge is the return.
             </h2>
           </div>
 
@@ -225,11 +230,11 @@ export function Home() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-14">
             <h2 className="text-3xl md:text-5xl font-bold text-white">
-              Inside your walls. Provable at every step.
+              Every question is a deposit.
             </h2>
             <p className="text-lg text-muted-foreground mt-6 leading-relaxed">
-              We don't take your data. We don't train on your data. We don't see your data.
-              Everything runs inside your walls. And everything is provable.
+              The only question is whose account it lands in. Keep the work your people do with AI
+              inside your environment, where it can become knowledge your organisation owns.
             </p>
           </div>
 
@@ -261,12 +266,12 @@ export function Home() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-3xl mb-14">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              Start with the framework already shaping your decisions.
+              The rules are moving. Build the asset, not just the paperwork.
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              These frameworks do not prescribe a technology. They create an obligation to
-              govern risk, evidence decisions, and maintain control. SocioProphet provides
-              structural support — you bring your regulatory interpretation.
+              These frameworks are evidence of a shift: organisations must be able to govern risk,
+              evidence decisions, and maintain control. SocioProphet provides structural support —
+              you bring your regulatory interpretation.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 border-y border-border">

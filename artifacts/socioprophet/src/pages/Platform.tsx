@@ -139,12 +139,13 @@ export function Platform() {
               <Network className="w-4 h-4" />
               <span>The Architecture</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
-              A governed, model-portable <br />orchestration layer.
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
+              The infrastructure that makes intelligence yours.
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl">
-              Built to govern autonomous agents, not just chat. SocioProphet sits underneath
-              public AI, vendor platforms, and in-house agents alike — an{" "}
+              Sovereignty determines whether anything accumulates. Governance determines whether
+              it can be relied on. SocioProphet sits underneath public AI, vendor platforms, and
+              in-house agents alike — an{" "}
               <TermTooltip term="evidence-fabric">evidence fabric</TermTooltip>, a{" "}
               <TermTooltip term="neurosymbolic-harness">neurosymbolic harness</TermTooltip>, a{" "}
               <TermTooltip term="cybernetic-control-plane">cybernetic control plane</TermTooltip>, a
@@ -292,8 +293,8 @@ export function Platform() {
       </section>
 
       <CTASection
-        title="Validate the architecture with our engineers."
-        subtitle="Request a technical briefing and we will walk your CIO, CDO, and security teams through every layer."
+        title="See what your AI can become."
+        subtitle="Request a technical briefing and we will walk your CIO, CDO, and security teams through the architecture that turns use into an owned asset."
         buttonLabel="Request a Technical Briefing"
       />
     </div>

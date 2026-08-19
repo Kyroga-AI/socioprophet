@@ -9,8 +9,8 @@ interface CTASectionProps {
 }
 
 export function CTASection({
-  title = "Ready to secure your AI frontier?",
-  subtitle = "Schedule a briefing to discuss how SocioProphet can deploy a sovereign, governed AI infrastructure within your organisation.",
+  title = "Build what your AI learns.",
+  subtitle = "SocioProphet turns daily AI use into a sovereign, governed, compounding knowledge asset inside your organisation.",
   buttonLabel = "Request a Briefing",
   buttonHref = "/contact",
 }: CTASectionProps) {

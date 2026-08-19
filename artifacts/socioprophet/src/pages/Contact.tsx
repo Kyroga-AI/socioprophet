@@ -49,11 +49,11 @@ export function Contact() {
               <span>Contact Us</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-              Request a Briefing.
+              Start building intelligence you own.
             </h1>
             <p className="text-lg text-muted-foreground mb-12 max-w-md leading-relaxed">
-              Speak with our engineering and deployment team about bringing sovereign, governed AI
-              infrastructure into your environment. Defined-scope engagements. No hidden complexity.
+              Tell us where your organisation is using AI today and where you need the value to
+              accumulate. We will start with your existing tools, boundaries, and highest-value work.
             </p>
 
             <div className="space-y-8">
@@ -62,10 +62,10 @@ export function Contact() {
                   <ShieldCheck className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white mb-1">Confidential Consultation</h3>
+                  <h3 className="font-bold text-white mb-1">A direct conversation</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    We routinely work under NDA to discuss specific regulatory and architectural
-                    requirements for Tier-1 institutions.
+                    Bring the questions your teams are already asking about ownership, evidence,
+                    deployment, and the work you want AI to improve.
                   </p>
                 </div>
               </div>
@@ -75,10 +75,10 @@ export function Contact() {
                   <Building className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white mb-1">Enterprise Ready</h3>
+                  <h3 className="font-bold text-white mb-1">Inside your boundary</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Cloud-agnostic deployments (AWS, Azure, GCP, IBM) or strictly air-gapped
-                    on-premise hardware setups.
+                    We can discuss private-cloud, on-premise, and air-gapped deployment contexts
+                    around your organisation's data and operating constraints.
                   </p>
                 </div>
               </div>

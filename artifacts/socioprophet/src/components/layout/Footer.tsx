@@ -15,7 +15,8 @@ export function Footer() {
               <span className="font-sans font-bold text-xl tracking-tight text-white">Socio<span className="text-primary">Prophet</span></span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              SocioProphet governs people, agents, and knowledge. One governed intelligence layer for everything your organisation's AI does — and a cryptographic record of every decision it makes.
+              SocioProphet turns your organisation's use of AI into an asset you own — sovereign,
+              provable, and compounding inside your own walls.
             </p>
           </div>
           
@@ -60,7 +61,7 @@ export function Footer() {
             &copy; {new Date().getFullYear()} SocioProphet. All rights reserved.
           </p>
           <div className="flex gap-4">
-            <span className="text-xs text-muted-foreground font-mono tracking-widest uppercase">Your Brain. Your Agents. Your AI.</span>
+            <span className="text-xs text-muted-foreground font-mono tracking-widest uppercase">Own your AI. Don't rent it.</span>
           </div>
         </div>
       </div>
