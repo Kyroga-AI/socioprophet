@@ -1,0 +1,126 @@
+/*
+ * SocioProphet — Archive / Silver
+ *
+ * A record-room palette: blue-black ink, cool paper type, and a restrained
+ * silver-grey signal. Silver behaves like a stamped index mark — quiet,
+ * precise, and legible rather than glossy.
+ */
+
+:root {
+  --background: 218 24% 7%;
+  --foreground: 210 16% 91%;
+
+  --card: 218 21% 10%;
+  --card-foreground: 210 16% 91%;
+  --card-border: 216 14% 22%;
+
+  --popover: 218 21% 10%;
+  --popover-foreground: 210 16% 91%;
+  --popover-border: 216 14% 22%;
+
+  /* cool silver-grey signal */
+  --primary: 210 14% 72%;
+  --primary-foreground: 218 24% 7%;
+
+  --secondary: 216 15% 17%;
+  --secondary-foreground: 210 16% 91%;
+  --muted: 216 15% 17%;
+  --muted-foreground: 214 10% 66%;
+  --accent: 216 15% 17%;
+  --accent-foreground: 210 16% 91%;
+
+  --border: 216 14% 22%;
+  --input: 216 14% 22%;
+  --ring: 210 14% 72%;
+
+  --sidebar: 218 21% 10%;
+  --sidebar-foreground: 210 16% 91%;
+  --sidebar-border: 216 14% 22%;
+  --sidebar-primary: 210 14% 72%;
+  --sidebar-primary-foreground: 218 24% 7%;
+  --sidebar-accent: 216 15% 17%;
+  --sidebar-accent-foreground: 210 16% 91%;
+  --sidebar-ring: 210 14% 72%;
+
+  --button-outline: rgba(218, 225, 232, 0.18);
+  --badge-outline: rgba(218, 225, 232, 0.08);
+  --elevate-1: rgba(218, 225, 232, 0.045);
+  --elevate-2: rgba(218, 225, 232, 0.085);
+  --primary-border: hsl(210 14% 82%);
+}
+
+.archive-silver {
+  color: hsl(var(--foreground));
+}
+
+.archive-silver .text-white {
+  color: hsl(210 16% 91%);
+}
+
+.archive-silver .text-white\/60 {
+  color: hsl(214 10% 67% / 0.74);
+}
+
+.archive-silver .text-primary,
+.archive-silver .group-hover\:text-primary:hover {
+  color: hsl(var(--primary));
+}
+
+.archive-silver .bg-primary\/5 {
+  background-color: hsl(210 14% 72% / 0.075);
+}
+
+.archive-silver .bg-primary\/10 {
+  background-color: hsl(210 14% 72% / 0.12);
+}
+
+.archive-silver .bg-primary\/20 {
+  background-color: hsl(210 14% 72% / 0.2);
+}
+
+.archive-silver .border-primary\/20 {
+  border-color: hsl(210 14% 72% / 0.26);
+}
+
+.archive-silver .border-primary\/25 {
+  border-color: hsl(210 14% 72% / 0.32);
+}
+
+.archive-silver .border-primary\/30 {
+  border-color: hsl(210 14% 72% / 0.38);
+}
+
+.archive-silver .hover\:bg-primary\/5:hover {
+  background-color: hsl(210 14% 72% / 0.1);
+}
+
+.archive-silver .hover\:decoration-primary:hover,
+.archive-silver .focus-visible\:decoration-primary:focus-visible {
+  text-decoration-color: hsl(var(--primary));
+}
+
+.archive-silver .hover\:text-white:hover,
+.archive-silver .focus-visible\:text-white:focus-visible {
+  color: hsl(210 16% 96%);
+}
+
+/* Preserve the exact abstract asset while turning its plate into cool silver. */
+.archive-silver .mix-blend-screen img {
+  filter: grayscale(0.92) saturate(0.48) contrast(1.05) brightness(0.92);
+}
+
+.archive-silver .mix-blend-screen > .bg-gradient-to-t {
+  background-image: linear-gradient(
+    to top,
+    hsl(var(--background)) 0%,
+    hsl(218 24% 7% / 0.86) 58%,
+    hsl(218 24% 7% / 0.18) 100%
+  );
+}
+
+.archive-silver a:focus-visible,
+.archive-silver button:focus-visible,
+.archive-silver [tabindex="0"]:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 4px;
+}
