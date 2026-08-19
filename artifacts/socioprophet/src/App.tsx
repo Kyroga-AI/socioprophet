@@ -20,6 +20,7 @@ import { Evidence } from "@/pages/Evidence";
 import { Education } from "@/pages/Education";
 import { Company } from "@/pages/Company";
 import { Contact } from "@/pages/Contact";
+import { PrivacyPolicy } from "@/pages/PrivacyPolicy";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ function Router() {
           <Route path="/company" component={Company} />
           <Route path="/about" component={Company} />
           <Route path="/contact" component={Contact} />
+          <Route path="/privacy" component={PrivacyPolicy} />
           <Route component={NotFound} />
         </Switch>
       </main>

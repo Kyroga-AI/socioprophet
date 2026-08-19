@@ -45,6 +45,7 @@ export function Footer() {
               <li><Link href="/education#how-noetica" className="text-sm text-muted-foreground hover:text-white transition-colors">How Noetica Works</Link></li>
               <li><Link href="/company" className="text-sm text-muted-foreground hover:text-white transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-white transition-colors">Contact</Link></li>
+              <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-white transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ShieldCheck, Mail, Building } from "lucide-react";
 import { useCreateLead } from "@workspace/api-client-react";
 import type { CreateLeadRequest } from "@workspace/api-client-react";
+import { Link } from "wouter";
 
 const PRODUCT_OPTIONS: { value: CreateLeadRequest["productInterest"]; label: string }[] = [
   { value: "noetica", label: "Noetica" },
@@ -239,8 +240,14 @@ export function Contact() {
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center">
-                  By submitting this form, you agree to our privacy policy and secure handling of
-                  your data.
+                  By submitting this form, you agree to our{" "}
+                  <Link
+                    href="/privacy"
+                    className="text-primary underline underline-offset-2 hover:text-white"
+                  >
+                    privacy policy
+                  </Link>{" "}
+                  and secure handling of your data.
                 </p>
               </form>
             )}
