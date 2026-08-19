@@ -70,46 +70,46 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  /* Deep Navy Institutional Palette - Dark Theme Default */
-  --background: 226 50% 5%;
-  --foreground: 210 40% 98%;
+  /* Archive / Copper — dark institutional record room */
+  --background: 218 29% 7%;
+  --foreground: 38 28% 92%;
 
-  --card: 226 45% 7%;
-  --card-foreground: 210 40% 98%;
-  --card-border: 226 30% 15%;
+  --card: 218 25% 10%;
+  --card-foreground: 38 28% 92%;
+  --card-border: 218 18% 20%;
 
-  --popover: 226 45% 7%;
-  --popover-foreground: 210 40% 98%;
-  --popover-border: 226 30% 15%;
+  --popover: 218 25% 10%;
+  --popover-foreground: 38 28% 92%;
+  --popover-border: 218 18% 20%;
 
-  /* Subtle Teal/Cyan for Primary accents */
-  --primary: 190 90% 50%;
-  --primary-foreground: 226 50% 5%;
+  /* Copper is an annotation signal, never surface decoration. */
+  --primary: 25 66% 62%;
+  --primary-foreground: 218 29% 7%;
 
-  --secondary: 226 30% 15%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 218 19% 17%;
+  --secondary-foreground: 38 28% 92%;
 
-  --muted: 226 30% 15%;
-  --muted-foreground: 215 20% 65%;
+  --muted: 218 19% 17%;
+  --muted-foreground: 38 13% 68%;
 
-  --accent: 226 30% 15%;
-  --accent-foreground: 210 40% 98%;
+  --accent: 218 19% 17%;
+  --accent-foreground: 38 28% 92%;
 
   --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive-foreground: 38 28% 92%;
 
-  --border: 226 30% 15%;
-  --input: 226 30% 15%;
-  --ring: 190 90% 50%;
+  --border: 218 18% 20%;
+  --input: 218 18% 20%;
+  --ring: 25 66% 62%;
 
-  --sidebar: 226 45% 7%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-border: 226 30% 15%;
-  --sidebar-primary: 190 90% 50%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 226 30% 15%;
-  --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-ring: 190 90% 50%;
+  --sidebar: 218 25% 10%;
+  --sidebar-foreground: 38 28% 92%;
+  --sidebar-border: 218 18% 20%;
+  --sidebar-primary: 25 66% 62%;
+  --sidebar-primary-foreground: 218 29% 7%;
+  --sidebar-accent: 218 19% 17%;
+  --sidebar-accent-foreground: 38 28% 92%;
+  --sidebar-ring: 25 66% 62%;
 
   --app-font-sans: 'Plus Jakarta Sans', sans-serif;
   --app-font-serif: Georgia, serif;
@@ -121,7 +121,7 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
 
-  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --primary-border: hsl(25 66% 72%);
   --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
@@ -138,6 +138,34 @@
   }
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    caret-color: hsl(var(--primary));
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary) / 0.30);
+    color: hsl(var(--foreground));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 4px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.75rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border: 3px solid hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.72);
   }
 }
 
@@ -163,5 +191,24 @@
 
   .gradient-text {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60;
+  }
+
+  .archival-hero-image {
+    filter: sepia(0.34) saturate(0.7) hue-rotate(323deg);
+  }
+}
+
+@layer utilities {
+  .text-white {
+    color: hsl(var(--foreground));
+  }
+
+  .text-white\/60 {
+    color: hsl(38 16% 68% / 0.72);
+  }
+
+  .hover\:text-white:hover,
+  .focus-visible\:text-white:focus-visible {
+    color: hsl(38 28% 96%);
   }
 }

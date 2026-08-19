@@ -4,5 +4,6 @@ export const modules: ModuleMap = {
   "./components/mockups/socioprophet-home/ArchiveCopper.tsx": () => import("../components/mockups/socioprophet-home/ArchiveCopper.tsx"),
   "./components/mockups/socioprophet-home/ArchiveSilver.tsx": () => import("../components/mockups/socioprophet-home/ArchiveSilver.tsx"),
   "./components/mockups/socioprophet-home/Current.tsx": () => import("../components/mockups/socioprophet-home/Current.tsx"),
+  "./components/mockups/socioprophet-home/LedgerCopper.tsx": () => import("../components/mockups/socioprophet-home/LedgerCopper.tsx"),
   "./components/mockups/socioprophet-home/MineralInk.tsx": () => import("../components/mockups/socioprophet-home/MineralInk.tsx")
 };

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">SocioProphet Archive / Copper colour palette</title>
+  <desc id="desc">A shareable colour palette for SocioProphet using deep blue-black ink, warm paper typography, and restrained copper accents.</desc>
+  <rect width="1600" height="1000" fill="#0D1017"/>
+
+  <g font-family="Arial, Helvetica, sans-serif" fill="#F1EEE9">
+    <text x="96" y="112" font-size="24" letter-spacing="5" fill="#DE9460">SOCIOPROPHET</text>
+    <text x="96" y="190" font-size="66" font-weight="700" letter-spacing="-2">Archive / Copper</text>
+    <text x="96" y="238" font-size="24" fill="#B8B0A3">Dark institutional record room · restrained copper signal</text>
+  </g>
+
+  <g transform="translate(96 320)">
+    <g>
+      <rect width="300" height="300" rx="18" fill="#0D1017"/>
+      <rect width="300" height="300" rx="18" fill="none" stroke="#2A3040" stroke-width="2"/>
+      <text x="28" y="54" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="3" fill="#B8B0A3">BACKGROUND</text>
+      <text x="28" y="232" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#F1EEE9">Deep Ink</text>
+      <text x="28" y="268" font-family="monospace" font-size="16" fill="#B8B0A3">#0D1017</text>
+      <text x="28" y="292" font-family="monospace" font-size="14" fill="#B8B0A3">HSL 218 29% 7%</text>
+    </g>
+
+    <g transform="translate(330 0)">
+      <rect width="300" height="300" rx="18" fill="#0C1014"/>
+      <rect width="300" height="300" rx="18" fill="none" stroke="#2A3040" stroke-width="2"/>
+      <text x="28" y="54" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="3" fill="#B8B0A3">SURFACE</text>
+      <text x="28" y="232" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#F1EEE9">Ink Panel</text>
+      <text x="28" y="268" font-family="monospace" font-size="16" fill="#B8B0A3">#0C1014</text>
+      <text x="28" y="292" font-family="monospace" font-size="14" fill="#B8B0A3">HSL 218 25% 10%</text>
+    </g>
+
+    <g transform="translate(660 0)">
+      <rect width="300" height="300" rx="18" fill="#DE9460"/>
+      <text x="28" y="54" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="3" fill="#3A2115">PRIMARY</text>
+      <text x="28" y="232" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#0D1017">Archive Copper</text>
+      <text x="28" y="268" font-family="monospace" font-size="16" fill="#3A2115">#DE9460</text>
+      <text x="28" y="292" font-family="monospace" font-size="14" fill="#3A2115">HSL 25 66% 62%</text>
+    </g>
+
+    <g transform="translate(990 0)">
+      <rect width="300" height="300" rx="18" fill="#F1EEE9"/>
+      <text x="28" y="54" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="3" fill="#665E55">FOREGROUND</text>
+      <text x="28" y="232" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#0D1017">Warm Paper</text>
+      <text x="28" y="268" font-family="monospace" font-size="16" fill="#665E55">#F1EEE9</text>
+      <text x="28" y="292" font-family="monospace" font-size="14" fill="#665E55">HSL 38 28% 92%</text>
+    </g>
+
+    <g transform="translate(165 350)">
+      <rect width="300" height="220" rx="18" fill="#B8B0A3"/>
+      <text x="28" y="52" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="3" fill="#3A3630">MUTED TEXT</text>
+      <text x="28" y="154" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#0D1017">Parchment</text>
+      <text x="28" y="190" font-family="monospace" font-size="16" fill="#3A3630">#B8B0A3</text>
+      <text x="28" y="214" font-family="monospace" font-size="14" fill="#3A3630">HSL 38 13% 68%</text>
+    </g>
+
+    <g transform="translate(495 350)">
+      <rect width="300" height="220" rx="18" fill="#2A3040"/>
+      <text x="28" y="52" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="3" fill="#B8B0A3">BORDER</text>
+      <text x="28" y="154" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#F1EEE9">Slate Line</text>
+      <text x="28" y="190" font-family="monospace" font-size="16" fill="#B8B0A3">#2A3040</text>
+      <text x="28" y="214" font-family="monospace" font-size="14" fill="#B8B0A3">HSL 218 18% 20%</text>
+    </g>
+
+    <g transform="translate(825 350)">
+      <rect width="465" height="220" rx="18" fill="#151B25" stroke="#2A3040" stroke-width="2"/>
+      <text x="28" y="52" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="3" fill="#DE9460">USAGE PRINCIPLE</text>
+      <text x="28" y="100" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#F1EEE9">Copper is an annotation signal.</text>
+      <text x="28" y="140" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#B8B0A3">Use it for action, evidence, focus, and</text>
+      <text x="28" y="170" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#B8B0A3">the “Prophet” wordmark — not decoration.</text>
+      <rect x="28" y="194" width="180" height="3" fill="#DE9460"/>
+    </g>
+  </g>
+
+  <text x="96" y="940" font-family="monospace" font-size="16" letter-spacing="1" fill="#B8B0A3">SOCIOPROPHET · OWN YOUR AI. DON'T RENT IT.</text>
+</svg>

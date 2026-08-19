@@ -66,7 +66,7 @@ export function Home() {
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center pt-24 pb-32 overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-40 mix-blend-screen">
-          <img src={heroAbstract} alt="" className="w-full h-full object-cover" />
+          <img src={heroAbstract} alt="" className="w-full h-full object-cover archival-hero-image" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
         </div>
 
