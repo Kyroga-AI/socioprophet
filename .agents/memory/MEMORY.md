@@ -3,3 +3,4 @@
 - [Live-site brand copy source](livesite-copy-source.md) — Kyroga-AI/socioprophet repo is the source of authentic brand vocabulary; keep rebuild IA, weave live copy in.
 - [SocioProphet copy rules](socioprophet-copy-rules.md) — banned terms, "incomplete paths" framing, no pricing/benchmarks; grep-sweep before sign-off; deck not yet updated.
 - [Asset-first brand voice](socioprophet-asset-first-brand-voice.md) — market-facing copy leads with owned, compounding intelligence; sovereignty and governance are the means.
+- [GitHub empty repository export](github-empty-repository-export.md) — seed a branch through Contents API before connector-driven Git blob/tree exports.
