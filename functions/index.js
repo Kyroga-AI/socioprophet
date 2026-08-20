@@ -11,6 +11,10 @@ const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
 
 const SMTP_APP_PASSWORD = defineSecret("SMTP_APP_PASSWORD");
+// Auth account: the app password belongs to this mailbox, and Gmail requires
+// the From header to match it (or a verified Workspace "send as" alias) or the
+// send is rejected/rewritten. Recipient is the shared inbox leads should land in.
+const SMTP_AUTH_USER = "gus.quiroga@socioprophet.ai";
 const LEAD_NOTIFICATION_MAILBOX = "marketing@socioprophet.ai";
 
 // Header-context only: strips CR/LF so user-controlled fields can't inject extra
@@ -28,7 +32,7 @@ function getTransporter() {
       port: 465,
       secure: true,
       auth: {
-        user: LEAD_NOTIFICATION_MAILBOX,
+        user: SMTP_AUTH_USER,
         pass: SMTP_APP_PASSWORD.value(),
       },
     });
@@ -57,7 +61,7 @@ async function sendLeadNotificationEmail(doc, leadId) {
   ].filter(Boolean);
 
   await getTransporter().sendMail({
-    from: `SocioProphet Intake <${LEAD_NOTIFICATION_MAILBOX}>`,
+    from: `SocioProphet Intake <${SMTP_AUTH_USER}>`,
     to: LEAD_NOTIFICATION_MAILBOX,
     subject: `New lead: ${subjectBits || headerSafe(doc.email) || "(no details)"}`,
     text: lines.join("\n"),
