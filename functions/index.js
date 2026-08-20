@@ -13,25 +13,39 @@ db.settings({ ignoreUndefinedProperties: true });
 const SMTP_APP_PASSWORD = defineSecret("SMTP_APP_PASSWORD");
 const LEAD_NOTIFICATION_MAILBOX = "marketing@socioprophet.ai";
 
-async function sendLeadNotificationEmail(doc, leadId) {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: LEAD_NOTIFICATION_MAILBOX,
-      pass: SMTP_APP_PASSWORD.value(),
-    },
-  });
+// Header-context only: strips CR/LF so user-controlled fields can't inject extra
+// email headers via the Subject line. Not applied to the plain-text body (e.g.
+// `notes`), where legitimate multi-line content should stay intact.
+function headerSafe(v) {
+  return typeof v === "string" ? v.replace(/[\r\n]+/g, " ").trim() : "";
+}
 
-  const name = [doc.firstName, doc.lastName].filter(Boolean).join(" ") || "(no name given)";
-  const subjectBits = [name, doc.organisation].filter(Boolean).join(" — ");
+let transporter = null;
+function getTransporter() {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: LEAD_NOTIFICATION_MAILBOX,
+        pass: SMTP_APP_PASSWORD.value(),
+      },
+    });
+  }
+  return transporter;
+}
+
+async function sendLeadNotificationEmail(doc, leadId) {
+  const name = [headerSafe(doc.firstName), headerSafe(doc.lastName)].filter(Boolean).join(" ");
+  const org = headerSafe(doc.organisation);
+  const subjectBits = [name, org].filter(Boolean).join(" — ");
 
   const lines = [
     `Surface: ${doc.surface}`,
     `Audience: ${doc.audience}`,
     `Email: ${doc.email}`,
-    doc.firstName || doc.lastName ? `Name: ${name}` : null,
+    doc.firstName || doc.lastName ? `Name: ${[doc.firstName, doc.lastName].filter(Boolean).join(" ")}` : null,
     doc.organisation ? `Organisation: ${doc.organisation}` : null,
     doc.role ? `Role: ${doc.role}` : null,
     doc.productInterest ? `Product interest: ${doc.productInterest}` : null,
@@ -42,10 +56,10 @@ async function sendLeadNotificationEmail(doc, leadId) {
     `Lead ID: ${leadId}`,
   ].filter(Boolean);
 
-  await transporter.sendMail({
+  await getTransporter().sendMail({
     from: `SocioProphet Intake <${LEAD_NOTIFICATION_MAILBOX}>`,
     to: LEAD_NOTIFICATION_MAILBOX,
-    subject: `New lead: ${subjectBits || doc.email}`,
+    subject: `New lead: ${subjectBits || headerSafe(doc.email) || "(no details)"}`,
     text: lines.join("\n"),
   });
 }
