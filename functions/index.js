@@ -1,5 +1,7 @@
 const { onRequest } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
+const nodemailer = require("nodemailer");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { getProducer, buildEnvelope, getKafkaConfig } = require("./lib/kafkaRelay");
@@ -7,6 +9,46 @@ const { getProducer, buildEnvelope, getKafkaConfig } = require("./lib/kafkaRelay
 initializeApp();
 const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
+
+const SMTP_APP_PASSWORD = defineSecret("SMTP_APP_PASSWORD");
+const LEAD_NOTIFICATION_MAILBOX = "marketing@socioprophet.ai";
+
+async function sendLeadNotificationEmail(doc, leadId) {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: LEAD_NOTIFICATION_MAILBOX,
+      pass: SMTP_APP_PASSWORD.value(),
+    },
+  });
+
+  const name = [doc.firstName, doc.lastName].filter(Boolean).join(" ") || "(no name given)";
+  const subjectBits = [name, doc.organisation].filter(Boolean).join(" — ");
+
+  const lines = [
+    `Surface: ${doc.surface}`,
+    `Audience: ${doc.audience}`,
+    `Email: ${doc.email}`,
+    doc.firstName || doc.lastName ? `Name: ${name}` : null,
+    doc.organisation ? `Organisation: ${doc.organisation}` : null,
+    doc.role ? `Role: ${doc.role}` : null,
+    doc.productInterest ? `Product interest: ${doc.productInterest}` : null,
+    doc.intent ? `Intent: ${doc.intent}` : null,
+    doc.reason ? `Reason: ${doc.reason}` : null,
+    doc.notes ? `Notes: ${doc.notes}` : null,
+    doc.page ? `Page: ${doc.page}` : null,
+    `Lead ID: ${leadId}`,
+  ].filter(Boolean);
+
+  await transporter.sendMail({
+    from: `SocioProphet Intake <${LEAD_NOTIFICATION_MAILBOX}>`,
+    to: LEAD_NOTIFICATION_MAILBOX,
+    subject: `New lead: ${subjectBits || doc.email}`,
+    text: lines.join("\n"),
+  });
+}
 
 const RELEASE = {
   environment: process.env.APP_ENV || "dev",
@@ -56,7 +98,7 @@ function osFromUA(ua) {
   return { family: "", version: "" };
 }
 
-exports.leadCapture = onRequest(async (req, res) => {
+exports.leadCapture = onRequest({ secrets: [SMTP_APP_PASSWORD] }, async (req, res) => {
   res.set("Cache-Control", "no-store");
 
   if (req.method === "OPTIONS") {
@@ -313,11 +355,20 @@ exports.leadCapture = onRequest(async (req, res) => {
       slot: RELEASE.releaseSlot,
     });
 
+    let emailSent = false;
+    try {
+      await sendLeadNotificationEmail(doc, ref.id);
+      emailSent = true;
+    } catch (emailErr) {
+      logger.error("leadCapture email notification failed", { id: ref.id, err: emailErr });
+    }
+
     return res.status(200).json({
       ok: true,
       id: ref.id,
       releaseId: RELEASE.releaseId,
       releaseSlot: RELEASE.releaseSlot,
+      emailSent,
     });
   } catch (err) {
     logger.error("leadCapture failed", err);
