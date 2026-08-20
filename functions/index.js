@@ -1,5 +1,7 @@
 const { onRequest } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
+const nodemailer = require("nodemailer");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { getProducer, buildEnvelope, getKafkaConfig } = require("./lib/kafkaRelay");
@@ -7,6 +9,64 @@ const { getProducer, buildEnvelope, getKafkaConfig } = require("./lib/kafkaRelay
 initializeApp();
 const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
+
+const SMTP_APP_PASSWORD = defineSecret("SMTP_APP_PASSWORD");
+// Auth account: the app password belongs to this mailbox, and Gmail requires
+// the From header to match it (or a verified Workspace "send as" alias) or the
+// send is rejected/rewritten. Recipient is the shared inbox leads should land in.
+const SMTP_AUTH_USER = "gus.quiroga@socioprophet.ai";
+const LEAD_NOTIFICATION_MAILBOX = "marketing@socioprophet.ai";
+
+// Header-context only: strips CR/LF so user-controlled fields can't inject extra
+// email headers via the Subject line. Not applied to the plain-text body (e.g.
+// `notes`), where legitimate multi-line content should stay intact.
+function headerSafe(v) {
+  return typeof v === "string" ? v.replace(/[\r\n]+/g, " ").trim() : "";
+}
+
+let transporter = null;
+function getTransporter() {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: SMTP_AUTH_USER,
+        pass: SMTP_APP_PASSWORD.value(),
+      },
+    });
+  }
+  return transporter;
+}
+
+async function sendLeadNotificationEmail(doc, leadId) {
+  const name = [headerSafe(doc.firstName), headerSafe(doc.lastName)].filter(Boolean).join(" ");
+  const org = headerSafe(doc.organisation);
+  const subjectBits = [name, org].filter(Boolean).join(" — ");
+
+  const lines = [
+    `Surface: ${doc.surface}`,
+    `Audience: ${doc.audience}`,
+    `Email: ${doc.email}`,
+    doc.firstName || doc.lastName ? `Name: ${[doc.firstName, doc.lastName].filter(Boolean).join(" ")}` : null,
+    doc.organisation ? `Organisation: ${doc.organisation}` : null,
+    doc.role ? `Role: ${doc.role}` : null,
+    doc.productInterest ? `Product interest: ${doc.productInterest}` : null,
+    doc.intent ? `Intent: ${doc.intent}` : null,
+    doc.reason ? `Reason: ${doc.reason}` : null,
+    doc.notes ? `Notes: ${doc.notes}` : null,
+    doc.page ? `Page: ${doc.page}` : null,
+    `Lead ID: ${leadId}`,
+  ].filter(Boolean);
+
+  await getTransporter().sendMail({
+    from: `SocioProphet Intake <${SMTP_AUTH_USER}>`,
+    to: LEAD_NOTIFICATION_MAILBOX,
+    subject: `New lead: ${subjectBits || headerSafe(doc.email) || "(no details)"}`,
+    text: lines.join("\n"),
+  });
+}
 
 const RELEASE = {
   environment: process.env.APP_ENV || "dev",
@@ -56,7 +116,7 @@ function osFromUA(ua) {
   return { family: "", version: "" };
 }
 
-exports.leadCapture = onRequest(async (req, res) => {
+exports.leadCapture = onRequest({ secrets: [SMTP_APP_PASSWORD] }, async (req, res) => {
   res.set("Cache-Control", "no-store");
 
   if (req.method === "OPTIONS") {
@@ -313,11 +373,20 @@ exports.leadCapture = onRequest(async (req, res) => {
       slot: RELEASE.releaseSlot,
     });
 
+    let emailSent = false;
+    try {
+      await sendLeadNotificationEmail(doc, ref.id);
+      emailSent = true;
+    } catch (emailErr) {
+      logger.error("leadCapture email notification failed", { id: ref.id, err: emailErr });
+    }
+
     return res.status(200).json({
       ok: true,
       id: ref.id,
       releaseId: RELEASE.releaseId,
       releaseSlot: RELEASE.releaseSlot,
+      emailSent,
     });
   } catch (err) {
     logger.error("leadCapture failed", err);
