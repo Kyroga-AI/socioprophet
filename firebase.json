@@ -12,21 +12,6 @@
       "trailingSlash": false
     },
     {
-      "target": "marketing",
-      "public": "marketing/public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "rewrites": [
-        {
-          "source": "/api/lead",
-          "function": "leadCapture"
-        }
-      ]
-    },
-    {
       "target": "app",
       "comment": "The app site (socioprophet-builder) now serves the unified cockpit (client-vue), not the retired app-vue builder. Mirrors the proven `cockpit` target: SPA rewrite only, and NO predeploy — deploy via socioprophet-web/deploy-cockpit.sh, which builds client-vue and injects the runtime Firebase config into dist AFTER the build (a predeploy rebuild here would wipe that injected firebase-config.js). The cockpit's backend calls resolve via window.__COCKPIT_CONFIG__ (sovereign) or the prophet-platform in-cluster proxies (connected) — never a Firebase /api rewrite.",
       "public": "socioprophet-web/client-vue/dist",

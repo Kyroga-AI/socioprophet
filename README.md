@@ -16,7 +16,6 @@ Treat this repo first as the **public-facing SocioProphet web/docs and integrati
 Today that includes, at minimum:
 
 - Firebase-hosted docs output from `docs/.vitepress/dist`
-- Firebase-hosted marketing/public surface from `marketing/public`
 - server-side intake wiring from `functions/`
 - repo-local glue that connects public surfaces to adjacent agentic/runtime work
 
